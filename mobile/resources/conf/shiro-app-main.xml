@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-4.1.xsd"
+	   default-autowire="byName">
+
+	<import resource="classpath*:conf/shiro-base.xml"/>
+	<import resource="classpath*:conf/shiro-common.xml"/>
+	<import resource="classpath*:conf/shiro-base-local.xml"/>
+	<import resource="classpath*:conf/shiro-app-local.xml"/>
+
+	<util:list id="passportListeners">
+		<ref bean="passportListener"/>
+		<ref bean="userInfoListener"/>
+	</util:list>
+
+	<bean id="passportDelegate" class="so.wwb.gamebox.web.shiro.common.delegate.PassportDelegate">
+		<property name="passportListeners" ref="passportListeners"/>
+	</bean>
+
+	<!--登录后:获取用户信息-->
+	<bean id="userInfoListener" class="so.wwb.gamebox.mobile.session.listener.UserInfoListener"/>
+
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.soul.web.shiro.common.spring.CustomShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="successUrl" value="/index.html"  />
+		<property name="loginUrl" value="/passport/login.html"/>
+		<property name="unauthorizedUrl" value="/errors/403.html"></property>
+		<property name="filters">
+			<map>
+				<entry key="kickout" value-ref="kickoutFilter"></entry>
+				<entry key="login" value-ref="login"></entry>
+				<entry key="autho" value-ref="authoFilter"></entry>
+				<entry key="authc" value-ref="authcFilter"></entry>
+				<entry key="captcha" value-ref="captcha"></entry>
+				<entry key="subsys" value-ref="subsysCodeFilter"></entry>
+			</map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/message_*.js = anon
+				/ =  anon
+				/message_*.js = anon
+				/index.* =  anon
+				/mainIndex.* = anon
+				/game.* =  anon
+				/game/* =  anon
+				/validate/* anon
+				/index/language.html = anon
+				/index/language/change.html = anon
+				/images/favicon.ico = anon <!--for chrome-->
+				/resource/** = anon
+				/logout/logoutByTimeOut.html = anon
+				/login/*.html = anon
+				/signUp/** = anon
+				/register.html = anon
+				/template/email/** = anon
+				/errors/** = anon
+				/help/** = anon
+				/index/*.html = anon
+				/index/static/*.html = anon
+				/promo/promo.html = anon
+				/promo/activityType.html = anon
+				/promo/finishedPromo.html = anon
+				/promo/promoDetail.html = anon
+				/captcha/*.html = captcha
+				/passport/verify/*.html = anon
+				/passport/login* = subsys,login
+				/verificationCode/*=anon
+				/commonPage/*.html = anon
+				/app/*.html = anon
+				/sysUser.html = anon
+				/** = subsys,kickout,authc,autho
+			</value>
+		</property>
+	</bean>
+</beans>
