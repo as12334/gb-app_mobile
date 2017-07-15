@@ -32,7 +32,7 @@ import java.util.Map;
  * 银行卡管理控制器
  */
 @Controller
-@RequestMapping("/bankCard")
+@RequestMapping("/bankCard/submitBankCard.html")
 public class BankCardController {
 
     @RequestMapping("/page/bankCard")
@@ -83,24 +83,8 @@ public class BankCardController {
             map.put(TokenHandler.TOKEN_VALUE,TokenHandler.generateGUID());
             return map;
         }
-//        SysUser user = SessionManager.getUser();
         bankcardVo.setSuccess(false);
 
-        /*if (StringTool.isBlank(user.getRealName())) {
-            map.put("state", false);
-            map.put("msg", "真实姓名为空");
-            return map;
-        }
-
-        if (StringTool.isBlank(bankcardVo.getResult().getBankcardNumber())) {
-            map.put("state", false);
-            map.put("msg", "银行卡号为空");
-            return map;
-        }*/
-
-       /* bankcardVo = insertBankcard(bankcardVo);
-        map.put("msg", StringTool.isNotBlank(bankcardVo.getOkMsg()) ? bankcardVo.getOkMsg() : bankcardVo.getErrMsg());
-        map.put("state", bankcardVo.isSuccess());*/
         bankcardVo.getResult().setUserId(SessionManager.getUserId());
         bankcardVo.getResult().setBankcardMasterName(realName);
         bankcardVo.getResult().setCreateTime(SessionManager.getDate().getNow());

@@ -17,7 +17,7 @@ public class AuthTool {
 
     private static final Log LOG = LogFactory.getLog(AuthTool.class);
 
-    private static final String ROOT_PATH = "/home/leo/app/";
+    private static final String ROOT_PATH = "/home/fei/app/";
 
     //用户密码
     private static String SALT_SYS_USER_PWD = "AgDz+&?MB|G{*%bH%pf@w4y8;Avt>0R9en,~.L]|db[16=Jr.)0wa^U@~%QNe(Xk";
@@ -159,63 +159,66 @@ public class AuthTool {
      */
     private static void getAppBuild(){
         String[] ids = new String[]{
-//                "1,0001,开发一",
-//                "21,rf80,测试01",
-//                "71,8l6r,超博娱乐",
-//                "76,XH5Z,澳门永利",
-//                "110,cabu,超博娱乐",
-//                "111,74bk,新葡京娱乐场",
-//                "112,SNRM,威尼斯人娱乐",
-//                "113,jwdg,伟德娱乐",
-//                "114,ojlj,澳门金沙娱乐场",
-//                "116,bldz,电子777娱乐",
-//                "117,yytt,澳门威尼斯人",
-//                "118,ys3q,澳门星际娱乐",
-//                "119,nu9r,UEDBET",
-//                "120,cvqb,演示站点",
-//                "121,pnuw,太阳城集团",
-//                "123,seck,皇家赌场",
-//                "124,98ph,澳门金沙",
-//                "125,bqmn,新葡京娱乐场",
-//                "126,8wu8,澳门永利娱乐城",
-//                "128,xjc9,新葡京娱乐场",
-//                "129,0a74,新葡京娱乐城",
-//                "133,xwc7,澳门威尼斯人",
-//                "134,o7av,澳门威尼斯人",
-//                "135,miv5,澳门金沙娱乐场",
-//                "136,5rdu,澳门威尼斯人",
-//                "140,ix2i,澳门威尼斯人",
-//                "141,hihk,BET365",
-//                "142,vbgt,澳门新葡京娱乐场",
-//                "143,zhcu,太阳城娱乐城",
-//                "150,zz1g,威尼斯人",
-//                "151,tloz,bet365",
-//                "153,cqkv,澳门威尼斯人",
-//                "155,zqq5,澳门银河娱乐城",
-//                "156,xmil,新葡京娱乐场",
-//                "157,uhte,澳门金沙赌场",
-//                "158,7p44,九狮国际娱乐城",
-//                "159,mhi7,澳门威尼斯人赌场",
-//                "161,n0o7,bet365亚洲官网",
-//                "162,bgst,葡京娱乐场",
-//                "163,duzr,FUNGAME",
-//                "165,g7oq,澳门赌场",
-//                "167,hzy3,澳门新葡京赌场",
-//                "168,lont,澳门威尼斯人",
+                /*
+                "1,0001,开发一",
+                "21,rf80,测试01",*/
+                "71,8l6r,超博娱乐",
+                "76,XH5Z,澳门永利",
+                "110,cabu,超博娱乐",
+                "111,74bk,新葡京娱乐场",
+                "112,SNRM,威尼斯人娱乐",
+                "113,jwdg,伟德娱乐",
+                "114,ojlj,澳门金沙娱乐场",
+                "116,bldz,电子777娱乐",
+                "117,yytt,澳门威尼斯人",
+                "118,ys3q,澳门星际娱乐",
+                "119,nu9r,UEDBET",
+                "120,cvqb,演示站点",
+                "121,pnuw,太阳城集团",
+                "123,seck,皇家赌场",
+                "124,98ph,澳门金沙",
+                "125,bqmn,新葡京娱乐场",
+                "126,8wu8,澳门永利娱乐城",
+                "128,xjc9,新葡京娱乐场",
+                "129,0a74,新葡京娱乐城",
+                "133,xwc7,澳门威尼斯人",
+                "134,o7av,澳门威尼斯人",
+                "135,miv5,澳门金沙娱乐场",
+                "136,5rdu,澳门威尼斯人",
+                "140,ix2i,澳门威尼斯人",
+                "141,hihk,BET365",
+                "142,vbgt,澳门新葡京娱乐场",
+                "143,zhcu,太阳城娱乐城",
+                "150,zz1g,威尼斯人",
+                "151,tloz,bet365",
+                "153,cqkv,澳门威尼斯人",
+                "155,zqq5,澳门银河娱乐城",
+                "156,xmil,新葡京娱乐场",
+                "157,uhte,澳门金沙赌场",
+                "158,7p44,九狮国际娱乐城",
+                "159,mhi7,澳门威尼斯人赌场",
+                "161,n0o7,bet365亚洲官网",
+                "162,bgst,葡京娱乐场",
+                "163,duzr,FUNGAME",
+                "165,g7oq,澳门赌场",
+                "167,hzy3,澳门新葡京赌场",
+                "168,lont,澳门威尼斯人",
                 "169,c79k,澳门银河在线赌场Casino",
                 "171,ihqx,宝开娱乐",
                 "172,izbv,豪森国际",
                 "173,jr3j,濠利会娱乐城",
                 "175,x0le,澳门银河娱乐城",
                 "176,qgjl,全胜娱乐",
-//                "177,x1dv,澳门威尼斯人娱乐场",
-//                "178,ptxa,点金坊",
-//                "179,rosz,英雄联盟",
-//                "180,qfxk,皇冠国际",
-//                "181,4w3g,超博娱乐",
-//                "182,ixuf,雄伟集团",
-//                "183,nrpf,美高梅赌场",
-//                "185,fyxi,フェニックス・エンターテイメント"
+                "177,x1dv,澳门威尼斯人娱乐场",
+                "178,ptxa,点金坊",
+                "179,rosz,英雄联盟",
+                "180,qfxk,皇冠国际",
+                "181,4w3g,超博娱乐",
+                "182,ixuf,雄伟集团",
+                "183,nrpf,美高梅赌场",
+                "185,fyxi,Phoenix Gaming",
+                "186,cwad,赛博体育",
+                "187,b02h,澳门银河"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -227,10 +230,10 @@ public class AuthTool {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
-//            getIosPlist(code, "1.0.5", siteId, name);
-            getIosBuild(siteId, name, code);
-//            getAndroidApk(code, "3.1.0");
-//            getAndroidFlavors(siteId, name, code);
+//            getIosPlist(code, "1.0.3", siteId, name);
+//            getIosBuild(siteId, name, code);
+            getAndroidFlavors(siteId, name, code);
+//            getAndroidApk(code, "3.1.5");
 //            getIosImage(siteId);
         }
 
@@ -252,8 +255,7 @@ public class AuthTool {
     private static void getAndroidFlavors(Integer siteId, String name, String code){
         String theme = "default.skin";
         if (siteId == 119) theme = "blue.skin";
-        else if (siteId == 141 || siteId == 161) theme = "green.skin";
-        else if (siteId == 185) theme = "pink.skin";
+        else if (siteId == 141) theme = "green.skin";
 
         StringBuilder flavor = new StringBuilder();
         flavor.append("_").append(code).append(" {");
