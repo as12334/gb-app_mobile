@@ -49,6 +49,8 @@ public class DepositController extends BaseCommonDepositController {
     private static final String ALIPAY = "alipay";
     /*微信支付*/
     private static final String WECHATPAY = "wechatpay";
+    /*QQ钱包支付*/
+    private static final String QQWALLET = "qqwallet";
 
     private static final String OTHERFAST = "other";
 
@@ -75,6 +77,7 @@ public class DepositController extends BaseCommonDepositController {
             List<PayAccount> onlinePayAccount = new ArrayList<>(0);
             List<PayAccount> scanPayAccountForWechat = new ArrayList<>(0);
             List<PayAccount> scanPayAccountForAlipay = new ArrayList<>(0);
+            List<PayAccount> scanPayAccountForQQwallet = new ArrayList<>(0);
             List<PayAccount> electronicPayAccount = new ArrayList<>(0);
             List<PayAccount> companyPayAccount = new ArrayList<>(0);
             List<PayAccount> bitcoinPayAccount = new ArrayList<>(0);
@@ -88,6 +91,8 @@ public class DepositController extends BaseCommonDepositController {
                         scanPayAccountForWechat.add(payAccount);
                     } else if (PayAccountAccountType.ALIPAY.getCode().equals(accountType)) {
                         scanPayAccountForAlipay.add(payAccount);
+                    } else  if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)){
+                        scanPayAccountForQQwallet.add(payAccount);
                     }
                 } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(type)) {
                     if (PayAccountAccountType.BANKACCOUNT.getCode().equals(accountType)) {
@@ -107,6 +112,7 @@ public class DepositController extends BaseCommonDepositController {
             //微信扫码
             scanPay(scanPayAccountForWechat, payAccountMap, RechargeTypeEnum.WECHATPAY_SCAN.getCode(), WECHATPAY);
             scanPay(scanPayAccountForAlipay, payAccountMap, RechargeTypeEnum.ALIPAY_SCAN.getCode(), ALIPAY);
+            scanPay(scanPayAccountForQQwallet,payAccountMap,RechargeTypeEnum.QQWALLET_SCAN.getCode(),QQWALLET);
 
             //网银存款,柜员机/柜台存款
             company(companyPayAccount, payAccountMap);

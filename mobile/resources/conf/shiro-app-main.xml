@@ -39,6 +39,7 @@
 				<entry key="authc" value-ref="authcFilter"></entry>
 				<entry key="captcha" value-ref="captcha"></entry>
 				<entry key="subsys" value-ref="subsysCodeFilter"></entry>
+				<entry key="access" value-ref="accessFilter"></entry>
 			</map>
 		</property>
 		<property name="filterChainDefinitions">
@@ -75,7 +76,7 @@
 				/commonPage/*.html = anon
 				/app/*.html = anon
 				/sysUser.html = anon
-				/** = subsys,kickout,authc,autho
+				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>
 	</bean>

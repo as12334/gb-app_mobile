@@ -318,6 +318,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
             payAccount = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode());
         } else if (RechargeTypeEnum.WECHATPAY_SCAN.getCode().equals(rechargeType)) {
             payAccount = getScanPay(rank, PayAccountAccountType.WECHAT.getCode());
+        }else if (RechargeTypeEnum.QQWALLET_SCAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode());
         }
         return payAccount;
     }

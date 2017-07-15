@@ -34,7 +34,7 @@
     <c:when test="${siteId == 141 || siteId == 161}"> <!-- green -->
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/green/style.css?v=${rcVersion}" />
     </c:when>
-    <c:when test="${siteId == 130 || siteId == 34 || siteId == 185}"> <!-- phoenix -->
+    <c:when test="${siteId == 35 || siteId == 185}"> <!-- phoenix -->
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/phoenix/style.css?v=${rcVersion}" />
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/phoenix/loading.css?v=${rcVersion}" />
     </c:when>

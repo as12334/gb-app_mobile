@@ -221,7 +221,7 @@
                                             <p>${views.fund['FundRecord.view.tips']}</p>
                                         </div>
                                     </c:when>
-                                    <c:when test="${command.result.fundType eq 'alipay_scan'||command.result.fundType eq 'other_fast' || command.result.fundType eq 'wechatpay_scan'||command.result.fundType eq 'wechatpay_fast' || command.result.fundType eq 'alipay_fast'||command.result.fundType eq 'bitcoin_fast'}">
+                                    <c:when test="${command.result.fundType eq 'qqwallet_scan'||command.result.fundType eq 'alipay_scan'||command.result.fundType eq 'other_fast' || command.result.fundType eq 'wechatpay_scan'||command.result.fundType eq 'wechatpay_fast' || command.result.fundType eq 'alipay_fast'||command.result.fundType eq 'bitcoin_fast'}">
                                         <div class="hd">
                                             <p>
                                                 <c:set var="isOther" value="${bankCode eq 'other' && !empty command.result._describe['customBankName']}"/>

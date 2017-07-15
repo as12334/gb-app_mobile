@@ -14,7 +14,7 @@ import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.session.SessionKey;
-import org.soul.web.locale.DateQuickPicker;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

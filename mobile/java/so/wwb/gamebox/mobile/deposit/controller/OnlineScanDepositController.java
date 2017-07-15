@@ -34,6 +34,8 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     private static final String ALIPAY = "alipay";
     /*微信*/
     private static final String WECHATPAY = "wechatpay";
+    /*QQ钱包*/
+    private static final String QQWALLET = "qqwallet";
 
     /**
      * 扫码支付
@@ -52,6 +54,11 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
             //微信支付收款账号
             payAccountForScan = getScanPay(rank, PayAccountAccountType.WECHAT.getCode());
             model.addAttribute("scanPay", RechargeTypeEnum.WECHATPAY_SCAN.getCode());
+        }
+        if (QQWALLET.equals(type)) {
+            //微信支付收款账号
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode());
+            model.addAttribute("scanPay", RechargeTypeEnum.QQWALLET_SCAN.getCode());
         }
         model.addAttribute("payAccountForScan", payAccountForScan);
         model.addAttribute("currency", getCurrencySign());
