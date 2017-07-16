@@ -7,8 +7,8 @@
     <artifactId>mobile</artifactId>
     <packaging>war</packaging>
     <properties>
-        <soul.version>1.0.4.5-SNAPSHOT</soul.version>
-        <api.version>1.0.4.5-SNAPSHOT</api.version>
+        <soul.version>1.0.4.7-SNAPSHOT</soul.version>
+        <api.version>1.0.4.7-SNAPSHOT</api.version>
         <monitor.version>1.0.0-SNAPSHOT</monitor.version>
         <gamebox.version>1.0.0-SNAPSHOT</gamebox.version>
 
@@ -108,11 +108,13 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-servlet_3.0_spec</artifactId>
             <version>${geronimo.servlet_3_0.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <version>${jsp.api.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -120,14 +122,13 @@
             <artifactId>spring-web</artifactId>
             <version>${springframework.version}</version>
         </dependency>
-        <!--ThirdParty引用-->
-        <!--Test引用-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${springframework.version}</version>
-            <scope>test</scope>
         </dependency>
+        <!--ThirdParty引用-->
+        <!--Test引用-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
