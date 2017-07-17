@@ -1,3 +1,4 @@
+<%--@elvariable id="command" type="so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <c:if test="${empty unReadType}">
@@ -9,10 +10,8 @@
                         <li data-url="${root}/message/gameNoticeDetail.html?searchId=${command.getSearchId(s.id)}">
                             <div class="i">
                                 <div class="ct">
-                                    <p><c:if test="${not empty s.title}"> 【${fn:substring(s.title,0,50)}<c:if
-                                            test="${fn:length(s.title)>50}">...</c:if>】</c:if>
-                                            ${fn:substring(s.content,0,80)}<c:if
-                                                test="${fn:length(s.content)>80}">...</c:if></p>
+                                    <p><c:if test="${not empty s.title}"> 【${s.shortTitle80}】</c:if>
+                                            ${s.shortContentText80}</p>
                                 </div>
                                 <p>${gbFn:getApiName((s.apiId).toString())}
                                     <c:if test="${s.gameId!=null}">——${gbFn:getGameName((s.gameId).toString())}</c:if>
