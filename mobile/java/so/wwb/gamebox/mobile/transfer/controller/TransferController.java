@@ -273,9 +273,6 @@ public class TransferController extends WalletBaseController {
         Integer apiId = playerTransferVo.getResult().getApiId();
         Api api = CacheBase.getApi().get(String.valueOf(apiId));
         SiteApi siteApi = CacheBase.getSiteApi().get(String.valueOf(apiId));
-        if(NumberTool.toInt(ApiProviderEnum.BSG.getCode())==apiId){
-            return getErrorMessage(TransferResultStatusEnum.API_TRANSFER_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
-        }
         if (api.getTransferable() == null || !api.getTransferable())
             return getErrorMessage(TransferResultStatusEnum.API_TRANSFER_SWITCH_COLSE.getCode(), playerTransferVo.getResult().getApiId());
 
