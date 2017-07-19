@@ -271,6 +271,9 @@ public class TransferController extends WalletBaseController {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_SWITCH_CLOSE.getCode(), playerTransferVo.getResult().getApiId());
         }
         Integer apiId = playerTransferVo.getResult().getApiId();
+        if(NumberTool.toInt(ApiProviderEnum.BSG.getCode())==apiId){
+            return getErrorMessage(TransferResultStatusEnum.API_TRANSFER_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
+        }
         Api api = CacheBase.getApi().get(String.valueOf(apiId));
         SiteApi siteApi = CacheBase.getSiteApi().get(String.valueOf(apiId));
         if (api.getTransferable() == null || !api.getTransferable())
@@ -501,6 +504,10 @@ public class TransferController extends WalletBaseController {
         SiteApi siteApi;
         for (PlayerApi playerApi : playerApiList) {
             String apiId = String.valueOf(playerApi.getApiId());
+            //额度转换的ｂｓｇ不支持
+            if(!SessionManagerCommon.isAutoPay()&&ApiProviderEnum.BSG.getCode().equals(apiId)){
+                continue;
+            }
             Map<String, Object> playerApiMap = new HashMap<>(3);
             String apiName = CacheBase.getSiteApiName(apiId);
             playerApiMap.put("apiName", apiName);
