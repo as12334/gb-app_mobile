@@ -34,10 +34,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static so.wwb.gamebox.mobile.tools.ServiceTool.playerRechargeService;
 
@@ -113,17 +110,15 @@ public class BaseDepositController extends BaseCommonDepositController {
         vActivityMessageVo.setLocal(SessionManager.getLocale().toString());
         vActivityMessageVo = ServiceTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
-        //如果玩家首存，查询首存送优惠
-        List<VActivityMessage> activityList = null;
+        if(CollectionTool.isEmpty(vActivityMessages)) {
+            return new ArrayList<>();
+        }
+        //如果玩家首存可同时显示首存送和存就送
         if (userPlayer.getIsFirstRecharge() != null && userPlayer.getIsFirstRecharge()) {
-            activityList = CollectionQueryTool.query(vActivityMessages, Criteria.add(VActivityMessage.PROP_CODE,
-                    Operator.EQ, ActivityTypeEnum.FIRST_DEPOSIT.getCode()));
+            return setClassifyKeyName(new ArrayList(vActivityMessages));
         }
-        //玩家非首存或者首存送无优惠，查询存就送优惠
-        if (activityList == null || CollectionTool.isEmpty(activityList)) {
-            activityList = CollectionQueryTool.query(vActivityMessages, Criteria.add(VActivityMessage.PROP_CODE,
-                    Operator.EQ, ActivityTypeEnum.DEPOSIT_SEND.getCode()));
-        }
+        //玩家非首存，查询存就送优惠
+        List<VActivityMessage> activityList = CollectionQueryTool.query(vActivityMessages, Criteria.add(VActivityMessage.PROP_CODE, Operator.EQ, ActivityTypeEnum.DEPOSIT_SEND.getCode()));
         return setClassifyKeyName(activityList);
     }
 
