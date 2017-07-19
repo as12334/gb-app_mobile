@@ -1,3 +1,4 @@
+<%--@elvariable id="command" type="so.wwb.gamebox.model.company.operator.vo.SystemAnnouncementListVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
 
@@ -7,7 +8,7 @@
             <li data-url="${root}/message/systemNoticeDetail.html?searchId=${command.getSearchId(s.id)}">
                 <div class="i">
                     <div class="ct">
-                        <p>${fn:substring(s.content,0,50)}<c:if test="${fn:length(s.content)>50}">...</c:if></p>
+                        <p>${s.shortContentText50}</p>
                     </div>
                     <p>${soulFn:formatDateTz(s.publishTime, DateFormat.DAY_SECOND,timeZone)}</p>
                 </div>

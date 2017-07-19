@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.my.controller;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.lang.DateTool;
@@ -25,6 +26,7 @@ import so.wwb.gamebox.mobile.my.form.PlayerAdvisoryForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
@@ -133,6 +135,11 @@ public class MessageController {
         vListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.SYSTEM.getCode());
         vListVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
         vListVo = ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(vListVo);
+        if (CollectionTool.isNotEmpty(vListVo.getResult())) {
+            for (VSystemAnnouncement vSystemAnnouncement : vListVo.getResult()) {
+                vSystemAnnouncement.setContent(StringTool.replaceHtml(vSystemAnnouncement.getContent()));
+            }
+        }
         model.addAttribute("command", vListVo);
         model.addAttribute("minDate",SessionManager.getDate().addDays(TIME_INTERVAL));
         model.addAttribute("maxDate", new Date());
