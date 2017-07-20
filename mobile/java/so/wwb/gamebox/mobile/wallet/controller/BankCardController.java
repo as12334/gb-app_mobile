@@ -32,7 +32,7 @@ import java.util.Map;
  * 银行卡管理控制器
  */
 @Controller
-@RequestMapping("/bankCard/submitBankCard.html")
+@RequestMapping("/bankCard")
 public class BankCardController {
 
     @RequestMapping("/page/bankCard")
