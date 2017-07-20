@@ -256,7 +256,8 @@ public class AuthTool {
     private static void getAndroidFlavors(Integer siteId, String name, String code){
         String theme = "default.skin";
         if (siteId == 119) theme = "blue.skin";
-        else if (siteId == 141) theme = "green.skin";
+        else if (siteId == 141 || siteId == 161) theme = "green.skin";
+        else if (siteId == 185) theme = "pink.skin";
 
         StringBuilder flavor = new StringBuilder();
         flavor.append("_").append(code).append(" {");
