@@ -232,7 +232,7 @@
                                                     <c:set var="bankCss" value="alipay"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'wechatpay_scan'||command.result.fundType eq 'wechatpay_fast'}">
-                                                    <c:set var="bankCss" value="alipay"/>
+                                                    <c:set var="bankCss" value="wechatpay"/>
                                                 </c:if>
                                                 <c:set var="isOther" value="${bankCode eq 'other' && !empty command.result._describe['customBankName']}"/>
                                                 <span class="${isOther?'':'pay-third '}${bankCss}"/>
