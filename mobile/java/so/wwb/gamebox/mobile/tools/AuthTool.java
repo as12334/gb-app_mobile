@@ -161,7 +161,8 @@ public class AuthTool {
         String[] ids = new String[]{
                 /*
                 "1,0001,开发一",
-                "21,rf80,测试01",*/
+                "21,rf80,测试01",
+                "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
                 "110,cabu,超博娱乐",
@@ -219,7 +220,8 @@ public class AuthTool {
                 "185,fyxi,Phoenix Gaming",
                 "186,cwad,赛博体育",
                 "187,b02h,澳门银河",
-                "188,acpb,鸿泰国际"
+                "188,acpb,鸿泰国际"*/
+                "189,a56r,澳门永利贵宾会"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -231,9 +233,9 @@ public class AuthTool {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
-//            getIosPlist(code, "1.0.3", siteId, name);
-//            getIosBuild(siteId, name, code);
-            getAndroidFlavors(siteId, name, code);
+//            getIosPlist(code, "1.0.5", siteId, name);
+            getIosBuild(siteId, name, code);
+//            getAndroidFlavors(siteId, name, code);
 //            getAndroidApk(code, "3.1.5");
 //            getIosImage(siteId);
         }
