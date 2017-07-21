@@ -82,7 +82,11 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index")
-    public String toIndex(Model model) {
+    public String toIndex(HttpServletRequest request) {
+        String c = request.getParameter("c");
+        if (StringTool.isNotBlank(c)) {
+            SessionManager.setRecommendUserCode(c);
+        }
         return "/ToIndex";
     }
 
