@@ -149,6 +149,10 @@ public class TransferController extends WalletBaseController {
         transableApis.add(map);
         for (String apiId : siteApis.keySet()) {
             api = apis.get(apiId);
+            //额度转换的ｂｓｇ不支持
+            if(ApiProviderEnum.BSG.getCode().equals(apiId)){
+                continue;
+            }
             siteApi = siteApis.get(apiId);
             if (api != null
                     && !StringTool.equals(api.getSystemStatus(), disable)
@@ -504,10 +508,6 @@ public class TransferController extends WalletBaseController {
         SiteApi siteApi;
         for (PlayerApi playerApi : playerApiList) {
             String apiId = String.valueOf(playerApi.getApiId());
-            //额度转换的ｂｓｇ不支持
-            if(!SessionManagerCommon.isAutoPay()&&ApiProviderEnum.BSG.getCode().equals(apiId)){
-                continue;
-            }
             Map<String, Object> playerApiMap = new HashMap<>(3);
             String apiName = CacheBase.getSiteApiName(apiId);
             playerApiMap.put("apiName", apiName);
