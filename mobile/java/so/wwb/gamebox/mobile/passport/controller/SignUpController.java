@@ -40,10 +40,8 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.RegisterConst;
 import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
-import so.wwb.gamebox.model.company.sys.po.SysDomain;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
-import so.wwb.gamebox.model.company.sys.vo.SysDomainListVo;
 import so.wwb.gamebox.model.master.enums.CreateChannelEnum;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserRegisterVo;
@@ -62,8 +60,6 @@ import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -384,6 +380,12 @@ public class SignUpController {
         userRegisterVo.getSysUser().setRegisterSite(request.getServerName());
         userRegisterVo.getSysUser().setRegisterIpDictCode(SessionManager.getIpDictCode());
         userRegisterVo.getSysUser().setRegisterIp(IpTool.ipv4StringToLong(ServletTool.getIpAddr(request)));
+
+        String registerCode = SessionManager.getRecommendUserCode();
+        if (StringTool.isNotBlank(registerCode)) {
+            userRegisterVo.setRecommendRegisterCode(registerCode);
+        }
+
         if (StringTool.isBlank(userRegisterVo.getSysUser().getDefaultCurrency())) {
             userRegisterVo.getSysUser().setDefaultCurrency(getSysSite().getMainCurrency());
         }
