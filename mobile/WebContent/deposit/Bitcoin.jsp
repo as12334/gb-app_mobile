@@ -9,7 +9,7 @@
     <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css" />
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css" />
-    <title>比特币支付</title>
+    <title>${views.deposit_auto['比特币支付']}</title>
 </head>
 <body class="gb-theme mine-page">
 <div id="offCanvasWrapper" class="mui-draggable">
@@ -17,7 +17,7 @@
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-            <h1 class="mui-title">比特币支付</h1>
+            <h1 class="mui-title">${views.deposit_auto['比特币支付']}</h1>
         </header>
         <form id="bitcoinForm">
         <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0"':''}>
@@ -33,7 +33,7 @@
                                 <div class="gb-headtabs">
                                     <div id="segmentedControl" class="mui-segmented-control">
                                         <a href="#wechat1" class="mui-control-item mui-active">${views.deposit_auto['账号信息']}</a>
-                                        <a href="#wechat2" class="mui-control-item">比特币二维码</a>
+                                        <a href="#wechat2" class="mui-control-item">${views.deposit_auto['比特币二维码']}</a>
                                     </div>
                                 </div>
                             </div>
@@ -101,8 +101,8 @@
                         <div class="mui-row">
                             <div class="mui-input-group mine-form m-t-sm">
                                 <div class="mui-input-row">
-                                        <c:set value="您的比特币地址" var="n"></c:set>
-                                        <c:set value="请输入比特币地址" var="m"></c:set>
+                                        <c:set value="${views.deposit_auto['您的比特币地址']}" var="n"></c:set>
+                                        <c:set value="${views.deposit_auto['请输入比特币地址']}" var="m"></c:set>
                                     <label>${n}</label>
                                     <div class="ct">
                                         <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
@@ -118,7 +118,7 @@
                                 </div>
 
                                 <div class="mui-input-row">
-                                    <label for="result.bitAmount">比特币</label>
+                                    <label for="result.bitAmount">${views.deposit_auto['比特币']}</label>
                                     <div class="ct">
                                        <input type="number" name="result.bitAmount" id="result.bitAmount" autocomplete="off">
                                     </div>
@@ -138,7 +138,7 @@
 
                                 <%--<div class="mui-input-row">--%>
                                     <div class="gb-datafilter">
-                                        <label for="result.returnTime">交易时间</label>
+                                        <label for="result.returnTime">${views.deposit_auto['交易时间']}</label>
                                         <span class="input-date">
                                             <input type="text" id="result.returnTime" name="result.returnTime" class="date" value="${soulFn:formatDateTz(date, DateFormat.DAY_MINUTE,timeZone)}" beginTime="${soulFn:formatDateTz(minDate, DateFormat.DAY_MINUTE,timeZone)}">
                                         </span>
