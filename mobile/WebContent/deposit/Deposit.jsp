@@ -56,7 +56,7 @@
                                                         <li><a data-fastRecharge="${p.value}">${views.deposit_auto['快速充值中心']}</a></li>
                                                     </c:if>
                                                     <c:if test="${p.key eq 'bitcoin_fast'}">
-                                                        <li><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}">比特币支付</a></li>
+                                                        <li><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit_auto['比特币支付']}</a></li>
                                                     </c:if>
                                                 </c:forEach>
                                             </ul>

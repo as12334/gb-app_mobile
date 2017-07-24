@@ -1,3 +1,4 @@
+<%--@elvariable id="command" type="org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <c:choose>
@@ -6,9 +7,7 @@
             <li class="${s.receiveStatus=='12'?'':'no-read'}" >
                 <div class="i"><a  href="" class="gb-radio" value="${s.id}" name="site1_check"></a>
                     <div class="ct" data-url="${root}/message/announcementDetail.html?searchId=${command.getSearchId(s.id)}">
-                        <p><c:if test="${not empty s.title}">${fn:substring(s.title,0,50)}</c:if><c:if
-                            test="${fn:length(s.title)>50}">...</c:if>
-                            <%--<pre>${s.content} </pre>--%></p>
+                        <p>${s.shortTitle50}</p>
                     </div>
                     <p data-url="${root}/message/announcementDetail.html?searchId=${command.getSearchId(s.id)}">
                         &nbsp;${soulFn:formatDateTz(s.receiveTime, DateFormat.DAY_SECOND,timeZone)}</p>

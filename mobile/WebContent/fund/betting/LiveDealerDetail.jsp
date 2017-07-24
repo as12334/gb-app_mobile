@@ -8,7 +8,7 @@
 <c:if test="${! empty resultVo.tableInfo && resultVo.tableInfo !='null'}">
 <div class="panel">
     <p>
-        <span class="text">场次： </span>
+        <span class="text">${views.fund_auto['场次']}： </span>
         ${resultVo.tableInfo}
     </p>
 </div></c:if>

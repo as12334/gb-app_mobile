@@ -149,6 +149,10 @@ public class TransferController extends WalletBaseController {
         transableApis.add(map);
         for (String apiId : siteApis.keySet()) {
             api = apis.get(apiId);
+            //额度转换的ｂｓｇ不支持
+            if(ApiProviderEnum.BSG.getCode().equals(apiId)){
+                continue;
+            }
             siteApi = siteApis.get(apiId);
             if (api != null
                     && !StringTool.equals(api.getSystemStatus(), disable)
@@ -271,11 +275,11 @@ public class TransferController extends WalletBaseController {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_SWITCH_CLOSE.getCode(), playerTransferVo.getResult().getApiId());
         }
         Integer apiId = playerTransferVo.getResult().getApiId();
-        Api api = CacheBase.getApi().get(String.valueOf(apiId));
-        SiteApi siteApi = CacheBase.getSiteApi().get(String.valueOf(apiId));
         if(NumberTool.toInt(ApiProviderEnum.BSG.getCode())==apiId){
             return getErrorMessage(TransferResultStatusEnum.API_TRANSFER_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
         }
+        Api api = CacheBase.getApi().get(String.valueOf(apiId));
+        SiteApi siteApi = CacheBase.getSiteApi().get(String.valueOf(apiId));
         if (api.getTransferable() == null || !api.getTransferable())
             return getErrorMessage(TransferResultStatusEnum.API_TRANSFER_SWITCH_COLSE.getCode(), playerTransferVo.getResult().getApiId());
 

@@ -162,6 +162,7 @@ public class AuthTool {
                 /*
                 "1,0001,开发一",
                 "21,rf80,测试01",
+                "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
                 "110,cabu,超博娱乐",
@@ -218,8 +219,9 @@ public class AuthTool {
                 "183,nrpf,美高梅赌场",
                 "185,fyxi,Phoenix Gaming",
                 "186,cwad,赛博体育",
-                "187,b02h,澳门银河",*/
-                "188,acpb,鸿泰国际"
+                "187,b02h,澳门银河",
+                "188,acpb,鸿泰国际"*/
+                "189,a56r,澳门永利贵宾会"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -256,7 +258,8 @@ public class AuthTool {
     private static void getAndroidFlavors(Integer siteId, String name, String code){
         String theme = "default.skin";
         if (siteId == 119) theme = "blue.skin";
-        else if (siteId == 141) theme = "green.skin";
+        else if (siteId == 141 || siteId == 161) theme = "green.skin";
+        else if (siteId == 185) theme = "pink.skin";
 
         StringBuilder flavor = new StringBuilder();
         flavor.append("_").append(code).append(" {");
