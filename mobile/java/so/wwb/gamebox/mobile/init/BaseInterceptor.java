@@ -20,7 +20,7 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
             String url = modelAndView.getViewName();
             if (!url.startsWith("redirect:") && !url.startsWith("forward:") && !url.startsWith("/errors/"))            //过滤重定向
                 //全局跳转皮肤
-                modelAndView.setViewName("/themes/default"+url);
+                modelAndView.setViewName("/themes/lottery"+url);
         }
         super.postHandle(request, response, handler, modelAndView);
     }//Method postHandle

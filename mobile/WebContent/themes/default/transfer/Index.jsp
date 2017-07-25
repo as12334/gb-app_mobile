@@ -44,7 +44,7 @@
     </div>
 </div>
 </body>
-<%@ include file="../include/include.base.js.common.jsp" %>
+<%@ include file="/include/include.base.js.common.jsp" %>
 <script type="text/javascript"
         src="${root}/mobile/message_<%=SessionManagerCommon.getLocale().toString()%>.js?v=${rcVersion}"></script>
 <script>
