@@ -128,82 +128,10 @@
                     <h4>热门开奖</h4>
                     <a data-href="/lottery/lotteryResultHistory/index.html" class="mui-pull-right home-more-btn">更多<span class="mui-icon mui-icon-more-filled"></span></a>
                 </div>
-                <ul class="mui-table-view mui-table-view-chevron">
-                    <li class="mui-table-view-cell">
-                        <a class="mui-navigate-right draw-list-a">
-                            <img class="mui-media-object draw-list-img" src="${resRoot}/themes/lottery/images/lottery_ico/cqssc.png">
-                            <div class="mui-media-body draw-list-right">
-                                <span class="title">重庆时时彩</span>
-                                <span class="mui-pull-right"><font class="col-blue">20170502077期</font>&nbsp;17-05-02 18:50</span>
-                                <p class="mui-ellipsis">
-                                    <span class="inline-list-2">
-                                        <i class="lottery-ball">0</i>
-                                        <i class="lottery-ball">1</i>
-                                        <i class="lottery-ball">0</i>
-                                        <i class="lottery-ball">2</i>
-                                        <i class="lottery-ball">6</i>
-                                    </span>
-                                    <span class="inline-list-2">
-                                        <i class="lottery-block">9</i>
-                                        <i class="lottery-block">单</i>
-                                        <i class="lottery-block">小</i>
-                                        <i class="lottery-block">虎</i>
-                                    </span>
-                                </p>
-
-                            </div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <a class="mui-navigate-right draw-list-a">
-                            <img class="mui-media-object draw-list-img" src="${resRoot}/themes/lottery/images/lottery_ico/bjpk10.png">
-                            <div class="mui-media-body draw-list-right">
-                                <span class="title">北京PK拾</span>
-                                <span class="mui-pull-right"><font class="col-blue">20170502077期</font>&nbsp;17-05-02 18:50</span>
-                                <p class="mui-ellipsis">
-                                    <span class="inline-list-2">
-                                        <i class="lottery-ball pks-num" num="1">1</i>
-                                        <i class="lottery-ball pks-num" num="3">3</i>
-                                        <i class="lottery-ball pks-num" num="4">4</i>
-                                        <i class="lottery-ball pks-num" num="5">5</i>
-                                        <i class="lottery-ball pks-num" num="6">6</i>
-                                        <i class="lottery-ball pks-num" num="9">9</i>
-                                        <i class="lottery-ball pks-num" num="2">2</i>
-                                        <i class="lottery-ball pks-num" num="8">8</i>
-                                        <i class="lottery-ball pks-num" num="10">10</i>
-                                        <i class="lottery-ball pks-num" num="7">7</i>
-                                    </span>
-                                </p>
-
-                            </div>
-                        </a>
-                    </li>
-                    <li class="mui-table-view-cell">
-                        <a class="mui-navigate-right draw-list-a">
-                            <img class="mui-media-object draw-list-img" src="${resRoot}/themes/lottery/images/lottery_ico/sfssc.png">
-                            <div class="mui-media-body draw-list-right">
-                                <span class="title">三分时时彩</span>
-                                <span class="mui-pull-right"><font class="col-blue">20170502077期</font>&nbsp;17-05-02 18:50</span>
-                                <p class="mui-ellipsis">
-                                    <span class="inline-list-2">
-                                        <i class="lottery-ball">0</i>
-                                        <i class="lottery-ball">1</i>
-                                        <i class="lottery-ball">0</i>
-                                        <i class="lottery-ball">2</i>
-                                        <i class="lottery-ball">6</i>
-                                    </span>
-                                    <span class="inline-list-2">
-                                        <i class="lottery-block">9</i>
-                                        <i class="lottery-block">单</i>
-                                        <i class="lottery-block">小</i>
-                                        <i class="lottery-block">虎</i>
-                                    </span>
-                                </p>
-
-                            </div>
-                        </a>
-                    </li>
+                <ul class="mui-table-view mui-table-view-chevron _result">
+                    <!-- 热门开奖 -->
                 </ul>
+                <div class="margin"></div>
             </div>
         </div>
 
@@ -218,6 +146,55 @@
     </div>
 </div>
 </body>
+
+<script type="text/html" id="template_myLotteryTemplate">
+        {{each list as value index}}
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right draw-list-a"
+               data-href="${root}/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
+                <img class="mui-media-object draw-list-img" src="${resRoot}/themes/lottery/images/lottery_ico/{{value.code}}.png">
+                <div class="mui-media-body draw-list-right">
+                    <span class="title">{{value.name}}</span>
+                    <span class="expect mui-pull-right"><font class="col-blue">{{value.expect}}期</font>&nbsp;
+                                {{value.openTime}}
+                                </span>
+                    <p class="mui-ellipsis">
+                        {{if value.type=="pk10"}}
+                        <span class="inline-list-2">
+                            {{each value.ball as ball index}}
+                                    <i class="lottery-ball pks-num" num="{{ball}}">{{ball}}</i>
+                            {{/each}}
+                        </span>
+                        {{else if value.type=="lhc"}}
+                        <span class="inline-list-2">
+                            {{each value.ball as ball index}}
+                                {{if index==6}}
+                                    <i class="draw-list-i-add">+</i>
+                                {{/if}}
+                                    <i class="lottery-ball lhc-num" num="{{ball}}">{{ball}}</i>
+                            {{/each}}
+                               </span>
+                        <span class="inline-list-2">
+                            {{each value.sx as sx index}}
+                                {{if index==6}}
+                                    <i style="margin-left: 12px"></i>
+                                {{/if}}
+                                    <i class="lottery-block">{{sx}}</i>
+                            {{/each}}
+                        </span>
+                        {{else}}
+                        <span class="inline-list-2">
+                            {{each value.ball as ball index}}
+                                    <i class="lottery-ball">{{ball}}</i>
+                            {{/each}}
+                        </span>
+                        {{/if}}
+                    </p>
+                </div>
+            </a>
+        </li>
+        {{/each}}
+</script>
 
 <script src="${resRoot}/js/mui/mui.pullToRefresh.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>

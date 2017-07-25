@@ -16,6 +16,7 @@ import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.session.SessionKey;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +27,11 @@ import so.wwb.gamebox.mobile.my.form.PlayerAdvisoryForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
+import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
@@ -111,7 +115,10 @@ public class MessageController {
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
         listVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());
         listVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
-//        listVo.getSearch().setApiId();
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        if (param!=null && param.getParamValue()!=null && param.getParamValue().equals("true")) {
+            listVo.getSearch().setApiId(Integer.parseInt(ApiProviderEnum.PL.getCode()));
+        }
         listVo = ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(listVo);
         model.addAttribute("command", listVo);
 
