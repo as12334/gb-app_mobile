@@ -260,6 +260,7 @@ public class AuthTool {
         if (siteId == 119) theme = "blue.skin";
         else if (siteId == 141 || siteId == 161) theme = "green.skin";
         else if (siteId == 185) theme = "pink.skin";
+        else if (siteId == 69 || siteId == 70) theme = "lottery.skin";
 
         StringBuilder flavor = new StringBuilder();
         flavor.append("_").append(code).append(" {");

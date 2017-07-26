@@ -29,7 +29,7 @@
         <!--底部-->
         <%@include file="/include/include.footer.jsp" %>
         <!-- 内容 -->
-        <div class="mui-scroll-wrapper middle-content" id="mui-refresh-index">
+        <div class="mui-scroll-wrapper middle-content _cacheContent" id="mui-refresh-index">
             <div class="mui-scroll">
                 <div class="gb-anno">
                     <a type="button" class="mui-pull-left notice-icon"><i class="iconfont icon-gonggao"></i></a>
@@ -71,7 +71,7 @@
                 </ul>
                 <div class="content-title home-title">
                     <h4>热门彩种</h4>
-                    <a data-href="/lottery/mainIndex.html" class="mui-pull-right home-more-btn">更多<span class="mui-icon mui-icon-more-filled"></span></a>
+                    <a href="/lottery/mainIndex.html" class="mui-pull-right home-more-btn moreLottery">更多<span class="mui-icon mui-icon-more-filled"></span></a>
                 </div>
                 <ul class="mui-table-view mui-grid-view diy-grid-9">
                     <li class="diy-table-view-cell mui-col-xs-3">
@@ -150,7 +150,7 @@
         {{each list as value index}}
         <li class="mui-table-view-cell">
             <a class="mui-navigate-right draw-list-a"
-               data-href="${root}/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
+               data-href="${root}/lottery/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
                 <img class="mui-media-object draw-list-img" src="${resRoot}/themes/lottery/images/lottery_ico/{{value.code}}.png">
                 <div class="mui-media-body draw-list-right">
                     <span class="title">{{value.name}}</span>
