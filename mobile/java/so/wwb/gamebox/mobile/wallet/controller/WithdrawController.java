@@ -375,7 +375,7 @@ public class WithdrawController extends WalletBaseController {
         //用于显示用的手续用，不能用来计算
         String counterFee = ServiceTool.playerWithdrawService().getDisplayCounterFee(transactionVo);
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(8,1f);
         result.put("actualWithdraw", actualWithdraw);
         result.put("deductFavorable", auditMap.get("favorableSum"));
         result.put("transactionNo", auditMap.get("transactionNo"));
