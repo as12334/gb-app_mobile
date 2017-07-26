@@ -7,7 +7,7 @@
 <html>
 <head>
     <title>605 | IP限制</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 </head>
 

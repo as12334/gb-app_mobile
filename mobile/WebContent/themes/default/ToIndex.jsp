@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html manifest="${resRoot}/m.appcache">
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${siteName}</title>
     <%@ include file="/include/include.js.jsp" %>
     <script src="${resRoot}/js/include/ToIndex.js?v=${rcVersion}"></script>

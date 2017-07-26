@@ -116,7 +116,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
     /**
      * 取款处理中/转账处理中的金额
      */
-    public void getFund(Model model) {
+    private void getFund(Model model) {
         //正在处理中取款金额
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -167,8 +167,12 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         return getViewBasePath() + "Details";
     }
 
-    public VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
-        playerTransactionListVo.setDictCommonTransactionType(DictTool.get(DictEnum.COMMON_TRANSACTION_TYPE));
+    private VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
+        Map<String, Serializable> transactionMap = DictTool.get(DictEnum.COMMON_TRANSACTION_TYPE);
+        if (transactionMap != null) {   // 过滤转账类型
+            transactionMap.remove(TransactionTypeEnum.TRANSFERS.getCode());
+        }
+        playerTransactionListVo.setDictCommonTransactionType(transactionMap);
         Map<String, Serializable> dictCommonStatus = DictTool.get(DictEnum.COMMON_STATUS);
         /*删掉稽核失败待处理状态*/
         dictCommonStatus.remove(CommonStatusEnum.DEAL_AUDIT_FAIL.getCode());
@@ -180,16 +184,6 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
             CollectionTool.batchUpdate(playerTransactionListVo.getResult(), Criteria.and(criteria, criteriaType), MapTool.newHashMap(new Pair<String, Object>(VPlayerTransaction.PROP_STATUS, CommonStatusEnum.SUCCESS.getCode())));
         }
         return playerTransactionListVo;
-    }
-
-    /**
-     * 初始化ListVo
-     */
-    private void initListVo(VPlayerTransactionListVo listVo, String code) {
-        listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        listVo.getSearch().setTransactionType(code);
-        listVo.getSearch().setBeginCreateTime(DateTool.addDays(SessionManager.getDate().getToday(), -6));
-        listVo.getSearch().setEndCreateTime(SessionManager.getDate().getNow());
     }
 
     private void initQueryDate(VPlayerTransactionListVo listVo) {

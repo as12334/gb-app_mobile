@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.promo_auto['我的优惠记录']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 </head>
 

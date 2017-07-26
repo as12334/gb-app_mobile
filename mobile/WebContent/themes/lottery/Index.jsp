@@ -4,8 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
-    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/lottery/style.css?v=${rcVersion}" />
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${siteName}</title>
     <%@ include file="/include/include.js.jsp" %>
 </head>
@@ -32,9 +31,9 @@
         <!-- 内容 -->
         <div class="mui-scroll-wrapper middle-content" id="mui-refresh-index">
             <div class="mui-scroll">
-                <div class="gb-notice">
+                <div class="gb-anno">
                     <a type="button" class="mui-pull-left notice-icon"><i class="iconfont icon-gonggao"></i></a>
-                    <ul class="mui-list-unstyled gb-notice-list">
+                    <ul class="mui-list-unstyled gb-anno-list">
                         <li>
                             <marquee behavior="scroll" scrollamount="7" direction="left">
                                 <p>

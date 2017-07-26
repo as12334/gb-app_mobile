@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${views.passport_auto['设置安全密码']}</title>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
 </head>

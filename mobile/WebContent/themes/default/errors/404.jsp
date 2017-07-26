@@ -7,7 +7,7 @@
 <html>
 <head>
     <title>404 | NOT FIND</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 </head>
 

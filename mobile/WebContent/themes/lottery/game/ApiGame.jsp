@@ -2,7 +2,7 @@
 <%@ include file="/include/include.inc.jsp" %>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</title>
     <%@ include file="/include/include.js.jsp" %>
     <style>

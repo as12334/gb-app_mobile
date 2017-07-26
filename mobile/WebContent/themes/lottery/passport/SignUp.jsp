@@ -6,7 +6,7 @@
 
 <head>
     <title>${views.passport_auto['注册']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css"/>

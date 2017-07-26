@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${views.app_auto['下载最新客户端']}</title>
     <link rel="stylesheet" href="${resRoot}/themes/default/ios/foundation.css?v=${rcVersion}"/>
     <link rel="stylesheet" href="${resRoot}/themes/default/ios/layout.css?v=${rcVersion}"/>

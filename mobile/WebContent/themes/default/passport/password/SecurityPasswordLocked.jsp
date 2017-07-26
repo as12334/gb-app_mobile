@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${views.passport_auto['冻结安全密码']}</title>
     <%@ include file="/include/include.js.jsp" %>
 </head>

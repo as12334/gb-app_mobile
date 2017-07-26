@@ -5,7 +5,7 @@
 
 <head>
     <title>${views.withdraw_auto['查看稽核']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
 </head>
 <body class="gb-theme mine-page">
 <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">

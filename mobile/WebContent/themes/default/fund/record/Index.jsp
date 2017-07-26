@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.fund_auto['资金记录']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
     <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
@@ -12,18 +12,9 @@
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css"/>
     <%--popover滚动需在页面自定义样式--%>
     <style>
-        #transactionType {
-            position: fixed;
-            top: 16px;
-            right: 6px;
-        }
-        #transactionType .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
-        .mui-popover {
-            height: 300px;
-        }
+        #transactionType {position: fixed;top: 16px;right: 6px;}
+        #transactionType .mui-popover-arrow {left: auto;right: 6px;}
+        .mui-popover {height: 300px;}
     </style>
 </head>
 

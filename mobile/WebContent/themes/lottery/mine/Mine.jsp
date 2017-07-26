@@ -5,7 +5,7 @@
 
 <head>
     <title>${siteName}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
     <%@ include file="/include/include.js.jsp" %>
 </head>

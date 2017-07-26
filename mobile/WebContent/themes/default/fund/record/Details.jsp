@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.fund_auto['资金记录明细']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 </head>
 

@@ -8,7 +8,7 @@
 <html>
 <head>
     <title>607 | 站点维护</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 </head>
 

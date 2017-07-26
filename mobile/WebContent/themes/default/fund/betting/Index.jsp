@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.fund_auto['投注记录']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
     <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>

@@ -9,7 +9,7 @@
         <span class="mui-icon icon2"></span>
         <span class="mui-tab-label">${views.include_auto['存款']}</span>
     </a>
-    <a class="mui-tab-item" data-url="/transfer/index.html" id="footer_transfer">
+    <a class="mui-tab-item" data-url="${footerUrl}" id="footer_transfer">
         <span class="mui-icon icon3"></span>
         <span class="mui-tab-label">${views.mine_auto['取款']}</span>
     </a>

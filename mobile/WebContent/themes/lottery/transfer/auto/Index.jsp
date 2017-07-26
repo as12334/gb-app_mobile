@@ -6,7 +6,7 @@
 <html>
 <head>
     <title>${views.transfer_auto['转账']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 </head>
 <body class="gb-theme mine-page">

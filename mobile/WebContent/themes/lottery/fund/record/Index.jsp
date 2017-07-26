@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.fund_auto['资金记录']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
     <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
@@ -12,18 +12,9 @@
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css"/>
     <%--popover滚动需在页面自定义样式--%>
     <style>
-        #transactionType {
-            position: fixed;
-            top: 16px;
-            right: 6px;
-        }
-        #transactionType .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
-        .mui-popover {
-            height: 300px;
-        }
+        #transactionType {position: fixed;top: 16px;right: 6px;}
+        #transactionType .mui-popover-arrow {left: auto;right: 6px;}
+        .mui-popover {height: 270px;}
     </style>
 </head>
 
@@ -107,16 +98,8 @@
 <div id="selectDate" class="mui-popover scroll-popover" style="height: 220px">
     <style>
         /*跨webview需要手动指定位置*/
-        .scroll-popover {
-            position: fixed;
-            top: 16px;
-            right: 6px;
-        }
-
-        .scroll-popover .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
+        .scroll-popover {position: fixed;top: 16px;right: 6px;}
+        .scroll-popover .mui-popover-arrow {left: auto;right: 6px;}
     </style>
 
     <div class="mui-scroll-wrapper popover-scroll">
@@ -143,28 +126,23 @@
                 </c:forEach>
             </ul>
         </div>
-            <script language="JavaScript">
-                mui.init({
-                    swipeBack: true //启用右滑关闭功能
-                });
-                mui('.fund-type-scroll').scroll();
-                mui('body').on('shown', '.mui-popover', function(e) {
-                    //console.log('shown', e.detail.id);//detail为当前popover元素
-                });
-                mui('body').on('hidden', '.mui-popover', function(e) {
-                    //console.log('hidden', e.detail.id);//detail为当前popover元素
-                });
-            </script>
+        <script language="JavaScript">
+            mui.init({ swipeBack: true});
+            mui('.fund-type-scroll').scroll();
+            mui('body').on('shown', '.mui-popover', function(e) {});
+            mui('body').on('hidden', '.mui-popover', function(e) {});
+        </script>
     </div>
 </div>
 </body>
 
 <script>
     curl(['common/MobileBasePage','site/fund/record/Index',],
-        function(Page, Assets,FundRecord) {
+        function(Page, FundRecord) {
             page = new Page();
             fundRecord = new FundRecord();
-        });
+        }
+    );
 </script>
 
 </html>

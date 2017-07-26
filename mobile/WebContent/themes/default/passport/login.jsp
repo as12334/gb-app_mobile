@@ -5,7 +5,7 @@
 <html>
 
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${views.passport_auto['登录']}</title>
 </head>
 

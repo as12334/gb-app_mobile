@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.mine_auto['消息']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 
     <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>

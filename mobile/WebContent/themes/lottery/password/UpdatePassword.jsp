@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.password_auto['修改登录密码']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 </head>
 

@@ -5,7 +5,7 @@
 
 <head>
     <title>${views.mine_auto['个人资料']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css" />
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css" />
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css" />

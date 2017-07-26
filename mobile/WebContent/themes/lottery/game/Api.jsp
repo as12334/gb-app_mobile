@@ -3,7 +3,7 @@
 <c:set value="${apiDetail.get('apiI18n')}" var="apiI18n"></c:set>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${apiI18n.name}</title>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
     <%@ include file="/include/include.js.jsp" %>

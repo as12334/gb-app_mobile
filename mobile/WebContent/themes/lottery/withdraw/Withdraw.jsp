@@ -4,7 +4,7 @@
 <html>
 
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${views.withdraw_auto['取款']}</title>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
     <script src="${resRoot}/js/plugin/map.js?v=${rcVersion}"></script>

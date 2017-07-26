@@ -15,6 +15,7 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
@@ -98,6 +101,12 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
+        String url = "/transfer/index.html";
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        if (param != null && "true".equals(param.getParamValue())) {
+            url = "/wallet/withdraw/index.html";
+        }
+        model.addAttribute("footerUrl", url);
         return "/Index";
     }
 

@@ -26,8 +26,6 @@
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/common.css?v=${rcVersion}" />
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/loading.css?v=${rcVersion}" />
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/layer.css?v=${rcVersion}" />
-
-<link rel="stylesheet" type="text/css" href="${resRoot}/themes/default/style.css?v=${rcVersion}" />
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/${curTheme}/lang/${language}.css?v=${rcVersion}"/>
 <%
     String userAgent = request.getHeader("User-Agent");
