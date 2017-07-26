@@ -66,7 +66,7 @@
                 </c:if>
             </nav>
 
-            <%@ include file="redEnvelope/Envelope.jsp" %>
+            <%@ include file="./redEnvelope/Envelope.jsp" %>
 
             <div class="mui-off-canvas-backdrop"></div>
         </div>

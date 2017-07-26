@@ -85,7 +85,7 @@
                     <div class="mui-input-group mine-form m-t-sm">
                         <div class="mine-table lg">
                             <table id="content">
-                                <%@ include file="IndexPartial.jsp" %>
+                                <%@ include file="./IndexPartial.jsp" %>
                             </table>
                         </div>
                     </div>

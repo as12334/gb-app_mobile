@@ -56,7 +56,7 @@
                                         <td>${views.fund_auto['状态']}</td>
                                     </tr>
                                     <tbody id="content-list">
-                                    <%@ include file="IndexPartialList.jsp"%></tbody>
+                                    <%@ include file="./IndexPartialList.jsp"%></tbody>
                                 </table>
                             </div>
                         </div>

@@ -40,7 +40,7 @@
                     </div>
 
                     <!-- 导航 -->
-                    <%@ include file="game/include/include.nav.jsp" %>
+                    <%@ include file="./game/include/include.nav.jsp" %>
 
                     <!--喜好定制(API)-->
                     <div class="mui-row _apiType">
@@ -105,7 +105,7 @@
             </div>
         </div>
 
-        <%@ include file="/themes/default/game/include/include.notice.jsp" %>
+        <%@ include file="./game/include/include.notice.jsp" %>
         <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>

@@ -39,9 +39,9 @@
                     <div class="mui-scroll">
                         <div>
                             <!-- Banner和公告 -->
-                            <%@ include file="../game/include/include.banner.jsp" %>
+                            <%@ include file="./include/include.banner.jsp" %>
                             <!-- 导航 -->
-                            <%@ include file="../game/include/include.nav.jsp" %>
+                            <%@ include file="./include/include.nav.jsp" %>
                             <div id="_games" class="mui-control-content ${apiTypeId<5?'mui-active':''}">
                                 <!-- API游戏 -->
                                 <input type="hidden" id="nav-type" value="${tid}"/>
@@ -70,7 +70,7 @@
                 <div class="mui-off-canvas-backdrop"></div>
             </div>
         </div>
-        <%@ include file="/themes/default/game/include/include.notice.jsp" %>
+        <%@ include file="./include/include.notice.jsp" %>
     </div>
 </div>
 </body>

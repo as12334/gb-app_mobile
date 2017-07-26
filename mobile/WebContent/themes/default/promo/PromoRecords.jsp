@@ -31,7 +31,7 @@
             <div class="promo1" id="promo1">
                 <div class="ct">
                     <ul id="content1" class="mui-promo">
-                        <%@include file="PromoRecordsPartial.jsp" %>
+                        <%@include file="./PromoRecordsPartial.jsp" %>
                     </ul>
                 </div>
             </div>

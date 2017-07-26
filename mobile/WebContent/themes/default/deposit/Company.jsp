@@ -84,7 +84,7 @@
                                         </div>
                                     </div>
 
-                                    <%@include file="ChooseAmount.jsp"%>
+                                    <%@include file="./ChooseAmount.jsp"%>
 
                                     <div class="mui-input-row"><label>${views.deposit_auto['存款类型']}</label>
                                         <div class="ct" id="rechargeType">

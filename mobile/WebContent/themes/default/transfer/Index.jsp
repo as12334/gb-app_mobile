@@ -26,7 +26,7 @@
             <div class="mui-scroll">
                 <%--转账--%>
                 <div id="transfer">
-                    <%@include file="/include/transfer.jsp" %>
+                    <%@include file="./include/transfer.jsp" %>
                 </div>
                 <%--api余额--%>
 
@@ -36,7 +36,7 @@
                     </button>
                 </div>
                 <div id="apiBalance">
-                    <%@include file="/include/api.jsp" %>
+                    <%@include file="./include/api.jsp" %>
                 </div>
             </div>
         </div>
