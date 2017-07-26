@@ -101,13 +101,13 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
-        String url = "/transfer/index.html";
-        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
-        if (param != null && "true".equals(param.getParamValue())) {
-            url = "/wallet/withdraw/index.html";
-        }
-        model.addAttribute("footerUrl", url);
+        model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
         return "/Index";
+    }
+
+    private boolean isLotterySite() {
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     private List<SiteApiType> getApiTypes() {
@@ -324,5 +324,12 @@ public class IndexController extends BaseApiController {
         }else {
             return "unLogin";
         }
+    }
+
+    /** app 判断是否彩票站点接口 */
+    @RequestMapping("/index/isLotterySite")
+    @ResponseBody
+    public String lotterySite() {
+        return JsonTool.toJson(isLotterySite());
     }
 }
