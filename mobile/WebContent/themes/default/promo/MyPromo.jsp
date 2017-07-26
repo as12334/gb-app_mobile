@@ -22,7 +22,7 @@
             <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''}>
                 <div class="mui-scroll">
                     <div class="mui-row" id="content">
-                         <%@include file="MyPromoPartial.jsp"%>
+                         <%@include file="./MyPromoPartial.jsp"%>
                     </div>
                 </div>
             </div>

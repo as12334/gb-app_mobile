@@ -156,7 +156,7 @@
                                     </div>
                                 </div>
 
-                                <%@include file="ChooseAmount.jsp"%>
+                                <%@include file="./ChooseAmount.jsp"%>
 
                                 <div class="mui-input-row">
                                     <label>${views.deposit_auto['订单号后5位']}

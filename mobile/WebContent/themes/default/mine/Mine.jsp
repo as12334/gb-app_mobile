@@ -28,7 +28,7 @@
                 </header>
                 <!--底部-->
                 <c:if test="${os ne 'android'&&os ne 'app_ios'}">
-                    <%@include file="../include/include.footer.jsp" %>
+                    <%@include file="/include/include.footer.jsp" %>
                 </c:if>
                 <div class="mui-content mui-scroll-wrapper" id="mineRefreshContainer" >
                     <div class="mui-scroll">

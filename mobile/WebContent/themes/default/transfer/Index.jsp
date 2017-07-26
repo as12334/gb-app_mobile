@@ -26,7 +26,7 @@
             <div class="mui-scroll">
                 <%--转账--%>
                 <div id="transfer">
-                    <%@include file="/include/transfer.jsp" %>
+                    <%@include file="./include/transfer.jsp" %>
                 </div>
                 <%--api余额--%>
 
@@ -36,7 +36,7 @@
                     </button>
                 </div>
                 <div id="apiBalance">
-                    <%@include file="/include/api.jsp" %>
+                    <%@include file="./include/api.jsp" %>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
     </div>
 </div>
 </body>
-<%@ include file="../include/include.base.js.common.jsp" %>
+<%@ include file="/include/include.base.js.common.jsp" %>
 <script type="text/javascript"
         src="${root}/mobile/message_<%=SessionManagerCommon.getLocale().toString()%>.js?v=${rcVersion}"></script>
 <script>

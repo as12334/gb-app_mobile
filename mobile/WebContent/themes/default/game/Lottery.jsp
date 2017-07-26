@@ -32,7 +32,7 @@
             <%--paging-x: 当前API对应的当前页--%>
             <input type="hidden" id="paging-${a.apiId}" value="1">
             <div class="mui-row lottery-content-${a.apiId}">
-                <%@include file="../include/include.loading.jsp"%>
+                <%@include file="/include/include.loading.jsp"%>
             </div>
         </div>
     </c:forEach>

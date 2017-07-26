@@ -45,7 +45,7 @@
             <input type="hidden" id="paging-${a.apiId}" value="1">
             <div class="mui-row">
                 <div class="electronic-list" style="margin-bottom: 0px;">
-                    <%@include file="../include/include.loading.jsp" %>
+                    <%@include file="/include/include.loading.jsp" %>
                     <div class="mui-row casino-content-${a.apiId}">
                     </div>
                 </div>

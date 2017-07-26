@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="/include/include.inc.jsp" %>
 <c:set value="${apiDetail.get('apiI18n')}" var="apiI18n"></c:set>
 <html>
 <head>
-    <%@ include file="../include/include.head.jsp" %>
+    <%@ include file="/include/include.head.jsp" %>
     <title>${apiI18n.name}</title>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
-    <%@ include file="../include/include.js.jsp" %>
+    <%@ include file="/include/include.js.jsp" %>
 </head>
 
 <body class="gb-theme index e-transfer" onresize="window.activeElement.scrollIntoView(true);">

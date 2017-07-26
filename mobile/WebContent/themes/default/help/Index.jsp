@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="/include/include.inc.jsp" %>
 <html>
 <head>
-    <%@ include file="../include/include.head.jsp" %>
+    <%@ include file="/include/include.head.jsp" %>
     <title>${views.help_auto['帮助中心']}</title>
-    <%@ include file="../include/include.js.jsp" %>
+    <%@ include file="/include/include.js.jsp" %>
 </head>
 
 <body class="gb-theme help-center">

@@ -73,7 +73,7 @@
                         <div class="mui-row">
                             <div class="notice-list">
                                 <ul id="noticeGamePartial">
-                                    <%@include file="NoticeGamePartial.jsp" %>
+                                    <%@include file="./NoticeGamePartial.jsp" %>
                                 </ul>
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                 </div>
             </div>
             <div id="noticeSite" class="mui-control-content ${empty unReadType?'':'mui-active'}" name="notice">
-                <%@include file="NoticeSite.jsp"%>
+                <%@include file="./NoticeSite.jsp"%>
             </div>
 
         </div>
@@ -144,7 +144,7 @@
     </ul>
 </div>
 <div id="selectDate" class="mui-popover scroll-popover" style="height: 300px">
-    <%@include file="../../include/include.popover.jsp"%>
+    <%@include file="/include/include.popover.jsp"%>
 </div>
 <script language="JavaScript">
     mui.init({
