@@ -5,6 +5,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criterion;
@@ -15,7 +16,7 @@ import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.session.SessionKey;
-import org.soul.commons.locale.DateQuickPicker;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +27,11 @@ import so.wwb.gamebox.mobile.my.form.PlayerAdvisoryForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
+import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
@@ -55,12 +59,12 @@ import java.util.*;
 @RequestMapping("/message")
 public class MessageController {
 
-    private static final String GAME_NOTICE_URL = "mine/message/NoticeGame";
-    private static final String SYSTEM_NOTICE_URL = "mine/message/NoticeSysPartial";
-    private static final String MESSAGE_SITE_URL = "mine/message/NoticeSitePartial";
-    private static final String MESSAGE_SITE2_URL = "mine/message/NoticeSite2Partial";
-    private static final String SEND_MESSAGE = "mine/message/SendMessage";
-    private static final String MESSAGE_DETAIL_URL = "mine/message/MessageDetail";
+    private static final String GAME_NOTICE_URL = "/mine/message/NoticeGame";
+    private static final String SYSTEM_NOTICE_URL = "/mine/message/NoticeSysPartial";
+    private static final String MESSAGE_SITE_URL = "/mine/message/NoticeSitePartial";
+    private static final String MESSAGE_SITE2_URL = "/mine/message/NoticeSite2Partial";
+    private static final String SEND_MESSAGE = "/mine/message/SendMessage";
+    private static final String MESSAGE_DETAIL_URL = "/mine/message/MessageDetail";
     private Long sysMessageUnReadCount = null ;
     private Integer advisoryUnReadCount = 0;
     private static final int TIME_INTERVAL = -29;
@@ -111,6 +115,10 @@ public class MessageController {
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
         listVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());
         listVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        if (param!=null && param.getParamValue()!=null && param.getParamValue().equals("true")) {
+            listVo.getSearch().setApiId(Integer.parseInt(ApiProviderEnum.PL.getCode()));
+        }
         listVo = ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(listVo);
         model.addAttribute("command", listVo);
 
