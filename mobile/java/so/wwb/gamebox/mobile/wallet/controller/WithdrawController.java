@@ -24,6 +24,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.common.Const;
+import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
 import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
@@ -375,7 +376,7 @@ public class WithdrawController extends WalletBaseController {
         //用于显示用的手续用，不能用来计算
         String counterFee = ServiceTool.playerWithdrawService().getDisplayCounterFee(transactionVo);
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(8,1f);
         result.put("actualWithdraw", actualWithdraw);
         result.put("deductFavorable", auditMap.get("favorableSum"));
         result.put("transactionNo", auditMap.get("transactionNo"));
@@ -420,7 +421,7 @@ public class WithdrawController extends WalletBaseController {
         }
         //推送消息给前端
         MessageVo message = new MessageVo();
-        message.setSubscribeType("MCENTER-TELLER-REMINDER");
+        message.setSubscribeType(CometSubscribeType.MCENTER_WITHDRAW_REMINDER.getCode());
         PlayerWithdraw withdraw = newWithdrawVo.getResult();
         Map<String, Object> map = new HashMap<>(3);
         map.put("date", withdraw.getCreateTime());

@@ -33,6 +33,7 @@
 
     <!--验证重复提交-->
     <mvc:interceptors>
+        <bean class="so.wwb.gamebox.mobile.init.BaseInterceptor"/>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <bean class="so.wwb.gamebox.web.common.token.TokenInterceptor"/>
