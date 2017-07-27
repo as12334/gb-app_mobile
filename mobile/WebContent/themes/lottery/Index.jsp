@@ -123,7 +123,7 @@
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
                         <a class="item _lottery" href="/lottery/k3/hbk3/index.html" data-status="normal">
-                            <span class="lottery-ico lottery-ico-sfssc"></span>
+                            <span class="lottery-ico lottery-ico-hbk3"></span>
                             <span class="lottery-title">湖北快3</span>
                         </a>
                     </li>

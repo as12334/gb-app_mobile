@@ -158,7 +158,9 @@ public class IndexController extends BaseApiController {
         } else if ("about".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
             CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
-            cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
             model.addAttribute("about", cttDocumentI18n);
         } else if ("terms".equals(path) || "protocol".equals(path)) {
             SiteI18n terms = Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString());

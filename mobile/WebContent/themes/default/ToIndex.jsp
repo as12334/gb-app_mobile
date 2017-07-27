@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <!DOCTYPE html>
-<html manifest="${resRoot}/m.appcache">
+<html manifest="${resRoot}/appcache/default.appcache">
 <head>
     <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${siteName}</title>
