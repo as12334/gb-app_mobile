@@ -17,13 +17,19 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!--头部-->
-        <header class="mui-bar mui-bar-nav mui-hide _siteHeader">
+        <header class="mui-bar mui-bar-nav _siteHeader">
             <div class="mui-pull-left">
                 <span class="index-action-menu mui-action-menu"></span>
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></div>
             </div>
             <!-- 资产 -->
-            <%@include file="/include/include.asset.jsp" %>
+            <div class="mui-hide-bar"></div>
+            <div class="mui-pull-right">
+                <div class="user mui-hide _rightUnLogin">
+                    <a class="btn mui-btn mui-btn-outlined btn-login">${views.include_auto['登录']}</a>
+                    <a class="btn mui-btn mui-btn-outlined btn-register" data-href="/signUp/index.html">${views.include_auto['注册']}</a>
+                </div>
+            </div>
         </header>
 
         <!--底部-->
@@ -86,7 +92,7 @@
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a href="bjpks.html">
+                        <a data-href="/lottery/lotteryResultHistory/index.html">
                             <span class="home-f-ico ico-service-3"></span>
                             <span class="lottery-title">开奖结果</span>
                         </a>
