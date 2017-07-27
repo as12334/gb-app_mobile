@@ -20,8 +20,6 @@
             <div class="mui-pull-left">
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
-            <!-- 资产 -->
-            <%@include file="/include/include.asset.jsp" %>
         </header>
         </c:if>
         <c:if test="${os ne 'android' && os ne 'app_ios'}">

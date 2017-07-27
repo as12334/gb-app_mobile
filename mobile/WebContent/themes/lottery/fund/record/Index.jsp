@@ -25,7 +25,6 @@
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
             <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.fund_auto['资金记录']}</h1>
-            <%@ include file="/include/include.asset.jsp" %>
         </header>
         <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''}>
             <div class="mui-scroll">
@@ -57,24 +56,20 @@
                             <div class="mui-pull-right" style="width: 45%;">
                                 <a href="javascript:" class="btn mui-btn mui-btn-primary query" style="width: 100%;">${views.fund_auto['搜索']}</a>
                             </div>
-                                <span class="input-drop" style="width: 45%;">
-                                    <a href="#transactionType">
-                                        <span id="displayType" value="${command.search.transactionType}">
-                                            <c:set var="type" value="${views.fund_auto['类型']}"></c:set>
-                                            ${not empty command.search.transactionType?dicts.common.transaction_type[command.search.transactionType]:type}</span>
-                                        <i class="mui-icon mui-icon-arrowdown"></i>
-                                    </a>
-                                </span>
+                            <span class="input-drop" style="width: 45%;">
+                                <a href="#transactionType">
+                                    <span id="displayType" value="${command.search.transactionType}">
+                                        <c:set var="type" value="${views.fund_auto['类型']}"></c:set>
+                                        ${not empty command.search.transactionType?dicts.common.transaction_type[command.search.transactionType]:type}</span>
+                                    <i class="mui-icon mui-icon-arrowdown"></i>
+                                </a>
+                            </span>
                         </div>
                     </div>
                 </div>
                 <div class="mui-row">
                     <div class="mui-input-group mine-form">
                         <p style="padding:10px">
-                            <span class="mui-pull-right">
-                                ${views.fund_auto['转账处理中']}：
-                                <span class="text-green transferSum">${currency}${soulFn:formatCurrency(transferSum)}</span>
-                            </span>
                             ${views.fund_auto['取款处理中']}：
                             <span class="text-green withdrawSum">${currency}${soulFn:formatCurrency(withdrawSum)}</span>
                         </p>

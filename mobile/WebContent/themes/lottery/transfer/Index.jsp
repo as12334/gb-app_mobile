@@ -19,7 +19,6 @@
                     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
                 </c:if>
                 <h1 class="mui-title">${views.transfer_auto['资金管理转账']}</h1>
-                <%@ include file="/include/include.asset.jsp" %>
             </header>
         </c:if>
         <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''}>

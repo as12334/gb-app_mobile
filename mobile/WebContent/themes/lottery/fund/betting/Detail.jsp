@@ -15,7 +15,6 @@
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.fund_auto['投注记录详情']}</h1>
-            <%@ include file="/include/include.asset.jsp" %>
         </header>
         <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
             <div class="mui-scroll">

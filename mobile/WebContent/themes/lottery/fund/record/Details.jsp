@@ -16,7 +16,6 @@
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.fund_auto['资金记录明细']}</h1>
             <c:if test="${os ne 'app_ios'}">
-            <%@ include file="/include/include.asset.jsp" %>
             </c:if>
         </header>
         <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
@@ -426,7 +425,7 @@
     </div>
 </div>
 <script>
-    $('._userAsset').removeClass('mui-hide');
+//    $('._userAsset').removeClass('mui-hide');
     curl(['common/MobileBasePage', 'site/common/Assets'], function(Page, Assets) {
         page = new Page();
         asset = new Assets();

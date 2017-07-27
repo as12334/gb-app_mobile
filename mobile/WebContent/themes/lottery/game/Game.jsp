@@ -23,8 +23,6 @@
                 <span class="index-action-menu mui-action-menu"></span>
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
-            <!-- 资产 -->
-            <%@include file="/include/include.asset.jsp" %>
         </header>
         <section class="site-address mui-hide _indexDomain">
             主页域名：${empty sysDomain?domain:sysDomain}
