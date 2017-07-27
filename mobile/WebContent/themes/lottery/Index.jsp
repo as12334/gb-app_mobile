@@ -31,6 +31,35 @@
         <!-- 内容 -->
         <div class="mui-scroll-wrapper middle-content _cacheContent" id="mui-refresh-index">
             <div class="mui-scroll">
+                <div id="slider" class="mui-slider" >
+                    <div class="mui-slider-group mui-slider-loop">
+                        <div class="mui-slider-item mui-slider-item-duplicate">
+                            <a href="#">
+                                <img src="${resRoot}/themes/lottery/images/slider/shuijiao.jpg">
+                            </a>
+                        </div>
+                        <div class="mui-slider-item">
+                            <a href="#">
+                                <img src="${resRoot}/themes/lottery/images/slider/muwu.jpg">
+                            </a>
+                        </div>
+                        <div class="mui-slider-item">
+                            <a href="#">
+                                <img src="${resRoot}/themes/lottery/images/slider/shuijiao.jpg">
+                            </a>
+                        </div>
+                        <div class="mui-slider-item mui-slider-item-duplicate">
+                            <a href="#">
+                                <img src="${resRoot}/themes/lottery/images/slider/muwu.jpg">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mui-slider-indicator">
+                        <div class="mui-indicator mui-active"></div>
+                        <div class="mui-indicator"></div>
+                    </div>
+                </div>
+
                 <div class="gb-anno">
                     <a type="button" class="mui-pull-left notice-icon"><i class="iconfont icon-gonggao"></i></a>
                     <ul class="mui-list-unstyled gb-anno-list">
@@ -52,19 +81,19 @@
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a data-href="/mine/index.html">
-                            <span class="home-f-ico ico-service"></span>
+                            <span class="home-f-ico ico-service-2"></span>
                             <span class="lottery-title">会员中心</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a href="bjpks.html">
-                            <span class="home-f-ico ico-service"></span>
+                            <span class="home-f-ico ico-service-3"></span>
                             <span class="lottery-title">开奖结果</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
                         <a href="bjpks.html">
-                            <span class="home-f-ico ico-service"></span>
+                            <span class="home-f-ico ico-service-4"></span>
                             <span class="lottery-title">走势图</span>
                         </a>
                     </li>
