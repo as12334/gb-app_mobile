@@ -44,7 +44,7 @@
 <input type="hidden" id="apiId" value="${apiI18n.apiId}"/>
 <input type="hidden" id="apiTypeId" value="${apiDetail.get('apiTypeId')}"/>
 <!--滚动区域-->
-<div class="mui-content mui-scroll-wrapper mui-fullscreen">
+<div class="mui-content mui-scroll-wrapper mui-fullscreen api-content">
     <div class="mui-scroll">
         <div class="gb-fullpage">
             <!-- banner -->

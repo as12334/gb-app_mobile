@@ -75,49 +75,49 @@
                 </div>
                 <ul class="mui-table-view mui-grid-view diy-grid-9">
                     <li class="diy-table-view-cell mui-col-xs-3">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/ssc/cqssc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-cqssc"></span>
                             <span class="lottery-title">重庆时时彩</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/lhc/hklhc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-hklhc"></span>
                             <span class="lottery-title">香港六合彩</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/pk10/bjpk10/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-bjpk10"></span>
                             <span class="lottery-title">北京PK拾</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/k3/hbk3/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-sfssc"></span>
-                            <span class="lottery-title">三分时时彩</span>
+                            <span class="lottery-title">湖北快3</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/ssc/tjssc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-tjssc"></span>
                             <span class="lottery-title">天津时时彩</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/ssc/xjssc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-xjssc"></span>
                             <span class="lottery-title">新疆时时彩</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="/lottery/k3/jsk3/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-jsk3"></span>
                             <span class="lottery-title">江苏快3</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a class="item _api" data-api-type-id="4" data-api-id="22" data-status="normal">
+                        <a class="item _lottery" href="lottery-ico lottery-ico-gxk3" data-status="normal">
                             <span class="lottery-ico lottery-ico-gxk3"></span>
                             <span class="lottery-title">广西快3</span>
                         </a>
