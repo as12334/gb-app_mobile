@@ -235,7 +235,7 @@ public class SignUpController {
         if (!languageList.isEmpty()) {
             for (SiteLanguage siteLanguage : languageList) {
                 String lang = StringTool.substringBefore(i18nMap.get(siteLanguage.getLanguage()).toString(), "#");
-                Map<String,String> map = new HashMap<>(2);
+                Map<String,String> map = new HashMap<>(2,1f);
                 map.put("text", lang);
                 map.put("value", siteLanguage.getLanguage());
                 mapList.add(map);
@@ -271,7 +271,7 @@ public class SignUpController {
         Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(Module.COMMON.getCode()).get(DictEnum.COMMON_CURRENCY.getType());
         for (SiteCurrency siteCurrency : siteCurrencies) {
             if (SiteCurrencyEnum.NORMAL.getCode().equals(siteCurrency.getStatus())) {
-                map = new HashMap<>(2);
+                map = new HashMap<>(2,1f);
                 map.put("text", i18nMap.get(siteCurrency.getCode()));
                 map.put("value", siteCurrency.getCode());
                 mapList.add(map);
@@ -293,7 +293,7 @@ public class SignUpController {
             Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(dictEnum.getModule().getCode()).get(dictEnum.getType());
             if (i18nMap != null) {
                 for (SysDict sysDict : dicts.values()) {
-                    Map<String, String> map = new HashMap<>(2);
+                    Map<String, String> map = new HashMap<>(2,1f);
                     map.put("text", i18nMap.get(sysDict.getDictCode()));
                     map.put("value", sysDict.getDictCode());
                     mapList.add(map);
@@ -339,7 +339,7 @@ public class SignUpController {
     }
 
     private Map<String, Object> getMessage(boolean isSuccess, String messageCode) {
-        Map<String, Object> resultMap = new HashMap<>(2);
+        Map<String, Object> resultMap = new HashMap<>(2,1f);
         resultMap.put("state", isSuccess);
         resultMap.put("msg", LocaleTool.tranMessage(Module.REGISTER.getCode(), messageCode));
         return resultMap;
@@ -366,7 +366,7 @@ public class SignUpController {
          /*注册防御*/
         IDefenseRs defense = (IDefenseRs) request.getAttribute(IDefenseRs.R_DEFENSE_RS);
         if (defense != null && !defense.isAvalable()) {
-            Map<String, Object> resultMap = new HashMap<>(2);
+            Map<String, Object> resultMap = new HashMap<>(2,1f);
             DefenseRs defenseRs = defense.getDefenseRs();
             resultMap.put("state", false);
             resultMap.put("msg", defenseRs.getMessage());

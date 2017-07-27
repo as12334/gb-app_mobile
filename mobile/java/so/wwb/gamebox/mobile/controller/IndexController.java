@@ -185,7 +185,7 @@ public class IndexController extends BaseApiController {
     @RequestMapping(value = "/index/getUserTimeZoneDate")
     @ResponseBody
     public String getUserTimeZoneDate() {
-        Map<String, String> map = new HashMap<>(2);
+        Map<String, String> map = new HashMap<>(2,1f);
         map.put("dateTimeFromat", CommonContext.getDateFormat().getDAY_SECOND());
         map.put("dateTime", SessionManager.getUserDate(CommonContext.getDateFormat().getDAY_SECOND()));
         map.put("time", String.valueOf(new Date().getTime()));
@@ -224,7 +224,7 @@ public class IndexController extends BaseApiController {
     @RequestMapping("/index/getLogoUrl")
     @ResponseBody
     public String getLogoUrl() {
-        Map<String,String> urlMap = new HashMap<>(2);
+        Map<String,String> urlMap = new HashMap<>(2,1f);
         urlMap.put("logoUrl", "/ftl/commonPage/images/app_logo/app_logo_"+ SessionManager.getSiteId() +".png");
         urlMap.put("iconUrl", "/ftl/commonPage/images/app_icon/app_icon_"+ SessionManager.getSiteId() +".png");
         return JsonTool.toJson(urlMap);

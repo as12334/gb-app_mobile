@@ -423,7 +423,7 @@ public class WithdrawController extends WalletBaseController {
         MessageVo message = new MessageVo();
         message.setSubscribeType(CometSubscribeType.MCENTER_WITHDRAW_REMINDER.getCode());
         PlayerWithdraw withdraw = newWithdrawVo.getResult();
-        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> map = new HashMap<>(3,1f);
         map.put("date", withdraw.getCreateTime());
         map.put("currency", StringTool.isBlank(SessionManager.getUser().getDefaultCurrency()) ? "" : SessionManager.getUser().getDefaultCurrency());
         map.put("type", withdraw.getWithdrawTypeParent());

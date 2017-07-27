@@ -69,7 +69,7 @@ public class UpdatePasswordController {
     @RequestMapping(value = "/updatePassword")
     @ResponseBody
     public Map updatePassword(UpdatePasswordVo updatePasswordVo, String code, @Valid UpdatePasswordForm form, BindingResult result,HttpServletRequest request) {
-        Map map = new HashMap(3);
+        Map map = new HashMap(3,1f);
         //有错误直接返回
         if (result.hasErrors()) {
             map.put("state", false);
@@ -167,7 +167,7 @@ public class UpdatePasswordController {
     }
 
     private HashMap validateCheckCode(String validCode) {
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         String msg;
         if (StringTool.isBlank(validCode)) {
             msg = LocaleTool.tranMessage("privilege", "captcha.input");
@@ -219,7 +219,7 @@ public class UpdatePasswordController {
     }
 
     private HashMap inputFault(HttpServletRequest request) {
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         Date now = DateQuickPicker.getInstance().getNow();
         int errTimes = getErrorTimes();
         if (errTimes == 0) {
@@ -263,7 +263,7 @@ public class UpdatePasswordController {
 
     private HashMap inputFalutNoAtMax(int times) {
         //返回页面消息
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         map.put("msg", LocaleTool.tranMessage("privilege", "input.wrong"));
         map.put("state", false);
         map.put("remainTimes", ERROR_TIMES - times);
@@ -271,7 +271,7 @@ public class UpdatePasswordController {
     }
 
     private HashMap inputMaxFalut() {
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         //返回页面消息
         map.put("msg", LocaleTool.tranMessage("privilege", "input.freeze"));
         map.put("stateCode", PrivilegeStatusEnum.CODE_99.getCode());
@@ -280,7 +280,7 @@ public class UpdatePasswordController {
     }
 
     private HashMap firstInputFalut() {
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         //返回页面消息
         map.put("msg", LocaleTool.tranMessage("privilege", "input.wrong"));
         map.put("state", false);

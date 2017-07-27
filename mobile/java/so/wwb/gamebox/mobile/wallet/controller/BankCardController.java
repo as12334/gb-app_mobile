@@ -76,7 +76,7 @@ public class BankCardController {
     public Map submitBankCard(UserBankcardVo bankcardVo,String realName,String action,
                               @Valid @FormModel BankcardForm bankcardForm,
                               BindingResult result) {
-        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> map = new HashMap<>(3,1f);
         if (result.hasErrors()) {
             map.put("state", false);
             map.put("msg", "请输入正确的信息");

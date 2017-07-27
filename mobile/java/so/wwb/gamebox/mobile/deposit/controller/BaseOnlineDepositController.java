@@ -130,7 +130,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
      */
     Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
         if (result.hasErrors()) {
-            Map<String, Object> messageMap = new HashMap<>(2);
+            Map<String, Object> messageMap = new HashMap<>(2,1f);
             messageMap.put("state", false);
             messageMap.put("msg", "请检查提交的数据是否正确");
             return messageMap;
@@ -164,7 +164,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     }
 
     private Map<String, Object> getResultMsg(boolean isSuccess, String msg, String transactionNo) {
-        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> map = new HashMap<>(3,1f);
         map.put("state", isSuccess);
         if (isSuccess) {
             map.put("orderNo", transactionNo);
@@ -320,7 +320,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
      * 查询符合玩家条件收款账号
      */
     List<PayAccount> searchPayAccount(String type, String accountType) {
-        Map<String, Object> map = new HashMap<>(4);
+        Map<String, Object> map = new HashMap<>(4,1f);
         map.put("playerId", SessionManager.getUserId());
         map.put("type", type);
         map.put("accountType", accountType);

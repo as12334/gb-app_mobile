@@ -81,7 +81,7 @@ public class TradingController extends WalletBaseController {
     @RequestMapping("/refreshPlayer")
     @ResponseBody
     public Map<String, Object> refreshPlayer() {
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = new HashMap<>(2,1f);
         VUserPlayer player = getPlayer();
         if (player != null) {
             map.put("walletBalance", CurrencyTool.formatCurrency(player.getWalletBalance()==null?0:player.getWalletBalance()));

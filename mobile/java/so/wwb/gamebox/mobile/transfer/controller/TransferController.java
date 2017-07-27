@@ -97,7 +97,7 @@ public class TransferController extends WalletBaseController {
     @ResponseBody
     @Token(generate = true)
     public Map<String, Object> transfer() {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = new HashMap<>(1,1f);
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return map;
     }
@@ -375,7 +375,7 @@ public class TransferController extends WalletBaseController {
      * @return
      */
     private Map<String, Object> getSuccessMessage(Integer apiId) {
-        Map<String, Object> resultMap = new HashMap<>(5);
+        Map<String, Object> resultMap = new HashMap<>(5,1f);
         resultMap.put("state", true);
         resultMap.put("apiId", apiId);
         return resultMap;
@@ -389,7 +389,7 @@ public class TransferController extends WalletBaseController {
      * @return
      */
     private Map<String, Object> getErrorMessage(String messageCode, Integer apiId) {
-        Map<String, Object> resultMap = new HashMap<>(5);
+        Map<String, Object> resultMap = new HashMap<>(5,1f);
         resultMap.put("state", false);
         resultMap.put("msg", LocaleTool.tranMessage(Module.FUND.getCode(), messageCode));
         resultMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
@@ -435,7 +435,7 @@ public class TransferController extends WalletBaseController {
             service.fetchPlayerApiBalance(listVo);
         }
 
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = new HashMap<>(2,1f);
         map.put("player", getPlayer());
         Integer apiId = listVo.getSearch().getApiId();
         PlayerApi playerApi = getPlayerApi(apiId);
@@ -460,7 +460,7 @@ public class TransferController extends WalletBaseController {
     @RequestMapping("/reconnectTransfer")
     @ResponseBody
     public Map reconnectTransfer(PlayerTransferVo playerTransferVo) {
-        Map<String, Object> map = new HashMap<>(5);
+        Map<String, Object> map = new HashMap<>(5,1f);
         if (StringTool.isBlank(playerTransferVo.getSearch().getTransactionNo())) {
             return getMessage(playerTransferVo.isSuccess(), null, map);
         }
@@ -508,7 +508,7 @@ public class TransferController extends WalletBaseController {
         SiteApi siteApi;
         for (PlayerApi playerApi : playerApiList) {
             String apiId = String.valueOf(playerApi.getApiId());
-            Map<String, Object> playerApiMap = new HashMap<>(3);
+            Map<String, Object> playerApiMap = new HashMap<>(3,1f);
             String apiName = CacheBase.getSiteApiName(apiId);
             playerApiMap.put("apiName", apiName);
             if (playerApi.getMoney() == null) {

@@ -159,7 +159,7 @@ public class PromoController {
     @ResponseBody
     @RequestMapping("/applyActivities")
     public Map applyActivities(VPlayerActivityMessageVo vPlayerActivityMessageVo){
-        Map map = new HashMap(2);
+        Map map = new HashMap(2,1f);
         String code = vPlayerActivityMessageVo.getCode();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(vPlayerActivityMessageVo.getResultId(), "PlayerActivityMessageListVo"));
         PlayerActivityMessage activityMessage = Cache.getActivityMessageInfo(id.toString());

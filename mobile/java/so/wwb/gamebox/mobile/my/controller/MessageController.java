@@ -219,7 +219,7 @@ public class MessageController {
         playerAdvisoryVo.getResult().setReplyCount(0);
         playerAdvisoryVo.getResult().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
         playerAdvisoryVo = ServiceTool.playerAdvisoryService().insert(playerAdvisoryVo);
-        HashMap map = new HashMap(4);
+        HashMap map = new HashMap(4,1f);
         map.put("isOpenCaptcha",false);
         if(SessionManager.getSendMessageCount() !=null && SessionManager.getSendMessageCount() >=3){
             String sessionCode = SessionManagerCommon.getCaptcha(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix());
@@ -291,7 +291,7 @@ public class MessageController {
         } else {
             vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "delete.failed"));
         }
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         map.put("msg", StringTool.isNotBlank(vo.getOkMsg()) ? vo.getOkMsg() : vo.getErrMsg());
         map.put("state", Boolean.valueOf(vo.isSuccess()));
         return map;
@@ -319,7 +319,7 @@ public class MessageController {
         } else {
             vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "delete.failed"));
         }
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         map.put("msg", StringTool.isNotBlank(vo.getOkMsg()) ? vo.getOkMsg() : vo.getErrMsg());
         map.put("state", Boolean.valueOf(vo.isSuccess()));
         return map;
@@ -348,7 +348,7 @@ public class MessageController {
         } else {
             noticeReceiveVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "update.failed"));
         }
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         map.put("msg", StringTool.isNotBlank(noticeReceiveVo.getOkMsg()) ? noticeReceiveVo.getOkMsg() : noticeReceiveVo.getErrMsg());
         map.put("state", Boolean.valueOf(b));
         return map;
@@ -387,7 +387,7 @@ public class MessageController {
                 ServiceTool.playerAdvisoryReadService().insert(parVo);
             }
         }
-        HashMap map = new HashMap(1);
+        HashMap map = new HashMap(1,1f);
         map.put("state", true);
         return map;
     }
