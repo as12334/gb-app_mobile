@@ -36,32 +36,32 @@ import java.util.Map;
 public class BankCardController {
 
     @RequestMapping("/page/bankCard")
-    public String bankCard(Model model){
-        model.addAttribute("userBankCard",BankHelper.getUserBankcard());
+    public String bankCard(Model model) {
+        model.addAttribute("userBankCard", BankHelper.getUserBankcard());
         return "/withdraw/BankCard";
     }
 
     @RequestMapping("/page/addCard")
     @Token(generate = true)
-    public String addCard(Model model, HttpServletRequest request){
+    public String addCard(Model model, HttpServletRequest request) {
 
-        model.addAttribute("userBankCard",BankHelper.getUserBankcard());
+        model.addAttribute("userBankCard", BankHelper.getUserBankcard());
         model.addAttribute("realName", SessionManager.getUser().getRealName());
         model.addAttribute("validateRule", JsRuleCreator.create(BankcardForm.class));
-        model.addAttribute("action",request.getParameter("action"));
+        model.addAttribute("action", request.getParameter("action"));
         return "/withdraw/AddCard";
     }
 
     @RequestMapping("/bankList")
     @ResponseBody
-    public List<Map> bankList(){
+    public List<Map> bankList() {
         BankListVo bankListVo = BankHelper.getBankListVo();
         List<Map> maps = new ArrayList<>();
         Map map;
         for (Bank bank : bankListVo.getResult()) {
             map = new HashMap();
-            map.put("value",bank.getBankName());
-            map.put("text",bank.getBankShortName());
+            map.put("value", bank.getBankName());
+            map.put("text", bank.getBankShortName());
             maps.add(map);
         }
         return maps;
@@ -73,14 +73,14 @@ public class BankCardController {
     @Token(valid = true)
     @RequestMapping("/submitBankCard")
     @ResponseBody
-    public Map submitBankCard(UserBankcardVo bankcardVo,String realName,String action,
+    public Map submitBankCard(UserBankcardVo bankcardVo, String realName, String action,
                               @Valid @FormModel BankcardForm bankcardForm,
                               BindingResult result) {
         Map<String, Object> map = new HashMap<>(3);
         if (result.hasErrors()) {
             map.put("state", false);
             map.put("msg", "请输入正确的信息");
-            map.put(TokenHandler.TOKEN_VALUE,TokenHandler.generateGUID());
+            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
             return map;
         }
         bankcardVo.setSuccess(false);
@@ -96,15 +96,17 @@ public class BankCardController {
         if (success) {
             SessionManager.refreshUser();
             map.put("msg", LocaleTool.tranMessage("common", "save.success"));
-            map.put("action",action);
+            map.put("action", action);
         } else {
             map.put("msg", LocaleTool.tranMessage("common", "save.failed"));
-            map.put(TokenHandler.TOKEN_VALUE,TokenHandler.generateGUID());
+            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         }
         return map;
     }
+
     /**
      * 添加银行卡信息
+     *
      * @param bankcardVo 银行卡信息
      * @return bankcardVo
      */
@@ -130,7 +132,7 @@ public class BankCardController {
      */
     @RequestMapping(value = "/checkCardIsExists")
     @ResponseBody
-    public String checkCardIsExists(@RequestParam("result.bankcardNumber") String bankcardNumber) {
-        return BankHelper.checkUserCardIsExists(bankcardNumber)?"false":"true";
+    public boolean checkCardIsExists(@RequestParam("result.bankcardNumber") String bankcardNumber) {
+        return !BankHelper.checkUserCardIsExists(bankcardNumber);
     }
 }
