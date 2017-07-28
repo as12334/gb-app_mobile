@@ -44,23 +44,13 @@
                         <div class="mui-row">
                             <div class="mui-input-group mine-form mui-notice">
                                 <div class="gb-datafilter" >
-                                    <div class="mui-pull-right" style="width: 24%;">
-                                        <span class="input-drop">
-                                            <a href="#popover">
-                                                <div class="game-type" style="float: left;">
-                                                <span id="displayGameType">${views.mine_auto['游戏类型']}</span>
-                                                    </div>
-                                                    <i class="mui-icon mui-icon-arrowdown" style="font-size: 23px"></i>
-                                            </a>
-                                        </span>
-                                    </div>
                                     <a href="#selectDate" class="btn mui-btn mui-btn-primary mui-pull-right" style="width: 15%;margin-right:1px;">${views.mine_auto['快选']}</a>
-                                    <span class="input-date" style="width: 28%;"><a href=""></a>
+                                    <span class="input-date" style="width: 40%;"><a href=""></a>
                                         <input type="datetime" class="date" value="${soulFn:formatDateTz(minDate, DateFormat.DAY,timeZone)}"
                                                id="gameBeginTime" minDate="${soulFn:formatDateTz(minDate, DateFormat.DAY,timeZone)}">
                                     </span>
                                     ~
-                                    <span class="input-date" style="width: 28%;"><a href=""></a>
+                                    <span class="input-date" style="width: 39%;"><a href=""></a>
                                         <input type="datetime" class="date"
                                                value="${soulFn:formatDateTz(maxDate, DateFormat.DAY,timeZone)}" id="gameEndTime"
                                                endTime="${soulFn:formatDateTz(maxDate, DateFormat.DAY,timeZone)}">
