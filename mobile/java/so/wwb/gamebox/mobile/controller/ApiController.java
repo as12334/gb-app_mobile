@@ -289,7 +289,7 @@ public class ApiController extends BaseApiController {
             service.fetchPlayerApiBalance(listVo);
         }
 
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = new HashMap<>(2,1f);
         Integer apiId = listVo.getSearch().getApiId();
         PlayerApi playerApi = getPlayerApi(apiId);
         if (playerApi != null) {

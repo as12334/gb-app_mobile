@@ -172,7 +172,7 @@ public class DepositController extends BaseCommonDepositController {
             String bankCode = payAccount.getBankCode();
             if (!bankCodes.contains(bankCode)) {
                 bankCodes.add(bankCode);
-                Map<String, Object> bankMap = new HashMap<>(2);
+                Map<String, Object> bankMap = new HashMap<>(2,1f);
                 bankMap.put("value", payAccount.getId());
                 if (StringTool.equals("other_bank", bankCode)) {
                     bankMap.put("text", payAccount.getCustomBankName());
@@ -200,7 +200,7 @@ public class DepositController extends BaseCommonDepositController {
 
     private List<PayAccount> searchPayAccounts() {
         PayAccountListVo listVo = new PayAccountListVo();
-        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> map = new HashMap<>(3,1f);
         map.put("playerId", SessionManager.getUserId());
         map.put("currency", SessionManager.getUser().getDefaultCurrency());
         listVo.setConditions(map);

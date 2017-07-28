@@ -149,7 +149,7 @@ public class UpdateSecurityPasswordController {
     @ResponseBody
     public Map updatePrivilegePassword(UpdatePasswordVo updatePasswordVo,String code) {
 
-        Map map = new HashMap(2);
+        Map map = new HashMap(2,1f);
 
         //判断安全密码是否输入正确
         String inputCode = AuthTool.md5SysUserPermission(updatePasswordVo.getOldPrivilegePwd(), SessionManager.getUserName());
@@ -330,7 +330,7 @@ public class UpdateSecurityPasswordController {
     }
 
     private HashMap inputFault() {
-        HashMap map = new HashMap(2);
+        HashMap map = new HashMap(2,1f);
         Date now = DateQuickPicker.getInstance().getNow();
         int errTimes = getErrorTimes();
         if (errTimes == 0) {
@@ -362,7 +362,7 @@ public class UpdateSecurityPasswordController {
         privilegeUsers.put("times", times);
         SessionManagerCommon.setPrivilegeStatus(privilegeUsers);
         //返回页面消息
-        HashMap map = new HashMap(3);
+        HashMap map = new HashMap(3,1f);
         map.put("msg", LocaleTool.tranMessage("privilege", "input.wrong"));
         map.put("stateCode", PrivilegeStatusEnum.CODE_98.getCode());
         map.put("state", false);
@@ -377,7 +377,7 @@ public class UpdateSecurityPasswordController {
         privilegeUsers.put("time", new Date());
         SessionManagerCommon.setPrivilegeStatus(privilegeUsers);
         //返回页面消息
-        HashMap map = new HashMap(3);
+        HashMap map = new HashMap(3,1f);
         map.put("msg", LocaleTool.tranMessage("privilege", "input.freeze"));
         map.put("stateCode", PrivilegeStatusEnum.CODE_99.getCode());
         map.put("state", false);
@@ -390,7 +390,7 @@ public class UpdateSecurityPasswordController {
         privilegeUsers.put("times", 1);
         SessionManagerCommon.setPrivilegeStatus(privilegeUsers);
         //返回页面消息
-        HashMap map = new HashMap(3);
+        HashMap map = new HashMap(3,1f);
         map.put("msg", LocaleTool.tranMessage("privilege", "input.wrong"));
         map.put("state", false);
         map.put("leftTimes", TRY_TIMES - 1);
@@ -426,7 +426,7 @@ public class UpdateSecurityPasswordController {
     }
 
     private HashMap validateCheckCode(String valiCode) {
-        HashMap map = new HashMap(3);
+        HashMap map = new HashMap(3,1f);
         String msg;
         if (StringTool.isBlank(valiCode)) {
             msg = LocaleTool.tranMessage("privilege", "captcha.input");
@@ -497,7 +497,7 @@ public class UpdateSecurityPasswordController {
     }
 
     private Map getVoMessage(BaseVo baseVo) {
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = new HashMap<>(2,1f);
         if (baseVo.isSuccess() && StringTool.isBlank(baseVo.getOkMsg())) {
             baseVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, "save.success"));
 
@@ -517,7 +517,7 @@ public class UpdateSecurityPasswordController {
     @RequestMapping("/checkPrivilege")
     @ResponseBody
     public Map checkPrivilege() {
-        final HashMap<Object, Object> map = new HashMap<>(2);
+        final HashMap<Object, Object> map = new HashMap<>(2,1f);
         /*if (StringTool.isBlank(SessionManagerCommon.getUser().getPermissionPwd())) {
             //未设置权限密码
             LOG.info("未设置安全密码");

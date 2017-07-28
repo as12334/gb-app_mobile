@@ -71,7 +71,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
         for (Map.Entry<String, PayAccount> entry : entrySet) {
             String bankCode = entry.getKey();
             PayAccount payAccount = entry.getValue();
-            Map<String, String> map = new HashMap<>(4);
+            Map<String, String> map = new HashMap<>(4,1f);
             map.put("value", bankCode);
             map.put("text", i18nMap.get(bankCode));
             map.put("min", payAccount.getSingleDepositMin() == null ? null : CurrencyTool.formatCurrency(payAccount.getSingleDepositMin()));

@@ -103,7 +103,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         //推送消息给前端
         MessageVo message = new MessageVo();
         message.setSubscribeType(CometSubscribeType.MCENTER_RECHARGE_REMINDER.getCode());
-        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> map = new HashMap<>(3,1f);
         map.put("date", recharge.getCreateTime() == null ? new Date() : recharge.getCreateTime());
         map.put("currency", getCurrencySign());
         map.put("type", recharge.getRechargeTypeParent());
@@ -193,7 +193,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
     }
 
     public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
-        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> map = new HashMap<>(3,1f);
         if (result.hasErrors()) {
             playerRechargeVo.setSuccess(false);
             return getVoMessage(map, playerRechargeVo);
