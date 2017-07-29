@@ -10,10 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -203,6 +200,7 @@ public class DepositController extends BaseCommonDepositController {
         Map<String, Object> map = new HashMap<>(3,1f);
         map.put("playerId", SessionManager.getUserId());
         map.put("currency", SessionManager.getUser().getDefaultCurrency());
+        map.put("terminal", TerminalEnum.MOBILE.getCode());
         listVo.setConditions(map);
         return ServiceTool.payAccountService().searchPayAccountByRank(listVo);
     }
