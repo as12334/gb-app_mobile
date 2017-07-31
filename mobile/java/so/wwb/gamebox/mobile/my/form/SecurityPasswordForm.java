@@ -30,7 +30,7 @@ public class SecurityPasswordForm implements IForm {
     public void setResult_permissionPwd(String result_permissionPwd) {
         this.result_permissionPwd = result_permissionPwd;
     }
-    @NotBlank(message="passport.edit.info.security.again")
+    @NotBlank(message = "passport.edit.info.security.again")
     @Compare(logic = CompareLogic.EQ, anotherProperty = "result.permissionPwd",message = "passport.edit.info.security.same")
     public String get$confirmPermissionPwd() {
         return $confirmPermissionPwd;
