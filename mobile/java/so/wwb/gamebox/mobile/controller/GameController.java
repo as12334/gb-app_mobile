@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
-import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
