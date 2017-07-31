@@ -6,6 +6,7 @@ import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,8 @@ import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.iservice.master.report.IPlayerRecommendAwardService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
@@ -54,7 +57,12 @@ public class MyController {
         model.addAttribute("channel", "mine");
         //玩家信息
         model.addAttribute("sysUser", SessionManager.getUser());
-
+        String url = "/transfer/index.html";
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        if (param != null && "true".equals(param.getParamValue())) {
+            url = "/wallet/withdraw/index.html";
+        }
+        model.addAttribute("footerUrl", url);
         return MY_INDEX;
     }
 

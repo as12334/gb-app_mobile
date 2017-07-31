@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="/include/include.inc.jsp" %>
 <html>
 <head>
-    <%@ include file="../include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</title>
-    <%@ include file="../include/include.js.jsp" %>
+    <%@ include file="/include/include.js.jsp" %>
     <style>
         .mui-bar-tab .mui-tab-item .mui-icon {top: 0;}
     </style>
@@ -21,7 +21,7 @@
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
             <!-- 资产 -->
-            <%@include file="../include/include.asset.jsp" %>
+            <%@include file="/include/include.asset.jsp" %>
         </header>
         </c:if>
         <c:if test="${os ne 'android' && os ne 'app_ios'}">
@@ -31,7 +31,7 @@
         </c:if>
         <!--底部-->
         <c:if test="${os ne 'android' && os ne 'app_ios'}">
-            <%@include file="../include/include.footer.jsp"%>
+            <%@include file="/include/include.footer.jsp"%>
         </c:if>
         <!--滚动区域-->
         <div class="index-content mui-content mui-scroll-wrapper mui-fullscreen" id="game-scroll" style="${os eq 'android' or os eq 'app_ios'?'padding-top:0px;':''}">
@@ -77,7 +77,7 @@
                         <div class="mui-row">
                             <div class="electronic-list" style="margin-bottom: 0;">
                                 <div class="mui-row" id="gameContent">
-                                    <%@include file="../include/include.loading.jsp" %>
+                                    <%@include file="/include/include.loading.jsp" %>
                                 </div>
                             </div>
                         </div>

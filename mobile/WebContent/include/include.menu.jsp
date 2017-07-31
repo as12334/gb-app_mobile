@@ -22,21 +22,21 @@
                 </div>
             </div>
             <div class="c-nav">
-                <ul class="mui-table-view">
+                <ul class="mui-table-view menu">
                     <li class="mui-table-view-cell ${channel eq 'index'?'active':''} _app" data-skip="/"
                         data-target="0"><a><span class="icon-canvas ic-index"></span>${views.include_auto['首页2']}</a>
                     </li>
-                    <li class="mui-table-view-cell ${channel eq 'activity'?'active':''} _promo"
+                    <%--<li class="mui-table-view-cell ${channel eq 'activity'?'active':''} _promo"
                         data-href="/game.html?typeId=5"><a><span class="icon-canvas ic-promo"></span>${views.include_auto['优惠活动']}</a>
-                    </li>
+                    </li>--%>
                     <li class="mui-table-view-cell _download _downloadApp mui-hide" data-download="/app/download.html">
                         <a><span class="icon-canvas ic-download"></span>${views.include_auto['客户端']}</a>
                     </li>
                     <li class="mui-table-view-cell _app" data-skip="/wallet/deposit/index.html" data-target="1"><a><span
                                     class="icon-canvas ic-deposit"></span>${views.include_auto['账户存款']}</a>
                     </li>
-                    <li class="mui-table-view-cell _app" data-skip="/transfer/index.html" data-target="2"><a><span
-                            class="icon-canvas ic-change"></span>${views.include_auto['额度转换']}</a>
+                    <li class="mui-table-view-cell _app" data-skip="/wallet/withdraw/index.html" data-target="2"><a><span
+                            class="icon-canvas ic-change"></span>${views.include_auto['账户取款']}</a>
                     </li>
                     <li class="mui-table-view-cell" data-href="/help/firstType.html"><a><span
                             class="icon-canvas ic-problem"></span>${views.include_auto['帮助中心']}</a>

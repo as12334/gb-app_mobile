@@ -15,6 +15,7 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
@@ -98,7 +101,13 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
+        model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
         return "/Index";
+    }
+
+    private boolean isLotterySite() {
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     private List<SiteApiType> getApiTypes() {
@@ -149,7 +158,9 @@ public class IndexController extends BaseApiController {
         } else if ("about".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
             CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
-            cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
             model.addAttribute("about", cttDocumentI18n);
         } else if ("terms".equals(path) || "protocol".equals(path)) {
             SiteI18n terms = Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString());
@@ -315,5 +326,12 @@ public class IndexController extends BaseApiController {
         }else {
             return "unLogin";
         }
+    }
+
+    /** app 判断是否彩票站点接口 */
+    @RequestMapping("/index/isLotterySite")
+    @ResponseBody
+    public String lotterySite() {
+        return JsonTool.toJson(isLotterySite());
     }
 }

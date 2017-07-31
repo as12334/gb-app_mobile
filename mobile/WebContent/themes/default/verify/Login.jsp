@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${views.verify_auto['登录验证']}</title>
 </head>
 

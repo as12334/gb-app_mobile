@@ -4,7 +4,7 @@
 
 <head>
     <title>${messages.common['SystemAnnouncement.'.concat(messageType)]}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 </head>
 

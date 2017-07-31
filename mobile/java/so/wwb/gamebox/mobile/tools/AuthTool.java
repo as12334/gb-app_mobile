@@ -162,6 +162,7 @@ public class AuthTool {
                 /*
                 "1,0001,开发一",
                 "21,rf80,测试01",
+                "69,7cxt,百发彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
@@ -220,8 +221,10 @@ public class AuthTool {
                 "185,fyxi,Phoenix Gaming",
                 "186,cwad,赛博体育",
                 "187,b02h,澳门银河",
-                "188,acpb,鸿泰国际"*/
-                "189,a56r,澳门永利贵宾会"
+                "188,acpb,鸿泰国际",
+                "189,a56r,澳门永利贵宾会",
+                "190,yj4v,万博体育",*/
+                "191,d1hg,澳门赌场"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -234,8 +237,8 @@ public class AuthTool {
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
 //            getIosPlist(code, "1.0.5", siteId, name);
-            getIosBuild(siteId, name, code);
-//            getAndroidFlavors(siteId, name, code);
+//            getIosBuild(siteId, name, code);
+            getAndroidFlavors(siteId, name, code);
 //            getAndroidApk(code, "3.1.5");
 //            getIosImage(siteId);
         }
@@ -260,6 +263,10 @@ public class AuthTool {
         if (siteId == 119) theme = "blue.skin";
         else if (siteId == 141 || siteId == 161) theme = "green.skin";
         else if (siteId == 185) theme = "pink.skin";
+        else if (siteId == 69 || siteId == 70) theme = "lottery.skin";
+
+        String siteType = "integrated";
+        if (siteId == 69 || siteId == 70) siteType = "lottery";
 
         StringBuilder flavor = new StringBuilder();
         flavor.append("_").append(code).append(" {");
@@ -267,6 +274,7 @@ public class AuthTool {
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_name\", ").append("\"").append(name).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_code\", ").append("\"").append(code).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_sid\", ").append("\"").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\"");
+        flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"site_type\", ").append("\"").append(siteType).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"theme\", ").append("\"").append(theme).append("\"");
         flavor.append("\n\t").append("manifestPlaceholders = [app_icon:\"@mipmap/app_icon_").append(siteId).append("\"]");
         flavor.append("\n}\n");
