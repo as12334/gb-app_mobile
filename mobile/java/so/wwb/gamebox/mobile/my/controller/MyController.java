@@ -14,6 +14,7 @@ import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.iservice.master.report.IPlayerRecommendAwardService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
@@ -22,7 +23,9 @@ import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
+import so.wwb.gamebox.model.master.player.po.UserBankcard;
 import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
@@ -33,6 +36,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +58,9 @@ public class MyController {
         model.addAttribute("channel", "mine");
         //玩家信息
         model.addAttribute("sysUser", SessionManager.getUser());
-
+        //现金取款方式
+        model.addAttribute("isBit", ParamTool.isBit());
+        model.addAttribute("isCash", ParamTool.isCash());
         return MY_INDEX;
     }
 
@@ -75,7 +81,7 @@ public class MyController {
     public String getFund() {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
-        Map<String, Object> userInfo=new HashMap<>();
+        Map<String, Object> userInfo = new HashMap<>();
         try {
             //总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
@@ -84,7 +90,7 @@ public class MyController {
             playerApiListVo.setSiteApis(Cache.getSiteApi());
             double totalAssets = ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo);
             userInfo.put("totalAssets", totalAssets);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.print(e.getMessage());
         }
         //钱包余额
@@ -112,10 +118,21 @@ public class MyController {
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
-        userInfo.put("preferentialAmount",ServiceTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
+        userInfo.put("preferentialAmount", ServiceTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
 
         //银行卡信息
-        userInfo.put("userBankCard", BankHelper.getUserBankcard());
+        List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
+        Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
+        for (UserBankcard userBankcard : userBankcards) {
+            int length = userBankcard.getBankcardNumber().length();
+            if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
+                userInfo.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*",0, length-4));
+            } else {
+                bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
+                bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length-4));
+                userInfo.put("bankcard", bankcardNumMap);
+            }
+        }
 
         //推荐好友,昨日收益
         PlayerRecommendAwardListVo playerRecommendAwardListVo = new PlayerRecommendAwardListVo();
@@ -127,7 +144,7 @@ public class MyController {
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         Long number = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
-        VPlayerAdvisoryListVo listVo=new VPlayerAdvisoryListVo();
+        VPlayerAdvisoryListVo listVo = new VPlayerAdvisoryListVo();
         listVo.setSearch(null);
         listVo.getSearch().setSearchType("player");
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -135,7 +152,7 @@ public class MyController {
         listVo.getSearch().setPlayerDelete(false);
         listVo = ServiceTool.vPlayerAdvisoryService().search(listVo);
         Integer advisoryUnReadCount = 0;
-        String tag  = "";
+        String tag = "";
         //所有咨询数据
         for (VPlayerAdvisory obj : listVo.getResult()) {
             //查询回复表每一条在已读表是否存在
@@ -149,27 +166,27 @@ public class MyController {
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
                 readVo = ServiceTool.playerAdvisoryReadService().search(readVo);
                 //不存在未读+1，标记已读咨询Id
-                if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
+                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
                     advisoryUnReadCount++;
-                    tag+=replay.getPlayerAdvisoryId().toString()+",";
+                    tag += replay.getPlayerAdvisoryId().toString() + ",";
                 }
             }
         }
         //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String [] tags = tag.split(",");
-        for(VPlayerAdvisory vo:listVo.getResult()){
-            for(int i=0;i<tags.length;i++){
-                if(tags[i]!=""){
+        String[] tags = tag.split(",");
+        for (VPlayerAdvisory vo : listVo.getResult()) {
+            for (int i = 0; i < tags.length; i++) {
+                if (tags[i] != "") {
                     VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
                     pa.getSearch().setId(Integer.valueOf(tags[i]));
                     VPlayerAdvisoryVo vpaVo = ServiceTool.vPlayerAdvisoryService().get(pa);
-                    if(vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())){
+                    if (vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())) {
                         vo.setIsRead(false);
                     }
                 }
             }
         }
-        userInfo.put("unReadCount", number+advisoryUnReadCount);
+        userInfo.put("unReadCount", number + advisoryUnReadCount);
         //用户个人信息
         userInfo.put("username", sysUser.getUsername());
         userInfo.put("avatarUrl", sysUser.getAvatarUrl());

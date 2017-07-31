@@ -28,7 +28,7 @@
                 <div class="p-a-sm">
                     <div id="segmentedControl" class="mui-segmented-control">
                         <a class="mui-control-item" data-href="${root}/bankCard/page/addCard.html">${views.withdraw_auto['添加银行卡']}</a>
-                        <a class="mui-control-item mui-active" data-href="${root}/bankCard/page/bankCard.html">${views.withdraw_auto['管理银行卡']}</a>
+                        <a class="mui-control-item mui-active" data-href="${root}/bankCard/page/addCard.html">${views.withdraw_auto['管理银行卡']}</a>
                     </div>
                 </div>
 

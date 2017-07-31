@@ -14,7 +14,8 @@
     <context:component-scan base-package="org.soul.web.controller
         so.wwb.gamebox.web.error.controller,
         so.wwb.gamebox.web.passport.controller,
-        so.wwb.gamebox.web.lottery.**.controller,"/>
+        so.wwb.gamebox.web.lottery.**.controller,
+        so.wwb.gamebox.web.fund.controller"/>
 
     <context:component-scan base-package="org.soul.**.controller,so.wwb.gamebox.**.controller" />
 

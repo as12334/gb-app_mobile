@@ -141,20 +141,36 @@
                         </div>
                         <div class="mui-row">
                             <div class="gb-userlist m-t-sm">
+                                <c:set var="len" value="0"/>
                                 <ul>
-                                    <li>
-                                        <a href="" class="item" data-url="${root}/bankCard/page/addCard.html">
-                                            <p><img src="${resRoot}/images/my-ico7.png" style="width: 31px;" alt=""></p>
-                                            <div class="ct">
-                                                <p>${views.mine_auto['银行卡']}</p>
-                                                <p>
-                                                    <small id="bankcardNumber">
-                                                        <span id="bankImg"></span>
-                                                    </small>
-                                                </p>
-                                            </div>
-                                        </a>
-                                    </li>
+                                    <c:if test="${isCash}">
+                                        <li>
+                                            <a href="" class="item" data-url="${root}/bankCard/page/addCard.html">
+                                                <p><img src="${resRoot}/images/my-ico7.png" style="width: 31px;" alt=""></p>
+                                                <div class="ct">
+                                                    <p>${views.mine_auto['银行卡']}</p>
+                                                    <p>
+                                                        <small id="bankcardNumber">
+                                                            <span id="bankImg"></span>
+                                                        </small>
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <c:set var="len" value="${len+1}"/>
+                                    </c:if>
+                                   <c:if test="${isBit}">
+                                       <li>
+                                           <a href="" class="item" data-url="${root}/bankCard/page/addBtc.html">
+                                               <p><img src="${resRoot}/images/my-ico12.png" style="width: 33px;" alt=""></p>
+                                               <div class="ct">
+                                                   <p>比特币钱包</p>
+                                                   <p><small id="btcNumber"></small></p>
+                                               </div>
+                                           </a>
+                                       </li>
+                                       <c:set var="len" value="${len+1}"/>
+                                   </c:if>
                                     <li>
                                         <a class="item" data-url="${root}/message/gameNotice.html?isSendMessage=true">
                                             <p><img src="${resRoot}/images/my-ico9.png"
@@ -164,28 +180,16 @@
                                             </div>
                                         </a>
                                     </li>
-                                    <%--
-                                    <li>
-                                        <a href="" class="item" data-url="mine-invite.html">
-                                            <p><img src="${resRoot}/images/my-ico8.png" style="width: 33px;" alt=""></p>
-                                            <div class="ct">
-                                                <p>${views.mine_auto['推荐好友']}</p>
-                                                &lt;%&ndash;<c:if test="${not empty recomdAmount&&recomdAmount!=0}">&ndash;%&gt;
-                                                    <p>
-                                                        <small id="recomdAmount">&lt;%&ndash;昨日收益:￥${soulFn:formatCurrency(recomdAmount)}&ndash;%&gt;</small>
-                                                    </p>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    --%>
-                                    <li>
-                                        <a class="item" data-url="${root}/passport/securityPassword/edit.html">
-                                            <p><img src="${resRoot}/images/my-ico11.png" style="width: 26px;"></p>
-                                            <div class="ct">
-                                                <p>${views.mine_auto['修改安全密码']}</p>
-                                            </div>
-                                        </a>
-                                    </li>
+                                    <c:if test="${len!=2}">
+                                        <li>
+                                            <a class="item" data-url="${root}/passport/securityPassword/edit.html">
+                                                <p><img src="${resRoot}/images/my-ico11.png" style="width: 26px;"></p>
+                                                <div class="ct">
+                                                    <p>${views.mine_auto['修改安全密码']}</p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </c:if>
                                 </ul>
                                 <div class="clearfix"></div>
                             </div>
@@ -193,6 +197,16 @@
                         <div class="mui-row m-b-sm">
                             <div class="gb-userlist m-t-sm">
                                 <ul>
+                                    <c:if test="${len==2}">
+                                        <li>
+                                            <a class="item" data-url="${root}/passport/securityPassword/edit.html">
+                                                <p><img src="${resRoot}/images/my-ico11.png" style="width: 26px;"></p>
+                                                <div class="ct">
+                                                    <p>${views.mine_auto['修改安全密码']}</p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </c:if>
                                     <li>
                                         <a class="item" data-url="${root}/my/password/editPassword.html">
                                             <p><img src="${resRoot}/images/my-ico10.png" style="width: 30px;"></p>
