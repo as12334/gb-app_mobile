@@ -17,34 +17,6 @@ import javax.validation.constraints.Pattern;
 @Comment("安全密码设置")
 public class SecurityPasswordForm implements IForm {
 
-    /*private String privilegePwd;
-    private String privilegeRePwd;
-
-    @NotBlank(message = "请输入安全密码")
-    @Length(max = 6,message = "请输入6位0-9的纯数字")
-    @Pattern(message = "common.valid.securityPWDFormat",regexp = FormValidRegExps.SECURITY_PWD)
-    @Remote(checkClass = UpdateSecurityPasswordController.class, checkMethod = "checkPrivilegePwd", additionalProperties = {"privilegePwd"}, message = "当前密码过于简单，请重新输入")
-    @Comment("安全密码")
-    public String getPrivilegePwd() {
-        return privilegePwd;
-    }
-
-    public void setPrivilegePwd(String privilegePwd) {
-        this.privilegePwd = privilegePwd;
-    }
-
-    @NotBlank(message = "请再次输入安全密码")
-    @Length(max = 6,message = "请输入6位0-9的纯数字")
-    @Compare(message = "两次密码不一致", logic = CompareLogic.EQ, anotherProperty = "privilegePwd")
-    @Comment("新安全密码")
-    public String getPrivilegeRePwd() {
-        return privilegeRePwd;
-    }
-
-    public void setPrivilegeRePwd(String privilegeRePwd) {
-        this.privilegeRePwd = privilegeRePwd;
-    }*/
-
     private String result_permissionPwd;
     private String $confirmPermissionPwd;
 
