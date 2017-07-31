@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.fund_auto['投注记录']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
     <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
@@ -56,7 +56,7 @@
                                         <td>${views.fund_auto['状态']}</td>
                                     </tr>
                                     <tbody id="content-list">
-                                    <%@ include file="IndexPartialList.jsp"%></tbody>
+                                    <%@ include file="./IndexPartialList.jsp"%></tbody>
                                 </table>
                             </div>
                         </div>

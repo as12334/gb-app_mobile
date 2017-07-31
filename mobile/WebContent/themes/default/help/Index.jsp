@@ -2,7 +2,7 @@
 <%@ include file="/include/include.inc.jsp" %>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${views.help_auto['帮助中心']}</title>
     <%@ include file="/include/include.js.jsp" %>
 </head>

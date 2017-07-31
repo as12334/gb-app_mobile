@@ -2,13 +2,13 @@ package so.wwb.gamebox.mobile.my.controller;
 
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.validation.form.PasswordRule;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
-import org.soul.commons.locale.DateQuickPicker;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +41,7 @@ import java.util.Map;
 @RequestMapping("/my/password")
 public class UpdatePasswordController {
 
-    private static final String PERSON_INFO_UPDATE_PASSWORD = "password/UpdatePassword";
+    private static final String PERSON_INFO_UPDATE_PASSWORD = "/password/UpdatePassword";
 
     /*默认5次机会*/
     private static final int ERROR_TIMES = 5;

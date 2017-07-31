@@ -4,6 +4,7 @@ import org.soul.commons.bean.Pair;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -14,7 +15,6 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
 import org.soul.model.sys.po.SysParam;
-import org.soul.commons.locale.DateQuickPicker;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,9 +50,9 @@ import static so.wwb.gamebox.web.privilege.controller.PrivilegeController.TRY_TI
 @Controller
 @RequestMapping("/passport/securityPassword")
 public class SecurityPasswordController {
-    private static final String SET_PASSWORD_URL = "passport/password/SetSecurityPassword";
-    private static final String PASSWORD_LOCKED_URL = "passport/password/SecurityPasswordLocked";
-    private static final String UPDATE_PASSWORD_URL = "passport/password/UpdateSecurityPassword";
+    private static final String SET_PASSWORD_URL = "/passport/password/SetSecurityPassword";
+    private static final String PASSWORD_LOCKED_URL = "/passport/password/SecurityPasswordLocked";
+    private static final String UPDATE_PASSWORD_URL = "/passport/password/UpdateSecurityPassword";
     private static final Log LOG = LogFactory.getLog(SecurityPasswordController.class);
     /** 安全密码最大错误次数 */
     private static final int SECURITY_PWD_MAX_ERROR_TIMES = TRY_TIMES;

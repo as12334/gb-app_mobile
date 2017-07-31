@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<%@ include file="/include/include.head.jsp" %>
+	<%@ include file="/themes/default/include/include.head.jsp" %>
 	<title>${name}</title>
 	<%@ include file="/include/include.js.jsp" %>
 </head>

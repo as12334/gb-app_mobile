@@ -12,6 +12,6 @@
             <td>${views.fund_auto['派彩']}<br><span class="text-blue">${siteCurrencySign}${soulFn:formatCurrency(statisticalData.profit)}</span></td>
             <td>${views.fund_auto['状态']}</td>
         </tr>
-        <%@ include file="IndexPartialList.jsp"%>
+        <%@ include file="./IndexPartialList.jsp"%>
     </table>
 </div>

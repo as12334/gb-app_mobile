@@ -3,7 +3,7 @@
 <c:set value="${apiDetail.get('apiI18n')}" var="apiI18n"></c:set>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${apiI18n.name}</title>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
     <%@ include file="/include/include.js.jsp" %>
@@ -44,7 +44,7 @@
 <input type="hidden" id="apiId" value="${apiI18n.apiId}"/>
 <input type="hidden" id="apiTypeId" value="${apiDetail.get('apiTypeId')}"/>
 <!--滚动区域-->
-<div class="mui-content mui-scroll-wrapper mui-fullscreen">
+<div class="mui-content mui-scroll-wrapper mui-fullscreen api-content">
     <div class="mui-scroll">
         <div class="gb-fullpage">
             <!-- banner -->

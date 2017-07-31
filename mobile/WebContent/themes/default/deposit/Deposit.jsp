@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
@@ -26,7 +26,7 @@
             <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0"':''} >
                 <div class="${os eq 'app_ios' ? 'mui-scroll':''} mui-scroll2">
                     <div class="gb-notice page-notice bg-white mui-hide" id="bankNotice" ${bankNotices.result.size() == 0 ? 'style="display:none"' : ''}>
-                        <%@include file="BankNotice.jsp"%>
+                        <%@include file="./BankNotice.jsp"%>
                     </div>
                     <div class="mui-row">
                         <div class="mui-input-group mine-form">

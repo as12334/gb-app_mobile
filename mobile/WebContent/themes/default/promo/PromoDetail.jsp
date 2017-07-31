@@ -5,7 +5,7 @@
 <head>
     <c:set var="activity" value="${command.result}" />
     <title>${activity.activityName}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/hb/style.css?v=${rcVersion}" />
     <%@ include file="/include/include.js.jsp" %>
 </head>
@@ -66,7 +66,7 @@
                 </c:if>
             </nav>
 
-            <%@ include file="redEnvelope/Envelope.jsp" %>
+            <%@ include file="./redEnvelope/Envelope.jsp" %>
 
             <div class="mui-off-canvas-backdrop"></div>
         </div>

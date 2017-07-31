@@ -5,7 +5,7 @@
 <html>
 
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${views.index_auto['注册条款']}</title>
     <%@ include file="/include/include.js.jsp" %>
 </head>

@@ -4,7 +4,7 @@
 
 <head>
     <title>${views.fund_auto['投注记录详情']}</title>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
 </head>
 
@@ -151,11 +151,11 @@
                             <c:choose>
                                 <%--体育投注--%>
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==3}">
-                                    <%@include file="SportsbookDetail.jsp"%>
+                                    <%@include file="./SportsbookDetail.jsp"%>
                                 </c:when>
                                 <%--真人投注--%>
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==1}">
-                                    <%@include file="LiveDealerDetail.jsp"%>
+                                    <%@include file="./LiveDealerDetail.jsp"%>
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach items="${resultArray}" var="array">

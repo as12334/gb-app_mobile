@@ -26,7 +26,7 @@
                                name="result.rechargeAmount" id="result.rechargeAmount" autocomplete="off"/>
                     </div>
                 </div>
-                <%@include file="ChooseAmount.jsp"%>
+                <%@include file="./ChooseAmount.jsp"%>
             </div>
             <div class="mui-row">
                 <div class="gb-form-foot" style="padding-bottom:10px;">

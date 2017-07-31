@@ -1,13 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="/include/include.inc.jsp" %>
 <c:set var="tid" value="${apiTypeId}"/>
 <input type="hidden" id="tid" value="${apiTypeId}">
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="../include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${siteName}</title>
-    <%@ include file="../include/include.js.jsp" %>
+    <%@ include file="/include/include.js.jsp" %>
 </head>
 
 <body class="gb-theme index">
@@ -24,13 +24,13 @@
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
             <!-- 资产 -->
-            <%@include file="../include/include.asset.jsp" %>
+            <%@include file="/include/include.asset.jsp" %>
         </header>
         <section class="site-address mui-hide _indexDomain">
             主页域名：${empty sysDomain?domain:sysDomain}
         </section>
         <!--底部-->
-        <%@include file="../include/include.footer.jsp" %>
+        <%@include file="/include/include.footer.jsp" %>
         <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
             <!-- 主页面容器 -->
             <div class="mui-inner-wrap">
@@ -39,9 +39,9 @@
                     <div class="mui-scroll">
                         <div>
                             <!-- Banner和公告 -->
-                            <%@ include file="../game/include/include.banner.jsp" %>
+                            <%@ include file="./include/include.banner.jsp" %>
                             <!-- 导航 -->
-                            <%@ include file="../game/include/include.nav.jsp" %>
+                            <%@ include file="./include/include.nav.jsp" %>
                             <div id="_games" class="mui-control-content ${apiTypeId<5?'mui-active':''}">
                                 <!-- API游戏 -->
                                 <input type="hidden" id="nav-type" value="${tid}"/>
@@ -49,13 +49,13 @@
                                     <c:forEach var="at" items="${apiTypes}" varStatus="vs">
                                         <div id="container${at.apiTypeId}"
                                              class="mui-control-content ${at.apiTypeId == tid ? 'mui-show' : 'mui-hide'}">
-                                            <%@include file="../include/include.loading.jsp" %>
+                                            <%@include file="/include/include.loading.jsp" %>
                                         </div>
                                     </c:forEach>
                                 </div>
                             </div>
                             <div id="_promo" class="mui-control-content mui-nav ${apiTypeId==5?'mui-active':''}">
-                                <%@include file="../include/include.loading.jsp" %>
+                                <%@include file="/include/include.loading.jsp" %>
                             </div>
                             <div id="_agent" class="mui-control-content mui-nav ${apiTypeId==6?'mui-active':''}"></div>
                             <div id="_about" class="mui-control-content mui-nav ${apiTypeId==7?'mui-active':''}"></div>
@@ -70,7 +70,7 @@
                 <div class="mui-off-canvas-backdrop"></div>
             </div>
         </div>
-        <%@ include file="../game/include/include.notice.jsp" %>
+        <%@ include file="./include/include.notice.jsp" %>
     </div>
 </div>
 </body>

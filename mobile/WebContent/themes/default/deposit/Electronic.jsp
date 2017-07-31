@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <title><c:if test="${payAccount.bankCode eq 'wechatpay'}">
         ${views.deposit_auto['转账到微信']}
@@ -156,7 +156,7 @@
                                     </div>
                                 </div>
 
-                                <%@include file="ChooseAmount.jsp"%>
+                                <%@include file="./ChooseAmount.jsp"%>
 
                                 <div class="mui-input-row">
                                     <label>${views.deposit_auto['订单号后5位']}

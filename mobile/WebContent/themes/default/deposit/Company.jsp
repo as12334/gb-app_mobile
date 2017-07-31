@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/include/include.head.jsp" %>
+    <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
@@ -84,7 +84,7 @@
                                         </div>
                                     </div>
 
-                                    <%@include file="ChooseAmount.jsp"%>
+                                    <%@include file="./ChooseAmount.jsp"%>
 
                                     <div class="mui-input-row"><label>${views.deposit_auto['存款类型']}</label>
                                         <div class="ct" id="rechargeType">
