@@ -76,6 +76,7 @@
 				/commonPage/*.html = anon
 				/app/*.html = anon
 				/sysUser.html = anon
+				/lotteryResult/getOpenResult.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>
