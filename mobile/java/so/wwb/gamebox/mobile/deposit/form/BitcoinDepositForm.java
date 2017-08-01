@@ -40,7 +40,7 @@ public class BitcoinDepositForm implements IForm {
     @Comment("txId")
     @NotBlank
     @Length(max = 64)
-    @Remote(message = "txId已存在!", checkClass = CompanyBitcoinDepositController.class, checkMethod = "checkTxId")
+    @Remote(message = "deposit_auto.txId已存在", checkClass = CompanyBitcoinDepositController.class, checkMethod = "checkTxId")
     public String getResult_bankOrder() {
         return result_bankOrder;
     }

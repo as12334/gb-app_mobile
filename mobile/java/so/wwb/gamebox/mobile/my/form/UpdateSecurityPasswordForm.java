@@ -30,7 +30,7 @@ public class UpdateSecurityPasswordForm implements IForm {
     //有设置真实姓名
     private String realName2;
 
-    @NotBlank(message = "请输入安全密码")
+    @NotBlank(message = "my_auto.请输入安全密码")
     @Length(max = 6)
 //    @Pattern(message = "common.valid.securityPWDFormat",regexp = FormValidRegExps.SECURITY_PWD)
 //    @Remote(checkClass = PasswordController.class, checkMethod = "checkPrivilegePassword", additionalProperties = {"oldPrivilegePwd"}, message = "安全密码错误")
@@ -43,10 +43,10 @@ public class UpdateSecurityPasswordForm implements IForm {
         this.oldPrivilegePwd = oldPrivilegePwd;
     }
 
-    @NotBlank(message = "请输入安全密码")
+    @NotBlank(message = "my_auto.请输入安全密码")
     @Length(max = 6)
 //    @Pattern(message = "common.valid.securityPWDFormat",regexp = FormValidRegExps.SECURITY_PWD)
-    @Remote(checkClass = UpdateSecurityPasswordController.class, checkMethod = "checkPrivilegePwd", additionalProperties = {"privilegePwd"}, message = "当前密码过于简单,请重新输入")
+    @Remote(checkClass = UpdateSecurityPasswordController.class, checkMethod = "checkPrivilegePwd", additionalProperties = {"privilegePwd"}, message = "my_auto.当前密码过于简单")
     @Comment("新安全密码")
     public String getPrivilegePwd() {
         return privilegePwd;
@@ -56,9 +56,9 @@ public class UpdateSecurityPasswordForm implements IForm {
         this.privilegePwd = privilegePwd;
     }
 
-    @NotBlank(message = "请再次输入安全密码")
+    @NotBlank(message = "my_auto.请再次输入安全密码")
     @Length(max = 6)
-    @Compare(message = "两次密码不一致", logic = CompareLogic.EQ, anotherProperty = "privilegePwd")
+    @Compare(message = "my_auto.两次密码不一致", logic = CompareLogic.EQ, anotherProperty = "privilegePwd")
     @Comment("确认新安全密码")
     public String getConfirmPrivilegePwd() {
         return confirmPrivilegePwd;
@@ -68,8 +68,8 @@ public class UpdateSecurityPasswordForm implements IForm {
         this.confirmPrivilegePwd = confirmPrivilegePwd;
     }
 
-    @NotBlank(message = "请输入真实姓名")
-    @Remote(checkClass = UpdateSecurityPasswordController.class,checkMethod = "checkRealName",additionalProperties = {"realName"},message = "您暂未设置真实姓名,请先设置!")
+    @NotBlank(message = "my_auto.请输入真实姓名")
+    @Remote(checkClass = UpdateSecurityPasswordController.class,checkMethod = "checkRealName",additionalProperties = {"realName"},message = "my_auto.您暂未设置真实姓名")
     @Comment("真实姓名")
     public String getRealName() {
         return realName;
@@ -79,8 +79,8 @@ public class UpdateSecurityPasswordForm implements IForm {
         this.realName = realName;
     }
 
-    @NotBlank(message = "请输入真实姓名")
-    @Remote(checkClass = UpdateSecurityPasswordController.class,checkMethod = "checkRealName2",additionalProperties = {"realName2"},message = "输入错误,验证失败!")
+    @NotBlank(message = "my_auto.请输入真实姓名")
+    @Remote(checkClass = UpdateSecurityPasswordController.class,checkMethod = "checkRealName2",additionalProperties = {"realName2"},message = "my_auto.输入错误")
     @Comment("真实姓名")
     public String getRealName2() {
         return realName2;
@@ -90,8 +90,8 @@ public class UpdateSecurityPasswordForm implements IForm {
         this.realName2 = realName2;
     }
 
-    @Depends(property = "flag",operator = Operator.EQ,value = {"true"},jsValueExp ="$(\"[name=\\'flag\\']\").val()=='true'",message = "请输入验证码")
-    @Remote(checkClass = UpdateSecurityPasswordController.class, checkMethod = "checkValiCode", additionalProperties = {"code"}, message = "验证码错误")
+    @Depends(property = "flag",operator = Operator.EQ,value = {"true"},jsValueExp ="$(\"[name=\\'flag\\']\").val()=='true'",message = "my_auto.请输入验证码")
+    @Remote(checkClass = UpdateSecurityPasswordController.class, checkMethod = "checkValiCode", additionalProperties = {"code"}, message = "my_auto.验证码错误")
     public String getCode() {
         return code;
     }
