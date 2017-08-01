@@ -101,6 +101,7 @@
                                     <input type="hidden" name="noBank" value="${isCash && empty bank}"/>
                                     <input type="hidden" name="noBtc" value="${isBit && empty btc}"/>
                                     <input type="hidden" name="remittanceWay" value="${isCash?'1':'2'}">
+                                    <input id="sign" type="hidden" value="${currencySign}"/>
                                     <c:if test="${isCash}">
                                         <div class="mui-input-group mine-form bankcard" id="bank_account">
                                             <div class="bankitem" data-url="${root}/bankCard/page/addCard.html?action=withdraw">
@@ -122,7 +123,7 @@
                                             <div class="bankitem" data-url="${root}/bankCard/page/addBtc.html?action=withdraw">
                                                 <span>
                                                     <c:if test="${!empty btc}">
-                                                        <span class="pay-bank pay-bit-pay"></span>
+                                                        <span class="pay-bank bitcoin"></span>
                                                         比特币&nbsp;${gbFn:overlayBankcard(btc.bankcardNumber)}
                                                     </c:if>
                                                      <c:if test="${empty btc}">
