@@ -4,9 +4,10 @@
 <html>
 <head>
     <title>${empty userBankCard ? views.withdraw_auto['添加'] : views.withdraw_auto['我的']}${views.withdraw_auto['银行卡']}</title>
-    <%@ include file="/themes/default/include/include.head.jsp" %>
+    <%@ include file="../../include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
+    <%@ include file="/include/include.js.jsp" %>
 </head>
 
 <body class="gb-theme mine-page">
@@ -22,8 +23,8 @@
                 <c:choose>
                     <c:when test="${empty userBankCard}">
                         <div class="gb-bindcard-box" style="display: block;">
-                            <form onsubmit="return false">
-                                <div id="validateRule" style="display: none">${validateRule}</div>
+                            <form name="bankcardForm">
+                                <div id="validateRule" style="display: none">${validate}</div>
                                 <input type="hidden" name="action" value="${action}"/>
                                 <gb:token/>
                                 <div class="cont m-t-sm">
@@ -36,11 +37,11 @@
                                                 <div class="ct">
                                                     <c:choose>
                                                         <c:when test="${empty realName}">
-                                                            <input type="text" placeholder="${views.withdraw_auto['请输入真实姓名']}" name="realName" autocomplete="off">
+                                                            <input type="text" placeholder="${views.withdraw_auto['请输入真实姓名']}" name="result.bankcardMasterName" autocomplete="off">
                                                         </c:when>
                                                         <c:otherwise>
                                                             <span class="mui-text-right" style="font-size: 12px; color: #999999">${soulFn:overlayName(realName)}</span>
-                                                            <input value="${realName}" name="realName" type="hidden">
+                                                            <input type="hidden" value="${realName}" name="result.bankcardMasterName">
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </div>
@@ -49,7 +50,7 @@
                                                 <div class="ct">
                                                     <div class="gb-select">
                                                         <a id="bankLabel">${views.withdraw_auto['请选择']}</a>
-                                                        <input name="result.bankName" id="bankName" type="hidden"/>
+                                                        <input name="result.bankName" type="hidden"/>
                                                     </div>
                                                     <i class="arrow"></i>
                                                 </div>
@@ -116,23 +117,15 @@
 </div>
 </body>
 </html>
-<%@ include file="/include/include.base.js.common.jsp" %>
-<script type="text/javascript" src="${root}/mobile/message_<%=SessionManagerCommon.getLocale().toString()%>.js?v=${rcVersion}"></script>
-
-<script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
-<script src="${resComRoot}/js/jquery/jquery-2.1.1.min.js?v=${rcVersion}"></script>
-<script src="${resComRoot}/js/jquery/plugins/jquery.validate/jquery.validate.min.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/jquery/jquery.validate.extend.mobile.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/common/global.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-<script src="${resRoot}/js/my/AddCard.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script>
-    var language = '${language.replace('_','-')}';
-    var isLogin = '${isLogin}';
-    if(os == 'app_ios'){
-        $(".mui-action-back").on('tap', function () {
-            goBack();
-        })
-    }
+    curl(['site/withdraw/bankcard/Bankcard', 'site/passport/password/PopSecurityPassword', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
+            function (Page, Security, Menu, Footer, Dynamic) {
+                page = new Page();
+                page.security = new Security();
+                page.menu = new Menu();
+                page.menu = new Footer();
+                page.dynamic = new Dynamic();
+            });
 </script>

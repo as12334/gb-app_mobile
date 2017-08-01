@@ -23,10 +23,10 @@ public class OnlineScanDepositForm implements IForm {
     private String $code;
 
     @Comment("存款金额")
-    @NotBlank(message = "请输入存款金额")
+    @NotBlank(message = "deposit_auto.请输入存款金额")
     @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "单笔存款最低为{0}，最高为{1}", checkClass = OnlineScanDepositController.class, checkMethod = "checkScanCodeAmount", additionalProperties = {"result.rechargeType"})
-    @Max(message = "单笔存款最高为99,999,999", value = 99999999)
+    @Max(message = "deposit_auto.单笔存款最高为99", value = 99999999)
     @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 1)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;

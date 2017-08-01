@@ -25,7 +25,9 @@ import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
+import so.wwb.gamebox.model.master.player.po.UserBankcard;
 import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
@@ -36,6 +38,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,6 +66,9 @@ public class MyController {
             url = "/wallet/withdraw/index.html";
         }
         model.addAttribute("footerUrl", url);
+        //现金取款方式
+        model.addAttribute("isBit", ParamTool.isBit());
+        model.addAttribute("isCash", ParamTool.isCash());
         return MY_INDEX;
     }
 
@@ -123,7 +129,18 @@ public class MyController {
         userInfo.put("preferentialAmount",ServiceTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
 
         //银行卡信息
-        userInfo.put("userBankCard", BankHelper.getUserBankcard());
+        List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
+        Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
+        for (UserBankcard userBankcard : userBankcards) {
+            int length = userBankcard.getBankcardNumber().length();
+            if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
+                userInfo.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*",0, length-4));
+            } else {
+                bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
+                bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length-4));
+                userInfo.put("bankcard", bankcardNumMap);
+            }
+        }
 
         //推荐好友,昨日收益
         PlayerRecommendAwardListVo playerRecommendAwardListVo = new PlayerRecommendAwardListVo();
