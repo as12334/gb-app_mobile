@@ -42,7 +42,7 @@
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/default/style.css?v=${rcVersion}" />
     </c:otherwise>
 </c:choose>
-<link rel="stylesheet" type="text/css" href="${resRoot}/themes/${curTheme}/lang/${language.replace('_','-')}.css?v=${rcVersion}"/>
+<link rel="stylesheet" type="text/css" href="${resRoot}/themes/${curTheme}/lang/${language}.css?v=${rcVersion}"/>
 <%
     String userAgent = request.getHeader("User-Agent");
     String myos;
