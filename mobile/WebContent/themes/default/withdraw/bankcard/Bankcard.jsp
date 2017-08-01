@@ -4,10 +4,10 @@
 <html>
 <head>
     <title>${empty userBankCard ? views.withdraw_auto['添加'] : views.withdraw_auto['我的']}${views.withdraw_auto['银行卡']}</title>
-    <%@ include file="/include/include.head.jsp" %>
-    <%@ include file="/include/include.js.jsp" %>
+    <%@ include file="../../include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
+    <%@ include file="/include/include.js.jsp" %>
 </head>
 
 <body class="gb-theme mine-page">
