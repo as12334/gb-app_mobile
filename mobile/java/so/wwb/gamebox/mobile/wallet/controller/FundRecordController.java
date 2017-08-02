@@ -101,12 +101,12 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
         Map<String, String> result = new HashMap<>();
         result.put("withdrawSum", CurrencyTool.formatCurrency(ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo)));
+        result.put("currency", getCurrencySign());
         if (!isLotterySite()) {
             //正在转账中金额
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
             result.put("transferSum", CurrencyTool.formatCurrency(playerTransferService().queryProcessAmount(playerTransferVo)));
-            result.put("currency", getCurrencySign());
         }
         return result;
     }
