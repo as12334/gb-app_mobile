@@ -91,7 +91,7 @@
                     </c:if>
                     <div class="mui-clearfix">
                         <div class="mui-control-content mui-active">
-                            <div id="validateRule" style="display: none">${validateRule}</div>
+                            <div id="validateRule" style="display: none">${validate}</div>
                             <div class="mui-scroll">
                                 <div class="mui-row">
                                     <c:set var="bankType" value="<%=UserBankcardTypeEnum.TYPE_BANK%>"/>
