@@ -85,11 +85,12 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index")
-    public String toIndex(HttpServletRequest request) {
+    public String toIndex(Model model, HttpServletRequest request) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             SessionManager.setRecommendUserCode(c);
         }
+        getAppPath(model, request);
         return "/ToIndex";
     }
 
@@ -196,7 +197,7 @@ public class IndexController extends BaseApiController {
     @RequestMapping(value = "/index/getUserTimeZoneDate")
     @ResponseBody
     public String getUserTimeZoneDate() {
-        Map<String, String> map = new HashMap<>(2);
+        Map<String, String> map = new HashMap<>(2,1f);
         map.put("dateTimeFromat", CommonContext.getDateFormat().getDAY_SECOND());
         map.put("dateTime", SessionManager.getUserDate(CommonContext.getDateFormat().getDAY_SECOND()));
         map.put("time", String.valueOf(new Date().getTime()));
@@ -235,7 +236,7 @@ public class IndexController extends BaseApiController {
     @RequestMapping("/index/getLogoUrl")
     @ResponseBody
     public String getLogoUrl() {
-        Map<String,String> urlMap = new HashMap<>(2);
+        Map<String,String> urlMap = new HashMap<>(2,1f);
         urlMap.put("logoUrl", "/ftl/commonPage/images/app_logo/app_logo_"+ SessionManager.getSiteId() +".png");
         urlMap.put("iconUrl", "/ftl/commonPage/images/app_icon/app_icon_"+ SessionManager.getSiteId() +".png");
         return JsonTool.toJson(urlMap);
@@ -282,6 +283,12 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     public String downloadApp(Model model, ServletRequest request){
+        getAppPath(model, request);
+        return "/app/Index";
+    }
+
+    /** 获取APP下载地址 */
+    private void getAppPath(Model model, ServletRequest request) {
         //获取站点信息
         Integer siteId = SessionManager.getSiteId();
         String code = Cache.getSysSite().get(siteId.toString()).getCode();
@@ -310,7 +317,6 @@ public class IndexController extends BaseApiController {
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(iosUrl, 6)));
         model.addAttribute("androidUrl", androidUrl);
         model.addAttribute("iosUrl", iosUrl);
-        return "/app/Index";
     }
 
     /**
