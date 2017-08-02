@@ -85,11 +85,12 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index")
-    public String toIndex(HttpServletRequest request) {
+    public String toIndex(Model model, HttpServletRequest request) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             SessionManager.setRecommendUserCode(c);
         }
+        getAppPath(model, request);
         return "/ToIndex";
     }
 
@@ -282,6 +283,12 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     public String downloadApp(Model model, ServletRequest request){
+        getAppPath(model, request);
+        return "/app/Index";
+    }
+
+    /** 获取APP下载地址 */
+    private void getAppPath(Model model, ServletRequest request) {
         //获取站点信息
         Integer siteId = SessionManager.getSiteId();
         String code = Cache.getSysSite().get(siteId.toString()).getCode();
@@ -310,7 +317,6 @@ public class IndexController extends BaseApiController {
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(iosUrl, 6)));
         model.addAttribute("androidUrl", androidUrl);
         model.addAttribute("iosUrl", iosUrl);
-        return "/app/Index";
     }
 
     /**

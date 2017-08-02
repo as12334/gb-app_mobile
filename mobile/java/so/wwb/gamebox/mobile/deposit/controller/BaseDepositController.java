@@ -8,7 +8,6 @@ import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
-import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
