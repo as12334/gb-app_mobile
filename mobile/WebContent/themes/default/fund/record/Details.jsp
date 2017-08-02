@@ -302,7 +302,7 @@
                                         <c:if test="${command.result.fundType eq 'bitcoin_fast'}">
                                             <p>
                                                 <span>比特币:</span>
-                                                ${command.result._describe['bitAmount']}
+                                                Ƀ<fmt:formatNumber value="${command.result._describe['bitAmount']}" pattern="#.########"/>
                                             </p>
                                             <c:if test="${command.result.rechargeAmount!=0}">
                                                 <p>
