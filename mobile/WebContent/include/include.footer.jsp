@@ -11,7 +11,7 @@
     </a>
     <a class="mui-tab-item" data-url="${footerUrl}" id="footer_transfer">
         <span class="mui-icon icon3"></span>
-        <span class="mui-tab-label">${views.mine_auto['取款']}</span>
+        <span class="mui-tab-label">${views.mine_auto[isLotterySite ? '取款' : '转账']}</span>
     </a>
     <a class="mui-tab-item customer" id="footer_customer">
         <span class="mui-icon icon4"></span>
