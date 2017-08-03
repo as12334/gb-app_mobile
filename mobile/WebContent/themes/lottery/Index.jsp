@@ -82,43 +82,43 @@
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a class="customer">
                             <span class="home-f-ico ico-service"></span>
-                            <span class="lottery-title">在线客服</span>
+                            <span class="lottery-title">${views.themes_auto['在线客服']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a data-href="/mine/index.html">
                             <span class="home-f-ico ico-service-2"></span>
-                            <span class="lottery-title">会员中心</span>
+                            <span class="lottery-title">${views.themes_auto['会员中心']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a data-href="/lottery/lotteryResultHistory/index.html">
                             <span class="home-f-ico ico-service-3"></span>
-                            <span class="lottery-title">开奖结果</span>
+                            <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
                         <a href="bjpks.html">
                             <span class="home-f-ico ico-service-4"></span>
-                            <span class="lottery-title">走势图</span>
+                            <span class="lottery-title">${views.themes_auto['走势图']}</span>
                         </a>
                     </li>
                 </ul>
                 <div class="content-title home-title">
-                    <h4>热门彩种</h4>
-                    <a href="/lottery/mainIndex.html" class="mui-pull-right home-more-btn moreLottery">更多<span class="mui-icon mui-icon-more-filled"></span></a>
+                    <h4>${views.themes_auto['热门彩种']}</h4>
+                    <a href="/lottery/mainIndex.html" class="mui-pull-right home-more-btn moreLottery">${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span></a>
                 </div>
                 <ul class="mui-table-view mui-grid-view diy-grid-9">
                     <li class="diy-table-view-cell mui-col-xs-3">
                         <a class="item _lottery" href="/lottery/ssc/cqssc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-cqssc"></span>
-                            <span class="lottery-title">重庆时时彩</span>
+                            <span class="lottery-title">${views.themes_auto['重庆时时彩']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
                         <a class="item _lottery" href="/lottery/lhc/hklhc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-hklhc"></span>
-                            <span class="lottery-title">香港六合彩</span>
+                            <span class="lottery-title">${views.themes_auto['香港六合彩']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
@@ -136,13 +136,13 @@
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a class="item _lottery" href="/lottery/ssc/tjssc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-tjssc"></span>
-                            <span class="lottery-title">天津时时彩</span>
+                            <span class="lottery-title">${views.themes_auto['天津时时彩']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a class="item _lottery" href="/lottery/ssc/xjssc/index.html" data-status="normal">
                             <span class="lottery-ico lottery-ico-xjssc"></span>
-                            <span class="lottery-title">新疆时时彩</span>
+                            <span class="lottery-title">${views.themes_auto['新疆时时彩']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
@@ -159,8 +159,8 @@
                     </li>
                 </ul>
                 <div class="content-title home-title">
-                    <h4>热门开奖</h4>
-                    <a data-href="/lottery/lotteryResultHistory/index.html" class="mui-pull-right home-more-btn">更多<span class="mui-icon mui-icon-more-filled"></span></a>
+                    <h4>${views.themes_auto['热门开奖']}</h4>
+                    <a data-href="/lottery/lotteryResultHistory/index.html" class="mui-pull-right home-more-btn">${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span></a>
                 </div>
                 <ul class="mui-table-view mui-table-view-chevron _result">
                     <!-- 热门开奖 -->

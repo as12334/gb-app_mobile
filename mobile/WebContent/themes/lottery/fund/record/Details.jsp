@@ -166,14 +166,14 @@
                                             <p class="mui-text-right">${command.result._describe['bankOrder']}</p>
                                         </div>
                                     </div>
-                                    <div class="mui-input-row"><label for="" class="text-gray">交易时间:</label>
+                                    <div class="mui-input-row"><label for="" class="text-gray">${views.themes_auto['交易时间']}:</label>
                                         <div class="ct">
                                             <p class="mui-text-right">
                                                     ${soulFn:formatDateTz(command.result._describe['returnTime'], DateFormat.DAY_SECOND, timeZone )}
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="mui-input-row"><label for="" class="text-gray">比特币地址:</label>
+                                    <div class="mui-input-row"><label for="" class="text-gray">${views.themes_auto['比特币地址']}:</label>
                                         <div class="ct">
                                             <p class="mui-text-right">${command.result._describe['payerBankcard']}</p>
                                         </div>
@@ -300,7 +300,7 @@
                                     <c:if test="${command.result.transactionType ne 'withdrawals'}">
                                         <c:if test="${command.result.fundType eq 'bitcoin_fast'}">
                                             <p>
-                                                <span>比特币:</span>
+                                                <span>${views.themes_auto['比特币']}:</span>
                                                 ${command.result._describe['bitAmount']}
                                             </p>
                                             <c:if test="${command.result.rechargeAmount!=0}">

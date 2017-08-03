@@ -164,7 +164,7 @@
                                            <a href="" class="item" data-url="${root}/bankCard/page/addBtc.html">
                                                <p><img src="${resRoot}/images/my-ico12.png" style="width: 33px;" alt=""></p>
                                                <div class="ct">
-                                                   <p>比特币钱包</p>
+                                                   <p>${views.themes_auto['比特币钱包']}</p>
                                                    <p><small id="btcNumber"></small></p>
                                                </div>
                                            </a>

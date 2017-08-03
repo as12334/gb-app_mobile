@@ -84,8 +84,8 @@
                     <c:if test="${isBit&&isCash}">
                         <div class="account_tab">
                             <div class="mui-segmented-control">
-                                <a class="mui-control-item mui-active" data="bank_account">银行卡账户</a>
-                                <a class="mui-control-item" data="bit_account">比特币账户</a>
+                                <a class="mui-control-item mui-active" data="bank_account">${views.themes_auto['银行卡账户']}</a>
+                                <a class="mui-control-item" data="bit_account">${views.themes_auto['比特币账户']}</a>
                             </div>
                         </div>
                     </c:if>
@@ -127,7 +127,7 @@
                                                         比特币&nbsp;${gbFn:overlayBankcard(btc.bankcardNumber)}
                                                     </c:if>
                                                      <c:if test="${empty btc}">
-                                                         <a>请先绑定比特币地址</a>
+                                                         <a>${views.themes_auto['请先绑定比特币地址']}</a>
                                                      </c:if>
                                                 </span>
                                                 <div class="clearfix"></div>

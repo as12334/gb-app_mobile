@@ -27,13 +27,13 @@
                         <input type="hidden" name="action" value="${action}"/>
                         <gb:token/>
                         <div class="bit_bind_wrap">
-                            <div class="tit">绑定比特币钱包</div>
+                            <div class="tit">${views.themes_auto['绑定比特币钱包']}</div>
                             <div class="sub_tit">取款前请先绑定比特币钱包地址，成功取款后我们会将款项转入您填写的钱包账户</div>
-                            <div class="tit">比特币钱包地址：</div>
+                            <div class="tit">${views.themes_auto['比特币钱包地址']}：</div>
                             <div><input type="text" class="bit_input" id="result.bankcardNumber" name="result.bankcardNumber"/></div>
                             <div class="btn_wrap">
-                                <div class="mui-col-xs-6 mui-pull-left"><a class="mui-btn btn_reset">重置</a></div>
-                                <div class="mui-col-xs-6 mui-pull-left"><a class="mui-btn btn_bind" id="bindBtc">绑定</a></div>
+                                <div class="mui-col-xs-6 mui-pull-left"><a class="mui-btn btn_reset">${views.themes_auto['重置']}</a></div>
+                                <div class="mui-col-xs-6 mui-pull-left"><a class="mui-btn btn_bind" id="bindBtc">${views.themes_auto['绑定']}</a></div>
                             </div>
                         </div>
                         </form>
@@ -42,7 +42,7 @@
                         <div class="cont m-t-sm">
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form">
-                                    <div class="mui-input-row"><label>比特币地址</label>
+                                    <div class="mui-input-row"><label>${views.themes_auto['比特币地址']}</label>
                                         <div class="ct">
                                             <span>${gbFn:overlayBankcard(userBankCard.bankcardNumber)}</span>
                                         </div>
