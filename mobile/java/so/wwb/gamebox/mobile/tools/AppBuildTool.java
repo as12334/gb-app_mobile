@@ -13,30 +13,22 @@ import java.io.*;
  *
  * Created by bill on 3/21/16.
  */
-public class AuthTool {
+public class AppBuildTool {
 
-    private static final Log LOG = LogFactory.getLog(AuthTool.class);
+    private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/home/fei/app/";
-
-    //用户密码
-    private static String SALT_SYS_USER_PWD = "AgDz+&?MB|G{*%bH%pf@w4y8;Avt>0R9en,~.L]|db[16=Jr.)0wa^U@~%QNe(Xk";
-
-    //用户安全密码
-    private static String SALT_SYS_USER_PERMISSION_PWD = "bnQElt-?a:nCYg@!|>kt42HvjdEaZ_?f.CR`MGKqDrXozKnGFo%*f;{C,|F+H`9r";
+    private static final String ROOT_PATH = "/Home/fei/app/";
 
     private static String sysUserPermissionSalt(String username){
         if (StringTool.isNotBlank(username)) {
+            String SALT_SYS_USER_PWD = "AgDz+&?MB|G{*%bH%pf@w4y8;Avt>0R9en,~.L]|db[16=Jr.)0wa^U@~%QNe(Xk";
             return SALT_SYS_USER_PWD + username;
         }
-        return SALT_SYS_USER_PERMISSION_PWD;
+        return "bnQElt-?a:nCYg@!|>kt42HvjdEaZ_?f.CR`MGKqDrXozKnGFo%*f;{C,|F+H`9r";
     }
 
     /**
      * 安全密码
-     * @param source
-     * @param username
-     * @return
      */
     private static String md5SysUserPermission(String source, String username){
         String salt = sysUserPermissionSalt(StringTool.lowerCase(username));
@@ -54,10 +46,6 @@ public class AuthTool {
 
     /**
      * 批量生成ios plist文件,并且将ipa包放在plist文件统一目录
-     * @param code
-     * @param versionName
-     * @param siteId
-     * @param siteName
      */
     public static void getIosPlist(String code, String versionName, Integer siteId, String siteName){
         String path = ROOT_PATH + "ios/" +versionName + "/" + code + "/";
@@ -134,21 +122,18 @@ public class AuthTool {
                 "\t</array>\n" +
                 "</dict>\n" +
                 "</plist>";
-        byte bt[] = new byte[1024];
+        byte bt[];
         bt = plist.getBytes();
         try {
             FileOutputStream in = new FileOutputStream(file);
             try {
                 in.write(bt, 0, bt.length);
                 in.close();
-                // boolean success=true;
                 System.out.println("写入文件:" + file.getName() +"----成功");
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -205,8 +190,8 @@ public class AuthTool {
                 "165,g7oq,澳门赌场",
                 "167,hzy3,澳门新葡京赌场",
                 "168,lont,澳门威尼斯人",
-                "169,c79k,澳门银河在线赌场Casino",
-                "171,ihqx,宝开娱乐",
+                "169,c79k,澳门银河在线赌场Casino",*/
+                "171,ihqx,宝开娱乐"/*,
                 "172,izbv,豪森国际",
                 "173,jr3j,濠利会娱乐城",
                 "175,x0le,澳门银河娱乐城",
@@ -223,14 +208,18 @@ public class AuthTool {
                 "187,b02h,澳门银河",
                 "188,acpb,鸿泰国际",
                 "189,a56r,澳门永利贵宾会",
-                "190,yj4v,万博体育",*/
-                "191,d1hg,澳门赌场"
+                "190,yj4v,万博体育",
+                "191,d1hg,澳门赌场",
+                "192,gc7p,金沙娱乐城",
+                "193,f9wn,皇冠娱乐"*/
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
 
         File flavor = new File(ROOT_PATH + "android/Flavors.go");
         if (flavor.exists()) flavor.delete();
+        File build = new File(ROOT_PATH + "ios/Build.go");
+        if (build.exists()) build.delete();
 
         for (int i = 0; i < ids.length; i++) {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
@@ -238,44 +227,39 @@ public class AuthTool {
             String name = ids[i].split(",")[2];
 //            getIosPlist(code, "1.0.5", siteId, name);
 //            getIosBuild(siteId, name, code);
+//            getIosImage(siteId);
             getAndroidFlavors(siteId, name, code);
 //            getAndroidApk(code, "3.1.5");
-//            getIosImage(siteId);
         }
 
+        System.out.println(String.format("共 %d 个站点", ids.length));
+
         try {
-            System.out.println(String.format("共 %d 个站点", ids.length));
             // 调用默认程序打开文件
             Desktop.getDesktop().open(new File(ROOT_PATH + "android/Flavors.go"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            try {
+                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.go"));
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }
 
     /**
      * 获取安卓app配置信息
-     * @param siteId
-     * @param name
-     * @param code
      */
     private static void getAndroidFlavors(Integer siteId, String name, String code){
-        String theme = "default.skin";
-        if (siteId == 119) theme = "blue.skin";
-        else if (siteId == 141 || siteId == 161) theme = "green.skin";
-        else if (siteId == 185) theme = "pink.skin";
-        else if (siteId == 69 || siteId == 70) theme = "lottery.skin";
-
-        String siteType = "integrated";
-        if (siteId == 69 || siteId == 70) siteType = "lottery";
-
         StringBuilder flavor = new StringBuilder();
         flavor.append("_").append(code).append(" {");
         flavor.append("\n\t").append("applicationId ").append("\"com.dawoo.gamebox.sid").append(siteId).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_name\", ").append("\"").append(name).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_code\", ").append("\"").append(code).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_sid\", ").append("\"").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\"");
-        flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"site_type\", ").append("\"").append(siteType).append("\"");
-        flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"theme\", ").append("\"").append(theme).append("\"");
+        flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"site_type\", ").append("\"").append(setSiteType(siteId)).append("\"");
+        flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"theme\", ").append("\"").append(setTheme(siteId)).append("\"");
         flavor.append("\n\t").append("manifestPlaceholders = [app_icon:\"@mipmap/app_icon_").append(siteId).append("\"]");
         flavor.append("\n}\n");
 
@@ -289,13 +273,28 @@ public class AuthTool {
 
             File file = new File(path + "/Flavors.go");
             if (file.createNewFile()) {
-                System.out.println("创建文件/home/fei/app/android/Flavors.go！");
+                System.out.println("创建文件: app/android/Flavors.go！");
             }
 
             appendConent(path + "/Flavors.go", flavor.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String setSiteType(Integer siteId) {
+        String siteType = "integrated";
+        if (siteId == 69 || siteId == 70) siteType = "lottery";
+        return siteType;
+    }
+
+    private static String setTheme(Integer siteId) {
+        String theme = "default.skin";
+        if (siteId == 119 || siteId == 171) theme = "blue.skin";
+        else if (siteId == 141 || siteId == 161) theme = "green.skin";
+        else if (siteId == 185) theme = "pink.skin";
+        else if (siteId == 69 || siteId == 70) theme = "lottery.skin";
+        return theme;
     }
 
     private static void appendConent(String fileName, String content) {
@@ -319,22 +318,37 @@ public class AuthTool {
 
     /**
      * 获取ios App站点信息
-     * @param siteId
-     * @param name
-     * @param code
      */
     private static void getIosBuild(Integer siteId, String name, String code){
-        System.out.println("#elif _" + code + " //" + name + "\n" +
-                "\n" +
-                "#define CODE   @\"" + code + "\"\n" +
-                "#define S   @\"" + CryptoTool.aesEncrypt(String.valueOf(siteId), code) + "\"\n" +
-                "#define SID   @\"" + siteId + "\"\n" +
-                "#define COLOR   @\"" + "DEFAULT" + "\"\n\n");
+        StringBuilder builder = new StringBuilder();
+        builder.append("#elif _").append(code).append(" //").append(name).append("\n\n");
+        builder.append("#define CODE\t@").append("\"").append(code).append("\"\n");
+        builder.append("#define S\t\t@").append("\"").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\"\n");
+        builder.append("#define SID\t\t@").append("\"").append(siteId).append("\"\n");
+        builder.append("#define COLOR\t@").append("\"").append(setTheme(siteId)).append("\"\n");
+        builder.append("#define SITE_TYPE\t@").append("\"").append(setSiteType(siteId)).append("\"\n\n");
+
+        try {
+            String path = ROOT_PATH + "ios";
+            File pathFile = new File(path);
+            if (!pathFile.exists()) {
+                pathFile.mkdirs();
+                System.out.println("创建目录:" + path + "----成功");
+            }
+
+            File file = new File(path + "/Build.go");
+            if (file.createNewFile()) {
+                System.out.println("创建文件: app/ios/Build.go！");
+            }
+
+            appendConent(path + "/Build.go", builder.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * 获取IOS桌面图标和配置信息
-     * @param siteId
      */
     public static void getIosImage(Integer siteId){
         String path = ROOT_PATH + "ios/ios_app_icon/AppIcon-" + siteId + ".appiconset";
@@ -420,29 +434,24 @@ public class AuthTool {
                 "    \"author\" : \"xcode\"\n" +
                 "  }\n" +
                 "}";
-        byte bt[] = new byte[1024];
+        byte bt[];
         bt = contents.getBytes();
         try {
             FileOutputStream in = new FileOutputStream(contentFile);
             try {
                 in.write(bt, 0, bt.length);
                 in.close();
-                // boolean success=true;
                 System.out.println("写入文件:" + contentFile.getName() +"----成功");
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     /**
      * 将安卓APK放在以code命名的文件夹中
-     * @param code
-     * @param versionName
      */
     public static void getAndroidApk(String code, String versionName){
         File codeFile = new File(ROOT_PATH + "android/" + versionName + "/" + code);
