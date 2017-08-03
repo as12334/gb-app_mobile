@@ -15,6 +15,7 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
@@ -82,11 +85,12 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index")
-    public String toIndex(HttpServletRequest request) {
+    public String toIndex(Model model, HttpServletRequest request) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             SessionManager.setRecommendUserCode(c);
         }
+        getAppPath(model, request);
         return "/ToIndex";
     }
 
@@ -98,7 +102,14 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
+        model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
+        model.addAttribute("isLotterySite", isLotterySite());
         return "/Index";
+    }
+
+    private boolean isLotterySite() {
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     private List<SiteApiType> getApiTypes() {
@@ -149,7 +160,9 @@ public class IndexController extends BaseApiController {
         } else if ("about".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
             CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
-            cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
             model.addAttribute("about", cttDocumentI18n);
         } else if ("terms".equals(path) || "protocol".equals(path)) {
             SiteI18n terms = Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString());
@@ -185,7 +198,7 @@ public class IndexController extends BaseApiController {
     @RequestMapping(value = "/index/getUserTimeZoneDate")
     @ResponseBody
     public String getUserTimeZoneDate() {
-        Map<String, String> map = new HashMap<>(2);
+        Map<String, String> map = new HashMap<>(2,1f);
         map.put("dateTimeFromat", CommonContext.getDateFormat().getDAY_SECOND());
         map.put("dateTime", SessionManager.getUserDate(CommonContext.getDateFormat().getDAY_SECOND()));
         map.put("time", String.valueOf(new Date().getTime()));
@@ -224,7 +237,7 @@ public class IndexController extends BaseApiController {
     @RequestMapping("/index/getLogoUrl")
     @ResponseBody
     public String getLogoUrl() {
-        Map<String,String> urlMap = new HashMap<>(2);
+        Map<String,String> urlMap = new HashMap<>(2,1f);
         urlMap.put("logoUrl", "/ftl/commonPage/images/app_logo/app_logo_"+ SessionManager.getSiteId() +".png");
         urlMap.put("iconUrl", "/ftl/commonPage/images/app_icon/app_icon_"+ SessionManager.getSiteId() +".png");
         return JsonTool.toJson(urlMap);
@@ -271,6 +284,12 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     public String downloadApp(Model model, ServletRequest request){
+        getAppPath(model, request);
+        return "/app/Index";
+    }
+
+    /** 获取APP下载地址 */
+    private void getAppPath(Model model, ServletRequest request) {
         //获取站点信息
         Integer siteId = SessionManager.getSiteId();
         String code = Cache.getSysSite().get(siteId.toString()).getCode();
@@ -299,7 +318,6 @@ public class IndexController extends BaseApiController {
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(iosUrl, 6)));
         model.addAttribute("androidUrl", androidUrl);
         model.addAttribute("iosUrl", iosUrl);
-        return "/app/Index";
     }
 
     /**
@@ -315,5 +333,12 @@ public class IndexController extends BaseApiController {
         }else {
             return "unLogin";
         }
+    }
+
+    /** app 判断是否彩票站点接口 */
+    @RequestMapping("/index/isLotterySite")
+    @ResponseBody
+    public String lotterySite() {
+        return JsonTool.toJson(isLotterySite());
     }
 }

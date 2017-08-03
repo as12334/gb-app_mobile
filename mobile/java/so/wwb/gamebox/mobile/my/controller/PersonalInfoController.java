@@ -49,9 +49,9 @@ public class PersonalInfoController {
             model.addAttribute("sysUserProtectionVo", sysUserProtectionVo);
 
             model.addAttribute("validateRule", JsRuleCreator.create(PersonInfoMobileForm.class));
-            return "mine/MineUser";
+            return "/mine/MineUser";
         }
-        return "errors/403";
+        return "/errors/403";
     }
 
     /**

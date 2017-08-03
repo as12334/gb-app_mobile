@@ -38,7 +38,7 @@ import java.util.*;
 public abstract class BaseCompanyDepositController extends BaseDepositController {
 
     /* 公司入款地址 */
-     private static final String MCENTER_COMPANY_RECHARGE_URL = "fund/deposit/company/confirmCheck.html";
+     private static final String MCENTER_COMPANY_RECHARGE_URL = "/fund/deposit/company/confirmCheck.html";
 
     private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
         SysUserDataRightVo sysUserDataRightVo = new SysUserDataRightVo();
