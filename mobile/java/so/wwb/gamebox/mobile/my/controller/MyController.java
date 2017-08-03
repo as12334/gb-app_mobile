@@ -60,16 +60,17 @@ public class MyController {
         model.addAttribute("channel", "mine");
         //玩家信息
         model.addAttribute("sysUser", SessionManager.getUser());
-        String url = "/transfer/index.html";
-        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
-        if (param != null && "true".equals(param.getParamValue())) {
-            url = "/wallet/withdraw/index.html";
-        }
-        model.addAttribute("footerUrl", url);
+        model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
+        model.addAttribute("isLotterySite", isLotterySite());
         //现金取款方式
         model.addAttribute("isBit", ParamTool.isBit());
         model.addAttribute("isCash", ParamTool.isCash());
         return MY_INDEX;
+    }
+
+    private boolean isLotterySite() {
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     @RequestMapping("/gamePage")
