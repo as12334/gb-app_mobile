@@ -27,12 +27,12 @@
                 <%--api余额--%>
                 <%@include file="Api.jsp" %>
                 <div class="mui-row">
-                    <div class="gb-form-foot">
+                    <div class="gb-form-foot p-t-0 p-b-0">
                         <button class="mui-btn mui-btn-primary m-t-sm submit recovery">${views.transfer_auto['一键回收']}</button>
                     </div>
                 </div>
                 <div class="mui-row">
-                    <div class="gb-form-foot">
+                    <div class="gb-form-foot p-t-0">
                         <button class="mui-btn mui-btn-primary m-t-sm submit reload">${views.transfer_auto['一键刷新']}</button>
                     </div>
                 </div>
