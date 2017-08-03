@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.head.jsp" %>
 <c:choose>
-    <c:when test="${siteId == 22 || siteId == 119 }"> <!-- blue -->
+    <c:when test="${siteId == 22 || siteId == 119 || siteId == 171}"> <!-- blue -->
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/blue/style.css?v=${rcVersion}" />
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/blue/loading.css?v=${rcVersion}" />
     </c:when>
