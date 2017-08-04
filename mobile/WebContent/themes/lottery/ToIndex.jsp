@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <!DOCTYPE html>
-<html> <%--manifest="${resRoot}/appcache/lottery.appcache"--%>
+<html manifest="${resRoot}/appcache/lottery.appcache">
 <head>
     <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${siteName}</title>
@@ -10,9 +10,7 @@
         .middle-content {bottom: 0;}
     </style>
     <script>
-        if (os === 'app_android' || os === 'app_ios') {
-            window.location.replace('/mainIndex.html');
-        }
+        if(os==='android'||os==='app_ios'){window.location.replace('/mainIndex.html')}
     </script>
     <%
         if (userAgent.contains("MicroMessenger")){

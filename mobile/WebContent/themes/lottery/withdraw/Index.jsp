@@ -7,7 +7,7 @@
 <html>
 
 <head>
-    <%@ include file="/themes/default/include/include.head.jsp" %>
+    <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${views.withdraw_auto['取款']}</title>
     <script src="${resRoot}/js/plugin/inputNumber.js?v=${rcVersion}"></script>
     <script src="${resRoot}/js/plugin/map.js?v=${rcVersion}"></script>
@@ -18,9 +18,10 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <c:if test="${os ne 'app_ios'}">
+                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            </c:if>
             <h1 class="mui-title">${views.withdraw_auto['取款']}</h1>
-            <%@ include file="/include/include.asset.jsp" %>
         </header>
         <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
             <form name="withdrawform">
@@ -228,11 +229,10 @@
 </div>
 </body>
 <script>
-    curl(['site/withdraw/Index', 'site/passport/password/PopSecurityPassword', 'site/common/Assets'],
+    curl(['site/withdraw/Index', 'site/passport/password/PopSecurityPassword'],
             function(Page, Security, Assets) {
                 page = new Page();
                 page.security = new Security();
-                page.asset = new Assets();
             }
     );
 </script>
