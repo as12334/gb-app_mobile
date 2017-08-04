@@ -205,10 +205,10 @@
                             <directory>${basedir}/../../base/webcommon/WebContent/errors</directory>
                             <targetPath>/errors</targetPath>
                         </resource>
-                        <!--<resource>
+                        <resource>
                             <directory>${basedir}/../../base/webcommon/WebContent/report</directory>
                             <targetPath>/report</targetPath>
-                        </resource>-->
+                        </resource>
                         <!--common include end-->
                         <!--<resource>
                             <directory>${basedir}/../_i18n</directory>
