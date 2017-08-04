@@ -190,8 +190,8 @@ public class AppBuildTool {
                 "165,g7oq,澳门赌场",
                 "167,hzy3,澳门新葡京赌场",
                 "168,lont,澳门威尼斯人",
-                "169,c79k,澳门银河在线赌场Casino",*/
-                "171,ihqx,宝开娱乐"/*,
+                "169,c79k,澳门银河在线赌场Casino",
+                "171,ihqx,宝开娱乐",
                 "172,izbv,豪森国际",
                 "173,jr3j,濠利会娱乐城",
                 "175,x0le,澳门银河娱乐城",
@@ -211,7 +211,9 @@ public class AppBuildTool {
                 "190,yj4v,万博体育",
                 "191,d1hg,澳门赌场",
                 "192,gc7p,金沙娱乐城",
-                "193,f9wn,皇冠娱乐"*/
+                "193,f9wn,皇冠娱乐",*/
+                "195,xjvs,大唐娱乐城",
+                "196,6rrt,澳门巴黎人"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
