@@ -327,7 +327,7 @@ public class AppBuildTool {
         builder.append("#define CODE\t@").append("\"").append(code).append("\"\n");
         builder.append("#define S\t\t@").append("\"").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\"\n");
         builder.append("#define SID\t\t@").append("\"").append(siteId).append("\"\n");
-        builder.append("#define COLOR\t@").append("\"").append(setTheme(siteId)).append("\"\n");
+        builder.append("#define THEME\t@").append("\"").append(setTheme(siteId)).append("\"\n");
         builder.append("#define SITE_TYPE\t@").append("\"").append(setSiteType(siteId)).append("\"\n\n");
 
         try {
