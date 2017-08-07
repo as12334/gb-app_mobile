@@ -6,6 +6,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
+import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -24,12 +25,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteI18nEnum;
-import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
+import so.wwb.gamebox.model.company.enums.GameStatusEnum;
+import so.wwb.gamebox.model.company.lottery.po.Lottery;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
@@ -105,6 +106,25 @@ public class IndexController extends BaseApiController {
         model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
         model.addAttribute("isLotterySite", isLotterySite());
         return "/Index";
+    }
+
+    // 彩票站-彩票
+    @RequestMapping("/index/lottery")
+    public String getLottery() {
+        List<Map<String, String>> list = new ArrayList<>();
+        Map<String, Lottery> lotterys = Cache.getLotteryByTerminal(TerminalEnum.MOBILE.getCode());
+        for (Map.Entry<String, Lottery> entry : lotterys.entrySet()) {
+            Lottery lot = entry.getValue();
+            if (StringTool.equals(GameStatusEnum.NORMAL.getCode(), lot.getStatus())) {
+                Map<String, String> map = new HashMap<>(3,1f);
+                map.put("type", lot.getType());
+                map.put("name", I18nTool.getDictsMap(SessionManager.getLocale().toString()).get(so.wwb.gamebox.model.DictEnum.LOTTERY.getModule().getCode()).get(DictEnum.LOTTERY.getType()).get(lot.getCode()));
+                map.put("code", lot.getCode());
+                list.add(map);
+                if (list.size() > 7) break;
+            }
+        }
+        return JsonTool.toJson(list);
     }
 
     private boolean isLotterySite() {

@@ -16,7 +16,7 @@
             <header class="mui-bar mui-bar-nav ">
                 <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
                 <h1 class="mui-title">${views.verify_auto['登录验证']}</h1>
-                <a class="mui-icon mui-icon-home mui-pull-right" data-href="/"></a>
+                <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
             </header>
             </c:if>
             <div class="mui-content mui-scroll-wrapper" ${(os eq 'android' or os eq 'app_ios')?'style="padding-top:0"':''}>

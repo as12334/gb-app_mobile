@@ -15,7 +15,7 @@
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.verify_auto['设置新账号']}</h1>
-            <a class="mui-icon mui-icon-home mui-pull-right" data-href="/"></a>
+            <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
         </header>
         <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
             <div class="mui-scroll">

@@ -80,7 +80,7 @@ public class PersonalInfoController {
         //前置验证
         if (result.hasErrors()) {
             map.put("status", false);
-            map.put("msg", LocaleTool.tranMessage("player", "更新失败"));
+            map.put("msg", LocaleTool.tranMessage("my_auto", "更新失败"));
             return map;
         }
         sysUserVo.getResult().setId(SessionManager.getUserId());
@@ -95,9 +95,9 @@ public class PersonalInfoController {
         map.put("status", sysUserVo.isSuccess());
         if (sysUserVo.isSuccess()) {
             SessionManager.refreshUser();
-            map.put("msg", LocaleTool.tranMessage("player", "更新成功"));
+            map.put("msg", LocaleTool.tranMessage("my_auto", "更新成功"));
         } else {
-            map.put("msg", LocaleTool.tranMessage("player", "更新失败"));
+            map.put("msg", LocaleTool.tranMessage("my_auto", "更新失败"));
         }
         return map;
     }
