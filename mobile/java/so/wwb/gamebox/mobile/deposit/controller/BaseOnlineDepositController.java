@@ -132,7 +132,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (result.hasErrors()) {
             Map<String, Object> messageMap = new HashMap<>(2,1f);
             messageMap.put("state", false);
-            messageMap.put("msg", "请检查提交的数据是否正确");
+            messageMap.put("msg", LocaleTool.tranMessage("deposit_auto","请检查提交的数据是否正确"));
             return messageMap;
         }
 
