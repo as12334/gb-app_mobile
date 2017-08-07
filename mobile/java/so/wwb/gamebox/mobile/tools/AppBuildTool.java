@@ -288,7 +288,7 @@ public class AppBuildTool {
 
     private static String setSiteType(Integer siteId) {
         String siteType = "integrated";
-        if (siteId == 69 || siteId == 70) siteType = "lottery";
+        if (siteId == 69 || siteId == 70 || siteId == 197) siteType = "lottery";
         return siteType;
     }
 
@@ -297,7 +297,7 @@ public class AppBuildTool {
         if (siteId == 119 || siteId == 171) theme = "blue.skin";
         else if (siteId == 141 || siteId == 161) theme = "green.skin";
         else if (siteId == 185) theme = "pink.skin";
-        else if (siteId == 69 || siteId == 70) theme = "lottery.skin";
+        else if (siteId == 69 || siteId == 70 || siteId == 197) theme = "lottery.skin";
         return theme;
     }
 
