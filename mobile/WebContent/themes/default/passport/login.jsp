@@ -17,7 +17,7 @@
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.passport_auto['登录']}</h1>
             <c:if test="${os ne 'app_ios' }">
-            <a class="mui-icon mui-icon-home mui-pull-right" data-href="/"></a>
+            <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
             </c:if>
         </header>
         <div class="mui-content mui-scroll-wrapper">

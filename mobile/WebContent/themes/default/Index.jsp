@@ -30,7 +30,7 @@
         <!--底部-->
         <%@include file="/include/include.footer.jsp" %>
         <!-- 内容 -->
-        <div class="index-content mui-content mui-scroll-wrapper _cacheContent" id="mui-refresh-index">
+        <div class="index-content mui-content mui-scroll-wrapper _cacheContent" id="mui-refresh">
             <div class="mui-scroll">
                 <div class="gb-fullpage">
                     <!-- Banner和公告 -->
