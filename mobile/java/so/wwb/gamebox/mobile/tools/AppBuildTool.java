@@ -17,11 +17,13 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/Home/fei/app/";
+    private static final String ROOT_PATH = "Users/fei/Desktop/app/";
 
-    private static String sysUserPermissionSalt(String username){
+    private static final String SALT_CODE = "ONFwe#(*FAS&$-932+)#9JI830*#@<-90-13~32@#%SDF*_(#DSF&*FSE!DO&$DW";
+
+    private static String sysUserPermissionSalt(String username) {
         if (StringTool.isNotBlank(username)) {
-            String SALT_SYS_USER_PWD = "AgDz+&?MB|G{*%bH%pf@w4y8;Avt>0R9en,~.L]|db[16=Jr.)0wa^U@~%QNe(Xk";
+            String SALT_SYS_USER_PWD =      "AgDz+&?MB|G{*%bH%pf@w4y8;Avt>0R9en,~.L]|db[16=Jr.)0wa^U@~%QNe(Xk";
             return SALT_SYS_USER_PWD + username;
         }
         return "bnQElt-?a:nCYg@!|>kt42HvjdEaZ_?f.CR`MGKqDrXozKnGFo%*f;{C,|F+H`9r";
@@ -145,8 +147,6 @@ public class AppBuildTool {
     private static void getAppBuild(){
         String[] ids = new String[]{
                 /*
-                "1,0001,开发一",
-                "21,rf80,测试01",
                 "69,7cxt,百发彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
@@ -211,9 +211,10 @@ public class AppBuildTool {
                 "190,yj4v,万博体育",
                 "191,d1hg,澳门赌场",
                 "192,gc7p,金沙娱乐城",
-                "193,f9wn,皇冠娱乐",*/
+                "193,f9wn,皇冠娱乐",
                 "195,xjvs,大唐娱乐城",
-                "196,6rrt,澳门巴黎人"
+                "196,6rrt,澳门巴黎人"*/
+                "197,sn2m,完美彩票"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -227,8 +228,8 @@ public class AppBuildTool {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
-//            getIosPlist(code, "1.0.5", siteId, name);
-//            getIosBuild(siteId, name, code);
+            getIosPlist(code, "2.0.0", siteId, name);
+            getIosBuild(siteId, name, code);
 //            getIosImage(siteId);
             getAndroidFlavors(siteId, name, code);
 //            getAndroidApk(code, "3.1.5");
@@ -262,6 +263,7 @@ public class AppBuildTool {
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_sid\", ").append("\"").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"site_type\", ").append("\"").append(setSiteType(siteId)).append("\"");
         flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"theme\", ").append("\"").append(setTheme(siteId)).append("\"");
+        flavor.append("\n\t").append("resValue ").append("\"string\", ").append("\"app_logo\", ").append("\"app_logo_").append(siteId).append("\"");
         flavor.append("\n\t").append("manifestPlaceholders = [app_icon:\"@mipmap/app_icon_").append(siteId).append("\"]");
         flavor.append("\n}\n");
 
@@ -327,7 +329,7 @@ public class AppBuildTool {
         builder.append("#define CODE\t@").append("\"").append(code).append("\"\n");
         builder.append("#define S\t\t@").append("\"").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\"\n");
         builder.append("#define SID\t\t@").append("\"").append(siteId).append("\"\n");
-        builder.append("#define COLOR\t@").append("\"").append(setTheme(siteId)).append("\"\n");
+        builder.append("#define THEME\t@").append("\"").append(setTheme(siteId)).append("\"\n");
         builder.append("#define SITE_TYPE\t@").append("\"").append(setSiteType(siteId)).append("\"\n\n");
 
         try {
