@@ -17,7 +17,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!--头部-->
-        <header class="mui-bar mui-bar-nav _siteHeader">
+        <header class="mui-bar mui-bar-nav _siteHeader" style="display: ${os == 'android' ? 'none' : ''}">
             <div class="mui-pull-left">
                 <span class="index-action-menu mui-action-menu"></span>
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></div>
