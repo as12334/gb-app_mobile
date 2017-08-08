@@ -83,17 +83,15 @@ public class BettingControler {
     }
     @RequestMapping("/gameRecordDetail")
     public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo, Model model) {
-        playerGameOrderVo = ServiceTool.playerGameOrderService().get(playerGameOrderVo);
+        playerGameOrderVo = ServiceTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);
         PlayerGameOrder playerGameOrder = playerGameOrderVo.getResult();
 //        如果不是这个玩家的投注订单，则视无该笔订单
-        if (playerGameOrder != null && playerGameOrder.getPlayerId() == SessionManager.getUserId().intValue()) {
-            //API详情JSON转换
-            List<Map> resultArray = (List<Map>) JsonTool.fromJson(playerGameOrderVo.getResult().getResultJson(), JsonTool.createCollectionType(ArrayList.class, Map.class));
-            model.addAttribute("resultArray", resultArray);
-        } else {
+        if (playerGameOrder == null || playerGameOrder.getPlayerId() != SessionManager.getUserId().intValue()) {
             playerGameOrderVo.setResult(null);
+            playerGameOrderVo.setResultArray(null);
         }
         model.addAttribute("command", playerGameOrderVo);
+        model.addAttribute("resultArray", playerGameOrderVo.getResultArray());
         return BETTING_DETAIL_URL;
     }
 
