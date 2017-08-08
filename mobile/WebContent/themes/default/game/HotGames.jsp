@@ -7,7 +7,7 @@
          data-api-type-id="${fish.apiTypeId}" data-api-id="${fish.apiId}" data-game-id="${fish.gameId}" data-game-code="${fish.code}" data-status="${fish.status}">
         <div class="game-hot g1">
             <div class="text">
-                <div class="title">${views.game_auto['AG捕鱼王']}</div>
+                <div class="title">${views.game_auto[(siteId == 35 || siteId == 185) ? 'GG捕鱼' : 'AG捕鱼王']}</div>
                 <div class="description">${views.game_auto['百发百中']}</div>
             </div>
             <div class="img">
