@@ -47,7 +47,7 @@
     <a type="button" class="mui-pull-left notice-icon"><i class="iconfont icon-gonggao"></i></a>
     <ul class="mui-list-unstyled gb-anno-list">
         <li>
-            <marquee behavior="scroll" scrollamount="7" direction="left">
+            <marquee behavior="scroll" scrollamount="5" direction="left">
                 <p>
                     <c:forEach items="${announcement}" var="a" varStatus="vs">
                         <a data-idx="${vs.index}">${a.content}</a>
