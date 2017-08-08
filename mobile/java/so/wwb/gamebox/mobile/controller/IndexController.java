@@ -206,7 +206,8 @@ public class IndexController extends BaseApiController {
     @RequestMapping("/index/getCustomerService")
     @ResponseBody
     public String getCustomerService() {
-        return SiteCustomerServiceHelper.getMobileCustomerServiceUrl();
+        String csUrl = SiteCustomerServiceHelper.getMobileCustomerServiceUrl();
+        return StringTool.isBlank(csUrl) ? "/commonPage/e404.html" : csUrl;
     }
 
     @RequestMapping("/index/gotoCustomerService")
