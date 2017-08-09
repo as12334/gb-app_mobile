@@ -288,8 +288,12 @@ public class GameController {
         return "/game/Game";
     }
     @RequestMapping("/hotGames")
-    public String hotGames(SiteGameListVo listVo, Model model){
+    public String hotGames(SiteGameListVo listVo, Model model) {
         Integer fishId = 90114;
+        int siteId = SessionManager.getSiteId();
+        if (siteId == 1 || siteId == 35 || siteId == 185) {
+            fishId = 280004;
+        }
         List<Integer> gameIds = Arrays.asList(fishId,31000,31009,31050,90071,100303,100222,100302,31077,31002,31011,150135,150141);//游戏ID
         //查询指定游戏
         Criteria criteria = Criteria.add(SiteGame.PROP_GAME_ID, Operator.IN, gameIds);

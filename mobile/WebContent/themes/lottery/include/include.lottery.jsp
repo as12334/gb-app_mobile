@@ -39,6 +39,7 @@
     </li>
     <li class="diy-table-view-cell mui-col-xs-3 none">
         <a class="item _lottery" href="/lottery/ssc/xjssc/index.html" data-status="normal">
+            <span class="lottery-ico lottery-ico-xjssc"></span>
             <span class="lottery-title">${views.themes_auto['新疆时时彩']}</span>
         </a>
     </li>

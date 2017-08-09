@@ -104,7 +104,11 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
-        model.addAttribute("isLotterySite", isLotterySite());
+        boolean isLotterySite = isLotterySite();
+        if (isLotterySite) {
+            model.addAttribute("carousels", getCarousel());
+        }
+        model.addAttribute("isLotterySite", isLotterySite);
         return "/Index";
     }
 
@@ -202,7 +206,8 @@ public class IndexController extends BaseApiController {
     @RequestMapping("/index/getCustomerService")
     @ResponseBody
     public String getCustomerService() {
-        return SiteCustomerServiceHelper.getMobileCustomerServiceUrl();
+        String csUrl = SiteCustomerServiceHelper.getMobileCustomerServiceUrl();
+        return StringTool.isBlank(csUrl) ? "/commonPage/e404.html" : csUrl;
     }
 
     @RequestMapping("/index/gotoCustomerService")
