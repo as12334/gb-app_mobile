@@ -12,8 +12,9 @@
             ${views.deposit_auto['转账到支付宝']}
         </c:if>
         <c:if test="${payAccount.bankCode eq 'other'}">
-            ${views.deposit_auto['其它支付']}
-        </c:if></title>
+            ${payAccount.customBankName}
+        </c:if>
+    </title>
 </head>
 <body class="gb-theme mine-page">
 <div id="offCanvasWrapper" class="mui-draggable">
@@ -29,7 +30,7 @@
                     ${views.deposit_auto['转账到支付宝']}
                 </c:if>
                 <c:if test="${payAccount.bankCode eq 'other'}">
-                    ${views.deposit_auto['其它支付']}
+                    ${payAccount.customBankName}
                 </c:if>
             </h1>
         </header>
@@ -58,7 +59,7 @@
                                                 ${views.deposit_auto['支付宝二维码']}
                                             </c:if>
                                             <c:if test="${payAccount.bankCode eq 'other'}">
-                                                ${views.deposit_auto['其它二维码']}
+                                                二维码
                                             </c:if>
                                         </a>
                                     </div>
