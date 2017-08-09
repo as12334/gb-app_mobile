@@ -53,7 +53,7 @@
                                         </div>
                                         <div class="ct">
                                             <div>
-                                            <span class="text-green" style="word-break: break-all;-webkit-user-select: all;">
+                                            <span class="text-green" style="word-break: break-all;-webkit-touch-callout: inherit;-webkit-user-select:text !important;user-select: text;-khtml-user-select: text;-moz-user-select: text;-ms-user-select: text;">
                                                 <c:choose>
                                                     <c:when test="${isHide}">
                                                         ${views.deposit_auto['账号代码']}：${payAccount.code},${views.deposit_auto['请联系客服']}
