@@ -53,7 +53,7 @@
                                         </div>
                                         <div class="ct">
                                             <div>
-                                            <span class="text-green" style="word-break: break-all;">
+                                            <span class="text-green" style="word-break: break-all;-webkit-user-select: all;">
                                                 <c:choose>
                                                     <c:when test="${isHide}">
                                                         ${views.deposit_auto['账号代码']}：${payAccount.code},${views.deposit_auto['请联系客服']}
@@ -101,26 +101,23 @@
                         <div class="mui-row">
                             <div class="mui-input-group mine-form m-t-sm">
                                 <div class="mui-input-row">
-                                        <c:set value="${views.deposit_auto['您的比特币地址']}" var="n"></c:set>
-                                        <c:set value="${views.deposit_auto['请输入比特币地址']}" var="m"></c:set>
-                                    <label>${n}</label>
+                                    <label>${views.deposit_auto['您的比特币地址']}}</label>
                                     <div class="ct">
-                                        <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
+                                        <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${views.deposit_auto['请输入比特币地址']}" autocomplete="off">
                                     </div>
                                 </div>
 
                                 <div class="mui-input-row">
                                     <label for="result.bankOrder">txId</label>
                                     <div class="ct">
-                                        <c:set value="txID" var="d"></c:set>
-                                        <input type="number" name="result.bankOrder" id="result.bankOrder" placeholder="${d}" autocomplete="off">
+                                        <input type="text" name="result.bankOrder" id="result.bankOrder" placeholder="txId" autocomplete="off">
                                     </div>
                                 </div>
 
                                 <div class="mui-input-row">
                                     <label for="result.bitAmount">${views.deposit_auto['比特币']}</label>
                                     <div class="ct">
-                                       <input type="number" name="result.bitAmount" id="result.bitAmount" autocomplete="off">
+                                       <input type="text" name="result.bitAmount" id="result.bitAmount" autocomplete="off">
                                     </div>
                                 </div>
 
