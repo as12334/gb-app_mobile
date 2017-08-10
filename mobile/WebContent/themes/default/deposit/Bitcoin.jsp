@@ -110,7 +110,7 @@
                                 <div class="mui-input-row">
                                     <label for="result.bankOrder">txId</label>
                                     <div class="ct">
-                                        <input name="result.bankOrder" id="result.bankOrder" placeholder="txId" autocomplete="off">
+                                        <input type="text" name="result.bankOrder" id="result.bankOrder" placeholder="txId" autocomplete="off">
                                     </div>
                                 </div>
 
