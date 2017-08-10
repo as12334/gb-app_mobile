@@ -5,15 +5,17 @@
 <head>
     <%@ include file="/themes/default/include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
-    <title><c:if test="${payAccount.bankCode eq 'wechatpay'}">
-        ${views.deposit_auto['转账到微信']}
-    </c:if>
+    <title>
+        <c:if test="${payAccount.bankCode eq 'wechatpay'}">
+            ${views.deposit_auto['转账到微信']}
+        </c:if>
         <c:if test="${payAccount.bankCode eq 'alipay'}">
             ${views.deposit_auto['转账到支付宝']}
         </c:if>
         <c:if test="${payAccount.bankCode eq 'other'}">
-            ${views.deposit_auto['其它支付']}
-        </c:if></title>
+            ${payAccount.customBankName}
+        </c:if>
+    </title>
 </head>
 <body class="gb-theme mine-page">
 <div id="offCanvasWrapper" class="mui-draggable">
@@ -29,7 +31,7 @@
                     ${views.deposit_auto['转账到支付宝']}
                 </c:if>
                 <c:if test="${payAccount.bankCode eq 'other'}">
-                    ${views.deposit_auto['其它支付']}
+                    ${payAccount.customBankName}
                 </c:if>
             </h1>
         </header>
@@ -58,7 +60,7 @@
                                                 ${views.deposit_auto['支付宝二维码']}
                                             </c:if>
                                             <c:if test="${payAccount.bankCode eq 'other'}">
-                                                ${views.deposit_auto['其它二维码']}
+                                                二维码
                                             </c:if>
                                         </a>
                                     </div>
