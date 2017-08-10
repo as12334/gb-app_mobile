@@ -31,8 +31,8 @@
                     <a class="btn mui-btn mui-btn-outlined btn-try">${views.include_auto['试玩']}</a>
                 </div>
                 <div class="user mui-hide _rightLogin">
-                    <a class="btn mui-btn mui-btn-outlined">欢迎！</a>
-                    <a class="btn mui-btn mui-btn-outlined" data-href="/mine/index.html"><%=SessionManager.getUserName() %></a>
+                    <a class="btn mui-btn mui-btn-outlined p-r-0">欢迎！</a>
+                    <a class="btn mui-btn mui-btn-outlined p-l-0" data-href="/mine/index.html"><%=SessionManager.getUserName() %></a>
                 </div>
             </div>
         </header>
