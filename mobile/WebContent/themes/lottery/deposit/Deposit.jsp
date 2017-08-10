@@ -51,6 +51,9 @@
                                                     <c:if test="${p.key eq 'wechatpay_fast' || p.key eq 'alipay_fast' }">
                                                         <li><a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit[p.key]}</a></li>
                                                     </c:if>
+                                                    <c:if test="${p.key eq 'other_fast'}">
+                                                        <li><a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(p.value.id)}">${p.value.customBankName}</a></li>
+                                                    </c:if>
                                                     <c:if test="${p.key eq 'isFastRecharge'}">
                                                         <li><a data-fastRecharge="${p.value}">${views.deposit_auto['快速充值中心']}</a></li>
                                                     </c:if>
