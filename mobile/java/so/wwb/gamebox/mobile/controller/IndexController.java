@@ -103,12 +103,10 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
-        model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
         boolean isLotterySite = isLotterySite();
         if (isLotterySite) {
             model.addAttribute("carousels", getCarousel());
         }
-        model.addAttribute("isLotterySite", isLotterySite);
         return "/Index";
     }
 

@@ -28,7 +28,7 @@
         <section class="site-address mui-hide _indexDomain">${views.app_auto['主页域名']}：${empty sysDomain?domain:sysDomain}</section>
 
         <!--底部-->
-        <%@include file="/include/include.footer.jsp" %>
+        <%@include file="/themes/default/include/include.footer.jsp" %>
         <!-- 内容 -->
         <div class="index-content mui-content mui-scroll-wrapper _cacheContent" id="mui-refresh">
             <div class="mui-scroll">

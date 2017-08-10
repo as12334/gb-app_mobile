@@ -6,7 +6,6 @@ import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
-import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,6 @@ import so.wwb.gamebox.iservice.master.report.IPlayerRecommendAwardService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
@@ -60,17 +58,10 @@ public class MyController {
         model.addAttribute("channel", "mine");
         //玩家信息
         model.addAttribute("sysUser", SessionManager.getUser());
-        model.addAttribute("footerUrl", isLotterySite() ? "/wallet/withdraw/index.html" : "/transfer/index.html");
-        model.addAttribute("isLotterySite", isLotterySite());
         //现金取款方式
         model.addAttribute("isBit", ParamTool.isBit());
         model.addAttribute("isCash", ParamTool.isCash());
         return MY_INDEX;
-    }
-
-    private boolean isLotterySite() {
-        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
-        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     @RequestMapping("/gamePage")

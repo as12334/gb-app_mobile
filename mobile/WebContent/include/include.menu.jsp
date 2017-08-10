@@ -7,7 +7,7 @@
             <div class="c-l-header">
                 <span class="icon-personal">
                     <input type="hidden" value="${resRoot}" id="resRoot">
-                    <img src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl,34,34, resRoot.concat('/images/avatar.png'))}"
+                    <img src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl, 36, 36, resRoot.concat('/images/avatar.png'))}"
                          width="100%" height="100%" alt="" id="avatarImg">
                 </span>
                 <!-- 登录状态 -->

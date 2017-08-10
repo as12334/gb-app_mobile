@@ -30,7 +30,7 @@
             主页域名：${empty sysDomain?domain:sysDomain}
         </section>
         <!--底部-->
-        <%@include file="/include/include.footer.jsp" %>
+        <%@include file="/themes/default/include/include.footer.jsp" %>
         <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
             <!-- 主页面容器 -->
             <div class="mui-inner-wrap">
