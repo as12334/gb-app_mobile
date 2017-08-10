@@ -31,7 +31,7 @@
         </c:if>
         <!--底部-->
         <c:if test="${os ne 'android' && os ne 'app_ios'}">
-            <%@include file="/include/include.footer.jsp"%>
+            <%@include file="/themes/default/include/include.footer.jsp"%>
         </c:if>
         <!--滚动区域-->
         <div class="index-content mui-content mui-scroll-wrapper mui-fullscreen" id="game-scroll" style="${os eq 'android' or os eq 'app_ios'?'padding-top:0px;':''}">

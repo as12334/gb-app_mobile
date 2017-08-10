@@ -30,11 +30,15 @@
                     <a class="btn mui-btn mui-btn-outlined btn-register" data-href="/signUp/index.html">${views.include_auto['注册']}</a>
                     <a class="btn mui-btn mui-btn-outlined btn-try">${views.include_auto['试玩']}</a>
                 </div>
+                <div class="user mui-hide _rightLogin">
+                    <a class="btn mui-btn mui-btn-outlined">欢迎！</a>
+                    <a class="btn mui-btn mui-btn-outlined" data-href="/mine/index.html"><%=SessionManager.getUserName() %></a>
+                </div>
             </div>
         </header>
 
         <!--底部-->
-        <%@include file="/include/include.footer.jsp" %>
+        <%@include file="/themes/lottery/include/include.footer.jsp" %>
         <!-- 内容 -->
         <div class="mui-scroll-wrapper middle-content _cacheContent" id="mui-refresh">
             <div class="mui-scroll">
@@ -80,13 +84,6 @@
             </div>
         </div>
 
-        <div class="desk">
-            <div class="mui-col-xs-2 logo"><img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" /></div>
-            <div class="mui-col-xs-8 tip">
-                <span class="desk-text">${views.game_auto['点击下方']}<em></em>${views.game_auto['添加到主屏幕']}</span>
-            </div>
-            <div class="mui-col-xs-1 close"><i></i></div>
-        </div>
         <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
