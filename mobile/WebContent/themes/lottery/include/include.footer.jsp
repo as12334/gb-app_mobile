@@ -10,15 +10,15 @@
         <span class="mui-tab-label">${views.include_auto['大厅']}</span>
     </a>
     <a class="mui-tab-item" data-url="/wallet/deposit/index.html" id="footer_deposit">
-        <span class="mui-icon"></span>
+        <span class="mui-icon bar-buttom-icon iconfont icon-chongzhitikuan"></span>
         <span class="mui-tab-label">${views.include_auto['存款']}</span>
     </a>
     <a class="mui-tab-item" data-url="/wallet/withdraw/index.html" id="footer_transfer">
-        <span class="mui-icon"></span>
+        <span class="mui-icon bar-buttom-icon iconfont icon-touzhujilu"></span>
         <span class="mui-tab-label">${views.mine_auto['取款']}</span>
     </a>
     <a class="mui-tab-item ${channel == 'mine' ? 'mui-active' : ''}" data-url="/mine/index.html" id="footer_mine">
-        <span class="mui-icon"></span>
+        <span class="mui-icon bar-buttom-icon iconfont icon-huiyuanzhongxin"></span>
         <span class="mui-tab-label">${views.include_auto['我的']}</span>
     </a>
 </nav>
