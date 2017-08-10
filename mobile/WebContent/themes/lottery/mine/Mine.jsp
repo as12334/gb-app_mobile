@@ -40,10 +40,9 @@
                                          data-url="${root}/personalInfo/index.html" class="_sub avatar">
                                     <p>${soulFn:overlayString(sysUser.username)}</p>
                                     <p>
-                                        <c:set value="${empty sysUser.loginTime?'': views.mine_auto['本次登录时间'].concat(soulFn:formatDateTz(sessionSysUser.loginTime, DateFormat.DAY_SECOND, timeZone))}"
+                                        <c:set var="_now" value="<%=new java.util.Date() %>" />
+                                        <c:set value="${empty sysUser.loginTime? soulFn:formatDateTz(_now, DateFormat.DAY_SECOND, timeZone): views.mine_auto['本次登录时间'].concat(soulFn:formatDateTz(sessionSysUser.loginTime, DateFormat.DAY_SECOND, timeZone))}"
                                                var="loginTime"/>
-                                        <c:set value="${empty sysUser.loginTime?'': views.mine_auto['本次登录时间'].concat(soulFn:formatDateTz(sessionSysUser.lastActiveTime, DateFormat.DAY_SECOND, timeZone))}"
-                                               var="lastActiveTime"/>
                                         <small>${empty sysUser.lastLoginTime ? (empty loginTime ? lastActiveTime : loginTime):
                                                 views.mine_auto['上次登录时间'].concat(soulFn:formatDateTz(sysUser.lastLoginTime, DateFormat.DAY_SECOND, timeZone))}
                                         </small>
@@ -74,7 +73,8 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="" class="item" data-url="${root}/wallet/withdraw/index.html">
+                                        <c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
+                                        <a href="" class="item" data-url="${isDemo ? '' : '/wallet/withdraw/index.html'} ">
                                             <p><img src="${resRoot}/images/my-ico2.png" style="width: 28px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['取款']}</p>
