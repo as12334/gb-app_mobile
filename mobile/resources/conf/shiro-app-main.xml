@@ -75,6 +75,7 @@
 				/verificationCode/*=anon
 				/commonPage/*.html = anon
 				/app/*.html = anon
+				/demo/*.html = anon
 				/sysUser.html = anon
 				/lotteryResult/getOpenResult.html = anon
 				/** = subsys,kickout,authc,access,autho
