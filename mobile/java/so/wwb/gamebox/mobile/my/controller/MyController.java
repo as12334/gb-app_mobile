@@ -97,8 +97,12 @@ public class MyController {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(userId);
         userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
-        double walletBalance = userPlayerVo.getResult().getWalletBalance();
-        userInfo.put("walletBalance", walletBalance);
+        if (userPlayerVo.getResult() == null) {
+            userInfo.put("walletBalance", 0.0d);
+        } else {
+            double walletBalance = userPlayerVo.getResult().getWalletBalance();
+            userInfo.put("walletBalance", walletBalance);
+        }
 
         //正在处理中取款金额
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
