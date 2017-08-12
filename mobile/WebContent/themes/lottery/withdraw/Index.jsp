@@ -76,7 +76,7 @@
                                     <p>${views.withdraw_auto['取款金额最少为'].replace('{0}', soulFn:formatCurrency(rank.withdrawMinNum))}</p>
                                     <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
                                 </div>
-                                <a class="mui-btn mui-btn-blue btn-deposit" data-href="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
+                                <a class="mui-btn mui-btn-blue btn-deposit" data-action="lottery" data-href="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
                             </div>
                         </div>
                     </div>
