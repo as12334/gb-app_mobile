@@ -139,11 +139,6 @@ public class IndexController extends BaseApiController {
         return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
-    private String appDmain(){
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_APP_DOMAIN);
-        return sysParam!=null ? sysParam.getParamValue():null;
-    }
-
     private List<SiteApiType> getApiTypes() {
         Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
         return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
@@ -339,7 +334,7 @@ public class IndexController extends BaseApiController {
 
         String androidUrl = "";
         if(androidApp != null)
-            androidUrl = "http://" + appDmain() + androidApp.getAppUrl() + androidApp.getVersionName() + "/app_" + code + "_" + androidApp.getVersionName() + ".apk";
+            androidUrl = "http://" + ParamTool.appDmain(request.getServerName()) + androidApp.getAppUrl() + androidApp.getVersionName() + "/app_" + code + "_" + androidApp.getVersionName() + ".apk";
 
         String iosUrl = "";
         if(iosApp != null)
