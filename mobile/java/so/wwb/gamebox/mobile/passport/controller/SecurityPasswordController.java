@@ -234,7 +234,7 @@ public class SecurityPasswordController {
 
     private String formatLockTime(Date date) {
 //        String timezone = SessionManager.getTimeZone().getID();
-        return LocaleDateTool.formatDate(date, DateTool.FMT_HYPHEN_DAY_CLN_SECOND, SessionManager.getTimeZone());
+        return LocaleDateTool.formatDate(date, DateTool.yyyy_MM_dd_HH_mm_ss, SessionManager.getTimeZone());
     }
 
     /**
