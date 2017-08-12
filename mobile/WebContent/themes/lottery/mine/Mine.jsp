@@ -74,7 +74,7 @@
                                     </li>
                                     <li>
                                         <c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
-                                        <a href="" class="item" data-url="${isDemo ? '' : '/wallet/withdraw/index.html'} ">
+                                        <a href="" class="item" data-url="${isDemo ? '' : '/wallet/withdraw/index.html'}">
                                             <p><img src="${resRoot}/images/my-ico2.png" style="width: 28px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['取款']}</p>
