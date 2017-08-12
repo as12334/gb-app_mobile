@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
+import com.sun.xml.internal.rngom.digested.DDataPattern;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.data.json.JsonTool;
@@ -17,6 +18,8 @@ import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.sys.po.SysParam;
+import org.soul.model.sys.vo.SysParamListVo;
+import org.soul.model.sys.vo.SysParamVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,6 +135,11 @@ public class IndexController extends BaseApiController {
     private boolean isLotterySite() {
         SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
         return param != null ? Boolean.valueOf(param.getParamValue()) : false;
+    }
+
+    private String appDmain(){
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_APP_DOMAIN);
+        return sysParam!=null ? sysParam.getParamValue():null;
     }
 
     private List<SiteApiType> getApiTypes() {
@@ -317,7 +325,6 @@ public class IndexController extends BaseApiController {
         Integer siteId = SessionManager.getSiteId();
         String code = Cache.getSysSite().get(siteId.toString()).getCode();
         Cache.getSysSite().get(siteId.toString());
-
         //获取android APP信息
         AppUpdateVo androidVo = new AppUpdateVo();
         androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
@@ -330,7 +337,7 @@ public class IndexController extends BaseApiController {
 
         String androidUrl = "";
         if(androidApp != null)
-            androidUrl = "http://" + request.getServerName() + androidApp.getAppUrl() + androidApp.getVersionName() + "/app_" + code + "_" + androidApp.getVersionName() + ".apk";
+            androidUrl = "http://" + appDmain() + androidApp.getAppUrl() + androidApp.getVersionName() + "/app_" + code + "_" + androidApp.getVersionName() + ".apk";
 
         String iosUrl = "";
         if(iosApp != null)
