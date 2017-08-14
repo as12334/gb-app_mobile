@@ -156,6 +156,9 @@
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==1}">
                                     <%@include file="LiveDealerDetail.jsp"%>
                                 </c:when>
+                                <c:when test="${result.apiId==22}">
+                                    <%@include file="LotteryDetail.jsp"%>
+                                </c:when>
                                 <c:otherwise>
                                     <c:forEach items="${resultArray}" var="array">
                                         <div class="panel">
