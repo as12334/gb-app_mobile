@@ -4,7 +4,7 @@
     <div class="gb-noticetabs">
         <div id="segmentedControl2" class="mui-segmented-control" style="overflow: auto">
             <a data-href="noticeSite1"
-               class="mui-control-item <c:if test="${empty unReadType || unReadType eq 'sysMessage'}">mui-active</c:if>">${views.mine_auto['系统消息']}
+               class="mui-control-item <c:if test="${empty unReadType || unReadType eq 'sysMessage'}">mui-active</c:if>" style="margin-right: 5px;">${views.mine_auto['系统消息']}
                 ${not empty sysMessageUnReadCount&&sysMessageUnReadCount!=0?'<span class="unread2-count-icon"></span>':''}</a>
             <a data-href="noticeSite2" class="mui-control-item ${unReadType eq 'advisoryMessage'?'mui-active':''}">${views.mine_auto['我的消息']}
                 ${not empty advisoryUnReadCount&&advisoryUnReadCount!=0?'<span class="unread2-count-icon"></span>':''}</a>

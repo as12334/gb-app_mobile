@@ -5,7 +5,7 @@
 <div class="mui-row hot-row">
     <div class="mui-col-xs-6 _game"
          data-api-type-id="${fish.apiTypeId}" data-api-id="${fish.apiId}" data-game-id="${fish.gameId}" data-game-code="${fish.code}" data-status="${fish.status}">
-        <div class="game-hot g1">
+        <div class="game-hot g1" style="height: 150px;">
             <div class="text">
                 <div class="title">${views.game_auto[(siteId == 35 || siteId == 185) ? 'GG捕鱼' : 'AG捕鱼王']}</div>
                 <div class="description">${views.game_auto['百发百中']}</div>
@@ -18,10 +18,10 @@
     <div class="mui-col-xs-6" style="padding-left: 0;">
         <div class="mui-row">
             <div class="mui-col-xs-12 _api" data-api-type-id="3" data-api-id="19" data-status="${not empty apiStatus_19?apiStatus_19:'maintain'}">
-                <div class="game-hot g2">
+                <div class="game-hot g2" style="height: 75px;">
                     <div class="text">
                         <div class="title">${views.game_auto['沙巴体育']}</div>
-                        <div class="description" style="width: 66%;line-height: 15px;">${views.game_auto['最热门的线上体育']}</div>
+                        <div class="description" style="width: 72%;height: 45px;line-height: 15px;">${views.game_auto['最热门的线上体育']}</div>
                     </div>
                     <div class="img">
                         <img src="${resRoot}/images/game/game-saba.png" style="width: 57px;"/>
@@ -29,10 +29,10 @@
                 </div>
             </div>
             <div class="mui-col-xs-12 _api" data-api-type-id="1" data-api-id="16" data-status="${not empty apiStatus_19?apiStatus_16:'maintain'}">
-                <div class="game-hot g3">
+                <div class="game-hot g3" style="height: 75px;">
                     <div class="text">
                         <div class="title">${views.game_auto['EBET真人']}</div>
-                        <div class="description">${views.game_auto['移动娱乐']}</div>
+                        <div class="description" style="width: 72%;height: 45px;line-height: 15px;">${views.game_auto['移动娱乐']}</div>
                     </div>
                     <div class="img">
                         <img src="${resRoot}/images/game/game-zr.png"/>
