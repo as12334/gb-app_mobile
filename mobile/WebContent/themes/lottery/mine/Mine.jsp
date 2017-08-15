@@ -14,17 +14,17 @@
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
-    <%@include file="/include/include.menu.jsp" %>
+    <%@include file="../include/include.menu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
             <!-- 主页面容器 -->
             <div class="mui-inner-wrap">
                 <header class="mui-bar mui-bar-nav">
-                    <a class="mui-action-menu index-action-menu" style="left: -5px;"></a>
-                    <h1 class="mui-title">${views.mine_auto['我的']}</h1>
-                    <a class="mui-icon mui-icon mui-pull-right icon-chat" data-url="/message/gameNotice.html"
+                    <a class="mui-icon mui-icon mui-pull-left icon-chat" data-url="/message/gameNotice.html"
                        id="unReadCount"></a>
+                    <h1 class="mui-title">${views.mine_auto['我的']}</h1>
+                    <a class="mui-action-menu index-action-menu mui-pull-right"></a>
                 </header>
                 <!--底部-->
                 <c:if test="${os ne 'android'&&os ne 'app_ios'}">

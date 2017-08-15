@@ -41,7 +41,7 @@
                     <li class="mui-table-view-cell" data-href="/help/firstType.html"><a><span
                             class="icon-canvas ic-problem"></span>${views.include_auto['帮助中心']}</a>
                     </li>
-                    <li class="mui-table-view-cell custom _app" data-skip="#" data-target="3"><a><span
+                    <li class="mui-table-view-cell customer _app" data-target="3"><a><span
                             class="icon-canvas ic-online"></span>${views.include_auto['在线客服']}</a>
                     </li>
                 </ul>

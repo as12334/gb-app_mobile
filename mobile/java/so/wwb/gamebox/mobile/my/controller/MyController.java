@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.my.controller;
 
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.lang.DateTool;
@@ -94,15 +95,7 @@ public class MyController {
             System.out.print(e.getMessage());
         }
         //钱包余额
-        UserPlayerVo userPlayerVo = new UserPlayerVo();
-        userPlayerVo.getSearch().setId(userId);
-        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
-        if (userPlayerVo.getResult() == null) {
-            userInfo.put("walletBalance", 0.0d);
-        } else {
-            double walletBalance = userPlayerVo.getResult().getWalletBalance();
-            userInfo.put("walletBalance", walletBalance);
-        }
+        userInfo.put("walletBalance", getWalletBalance(userId));
 
         //正在处理中取款金额
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
@@ -200,11 +193,29 @@ public class MyController {
         return JsonTool.toJson(userInfo);
     }
 
+    private Double getWalletBalance(Integer userId) {
+        UserPlayerVo userPlayerVo = new UserPlayerVo();
+        userPlayerVo.getSearch().setId(userId);
+        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
+        if (userPlayerVo.getResult() == null) {
+            return 0.0d;
+        } else {
+            return userPlayerVo.getResult().getWalletBalance();
+        }
+    }
+
     private String getCurrencySign() {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());
         if (sysCurrency != null) {
             return sysCurrency.getCurrencySign();
         }
         return "";
+    }
+
+    @RequestMapping("/getBalance")
+    @ResponseBody
+    public String getBalance() {
+        Integer userId = SessionManager.getUserId();
+        return CurrencyTool.formatCurrency(getWalletBalance(userId));
     }
 }

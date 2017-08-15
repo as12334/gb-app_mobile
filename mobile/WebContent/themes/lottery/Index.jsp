@@ -13,13 +13,12 @@
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
-    <%@include file="/include/include.menu.jsp" %>
+    <%@include file="include/include.menu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!--头部-->
         <header class="mui-bar mui-bar-nav _siteHeader" style="display: ${os == 'android' ? 'none' : ''}">
             <div class="mui-pull-left">
-                <span class="index-action-menu mui-action-menu"></span>
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></div>
             </div>
             <!-- 资产 -->
@@ -33,6 +32,7 @@
                 <div class="user mui-hide _rightLogin">
                     <a class="btn mui-btn mui-btn-outlined p-r-0">欢迎！</a>
                     <a class="btn mui-btn mui-btn-outlined p-l-0" data-href="/mine/index.html"><%=SessionManager.getUserName() %></a>
+                    <span class="index-action-menu mui-action-menu"></span>
                 </div>
             </div>
         </header>
@@ -94,7 +94,7 @@
         <li class="mui-table-view-cell">
             <a class="mui-navigate-right draw-list-a"
                data-href="${root}/lottery/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
-                <img class="mui-media-object draw-list-img" src="${resRoot}/themes/lottery/images/lottery_ico/{{value.code}}.png">
+                <img class="mui-media-object draw-list-img" src="${resRoot}/lottery/themes/images/lottery_ico/{{value.code}}.png">
                 <div class="mui-media-body draw-list-right">
                     <span class="title">{{value.name}}</span>
                     <span class="expect mui-pull-right"><font class="col-blue">{{value.expect}}期</font>&nbsp;
@@ -141,7 +141,7 @@
 <script src="${resRoot}/js/mui/mui.pullToRefresh.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>
 <script>
-    curl(['site/lottery/Index', 'site/game/ApiLogin', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
+    curl(['${resRoot}/lottery/js/Index', 'site/game/ApiLogin', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
         function (Page, ApiLogin, Menu, Footer, Dynamic) {
             page = new Page();
             page.apiLogin = new ApiLogin();
