@@ -139,7 +139,7 @@
 <div id="advisoryType" class="mui-popover" style="width: 98px;">
     <ul class="mui-table-view" >
         <c:forEach items="${advisoryType}" var="t">
-            <li class="mui-table-view-cell"><a href="#" value="${t.key}">${t.value['remark']}</a></li>
+            <li class="mui-table-view-cell"><a href="#" value="${t.key}">${views.mine_auto[t.value['remark']]}</a></li>
         </c:forEach>
     </ul>
 </div>
