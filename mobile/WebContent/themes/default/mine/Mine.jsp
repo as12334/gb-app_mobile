@@ -67,7 +67,7 @@
                             <div class="gb-userlist m-t-sm">
                                 <ul>
                                     <li>
-                                        <a  class="item _app" data-skip="/wallet/deposit/index.html" data-target="1">
+                                        <a  class="item" data-skip="/wallet/deposit/index.html" data-target="1">
                                             <p><img src="${resRoot}/images/my-ico1.png" style="width: 33px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['存款']}</p>
@@ -86,7 +86,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="item _app" data-skip="${root}/transfer/index.html" data-target="2">
+                                        <a class="item" data-skip="${root}/transfer/index.html" data-target="2">
                                             <p><img src="${resRoot}/images/my-ico3.png" style="width: 42px;" alt=""></p>
                                             <div class="ct" data-url="mine-exchange.html">
                                                 <p>${views.mine_auto['额度转换']}</p>

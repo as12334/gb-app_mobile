@@ -65,7 +65,7 @@
                             <div class="gb-userlist m-t-sm">
                                 <ul>
                                     <li>
-                                        <a  class="item _app" data-skip="/wallet/deposit/index.html" data-action="deposit">
+                                        <a  class="item _app" data-skip="/wallet/deposit/index.html" data-target="1">
                                             <p><img src="${resRoot}/images/my-ico1.png" style="width: 33px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['存款']}</p>
@@ -74,7 +74,7 @@
                                     </li>
                                     <li>
                                         <c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
-                                        <a href="" class="item _app" data-skip="${isDemo ? '' : '/wallet/withdraw/index.html'}" data-action="withdraw">
+                                        <a href="" class="item" data-skip="${isDemo ? '' : '/wallet/withdraw/index.html'}" data-target="2">
                                             <p><img src="${resRoot}/images/my-ico2.png" style="width: 28px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['取款']}</p>
