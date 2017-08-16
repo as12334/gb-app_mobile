@@ -120,13 +120,8 @@ public class DepositController extends BaseCommonDepositController {
 
         fastRecharge(payAccountMap);
         model.addAttribute("payAccountMap", payAccountMap);
-        model.addAttribute("isLotterySite", isLotterySite());
+        model.addAttribute("isLotterySite", ParamTool.isLotterySite());
         return DEPOSIT_URI;
-    }
-
-    private boolean isLotterySite() {
-        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
-        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     private void bitcoinPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {

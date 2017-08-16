@@ -12,7 +12,6 @@ import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.model.security.privilege.vo.SysUserVo;
-import org.soul.model.sys.po.SysParam;
 import org.soul.web.controller.NoMappingCrudController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +25,6 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
@@ -72,7 +70,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
 
         //玩家中心不展示派彩相关资金记录
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
-        listVo.getSearch().setLotterySite(isLotterySite());
+        listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = getService().search(listVo);
         listVo = preList(listVo);
         model.addAttribute("command", listVo);
@@ -102,7 +100,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         Map<String, String> result = new HashMap<>();
         result.put("withdrawSum", CurrencyTool.formatCurrency(ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo)));
         result.put("currency", getCurrencySign());
-        if (!isLotterySite()) {
+        if (!ParamTool.isLotterySite()) {
             //正在转账中金额
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
@@ -128,7 +126,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
         model.addAttribute("withdrawSum", ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
 
-        if (!isLotterySite()) {
+        if (!ParamTool.isLotterySite()) {
             //正在转账中金额
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
@@ -171,7 +169,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         }
         model.addAttribute("command", vo);
         model.addAttribute("siteCurrencySign", getCurrencySign());
-        model.addAttribute("isLotterySite", isLotterySite());
+        model.addAttribute("isLotterySite", ParamTool.isLotterySite());
         return getViewBasePath() + "Details";
     }
 
@@ -204,11 +202,6 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         if (listVo.getSearch().getEndCreateTime() == null) {
             listVo.getSearch().setEndCreateTime(SessionManager.getDate().getNow());
         }
-    }
-
-    private boolean isLotterySite() {
-        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
-        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     @Override
