@@ -200,7 +200,8 @@ public class MyController {
         if (userPlayerVo.getResult() == null) {
             return 0.0d;
         } else {
-            return userPlayerVo.getResult().getWalletBalance();
+            Double balance = userPlayerVo.getResult().getWalletBalance();
+            return balance == null ? 0.0d : balance;
         }
     }
 

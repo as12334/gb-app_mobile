@@ -147,7 +147,8 @@ public class ApiController extends BaseApiController {
                 map.put("username", StringTool.overlayString(player.getUsername()));
                 map.put("currSign", player.getCurrencySign());
                 // 钱包余额
-                map.put("playerWallet", CurrencyTool.formatCurrency(player.getWalletBalance()));
+                Double balance = player.getWalletBalance();
+                map.put("playerWallet", CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
             }
             // 总资产
             map.put("playerAssets", queryPlayerAssets(listVo, userId));

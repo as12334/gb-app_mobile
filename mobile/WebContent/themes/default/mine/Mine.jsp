@@ -14,7 +14,7 @@
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
-    <%@include file="/include/include.menu.jsp" %>
+    <%@include file="/themes/default/include/include.menu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">

@@ -171,6 +171,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         }
         model.addAttribute("command", vo);
         model.addAttribute("siteCurrencySign", getCurrencySign());
+        model.addAttribute("isLotterySite", isLotterySite());
         return getViewBasePath() + "Details";
     }
 

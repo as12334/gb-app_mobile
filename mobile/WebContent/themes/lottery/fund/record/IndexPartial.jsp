@@ -6,19 +6,7 @@
             <tr data-href="${root}/fund/record/details.html?searchId=${command.getSearchId(s.id)}">
                 <td><span class="text-gray">${soulFn:formatDateTz(s.createTime, DateFormat.DAY,timeZone)}</span></td>
                 <td><span class="text-green2">${soulFn:formatCurrency(s.transactionMoney)}</span></td>
-                <td>
-                        <%--<c:choose>--%>
-                        <%--<c:when test="${s.transactionType=='deposit'}">${views.fund_auto['存款']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='withdrawals'}">${views.fund_auto['取款']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='transfers'}">${views.fund_auto['转账']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='favorable'}">${views.fund_auto['优惠']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='backwater'}">${views.fund_auto['返水']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='recommend'}">${views.fund_auto['推荐']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='rebate'}">${views.fund_auto['返佣']}</c:when>--%>
-                        <%--<c:when test="${s.transactionType=='agent_withdrawals'}">${views.fund_auto['代理取款']}</c:when>--%>
-                        <%--</c:choose>--%>
-                        ${dicts.common.transaction_type[s.transactionType]}
-                </td>
+                <td>${dicts.common.transaction_type[s.transactionType]}</td>
                 <td>
                     <c:choose>
                         <c:when test="${s.status=='success'}"><span class="green">${dicts.common.status[s.status]}</span></c:when>

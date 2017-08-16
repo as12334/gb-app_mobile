@@ -5,12 +5,15 @@ import org.soul.commons.lang.DateTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderListVo;
@@ -19,8 +22,6 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.report.betting.controller.BaseGameOrderController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**投注记录
@@ -79,8 +80,15 @@ public class BettingControler {
         playerGameOrderVo=ServiceTool.playerGameOrderService().get(playerGameOrderVo);
         model.addAttribute("command",playerGameOrderVo);
         model.addAttribute("username",SessionManager.getUserName());
+        model.addAttribute("isLotterySite", isLotterySite());
         return BETTING_DETAIL_URL;
     }
+
+    private boolean isLotterySite() {
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
+    }
+
     @RequestMapping("/gameRecordDetail")
     public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo, Model model) {
         playerGameOrderVo = ServiceTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);

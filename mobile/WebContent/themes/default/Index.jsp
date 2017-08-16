@@ -13,7 +13,7 @@
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
-    <%@include file="/include/include.menu.jsp" %>
+    <%@include file="/themes/default/include/include.menu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!--头部-->
@@ -23,7 +23,7 @@
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
             <!-- 资产 -->
-            <%@include file="/include/include.asset.jsp" %>
+            <%@include file="/themes/default/include/include.asset.jsp" %>
         </header>
         <section class="site-address mui-hide _indexDomain">${views.app_auto['主页域名']}：${empty sysDomain?domain:sysDomain}</section>
 

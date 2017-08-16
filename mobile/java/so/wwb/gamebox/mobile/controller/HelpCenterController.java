@@ -8,10 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.company.help.po.HelpDocument;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
-import so.wwb.gamebox.model.company.help.vo.VHelpDocumentListVo;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -59,7 +57,7 @@ public class HelpCenterController {
             model.addAttribute("command", getTypeI18n(typeList));
         }
         model.addAttribute("name", getTypeName(searchId));
-        return "/help/SecondTypeList";
+        return "/help/SubList";
     }
 
     /**

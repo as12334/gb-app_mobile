@@ -22,12 +22,7 @@ import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 存款
@@ -125,7 +120,13 @@ public class DepositController extends BaseCommonDepositController {
 
         fastRecharge(payAccountMap);
         model.addAttribute("payAccountMap", payAccountMap);
+        model.addAttribute("isLotterySite", isLotterySite());
         return DEPOSIT_URI;
+    }
+
+    private boolean isLotterySite() {
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        return param != null ? Boolean.valueOf(param.getParamValue()) : false;
     }
 
     private void bitcoinPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
