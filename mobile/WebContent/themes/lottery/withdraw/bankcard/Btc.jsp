@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>${empty userBankCard ? views.withdraw_auto['添加'] : views.withdraw_auto['我的']}比特币</title>
+    <title>${empty userBankCard ? views.withdraw_auto['添加'] : views.withdraw_auto['我的']}${views.themes_auto['比特币']}</title>
     <%@ include file="../../include/include.head.jsp" %>
     <%@ include file="/include/include.js.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
