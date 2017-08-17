@@ -167,7 +167,7 @@
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="mui-input-row"><label for="" class="text-gray">${views.themes_auto['比特币地址']}:</label>
+                                    <div class="mui-input-row"><label for="" class="text-gray">${views.withdraw_auto['比特币地址']}:</label>
                                         <div class="ct">
                                             <p class="mui-text-right">${command.result._describe['payerBankcard']}</p>
                                         </div>
