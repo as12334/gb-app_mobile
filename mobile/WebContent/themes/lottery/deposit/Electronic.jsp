@@ -59,7 +59,7 @@
                                                 ${views.deposit_auto['支付宝二维码']}
                                             </c:if>
                                             <c:if test="${payAccount.bankCode eq 'other'}">
-                                                二维码
+                                                ${views.themes_auto['二维码']}
                                             </c:if>
                                         </a>
                                     </div>
