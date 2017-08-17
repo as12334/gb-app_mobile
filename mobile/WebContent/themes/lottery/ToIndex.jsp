@@ -30,7 +30,7 @@
                 <i class="mobile-ico ico-and"></i><span>${views.include_auto['Android下载']}</span>
             </button>
 
-            <div class="p1"><img src="${resRoot}/themes/lottery/images/p1.png" width="60%"></div>
+            <div class="p1"><img src="${resRoot}/lottery/themes/images/p1.png" width="60%"></div>
             <button type="button" class="mui-btn mui-btn-danger mui-btn-block goon" data-href="/mainIndex.html">${views.include_auto['继续访问']}${views.include_auto['连接成功']}</button>
             <div class="tit-tips">${views.include_auto['温馨提示']}</div>
         </div>
