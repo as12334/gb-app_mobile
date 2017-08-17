@@ -20,7 +20,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-href="/mainIndex.html" class="right-menu">
+                <a data-skip="/mainIndex.html" data-target="0" class="right-menu">
                     <span class="iconfont icon-home"></span>
                     <span>首页</span>
                 </a>
@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-href="/mine/index.html" class="right-menu">
+                <a data-skip="/mine/index.html" data-target="4" class="right-menu">
                     <span class="iconfont icon-huiyuanzhongxin"></span>
                     <span>会员中心</span>
                 </a>
@@ -56,14 +56,16 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a class="right-menu customer">
+                <a class="right-menu customer" data-target="3">
                     <span class="iconfont icon-zaixiankefu"></span>
                     <span>在线客服</span>
                 </a>
             </li>
         </ul>
+        <c:if test="${isLogin}">
         <div class="p-1r">
             <button type="button" class="mui-btn mui-btn-danger mui-btn-block user-logout">退出登录</button>
         </div>
+        </c:if>
     </div>
 </aside>

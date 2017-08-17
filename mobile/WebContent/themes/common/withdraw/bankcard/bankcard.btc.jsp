@@ -33,7 +33,7 @@
                         <div class="cont m-t-sm">
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form">
-                                    <div class="mui-input-row"><label>${views.themes_auto['比特币地址']}</label>
+                                    <div class="mui-input-row"><label>${views.withdraw_auto['比特币地址']}</label>
                                         <div class="ct">
                                             <span>${gbFn:overlayBankcard(userBankCard.bankcardNumber)}</span>
                                         </div>
