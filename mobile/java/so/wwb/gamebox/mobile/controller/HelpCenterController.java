@@ -76,8 +76,10 @@ public class HelpCenterController {
         if(list != null){
             for(Map<String, String> map : list){
                 HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
-                String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
-                helpDocumentI18n.setHelpContent(content);
+                if (helpDocumentI18n != null) {
+                    String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
+                    helpDocumentI18n.setHelpContent(content);
+                }
                 documentI18nList.add(helpDocumentI18n);
             }
         }
