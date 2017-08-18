@@ -592,7 +592,7 @@
                                                                 </c:if>
                                                                 <c:if test="${empty views.gameOrder[key]}">
                                                                     <c:if test="${command.result.orderState=='pending_settle'}">${views.fund_auto['未结算']}</c:if>
-                                                                    <c:if test="${command.result.orderState=='cancel'}">${views.fund_auto['取消']}</c:if>
+                                                                    <c:if test="${command.result.orderState=='cancel'}">${views.common_report['取消']}</c:if>
                                                                     <c:if test="${command.result.orderState=='settle'&&command.result.profitAmount>0}">${views.fund_auto['赢']}</c:if>
                                                                     <c:if test="${command.result.orderState=='settle'&&command.result.profitAmount==0}">${views.fund_auto['和']}</c:if>
                                                                     <c:if test="${command.result.orderState=='settle'&&command.result.profitAmount<0}">${views.fund_auto['输']}</c:if>
