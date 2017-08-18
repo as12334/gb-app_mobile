@@ -40,7 +40,7 @@
         </div>
         <div class="gb-form-foot" style="padding: 0 40px;">
             <div class="mui-pull-right" style="width: 47%;">
-                <a href="" class="mui-btn mui-btn-primary submit" id="advisoryReset">${views.mine_auto['取消']}</a>
+                <a href="" class="mui-btn mui-btn-primary submit" id="advisoryReset">${views.common_report['取消']}</a>
             </div>
             <a id="advisorySubmit" class="mui-btn mui-btn-primary submit" style="width: 47%;">${views.mine_auto['提交']}</a>
         </div>

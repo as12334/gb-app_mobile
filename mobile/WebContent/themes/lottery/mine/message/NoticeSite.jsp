@@ -19,7 +19,7 @@
     <form name="site1">
         <div class="operate-message">
             <p>
-                <a href="" style="color: #333" name="site1_allCheck"><span class="gb-checkbox2"></span>${views.mine_auto['全选']}</a>
+                <a href="" style="color: #333" name="site1_allCheck"><span class="gb-checkbox2"></span>${views.common_report['全选']}</a>
                 <button type="button" class="btn mui-btn mui-btn-outlined" style="margin-left: 25px;"
                         id="deleteMessage" name="delete">${views.mine_auto['删除']}
                 </button>
@@ -45,7 +45,7 @@
     <form name="site2">
         <div class="operate-message">
             <p>
-                <a href="" style="color: #333" name="site2_allCheck"><span class="gb-checkbox2"></span>${views.mine_auto['全选']}</a>
+                <a href="" style="color: #333" name="site2_allCheck"><span class="gb-checkbox2"></span>${views.common_report['全选']}</a>
                 <button type="button" class="btn mui-btn mui-btn-outlined" style="margin-left: 25px;"
                         name="delete">${views.mine_auto['删除']}
                 </button>

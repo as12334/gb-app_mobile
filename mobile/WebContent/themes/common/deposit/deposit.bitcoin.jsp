@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
 <body class="gb-theme mine-page">
 <div id="offCanvasWrapper" class="mui-draggable">
     <!-- 主页面容器 -->
@@ -40,21 +39,18 @@
                                                         ${payAccount.customBankName}
                                                     </c:if>
                                                 </p>
-                                                <button class="foobtn mui-pull-right" type="button" data-clipboard-target="#bit">${views.deposit_auto['复制']}</button>
                                             </div>
                                             <div class="ct">
                                                 <div>
                                                     <div class="bit-box">
-                                                    <span class="text-green" id="bit" style="word-break: break-all;-webkit-touch-callout: inherit;-webkit-user-select:text !important;user-select: text;-khtml-user-select: text;-moz-user-select: text;-ms-user-select: text;">
                                                         <c:choose>
                                                             <c:when test="${isHide}">
                                                                 ${views.deposit_auto['账号代码']}：${payAccount.code},${views.deposit_auto['请联系客服']}
                                                             </c:when>
                                                             <c:otherwise>
-                                                                ${payAccount.account}
+                                                                <textarea readonly="readonly">${payAccount.account}</textarea>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                    </span>
                                                     </div>
                                                 </div>
                                                 <div class="ct">

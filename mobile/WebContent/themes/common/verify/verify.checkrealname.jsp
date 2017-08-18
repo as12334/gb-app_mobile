@@ -81,7 +81,7 @@
                                 <input name="result.playerAccount" type="hidden" value="${p.playerAccount}" autocomplete="off" />
                                 <button class="mui-btn mui-btn-primary submit _ok" style="float: left; width: 68%" type="button">${views.verify_auto['确认']}</button>
                                 <button class="mui-btn mui-btn-primary btn-reg" data-href="/mainIndex.html"
-                                        style="float: right; background: #fff; margin-top: 0; width: 30%" type="button">${views.verify_auto['取消']}</button>
+                                        style="float: right; background: #fff; margin-top: 0; width: 30%" type="button">${views.common_report['取消']}</button>
                             </div>
                         </div>
                     </form>
