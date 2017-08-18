@@ -8,10 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.company.help.po.HelpDocument;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
-import so.wwb.gamebox.model.company.help.vo.VHelpDocumentListVo;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -78,8 +76,10 @@ public class HelpCenterController {
         if(list != null){
             for(Map<String, String> map : list){
                 HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
-                String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
-                helpDocumentI18n.setHelpContent(content);
+                if (helpDocumentI18n != null) {
+                    String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
+                    helpDocumentI18n.setHelpContent(content);
+                }
                 documentI18nList.add(helpDocumentI18n);
             }
         }
