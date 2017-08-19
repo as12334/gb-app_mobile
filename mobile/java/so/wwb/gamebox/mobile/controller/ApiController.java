@@ -7,6 +7,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.spring.utils.SpringTool;
+import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +34,7 @@ import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
@@ -133,29 +135,35 @@ public class ApiController extends BaseApiController {
     @RequestMapping("/getSiteApi")
     @ResponseBody
     public Map<String, Object> getSiteAPi(HttpServletRequest request) {
-        Integer userId = SessionManager.getUserId();
-        if(userId !=null) {
+        SysUser user = SessionManager.getUser();
+        if(user != null) {
             Map<String, Object> map = new HashMap<>();
-            PlayerApiListVo listVo = initPlayerApiListVo(userId);
-
-            VUserPlayer player = getPlayer(userId);
-
-            // API 余额
-            map.put("apis", getSiteApis(listVo, request, false));
-
-            if (player != null) {
-                map.put("username", StringTool.overlayString(player.getUsername()));
-                map.put("currSign", player.getCurrencySign());
-                // 钱包余额
-                Double balance = player.getWalletBalance();
-                map.put("playerWallet", CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
+            boolean isDemo = Boolean.valueOf(String.valueOf(SessionManager.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO)));
+            if (isDemo) {
+                map.put("username", user.getUsername());
+            } else {
+                getAppUserInfo(request, user, map);
             }
-            // 总资产
-            map.put("playerAssets", queryPlayerAssets(listVo, userId));
             return map;
-        }else {
+        } else {
             return null;
         }
+    }
+
+    private void getAppUserInfo(HttpServletRequest request, SysUser user, Map<String, Object> map) {
+        PlayerApiListVo listVo = initPlayerApiListVo(user.getId());
+        VUserPlayer player = getPlayer(user.getId());
+        // API 余额
+        map.put("apis", getSiteApis(listVo, request, false));
+        if (player != null) {
+            map.put("username", StringTool.overlayString(player.getUsername()));
+            map.put("currSign", player.getCurrencySign());
+            // 钱包余额
+            Double balance = player.getWalletBalance();
+            map.put("playerWallet", CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
+        }
+        // 总资产
+        map.put("playerAssets", queryPlayerAssets(listVo, user.getId()));
     }
 
     /**
