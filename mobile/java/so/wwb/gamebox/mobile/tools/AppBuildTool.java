@@ -17,7 +17,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "Users/fei/Desktop/app/";
+    private static final String ROOT_PATH = "/Users/fei/app/";
 
     private static final String SALT_CODE = "ONFwe#(*FAS&$-932+)#9JI830*#@<-90-13~32@#%SDF*_(#DSF&*FSE!DO&$DW";
 
@@ -213,8 +213,12 @@ public class AppBuildTool {
                 "192,gc7p,金沙娱乐城",
                 "193,f9wn,皇冠娱乐",
                 "195,xjvs,大唐娱乐城",
-                "196,6rrt,澳门巴黎人"*/
-                "197,sn2m,完美彩票"
+                "196,6rrt,澳门巴黎人"
+                "197,sn2m,完美彩票",
+                "198,urbr,澳门金沙娱乐场",
+                "199,n5ns,澳门威尼斯人",*/
+                "200,cghs,钱多多娱乐城",
+                "201,vtfw,澳门威尼斯人"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -472,7 +476,7 @@ public class AppBuildTool {
 
     public static void main(String[] args) {
         getAppBuild();
-        System.out.println("---android版本号加密：" + md5SysUserPermission("6", "android"));
-        System.out.println("---ios版本号加密：" + md5SysUserPermission("3", "ios"));
+        System.out.println("---android版本号加密：" + md5SysUserPermission("16", "android"));
+        System.out.println("---ios版本号加密：" + md5SysUserPermission("5", "ios"));
     }
 }
