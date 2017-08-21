@@ -51,7 +51,7 @@
             <div class="e-banner">
                 <img src="${resRoot}/images/api/banner/${apiI18n.apiId}-${apiI18n.apiId eq 10?'1':apiDetail.get('apiTypeId')}.jpg"
                      width="100%" alt="">
-            </div>d
+            </div>
             <!-- 游戏项 -->
             <div class="game-item">
                 <div class="mui-row">
