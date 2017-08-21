@@ -63,7 +63,7 @@ public class BitcoinDepositForm implements IForm {
     @Comment("比特币")
     @NotBlank
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
-    @DecimalMin(value = "0.00001001")
+    @DecimalMin(value = "0.00010001")
     @Digits(integer = 8, fraction = 8)
     public String getResult_bitAmount() {
         return result_bitAmount;
