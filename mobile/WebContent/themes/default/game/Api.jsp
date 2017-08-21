@@ -51,12 +51,14 @@
             <div class="e-banner">
                 <img src="${resRoot}/images/api/banner/${apiI18n.apiId}-${apiI18n.apiId eq 10?'1':apiDetail.get('apiTypeId')}.jpg"
                      width="100%" alt="">
-            </div>
+            </div>d
             <!-- 游戏项 -->
             <div class="game-item">
                 <div class="mui-row">
                     <div class="mui-pull-left">
-                        <span class="icon-hobby"><img src="${resRoot}/images/api/round/${apiDetail.get('apiTypeId')}-${apiI18n.apiId}.png" width="100%" alt=""></span>
+                        <span class="icon-hobby">
+                            <span class="api-icon api-icon-${apiDetail.get('apiTypeId')}-${apiI18n.apiId}"></span>
+                        </span>
                     </div>
                     <div class="mui-pull-left game-detail">
                         <h1 id="apiName">
