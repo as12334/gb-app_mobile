@@ -36,7 +36,7 @@
                                     class="icon-canvas ic-deposit"></span>${views.include_auto['账户存款']}</a>
                     </li>
                     <li class="mui-table-view-cell _app" data-skip="/wallet/withdraw/index.html" data-target="2"><a><span
-                            class="icon-canvas ic-change"></span>${views.include_auto['账户取款']}</a>
+                            class="icon-canvas ic-change"></span>${views.include_auto['额度转换']}</a>
                     </li>
                     <li class="mui-table-view-cell" data-href="/help/firstType.html"><a><span
                             class="icon-canvas ic-problem"></span>${views.include_auto['帮助中心']}</a>
