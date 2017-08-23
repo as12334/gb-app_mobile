@@ -1,7 +1,7 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.LocaleTool;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.soul.web.validation.form.js.JsRuleCreator;
@@ -14,18 +14,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.deposit.form.BitcoinDepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
-import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
-import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +32,7 @@ import javax.validation.Valid;
 import java.util.Map;
 
 /**
- *比特币支付
- *
+ * 比特币支付
  */
 @Controller
 @RequestMapping("/wallet/deposit/company/bitcoin")
@@ -45,24 +43,32 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
 
     @RequestMapping("/index")
     @Token(generate = true)
-    public String index(PayAccountVo payAccountVo,Model model, HttpServletRequest request) {
+    public String index(PayAccountVo payAccountVo, Model model, HttpServletRequest request) {
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
         if (payAccount != null) {
             //是否隐藏收款账号
             isHide(model, SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT);
             String rechargeType = RechargeTypeEnum.BITCOIN_FAST.getCode();
-            model.addAttribute("rechargeType",rechargeType);
+            model.addAttribute("rechargeType", rechargeType);
             model.addAttribute("validateRule", JsRuleCreator.create(BitcoinDepositForm.class));
             //上一次填写的账号/昵称
-            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType,SessionManager.getUserId()));
-            model.addAttribute("minDate",SessionManager.getDate().addDays(-30));
-            model.addAttribute("date",SessionManager.getDate().getNow());
+            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType, SessionManager.getUserId()));
+            model.addAttribute("minDate", SessionManager.getDate().addDays(-30));
+            model.addAttribute("date", SessionManager.getDate().getNow());
         }
         model.addAttribute("payAccount", payAccount);
         return BITCION_URI;
     }
 
+    @RequestMapping("/getSales")
+    @ResponseBody
+    public String getSales() {
+        VActivityMessageListVo listVo = new VActivityMessageListVo();
+        listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
+        listVo = ServiceTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        return JsonTool.toJson(listVo.getResult());
+    }
 
     /**
      * 提交订单
@@ -76,8 +82,8 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid BitcoinDepositForm form,
-                                      BindingResult result) {
-        return commonDeposit(playerRechargeVo,result);
+                                       BindingResult result) {
+        return commonDeposit(playerRechargeVo, result);
     }
 
     /**
@@ -107,7 +113,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
         return playerRechargeVo;
     }
 
-    private String getLastDepositName(String rechargeType,Integer userId) {
+    private String getLastDepositName(String rechargeType, Integer userId) {
         PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
         PlayerRecharge playerRecharge = new PlayerRecharge();
         playerRecharge.setRechargeType(rechargeType);
