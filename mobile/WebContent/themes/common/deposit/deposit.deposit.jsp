@@ -7,9 +7,9 @@
     <div class="mui-inner-wrap">
         <c:if test="${os ne 'android'}">
             <header class="mui-bar mui-bar-nav">
-                <c:if test="${os ne 'app_ios'}">
+                <%--<c:if test="${os ne 'app_ios'}">--%>
                     <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
-                </c:if>
+                <%--</c:if>--%>
                 <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
                 <c:if test="${!isLotterySite}">
                 <%@ include file="/themes/default/include/include.asset.jsp" %>
