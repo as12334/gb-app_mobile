@@ -22,7 +22,15 @@
                        data-api-id="${apiType.get("apiTypeRelation").apiId}"
                        data-api-type-id="${apiType.get("apiTypeRelation").apiTypeId}"
                        data-status="${apiStatus}">
-                        <span class="api-icon api-icon-${apiType.get("apiTypeRelation").apiTypeId}-${apiType.get("apiTypeRelation").apiId}"></span>
+                        <c:choose>
+                            <c:when test="${centerId == -3 && apiType.get('apiTypeRelation').apiId == 22}">
+                                <c:set var="api_icon" value="4-22-2" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="api_icon" value="${apiType.get('apiTypeRelation').apiTypeId}-${apiType.get('apiTypeRelation').apiId}" />
+                            </c:otherwise>
+                        </c:choose>
+                        <span class="api-icon api-icon-${api_icon}"></span>
                         <span class="icon-text">
                             <c:choose>
                             <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>

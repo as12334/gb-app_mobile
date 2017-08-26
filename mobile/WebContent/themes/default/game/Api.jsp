@@ -56,7 +56,17 @@
             <div class="game-item">
                 <div class="mui-row">
                     <div class="mui-pull-left">
-                        <span class="icon-hobby"><img src="${resRoot}/images/api/round/${apiDetail.get('apiTypeId')}-${apiI18n.apiId}.png" width="100%" alt=""></span>
+                        <span class="icon-hobby">
+                            <c:choose>
+                                <c:when test="${centerId == -3 && apiI18n.apiId == 22}">
+                                    <c:set var="api_icon" value="4-22-2" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="api_icon" value="${apiDetail.get('apiTypeId')}-${apiI18n.apiId}" />
+                                </c:otherwise>
+                            </c:choose>
+                            <span class="api-icon api-icon-${api_icon}"></span>
+                        </span>
                     </div>
                     <div class="mui-pull-left game-detail">
                         <h1 id="apiName">
