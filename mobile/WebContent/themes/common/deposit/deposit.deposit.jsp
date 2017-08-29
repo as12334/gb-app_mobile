@@ -7,13 +7,11 @@
     <div class="mui-inner-wrap">
         <c:if test="${os ne 'android'}">
             <header class="mui-bar mui-bar-nav">
-                <c:if test="${os ne 'app_ios'}">
-                    <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
-                </c:if>
+                    <%--<c:if test="${os ne 'app_ios'}">--%>
+                <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
+                    <%--</c:if>--%>
                 <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
-                <c:if test="${!isLotterySite}">
-                <%@ include file="/themes/default/include/include.asset.jsp" %>
-                </c:if>
+                <%@ include file="/include/include.asset.jsp" %>
             </header>
         </c:if>
         <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0"':''} >

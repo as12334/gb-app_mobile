@@ -44,7 +44,7 @@
                                                     ${views.deposit_auto['支付宝二维码']}
                                                 </c:if>
                                                 <c:if test="${payAccount.bankCode eq 'other'}">
-                                                    二维码
+                                                    ${views.themes_auto['二维码']}
                                                 </c:if>
                                             </a>
                                         </div>
@@ -175,7 +175,11 @@
     </div>
 </div>
 <script>
-    mui('.mui-scroll-wrapper').scroll({deceleration: 0.0005});
-    curl(['site/deposit/ElectronicDeposit'],function (Page){page=new Page()});
+    mui('.mui-scroll-wrapper').scroll({
+        deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+    });
+    curl(['site/deposit/ElectronicDeposit'], function (Page) {
+        page = new Page();
+    });
 </script>
 </body>
