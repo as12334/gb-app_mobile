@@ -5,21 +5,20 @@
         <span class="mui-icon bar-buttom-icon iconfont icon-shouye"></span>
         <span class="mui-tab-label">${views.include_auto['首页']}</span>
     </a>
-    <a class="mui-tab-item" data-url="/wallet/deposit/index.html" id="footer_deposit">
-        <span class="mui-icon bar-buttom-icon iconfont icon-qukuan"></span>
-        <span class="mui-tab-label">${views.include_auto['存款']}</span>
+    <a class="mui-tab-item" data-url="/lottery/lotteryResultHistory/index.html">
+        <span class="mui-icon bar-buttom-icon iconfont icon-kaijiang"></span>
+        <span class="mui-tab-label">${views.include_auto['开奖结果']}</span>
     </a>
-    <c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
-    <a class="mui-tab-item" data-url="${isDemo ? '' : '/wallet/withdraw/index.html'}" id="footer_transfer">
-        <span class="mui-icon bar-buttom-icon iconfont icon-touzhujilu"></span>
-        <span class="mui-tab-label">${views.mine_auto['取款']}</span>
+    <a class="mui-tab-item" data-url="/lottery/mainIndex.html">
+        <span class="mui-icon bar-buttom-icon iconfont icon-dating"></span>
+        <span class="mui-tab-label">${views.include_auto['购彩大厅']}</span>
     </a>
-    <a class="mui-tab-item customer" data-href="/lottery/mainIndex.html">
-        <span class="mui-icon bar-buttom-icon iconfont icon-kefu"></span>
-        <span class="mui-tab-label">${views.include_auto['客服']}</span>
+    <a class="mui-tab-item customer" data-href="/lottery/bet/betOrders.html">
+        <span class="mui-icon bar-buttom-icon iconfont icon-touzhu"></span>
+        <span class="mui-tab-label">${views.include_auto['投注记录']}</span>
     </a>
     <a class="mui-tab-item ${channel == 'mine' ? 'mui-active' : ''}" data-url="/mine/index.html" id="footer_mine">
         <span class="mui-icon bar-buttom-icon iconfont icon-wode"></span>
-        <span class="mui-tab-label">${views.include_auto['我的']}</span>
+        <span class="mui-tab-label">${views.include_auto['会员中心']}</span>
     </a>
 </nav>
