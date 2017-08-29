@@ -63,12 +63,12 @@
                             <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>
                     </li>
-                    <li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
+                    <%--<li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
                         <a href="javascript:">
                             <span class="home-f-ico ico-service-4"></span>
                             <span class="lottery-title">${views.themes_auto['走势图']}</span>
                         </a>
-                    </li>
+                    </li>--%>
                 </ul>
 
                 <%@ include file="include/include.lottery.jsp" %>
