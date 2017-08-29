@@ -27,6 +27,7 @@ import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
 import so.wwb.gamebox.model.master.player.po.UserBankcard;
+import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
@@ -197,10 +198,11 @@ public class MyController {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(userId);
         userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
-        if (userPlayerVo.getResult() == null) {
+        UserPlayer player = userPlayerVo.getResult();
+        if (player == null) {
             return 0.0d;
         } else {
-            Double balance = userPlayerVo.getResult().getWalletBalance();
+            Double balance = player.getWalletBalance();
             return balance == null ? 0.0d : balance;
         }
     }
