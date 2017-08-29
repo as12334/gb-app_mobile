@@ -19,7 +19,7 @@
                             <gb:token/>
                             <div class="bit_bind_wrap">
                                 <div class="tit">${views.themes_auto['绑定比特币钱包']}</div>
-                                <div class="sub_tit">${views.themes_auto['取款前请先绑定比特币钱包地址']}</div>
+                                <div class="sub_tit">${views.withdraw_auto['取款前请先绑定比特币钱包地址']}</div>
                                 <div class="tit">${views.themes_auto['比特币钱包地址']}：</div>
                                 <div><input type="text" class="bit_input" id="result.bankcardNumber" name="result.bankcardNumber"/></div>
                                 <div class="btn_wrap">
@@ -33,7 +33,7 @@
                         <div class="cont m-t-sm">
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form">
-                                    <div class="mui-input-row"><label>${views.withdraw_auto['比特币地址']}</label>
+                                    <div class="mui-input-row"><label>${views.themes_auto['比特币地址']}</label>
                                         <div class="ct">
                                             <span>${gbFn:overlayBankcard(userBankCard.bankcardNumber)}</span>
                                         </div>

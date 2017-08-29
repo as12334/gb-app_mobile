@@ -216,9 +216,11 @@ public class AppBuildTool {
                 "196,6rrt,澳门巴黎人"
                 "197,sn2m,完美彩票",
                 "198,urbr,澳门金沙娱乐场",
-                "199,n5ns,澳门威尼斯人",*/
+                "199,n5ns,澳门威尼斯人",
                 "200,cghs,钱多多娱乐城",
-                "201,vtfw,澳门威尼斯人"
+                "201,vtfw,澳门威尼斯人",*/
+                "202,ucuy,博亿娱乐城",
+                "203,q5tj,中博娱乐城"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -232,7 +234,7 @@ public class AppBuildTool {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
-            getIosPlist(code, "2.0.0", siteId, name);
+            getIosPlist(code, "2.1.0", siteId, name);
             getIosBuild(siteId, name, code);
 //            getIosImage(siteId);
             getAndroidFlavors(siteId, name, code);
@@ -292,7 +294,8 @@ public class AppBuildTool {
 
     private static String setSiteType(Integer siteId) {
         String siteType = "integrated";
-        if (siteId == 69 || siteId == 70 || siteId == 197) siteType = "lottery";
+        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 203)
+            siteType = "lottery";
         return siteType;
     }
 
@@ -301,7 +304,8 @@ public class AppBuildTool {
         if (siteId == 119 || siteId == 171) theme = "blue.skin";
         else if (siteId == 141 || siteId == 161) theme = "green.skin";
         else if (siteId == 185) theme = "pink.skin";
-        else if (siteId == 69 || siteId == 70 || siteId == 197) theme = "lottery.skin";
+        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 203)
+            theme = "lottery.skin";
         return theme;
     }
 
@@ -475,7 +479,7 @@ public class AppBuildTool {
     }
 
     public static void main(String[] args) {
-//        getAppBuild();
+        getAppBuild();
         System.out.println("---android版本号加密：" + md5SysUserPermission("17", "android"));
         System.out.println("---ios版本号加密：" + md5SysUserPermission("5", "ios"));
     }
