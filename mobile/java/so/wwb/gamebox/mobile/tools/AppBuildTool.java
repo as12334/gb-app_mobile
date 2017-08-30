@@ -198,7 +198,7 @@ public class AppBuildTool {
                 "176,qgjl,全胜娱乐",
                 "177,x1dv,澳门威尼斯人娱乐场",
                 "178,ptxa,点金坊",
-                "179,rosz,英雄联盟",
+                "179,rosz,威尼斯人",
                 "180,qfxk,皇冠国际",
                 "181,4w3g,超博娱乐",
                 "182,ixuf,雄伟集团",
@@ -210,17 +210,21 @@ public class AppBuildTool {
                 "189,a56r,澳门永利贵宾会",
                 "190,yj4v,万博体育",
                 "191,d1hg,澳门赌场",
-                "192,gc7p,金沙娱乐城",
                 "193,f9wn,皇冠娱乐",
                 "195,xjvs,大唐娱乐城",
-                "196,6rrt,澳门巴黎人"
+                "196,6rrt,澳门巴黎人",
                 "197,sn2m,完美彩票",
                 "198,urbr,澳门金沙娱乐场",
                 "199,n5ns,澳门威尼斯人",
                 "200,cghs,钱多多娱乐城",
-                "201,vtfw,澳门威尼斯人",*/
+                "201,vtfw,澳门威尼斯人",
                 "202,ucuy,博亿娱乐城",
-                "203,q5tj,中博娱乐城"
+                "203,q5tj,中博娱乐城",
+                "205,dfvp,百乐博",
+                "206,lnd9,葡京国际",*/
+                "207,xlei,BET365",
+                "208,npsa,彩中彩",
+                "209,arau,大发OK"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
@@ -294,7 +298,7 @@ public class AppBuildTool {
 
     private static String setSiteType(Integer siteId) {
         String siteType = "integrated";
-        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 203)
+        if (siteId == 69 || siteId == 70 || siteId == 197)
             siteType = "lottery";
         return siteType;
     }
@@ -304,7 +308,7 @@ public class AppBuildTool {
         if (siteId == 119 || siteId == 171) theme = "blue.skin";
         else if (siteId == 141 || siteId == 161) theme = "green.skin";
         else if (siteId == 185) theme = "pink.skin";
-        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 203)
+        else if (siteId == 69 || siteId == 70 || siteId == 197)
             theme = "lottery.skin";
         return theme;
     }
@@ -480,7 +484,7 @@ public class AppBuildTool {
 
     public static void main(String[] args) {
         getAppBuild();
-        System.out.println("---android版本号加密：" + md5SysUserPermission("17", "android"));
-        System.out.println("---ios版本号加密：" + md5SysUserPermission("5", "ios"));
+        System.out.println("---android版本号加密：" + md5SysUserPermission("19", "android"));
+        System.out.println("---ios版本号加密：" + md5SysUserPermission("6", "ios"));
     }
 }
