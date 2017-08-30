@@ -81,12 +81,6 @@
                                 </c:if>
                             </c:forEach>
                         </h1>
-                        <div class="g-money">
-                            <div class="login-status">
-                                <span class="rmb-c">${siteCurrency}</span><span id="apiBalance"></span> <span class="icon-refresh"
-                                                                                                  id="refreshApi"></span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

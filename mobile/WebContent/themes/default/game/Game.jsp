@@ -27,7 +27,7 @@
             <%@include file="/include/include.asset.jsp" %>
         </header>
         <section class="site-address mui-hide _indexDomain">
-            主页域名：${empty sysDomain?domain:sysDomain}
+            ${views.app_auto['主页域名']}：${empty sysDomain?domain:sysDomain}
         </section>
         <!--底部-->
         <%@include file="/themes/default/include/include.footer.jsp" %>
