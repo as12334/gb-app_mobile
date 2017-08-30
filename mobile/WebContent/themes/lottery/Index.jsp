@@ -44,7 +44,7 @@
             <div class="mui-scroll">
                 <%@include file="include/include.banner.jsp" %>
 
-                <ul class="mui-table-view mui-grid-view diy-grid-9 customer">
+                <ul class="mui-table-view mui-grid-view diy-grid-9">
                     <li class="diy-table-view-cell mui-col-xs-3 none">
                         <a class="customer">
                             <span class="home-f-ico ico-service"></span>
