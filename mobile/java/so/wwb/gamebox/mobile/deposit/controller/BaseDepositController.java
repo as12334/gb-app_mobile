@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -238,10 +239,10 @@ public class BaseDepositController extends BaseCommonDepositController {
             map.put("orderNo", playerRechargeVo.getResult().getTransactionNo());
         }
         if (playerRechargeVo.isSuccess() && StringTool.isBlank(playerRechargeVo.getOkMsg())) {
-            playerRechargeVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, "save.success"));
+            playerRechargeVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_SUCCESS));
 
         } else if (!playerRechargeVo.isSuccess() && StringTool.isBlank(playerRechargeVo.getErrMsg())) {
-            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "save.failed"));
+            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
         }
         map.put("state", playerRechargeVo.isSuccess());
         map.put("msg", StringTool.isNotBlank(playerRechargeVo.getOkMsg()) ? playerRechargeVo.getOkMsg() : playerRechargeVo.getErrMsg());
