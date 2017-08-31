@@ -29,6 +29,7 @@ import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -242,7 +243,7 @@ public class MessageController {
             }
         }
         if (playerAdvisoryVo.isSuccess()) {
-            playerAdvisoryVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, "save.success"));
+            playerAdvisoryVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_SUCCESS));
             //发送消息数量
             Integer sendMessageCount = SessionManager.getSendMessageCount()==null?0:SessionManager.getSendMessageCount();
             SessionManager.setsSendMessageCount(sendMessageCount+1);
@@ -254,7 +255,7 @@ public class MessageController {
             userTaskReminderVo.setTaskEnum(UserTaskEnum.PLAYERCONSULTATION);
             ServiceTool.userTaskReminderService().addTaskReminder(userTaskReminderVo);
         } else {
-            playerAdvisoryVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "save.failed"));
+            playerAdvisoryVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
         }
 
         map.put("msg", StringTool.isNotBlank(playerAdvisoryVo.getOkMsg()) ? playerAdvisoryVo.getOkMsg() : playerAdvisoryVo.getErrMsg());
