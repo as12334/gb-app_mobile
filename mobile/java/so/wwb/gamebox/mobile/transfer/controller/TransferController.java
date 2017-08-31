@@ -31,6 +31,7 @@ import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
@@ -410,7 +411,7 @@ public class TransferController extends WalletBaseController {
         if (msg == null && isSuccess) {
             msg = LocaleTool.tranMessage(Module.FUND, "Transfer.transfer.success");
         } else if (msg == null && !isSuccess) {
-            msg = LocaleTool.tranMessage(_Module.COMMON, "save.failed");
+            msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
         }
         map.put("msg", msg);
         if (!isSuccess) {

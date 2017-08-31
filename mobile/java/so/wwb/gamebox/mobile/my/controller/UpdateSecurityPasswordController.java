@@ -499,10 +499,10 @@ public class UpdateSecurityPasswordController {
     private Map getVoMessage(BaseVo baseVo) {
         Map<String, Object> map = new HashMap<>(2,1f);
         if (baseVo.isSuccess() && StringTool.isBlank(baseVo.getOkMsg())) {
-            baseVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, "save.success"));
+            baseVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_SUCCESS));
 
         } else if (!baseVo.isSuccess() && StringTool.isBlank(baseVo.getErrMsg())) {
-            baseVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "save.failed"));
+            baseVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
         }
         map.put("msg", StringTool.isNotBlank(baseVo.getOkMsg()) ? baseVo.getOkMsg() : baseVo.getErrMsg());
         map.put("state", baseVo.isSuccess());
