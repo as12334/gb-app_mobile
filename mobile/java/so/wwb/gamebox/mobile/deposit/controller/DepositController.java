@@ -257,7 +257,7 @@ public class DepositController extends BaseCommonDepositController {
     private void fastRecharge(Map<String, Object> payAccountMap) {
         String url = getFastRechargeUrl();
         if (StringTool.isNotBlank(url)) {
-            if (!url.startsWith("http://")) {
+            if (!url.startsWith("http")) {
                 url = "http://" + url;
             }
             payAccountMap.put(IS_FAST_RECHARGE, url);
