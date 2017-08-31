@@ -349,4 +349,8 @@ public class ApiController extends BaseApiController {
         return apiDetail;
     }
 
+    @Override
+    protected String getDemoIndex() {
+        return null;
+    }
 }

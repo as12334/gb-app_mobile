@@ -78,6 +78,7 @@
 				/demo/*.html = anon
 				/sysUser.html = anon
 				/lotteryResult/getOpenResult.html = anon
+				/lotteryDemo/*.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>
