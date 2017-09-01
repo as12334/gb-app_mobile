@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/blue/style.css?v=${rcVersion}" />
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/blue/loading.css?v=${rcVersion}" />
     </c:when>
-    <c:when test="${siteId == 141 || siteId == 161}"> <!-- green -->
+    <c:when test="${siteId == 141 || siteId == 161 || siteId == 207}"> <!-- green -->
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/green/style.css?v=${rcVersion}" />
     </c:when>
     <c:when test="${siteId == 35 || siteId == 185}"> <!-- phoenix -->
