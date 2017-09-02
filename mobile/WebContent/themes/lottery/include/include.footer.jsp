@@ -13,7 +13,7 @@
         <span class="mui-icon bar-buttom-icon iconfont icon-dating"></span>
         <span class="mui-tab-label">${views.include_auto['购彩大厅']}</span>
     </a>
-    <a class="mui-tab-item customer" data-href="/lottery/bet/betOrders.html">
+    <a class="mui-tab-item" data-href="/lottery/bet/betOrders.html">
         <span class="mui-icon bar-buttom-icon iconfont icon-touzhu"></span>
         <span class="mui-tab-label">${views.include_auto['投注记录']}</span>
     </a>
