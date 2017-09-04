@@ -146,15 +146,15 @@
                             <c:choose>
                                 <%--体育投注--%>
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==3}">
-                                    <%@include file="./SportsbookDetail.jsp"%>
+                                    <%@include file="betting.sportsbookdetail.jsp"%>
                                 </c:when>
                                 <%--真人投注--%>
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==1}">
-                                    <%@include file="./LiveDealerDetail.jsp"%>
+                                    <%@include file="betting.livedealerdetail.jsp"%>
                                 </c:when>
                                 <%--彩票投注--%>
                                 <c:when test="${result.apiId==22}">
-                                    <%@include file="LotteryDetail.jsp"%>
+                                    <%@include file="betting.lotterydetail.jsp"%>
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach items="${resultArray}" var="array">
