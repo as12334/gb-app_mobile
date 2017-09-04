@@ -99,6 +99,11 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/mainIndex")
     public String index(Model model,HttpServletRequest request) {
+        initData(model, request);
+        return "/Index";
+    }
+
+    private void initData(Model model, HttpServletRequest request) {
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
@@ -108,7 +113,6 @@ public class IndexController extends BaseApiController {
         if (ParamTool.isLotterySite()) {
             model.addAttribute("carousels", getCarousel());
         }
-        return "/Index";
     }
 
     // 彩票站-彩票
@@ -354,9 +358,13 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/lotteryDemo/{terminal}")
-    public String lotteryDemo(@PathVariable String terminal, HttpServletRequest request) {
+    public String lotteryDemo(@PathVariable String terminal, Model model,  HttpServletRequest request) {
         createDemoAccount(request);
-        return terminal.equals("h5") ? "redirect:/mainIndex.html" : "/ToIndex";
+        if (terminal.equals("h5")) {
+            initData(model, request);
+            return "/Index";
+        }
+        return "/ToIndex";
     }
 
     @Override
