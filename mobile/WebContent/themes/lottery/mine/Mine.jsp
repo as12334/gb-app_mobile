@@ -38,7 +38,7 @@
                                 <div class="ct">
                                     <a class="btn mui-btn mui-btn-outlined user-logout">${views.mine_auto['退出登录']}</a>
                                     <img src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl,34,34, resRoot.concat('/images/avatar.png'))}"
-                                         data-url="${root}/personalInfo/index.html" class="_sub avatar">
+                                         data-url="${root}/personalInfo/index.html" class="_sub avatar" data-demo="${isDemo}">
                                     <p>${soulFn:overlayString(sysUser.username)}</p>
                                     <p>
                                         <c:set var="_now" value="<%=new java.util.Date() %>" />
@@ -50,14 +50,14 @@
                                     </p>
                                 </div>
                                 <p>
-                            <span class="span">
-                                <span class="color2">${views.mine_auto['钱包']}</span>
-                                <span class="color3" id="walletBalance"></span>
-                            </span>
-                            <span class="span">
-                                <span class="color2">${views.mine_auto['总资产']}</span>
-                                <span class="color3" id="totalAssets"></span>
-                            </span>
+                                    <span class="span">
+                                        <span class="color2">${views.mine_auto['钱包']}</span>
+                                        <span class="color3" id="walletBalance"></span>
+                                    </span>
+                                    <span class="span">
+                                        <span class="color2">${views.mine_auto['总资产']}</span>
+                                        <span class="color3" id="totalAssets"></span>
+                                    </span>
                                 </p>
                                 <div class="clearfix"></div>
                             </div>
@@ -85,7 +85,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="" class="item" data-url="${root}/bankCard/page/addCard.html">
+                                        <a href="" class="item" data-url="${root}/bankCard/page/addCard.html" data-demo="${isDemo}">
                                             <p><img src="${resRoot}/images/my-ico7.png" style="width: 31px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['银行卡']}</p>
