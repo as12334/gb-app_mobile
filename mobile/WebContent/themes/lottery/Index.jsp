@@ -46,19 +46,19 @@
 
                 <ul class="mui-table-view mui-grid-view diy-grid-9">
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a class="customer">
+                        <a class="customer" data-os="${os}">
                             <span class="home-f-ico ico-service"></span>
                             <span class="lottery-title">${views.themes_auto['在线客服']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a data-skip="/mine/index.html" data-target="4">
+                        <a data-skip="/mine/index.html" data-target="4" data-os="${os}">
                             <span class="home-f-ico ico-service-2"></span>
                             <span class="lottery-title">${views.themes_auto['会员中心']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a data-skip="/lottery/lotteryResultHistory/index.html" data-target="1">
+                        <a data-skip="/lottery/lotteryResultHistory/index.html" data-target="1" data-os="${os}">
                             <span class="home-f-ico ico-service-3"></span>
                             <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>

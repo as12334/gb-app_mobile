@@ -20,31 +20,31 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-skip="/mainIndex.html" data-target="0" class="right-menu">
+                <a data-skip="/mainIndex.html" data-target="0" data-os="${os}" class="right-menu">
                     <span class="iconfont icon-home"></span>
                     <span>${views.themes_auto['首页']}</span>
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-href="/lottery/mainIndex.html" class="right-menu">
+                <a data-skip="/lottery/mainIndex.html" data-target="2" data-os="${os}" class="right-menu">
                     <span class="iconfont icon-goucaidating"></span>
                     <span>${views.themes_auto['购彩大厅']}</span>
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-href="/lottery/bet/betOrders.html" class="right-menu">
+                <a data-skip="/lottery/bet/betOrders.html" data-target="3" data-os="${os}" class="right-menu">
                     <span class="iconfont icon-touzhujilu"></span>
                     <span>${views.themes_auto['投注记录']}</span>
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-href="/lottery/lotteryResultHistory/index.html" class="right-menu">
+                <a data-skip="/lottery/lotteryResultHistory/index.html" data-target="1" data-os="${os}" class="right-menu">
                     <span class="iconfont icon-kaijiangjilu"></span>
                     <span>${views.themes_auto['开奖记录']}</span>
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-skip="/mine/index.html" data-target="4" class="right-menu">
+                <a data-skip="/mine/index.html" data-target="4" data-os="${os}" class="right-menu">
                     <span class="iconfont icon-huiyuanzhongxin"></span>
                     <span>${views.themes_auto['会员中心']}</span>
                 </a>
@@ -56,7 +56,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a class="right-menu customer" data-target="3">
+                <a class="right-menu customer" data-os="${os}">
                     <span class="iconfont icon-zaixiankefu"></span>
                     <span>${views.themes_auto['在线客服']}</span>
                 </a>
