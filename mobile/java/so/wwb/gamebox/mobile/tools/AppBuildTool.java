@@ -166,7 +166,6 @@ public class AppBuildTool {
                 "124,98ph,澳门金沙",
                 "125,bqmn,新葡京娱乐场",
                 "126,8wu8,澳门永利娱乐城",
-                "128,xjc9,新葡京娱乐场",
                 "129,0a74,新葡京娱乐城",
                 "133,xwc7,澳门威尼斯人",
                 "134,o7av,澳门威尼斯人",
@@ -210,6 +209,7 @@ public class AppBuildTool {
                 "189,a56r,澳门永利贵宾会",
                 "190,yj4v,万博体育",
                 "191,d1hg,澳门赌场",
+                "192,gc7p,星河娱乐城",
                 "193,f9wn,皇冠娱乐",
                 "195,xjvs,大唐娱乐城",
                 "196,6rrt,澳门巴黎人",
@@ -221,13 +221,19 @@ public class AppBuildTool {
                 "202,ucuy,博亿娱乐城",
                 "203,q5tj,中博娱乐城",
                 "205,dfvp,百乐博",
-                "206,lnd9,葡京国际",*/
+                "206,lnd9,葡京国际",
                 "207,xlei,BET365",
                 "208,npsa,彩中彩",
-                "209,arau,大发OK"
+                "209,arau,大发OK",
+                "210,1lgt,威廉希尔",
+                "211,3qj8,大发OK",
+                "212,cmu6,金元宝娱乐城",*/
+                "213,8y1c,万豪国际",
+                "215,mjiu,盈泰娱乐",
+                "216,cbe1,COD娱樂"
         };
 
-        /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id */
+        /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id; */
 
         File flavor = new File(ROOT_PATH + "android/Flavors.go");
         if (flavor.exists()) flavor.delete();
@@ -306,7 +312,7 @@ public class AppBuildTool {
     private static String setTheme(Integer siteId) {
         String theme = "default.skin";
         if (siteId == 119 || siteId == 171) theme = "blue.skin";
-        else if (siteId == 141 || siteId == 161) theme = "green.skin";
+        else if (siteId == 141 || siteId == 161 || siteId == 207) theme = "green.skin";
         else if (siteId == 185) theme = "pink.skin";
         else if (siteId == 69 || siteId == 70 || siteId == 197)
             theme = "lottery.skin";
@@ -466,25 +472,9 @@ public class AppBuildTool {
         }
     }
 
-    /**
-     * 将安卓APK放在以code命名的文件夹中
-     */
-    public static void getAndroidApk(String code, String versionName){
-        File codeFile = new File(ROOT_PATH + "android/" + versionName + "/" + code);
-        if(!codeFile.exists()){
-            codeFile.mkdirs();
-        }
-        File file = new File(ROOT_PATH + "android/" + versionName + "/app_" + code + "_" + versionName + ".apk");
-        File renameFile = new File(ROOT_PATH + "android/" + versionName + "/" + code + "/app_" + code + "_" + versionName + ".apk");
-
-        if(file.exists()){
-            file.renameTo(renameFile);
-        }
-    }
-
     public static void main(String[] args) {
         getAppBuild();
-        System.out.println("---android版本号加密：" + md5SysUserPermission("19", "android"));
-        System.out.println("---ios版本号加密：" + md5SysUserPermission("6", "ios"));
+//        System.out.println("---android版本号加密：" + md5SysUserPermission("19", "android"));
+//        System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
     }
 }
