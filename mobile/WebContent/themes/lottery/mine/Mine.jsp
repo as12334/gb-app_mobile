@@ -10,6 +10,7 @@
     <%@ include file="/include/include.js.jsp" %>
 </head>
 
+<c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
 <body class="gb-theme mine-page">
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
@@ -37,7 +38,7 @@
                                 <div class="ct">
                                     <a class="btn mui-btn mui-btn-outlined user-logout">${views.mine_auto['退出登录']}</a>
                                     <img src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl,34,34, resRoot.concat('/images/avatar.png'))}"
-                                         data-url="${root}/personalInfo/index.html" class="_sub avatar">
+                                         data-url="${root}/personalInfo/index.html" class="_sub avatar" data-demo="${isDemo}">
                                     <p>${soulFn:overlayString(sysUser.username)}</p>
                                     <p>
                                         <c:set var="_now" value="<%=new java.util.Date() %>" />
@@ -49,14 +50,14 @@
                                     </p>
                                 </div>
                                 <p>
-                            <span class="span">
-                                <span class="color2">${views.mine_auto['钱包']}</span>
-                                <span class="color3" id="walletBalance"></span>
-                            </span>
-                            <span class="span">
-                                <span class="color2">${views.mine_auto['总资产']}</span>
-                                <span class="color3" id="totalAssets"></span>
-                            </span>
+                                    <span class="span">
+                                        <span class="color2">${views.mine_auto['钱包']}</span>
+                                        <span class="color3" id="walletBalance"></span>
+                                    </span>
+                                    <span class="span">
+                                        <span class="color2">${views.mine_auto['总资产']}</span>
+                                        <span class="color3" id="totalAssets"></span>
+                                    </span>
                                 </p>
                                 <div class="clearfix"></div>
                             </div>
@@ -65,17 +66,16 @@
                             <div class="gb-userlist m-t-sm">
                                 <ul>
                                     <li>
-                                        <a  class="item _app" data-skip="/wallet/deposit/index.html" data-target="1">
-                                            <p><img src="${resRoot}/images/my-ico1.png" style="width: 33px;" alt=""></p>
+                                        <a  class="item _app" data-url="/wallet/deposit/index.html" data-demo="${isDemo}">
+                                            <p><img src="${resRoot}/images/my-ico1.png" style="width: 33px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['存款']}</p>
                                             </div>
                                         </a>
                                     </li>
                                     <li>
-                                        <c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
-                                        <a href="" class="item" data-skip="${isDemo ? '' : '/wallet/withdraw/index.html'}" data-target="2">
-                                            <p><img src="${resRoot}/images/my-ico2.png" style="width: 28px;" alt=""></p>
+                                        <a href="" class="item" data-url="${isDemo ? '' : '/wallet/withdraw/index.html'}" data-demo="${isDemo}">
+                                            <p><img src="${resRoot}/images/my-ico2.png" style="width: 28px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['取款']}</p>
                                                 <p>
@@ -85,8 +85,8 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="" class="item" data-url="${root}/bankCard/page/addCard.html">
-                                            <p><img src="${resRoot}/images/my-ico7.png" style="width: 31px;" alt=""></p>
+                                        <a href="" class="item" data-url="${root}/bankCard/page/addCard.html" data-demo="${isDemo}">
+                                            <p><img src="${resRoot}/images/my-ico7.png" style="width: 31px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['银行卡']}</p>
                                                 <p>
@@ -106,16 +106,15 @@
                                 <ul>
                                     <li>
                                         <a href="" class="item" data-url="${root}/fund/record/index.html">
-                                            <p><img src="${resRoot}/images/my-ico4.png" style="width: 25px;" alt=""></p>
+                                            <p><img src="${resRoot}/images/my-ico4.png" style="width: 25px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['资金记录']}</p>
                                             </div>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="item"
-                                           data-url="${root}/fund/betting/index.html">
-                                            <p><img src="${resRoot}/images/my-ico5.png" style="width: 31px;" alt=""></p>
+                                        <a class="item" data-skip="${root}/lottery/bet/betOrders.html" data-target="3" data-os="${os}">
+                                            <p><img src="${resRoot}/images/my-ico5.png" style="width: 31px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['投注记录']}</p>
                                                 <p>
@@ -126,8 +125,7 @@
                                     </li>
                                     <li>
                                         <a class="item" data-url="${root}/promo/myPromo.html">
-                                            <p><img src="${resRoot}/images/my-ico6.png"
-                                                    style="width: 29px; margin-top: 4px;"></p>
+                                            <p><img src="${resRoot}/images/my-ico6.png" style="width: 29px; margin-top: 4px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['优惠记录']}</p>
                                                 <p>
@@ -153,7 +151,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="item" data-url="${root}/my/password/editPassword.html">
+                                        <a class="item" data-url="${root}/my/password/editPassword.html" data-demo="${isDemo}">
                                             <p><img src="${resRoot}/images/my-ico10.png" style="width: 30px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['修改登录密码']}</p>
@@ -161,7 +159,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="item" data-url="${root}/passport/securityPassword/edit.html">
+                                        <a class="item" data-url="${root}/passport/securityPassword/edit.html" data-demo="${isDemo}">
                                             <p><img src="${resRoot}/images/my-ico11.png" style="width: 26px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['修改安全密码']}</p>

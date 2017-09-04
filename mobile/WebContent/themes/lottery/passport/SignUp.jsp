@@ -12,6 +12,6 @@
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css"/>
 </head>
 
-<%@ include file="/themes/common/passport/passport.login.jsp" %>
+<%@ include file="/themes/common/passport/passport.signup.jsp" %>
 
 </html>
