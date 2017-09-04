@@ -15,9 +15,7 @@
     <div class="mui-inner-wrap">
         <c:if test="${os ne 'android'}">
             <header class="mui-bar mui-bar-nav">
-                <c:if test="${os ne 'app_ios'}">
-                    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-                </c:if>
+                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
                 <h1 class="mui-title">${views.transfer_auto['资金管理转账']}</h1>
                 <%@ include file="/themes/default/include/include.asset.jsp" %>
             </header>
