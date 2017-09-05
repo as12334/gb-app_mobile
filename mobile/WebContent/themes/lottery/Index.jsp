@@ -17,7 +17,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!--头部-->
-        <header class="mui-bar mui-bar-nav _siteHeader" style="display: ${os == 'android' ? 'none' : ''}">
+        <header class="mui-bar mui-bar-nav _siteHeader" style="display: ${os eq 'android' ? 'none' : ''}">
             <div class="mui-pull-left">
                 <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></div>
             </div>
@@ -40,7 +40,7 @@
         <!--底部-->
         <%@include file="/themes/lottery/include/include.footer.jsp" %>
         <!-- 内容 -->
-        <div class="mui-scroll-wrapper middle-content _cacheContent" id="mui-refresh">
+        <div class="mui-scroll-wrapper middle-content _cacheContent" id="mui-refresh" <c:if test="${os eq 'android'}">style="padding-top:0;padding-bottom:0;top:0;bottom:0;"</c:if>>
             <div class="mui-scroll">
                 <%@include file="include/include.banner.jsp" %>
 

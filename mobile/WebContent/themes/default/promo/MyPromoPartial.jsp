@@ -6,7 +6,7 @@
             <div class="promo-records-warp">
                 <div class="mui-row">
                     <div class="promo-box-left">
-                        <h5>${empty s.activityName?views.promo_auto['系统优惠']:s.activityName}</h5>
+                        <h5 class="title">${empty s.activityName?views.promo_auto['系统优惠']:s.activityName}</h5>
                         <div class="text">
                             <span class="sum">
                                 <c:choose>
