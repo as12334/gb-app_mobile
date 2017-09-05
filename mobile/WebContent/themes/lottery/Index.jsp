@@ -31,7 +31,7 @@
                 </div>
                 <div class="user mui-hide _rightLogin">
                     <a class="btn mui-btn mui-btn-outlined p-r-0">欢迎！</a>
-                    <a class="btn mui-btn mui-btn-outlined p-l-0" data-href="/mine/index.html"><%=SessionManager.getUserName() %></a>
+                    <a class="btn mui-btn mui-btn-outlined p-l-0" data-skip="/mine/index.html" data-target="4" data-os="${os}"><%=SessionManager.getUserName() %></a>
                     <span class="index-action-menu mui-action-menu"></span>
                 </div>
             </div>
