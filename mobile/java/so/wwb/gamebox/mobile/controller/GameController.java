@@ -28,6 +28,7 @@ import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationI18nListVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.company.site.vo.VSiteApiListVo;
 import so.wwb.gamebox.model.company.site.vo.VSiteApiVo;
+import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -172,7 +173,19 @@ public class GameController {
 
         // 设置游戏状态
         List<SiteGame> siteGames = setGameStatus(listVo, games);
-        listVo.setResult(siteGames);
+        if (listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
+            List<SiteGame> plGames = new ArrayList<>();
+            for (int i = 0; i < plGames.size(); i++) {
+                if (i < 9) {
+                    plGames.add(plGames.get(i));
+                } else {
+                    break;
+                }
+            }
+            listVo.setResult(plGames);
+        } else {
+            listVo.setResult(siteGames);
+        }
         return listVo;
     }
 
