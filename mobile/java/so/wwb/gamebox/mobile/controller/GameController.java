@@ -175,11 +175,9 @@ public class GameController {
         List<SiteGame> siteGames = setGameStatus(listVo, games);
         if (listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
             List<SiteGame> plGames = new ArrayList<>();
-            for (int i = 0; i < plGames.size(); i++) {
-                if (i < 9) {
-                    plGames.add(plGames.get(i));
-                } else {
-                    break;
+            for (SiteGame game : siteGames) {
+                if (StringTool.isNotBlank(game.getCover())) {
+                    plGames.add(game);
                 }
             }
             listVo.setResult(plGames);
