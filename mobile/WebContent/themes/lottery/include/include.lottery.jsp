@@ -22,7 +22,7 @@
     <li class="diy-table-view-cell mui-col-xs-3">
         <a class="item" data-bet="/lottery/pk10/bjpk10/index.html" data-status="normal">
             <span class="lottery-ico lottery-ico-bjpk10"></span>
-            <span class="lottery-title">北京PK拾</span>
+            <span class="lottery-title">北京PK10</span>
         </a>
     </li>
     <li class="diy-table-view-cell mui-col-xs-3">
