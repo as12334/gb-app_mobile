@@ -35,6 +35,7 @@
                     <span class="index-action-menu mui-action-menu"></span>
                 </div>
             </div>
+            <input type="hidden" value="login-${isLogin}">
         </header>
 
         <!--底部-->
