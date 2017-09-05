@@ -474,7 +474,7 @@ public class AppBuildTool {
 
     public static void main(String[] args) {
         getAppBuild();
-//        System.out.println("---android版本号加密：" + md5SysUserPermission("19", "android"));
+        System.out.println("---android版本号加密：" + md5SysUserPermission("20", "android"));
 //        System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
     }
 }
