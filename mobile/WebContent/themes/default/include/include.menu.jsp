@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!-- 菜单容器 -->
-<aside class="mui-off-canvas-left">
+<aside class="mui-off-canvas-left canvas-wrapper">
     <div class="mui-scroll-wrapper">
         <div class="mui-scroll">
             <div class="c-l-header">

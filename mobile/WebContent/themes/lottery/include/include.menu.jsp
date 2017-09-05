@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!-- 菜单容器 -->
-<aside id="offCanvasSideRight" class="mui-off-canvas-right">
+<aside id="offCanvasSideRight" class="mui-off-canvas-right canvas-wrapper">
     <div id="offCanvasSideScroll" class="mui-scroll-wrapper">
         <ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted aside-right-menu">
             <li class="mui-table-view-cell mui-media">
