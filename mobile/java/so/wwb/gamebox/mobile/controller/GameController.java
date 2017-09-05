@@ -172,18 +172,7 @@ public class GameController {
         games = games.subList(formIndex, toIndex > paging.getTotalCount() ? (int) paging.getTotalCount() : toIndex);
 
         // 设置游戏状态
-        List<SiteGame> siteGames = setGameStatus(listVo, games);
-        if (listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
-            List<SiteGame> plGames = new ArrayList<>();
-            for (SiteGame game : siteGames) {
-                if (StringTool.isNotBlank(game.getCover())) {
-                    plGames.add(game);
-                }
-            }
-            listVo.setResult(plGames);
-        } else {
-            listVo.setResult(siteGames);
-        }
+        listVo.setResult(setGameStatus(listVo, games));
         return listVo;
     }
 
@@ -278,7 +267,19 @@ public class GameController {
         }
         Criteria cName = Criteria.add(SiteGameI18n.PROP_NAME, Operator.ILIKE, name);
 
-        return CollectionQueryTool.query(Cache.getSiteGameI18n().values(), Criteria.and(cGameIds, local, cName));
+        List<SiteGameI18n> gameI18ns = CollectionQueryTool.query(Cache.getSiteGameI18n().values(), Criteria.and(cGameIds, local, cName));
+
+        if (listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
+            List<SiteGameI18n> plGames = new ArrayList<>();
+            for (SiteGameI18n game : gameI18ns) {
+                if (StringTool.isNotBlank(game.getCover())) {
+                    plGames.add(game);
+                }
+            }
+            return plGames;
+        } else {
+            return gameI18ns;
+        }
     }
 
     /** ------------------------ 华丽丽的分割线 ------------------------ **/
