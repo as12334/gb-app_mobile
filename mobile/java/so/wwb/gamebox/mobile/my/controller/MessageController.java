@@ -296,9 +296,9 @@ public class MessageController {
             vo = ServiceTool.playerAdvisoryService().updateOnly(vo);
         }
         if (vo.isSuccess()) {
-            vo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, "delete.success"));
+            vo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_SUCCESS));
         } else {
-            vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "delete.failed"));
+            vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_FAILED));
         }
         HashMap map = new HashMap(2,1f);
         map.put("msg", StringTool.isNotBlank(vo.getOkMsg()) ? vo.getOkMsg() : vo.getErrMsg());
@@ -324,9 +324,9 @@ public class MessageController {
         boolean bool = ServiceTool.noticeService().deleteSiteMsg(vo);
 
         if (bool) {
-            vo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, "delete.success"));
+            vo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_SUCCESS));
         } else {
-            vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, "delete.failed"));
+            vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_FAILED));
         }
         HashMap map = new HashMap(2,1f);
         map.put("msg", StringTool.isNotBlank(vo.getOkMsg()) ? vo.getOkMsg() : vo.getErrMsg());
