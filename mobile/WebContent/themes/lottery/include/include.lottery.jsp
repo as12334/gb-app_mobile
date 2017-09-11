@@ -50,7 +50,7 @@
         </a>
     </li>
     <li class="diy-table-view-cell mui-col-xs-3 none">
-        <a class="item" data-bet="lottery-ico lottery-ico-gxk3" data-status="normal">
+        <a class="item" data-bet="/lottery/k3/gxk3/index.html" data-status="normal">
             <span class="lottery-ico lottery-ico-gxk3"></span>
             <span class="lottery-title">广西快3</span>
         </a>
