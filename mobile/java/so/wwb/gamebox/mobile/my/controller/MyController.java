@@ -223,7 +223,7 @@ public class MyController {
             PlayerApiVo playerApiVo = new PlayerApiVo();
             playerApiVo.getSearch().setPlayerId(userId);
             playerApiVo.getSearch().setApiId(NumberTool.toInt(ApiProviderEnum.PL.getCode()));
-            playerApiVo = ServiceTool.playerApiService().get(playerApiVo);
+            playerApiVo = ServiceTool.playerApiService().search(playerApiVo);
             PlayerApi playerApi = playerApiVo.getResult();
             return CurrencyTool.formatCurrency(playerApi == null || playerApi.getMoney() == null ? 0d : playerApi.getMoney());
         }
