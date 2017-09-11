@@ -9,7 +9,7 @@
         <span class="mui-icon bar-buttom-icon iconfont icon-kaijiang"></span>
         <span class="mui-tab-label">${views.include_auto['开奖结果']}</span>
     </a>
-    <a class="mui-tab-item" data-url="/lottery/mainIndex.html">
+    <a class="mui-tab-item" data-url="/lottery/mainIndex.html" data-auto="true">
         <span class="mui-icon bar-buttom-icon iconfont icon-dating"></span>
         <span class="mui-tab-label">${views.include_auto['购彩大厅']}</span>
     </a>
