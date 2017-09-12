@@ -218,6 +218,7 @@ public class MyController {
     @ResponseBody
     public String getBalance() {
         Integer userId = SessionManager.getUserId();
+        double balance = getWalletBalance(userId);
         //纯彩票站点查询api余额
         if (ParamTool.isLotterySite()) {
             PlayerApiVo playerApiVo = new PlayerApiVo();
@@ -225,8 +226,11 @@ public class MyController {
             playerApiVo.getSearch().setApiId(NumberTool.toInt(ApiProviderEnum.PL.getCode()));
             playerApiVo = ServiceTool.playerApiService().search(playerApiVo);
             PlayerApi playerApi = playerApiVo.getResult();
-            return CurrencyTool.formatCurrency(playerApi == null || playerApi.getMoney() == null ? 0d : playerApi.getMoney());
+            if (playerApi != null && playerApi.getMoney() != null) {
+                balance = balance + playerApi.getMoney();
+            }
+            return CurrencyTool.formatCurrency(balance);
         }
-        return CurrencyTool.formatCurrency(getWalletBalance(userId));
+        return CurrencyTool.formatCurrency(balance);
     }
 }
