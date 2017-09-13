@@ -3,13 +3,13 @@
 <c:choose>
     <c:when test="${fn:length(command.result) gt 0}">
         <c:forEach items="${command.result}" var="s">
-            <li name="promoLi" code="${s.activityClassifyKey}" >
+            <li class="promo-list" name="promoLi" code="${s.activityClassifyKey}">
                 <a class="activity-a" data-id="${s.id}">
                     <img src="${soulFn:getImagePathWithDefault(domain, s.activityAffiliated, resRoot.concat('/images/img-sale1.jpg'))}">
                 </a>
                 <c:if test="${!isTwoCount}">
                     <div name="activityDetail" class="activity-detail" style="display: none" >
-                        ${s.activityDescription}
+                            ${s.activityDescription}
                     </div>
                 </c:if>
             </li>
