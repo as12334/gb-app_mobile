@@ -63,12 +63,12 @@
                             <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>
                     </li>
-                   <%-- <li class="diy-table-view-cell mui-col-xs-3">
+                    <li class="diy-table-view-cell mui-col-xs-3">
                         <a data-skip="/promo/promo.html">
                             <span class="home-f-ico ico-service-5"></span>
                             <span class="lottery-title">优惠活动</span>
                         </a>
-                    </li>--%>
+                    </li>
                     <%--<li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
                         <a href="javascript:">
                             <span class="home-f-ico ico-service-4"></span>

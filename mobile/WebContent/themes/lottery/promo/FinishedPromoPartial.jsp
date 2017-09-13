@@ -19,4 +19,4 @@
         </li>
     </c:otherwise>
 </c:choose>
-<input value="${command.paging.lastPageNumber}" id="lastPageNumber2" hidden>
+<input value="${command.paging.lastPageNumber}" id="lastPageNumber2" hidden/>

@@ -7,7 +7,7 @@
 </script>
 <script src="${resComRoot}/js/jquery/jquery-2.1.1.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/common.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/mui/mui.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/plugin/layer.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/ProgressDialog.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/main.js?v=${rcVersion}"></script>

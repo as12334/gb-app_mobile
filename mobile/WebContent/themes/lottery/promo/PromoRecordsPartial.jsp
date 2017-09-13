@@ -8,10 +8,10 @@
                     <img src="${soulFn:getImagePathWithDefault(domain, s.activityAffiliated, resRoot.concat('/images/img-sale1.jpg'))}">
                 </a>
                 <c:if test="${!isTwoCount}">
-                <div name="activityDetail" class="activity-detail" style="display: none" >
-                    ${s.activityDescription}
-                </div>
-        </c:if>
+                    <div name="activityDetail" class="activity-detail" style="display: none" >
+                        ${s.activityDescription}
+                    </div>
+                </c:if>
             </li>
         </c:forEach>
     </c:when>

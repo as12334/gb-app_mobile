@@ -136,7 +136,7 @@ public class PromoController {
 
         model.addAttribute("command", vActivityMessageListVo);
 
-        return "promo/FinishedPromoPartial";
+        return "/promo/FinishedPromoPartial";
     }
     @RequestMapping("/promoDetail")
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model){
