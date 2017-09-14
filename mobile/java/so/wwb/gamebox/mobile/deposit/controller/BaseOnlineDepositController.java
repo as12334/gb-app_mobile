@@ -325,6 +325,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         map.put("type", type);
         map.put("accountType", accountType);
         map.put("currency", SessionManager.getUser().getDefaultCurrency());
+        map.put("terminal", TerminalEnum.MOBILE.getCode());
         PayAccountListVo listVo = new PayAccountListVo();
         listVo.setConditions(map);
         return ServiceTool.payAccountService().searchPayAccountByRank(listVo);
