@@ -88,6 +88,14 @@
                 <ul class="mui-table-view mui-table-view-chevron _result">
                     <!-- 热门开奖 -->
                 </ul>
+                <div class="pcAndMobile">
+                    <a data-href="/mainIndex.html">手机版</a>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <a data-terminal="pc" name="toPc">电脑版</a>
+                </div>
+                <div class="row copyright">
+                    <span>Copyright&nbsp;©&nbsp;2009-2017&nbsp;${siteName} 版权所有</span>
+                </div>
                 <div class="margin"></div>
             </div>
         </div>
