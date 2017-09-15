@@ -130,7 +130,7 @@ public class PromoController {
         vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
         vActivityMessageListVo.getPaging().setPageSize(8);
         //通过玩家层级判断是否显示活动
-        if (SessionManager.getUser() != null) {
+        if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo().booleanValue()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(DubboTool.getService(IPlayerRankService.class).searchRankByPlayerId(sysUserVo).getId());
