@@ -31,6 +31,7 @@ import so.wwb.gamebox.model.master.operation.po.ActivityPlayerApply;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.*;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +57,7 @@ public class PromoController {
     private static final String APPLIED = "apply.tip.next";
     private static final String PARTICIPATION = "apply.tip.doing";
     private static final String APPLY_FULL = "apply.tip.vacancies";
+
     /**
      * 我的优惠记录
      */
@@ -74,29 +76,29 @@ public class PromoController {
      * 正在进行中的活动
      */
     @RequestMapping("/promo")
-    public String processingPromoRecords(VActivityMessageListVo vActivityMessageListVo, Model model, HttpServletRequest request ,boolean isTwoCount) {
+    public String processingPromoRecords(VActivityMessageListVo vActivityMessageListVo, Model model, HttpServletRequest request, boolean isTwoCount) {
         vActivityMessageListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageListVo.getSearch().setIsDeleted(Boolean.FALSE);
         vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
         vActivityMessageListVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
         vActivityMessageListVo.getPaging().setPageSize(8);
         //通过玩家层级判断是否显示活动
-        if(SessionManager.getUser()!=null){
+        if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(DubboTool.getService(IPlayerRankService.class).searchRankByPlayerId(sysUserVo).getId());
         }
         vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         //首页只展示部分优惠
-        if(isTwoCount){
-            if(vActivityMessageListVo.getResult().size()>2) {
+        if (isTwoCount) {
+            if (vActivityMessageListVo.getResult().size() > 2) {
                 List<VActivityMessage> list = vActivityMessageListVo.getResult();
                 vActivityMessageListVo.setResult(list.subList(0, 2));
             }
         }
         model.addAttribute("isTwoCount", isTwoCount);
         model.addAttribute("command", vActivityMessageListVo);
-        return  request.getMethod().equals("GET")?PROMO_RECORDS_URL:PROMO_RECORDS_URL+"Partial";
+        return request.getMethod().equals("GET") ? PROMO_RECORDS_URL : PROMO_RECORDS_URL + "Partial";
     }
 
     /**
@@ -104,7 +106,7 @@ public class PromoController {
      */
     @RequestMapping("/activityType")
     @ResponseBody
-    public String getActivityType(){
+    public String getActivityType() {
         String localLanguage = SessionManager.getLocale().toString();
         Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
         Map<String, SiteI18n> tempMap = new LinkedHashMap<>();
@@ -116,6 +118,7 @@ public class PromoController {
         }
         return JsonTool.toJson(tempMap);
     }
+
     /**
      * 已经结束的活动
      */
@@ -127,7 +130,7 @@ public class PromoController {
         vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
         vActivityMessageListVo.getPaging().setPageSize(8);
         //通过玩家层级判断是否显示活动
-        if(SessionManager.getUser()!=null){
+        if (SessionManager.getUser() != null) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(DubboTool.getService(IPlayerRankService.class).searchRankByPlayerId(sysUserVo).getId());
@@ -138,58 +141,62 @@ public class PromoController {
 
         return "/promo/FinishedPromoPartial";
     }
+
     @RequestMapping("/promoDetail")
-    public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model){
+    public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
         vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageVo = ServiceTool.vPlayerActivityMessageService().search(vActivityMessageVo);
 
-        model.addAttribute("command",vActivityMessageVo);
-        model.addAttribute("nowTime",SessionManager.getDate().getNow());
+        model.addAttribute("command", vActivityMessageVo);
+        model.addAttribute("nowTime", SessionManager.getDate().getNow());
         return PROMO_RECORDS_DETAIL;
     }
+
     @ResponseBody
     @RequestMapping("/getPlayerActivityIds")
-    public String getPlayerActivityIds(HttpServletRequest request){
-        if (SessionManager.getUser()==null)
+    public String getPlayerActivityIds(HttpServletRequest request) {
+        if (SessionManager.getUser() == null)
             return "false";
-        Integer rankId =  getPlayerRankId(SessionManager.getUserId());
-        String result =getPlayerActivitiesIdsJsonByRankId(rankId,request);
+        Integer rankId = getPlayerRankId(SessionManager.getUserId());
+        String result = getPlayerActivitiesIdsJsonByRankId(rankId, request);
         return result;
     }
+
     @ResponseBody
     @RequestMapping("/applyActivities")
-    public Map applyActivities(VPlayerActivityMessageVo vPlayerActivityMessageVo){
-        Map map = new HashMap(2,1f);
+    public Map applyActivities(VPlayerActivityMessageVo vPlayerActivityMessageVo) {
+        Map map = new HashMap(2, 1f);
         String code = vPlayerActivityMessageVo.getCode();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(vPlayerActivityMessageVo.getResultId(), "PlayerActivityMessageListVo"));
         PlayerActivityMessage activityMessage = Cache.getActivityMessageInfo(id.toString());
         activityMessage.setId(id);
         vPlayerActivityMessageVo.setId(id);
-        if (StringTool.equals(code,ActivityTypeEnum.REGIST_SEND.getCode())){
-            applyRegisterSend(map, vPlayerActivityMessageVo,activityMessage);
-        }else if (StringTool.equals(code, ActivityTypeEnum.EFFECTIVE_TRANSACTION.getCode())
-                || StringTool.equals(code,ActivityTypeEnum.PROFIT.getCode())){
+        if (StringTool.equals(code, ActivityTypeEnum.REGIST_SEND.getCode())) {
+            applyRegisterSend(map, vPlayerActivityMessageVo, activityMessage);
+        } else if (StringTool.equals(code, ActivityTypeEnum.EFFECTIVE_TRANSACTION.getCode())
+                || StringTool.equals(code, ActivityTypeEnum.PROFIT.getCode())) {
             applyEffectiveOrProfit(vPlayerActivityMessageVo, map, activityMessage);
-        }else if (StringTool.equals(code,ActivityTypeEnum.RELIEF_FUND.getCode())){
+        } else if (StringTool.equals(code, ActivityTypeEnum.RELIEF_FUND.getCode())) {
             applyReliefFund(vPlayerActivityMessageVo, map, activityMessage);
         }
         return map;
     }
-    private void applyRegisterSend(Map map, VPlayerActivityMessageVo vPlayerActivityMessageVo, PlayerActivityMessage activityMessage ) {
-        LOG.debug("优惠活动申请：id：{0},code：{1}",activityMessage.getId(),activityMessage.getCode());
+
+    private void applyRegisterSend(Map map, VPlayerActivityMessageVo vPlayerActivityMessageVo, PlayerActivityMessage activityMessage) {
+        LOG.debug("优惠活动申请：id：{0},code：{1}", activityMessage.getId(), activityMessage.getCode());
         setPlayerApplyCountAndTIime(activityMessage);
         activityMessage.setRegisterTime(SessionManager.getUser().getCreateTime());
-        if (activityMessage.getAcount()>0 ){
-            if (activityMessage.getCompareActivityTime() || activityMessage.getCompareRegisterAndActivityTime()){
-                setApplyFailReturnStates(map,APPLY_EXPIRED);
-            }else {
-                setApplyFailReturnStates(map,REGIST_APPLIED);
+        if (activityMessage.getAcount() > 0) {
+            if (activityMessage.getCompareActivityTime() || activityMessage.getCompareRegisterAndActivityTime()) {
+                setApplyFailReturnStates(map, APPLY_EXPIRED);
+            } else {
+                setApplyFailReturnStates(map, REGIST_APPLIED);
                /* map.put("msg", LocaleTool.tranMessage("player","已申请"));*/
             }
-        }else {
-            if ((Boolean) activityMessage.getRegistSendEffectiveTime().get("flag")){
-                apply(vPlayerActivityMessageVo,map);
-            }else {
+        } else {
+            if ((Boolean) activityMessage.getRegistSendEffectiveTime().get("flag")) {
+                apply(vPlayerActivityMessageVo, map);
+            } else {
                 setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, "apply.tip.qualified",
                         ActivityEffectiveTime.getEffectiveTime(activityMessage.getEffectiveTime()),
                         LocaleDateTool.formatDate(SessionManager.getUser().getCreateTime(),
@@ -197,58 +204,61 @@ public class PromoController {
             }
         }
     }
-    private void applyEffectiveOrProfit(VPlayerActivityMessageVo vPlayerActivityMessageVo,Map map, PlayerActivityMessage activityMessage) {
-        LOG.debug("优惠活动申请：id：{0},code：{1}",activityMessage.getId(),activityMessage.getCode());
+
+    private void applyEffectiveOrProfit(VPlayerActivityMessageVo vPlayerActivityMessageVo, Map map, PlayerActivityMessage activityMessage) {
+        LOG.debug("优惠活动申请：id：{0},code：{1}", activityMessage.getId(), activityMessage.getCode());
         setPlayerApplyCountAndTIime(activityMessage);
-        if (activityMessage.getCompareActivityTime()){
-            setApplyFailReturnStates(map,APPLY_EXPIRED);
-        }else {
-            if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")){
-                setApplyFailReturnStates(map,APPLIED);
-            }else {
-                apply(vPlayerActivityMessageVo,map);
+        if (activityMessage.getCompareActivityTime()) {
+            setApplyFailReturnStates(map, APPLY_EXPIRED);
+        } else {
+            if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
+                setApplyFailReturnStates(map, APPLIED);
+            } else {
+                apply(vPlayerActivityMessageVo, map);
             }
         }
     }
-    private void applyReliefFund(VPlayerActivityMessageVo vPlayerActivityMessageVo,Map map, PlayerActivityMessage activityMessage) {
-        LOG.debug("优惠活动申请：id：{0},code：{1}",activityMessage.getId(),activityMessage.getCode());
+
+    private void applyReliefFund(VPlayerActivityMessageVo vPlayerActivityMessageVo, Map map, PlayerActivityMessage activityMessage) {
+        LOG.debug("优惠活动申请：id：{0},code：{1}", activityMessage.getId(), activityMessage.getCode());
         setPlayerApplyCountAndTIime(activityMessage);
         if (ActivityTypeEnum.RELIEF_FUND.getCode().equals(activityMessage.getCode())) {
             // 获取周期内参加玩家数(统计优惠名额)
             Integer activityId = activityMessage.getId();
             Map deadlineMap = activityMessage.getDeadlineTime();
-            Date applyStartTime = (Date)deadlineMap.get("deadLineStartTime");
-            Date applyEndTime = (Date)deadlineMap.get("deadLineTime");
+            Date applyStartTime = (Date) deadlineMap.get("deadLineStartTime");
+            Date applyEndTime = (Date) deadlineMap.get("deadLineTime");
             Long count = countApplyPlayer(activityId, applyStartTime, applyEndTime);
             activityMessage.setCountPlaceNumber(count);
         }
-        Integer placesNumber = activityMessage.getPlacesNumber()==null?0:activityMessage.getPlacesNumber();
-        if (placesNumber>0){
-            if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean)activityMessage.getDeadlineTime().get("isRepeat")){
+        Integer placesNumber = activityMessage.getPlacesNumber() == null ? 0 : activityMessage.getPlacesNumber();
+        if (placesNumber > 0) {
+            if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
 
-                setApplyFailReturnStates(map,PARTICIPATION);//参与中
-            }else {
-                if (activityMessage.getCountPlaceNumber() >= placesNumber){
-                    setApplyFailReturnStates(map,APPLY_FULL);
-                }else {
-                    apply(vPlayerActivityMessageVo,map);
+                setApplyFailReturnStates(map, PARTICIPATION);//参与中
+            } else {
+                if (activityMessage.getCountPlaceNumber() >= placesNumber) {
+                    setApplyFailReturnStates(map, APPLY_FULL);
+                } else {
+                    apply(vPlayerActivityMessageVo, map);
                 }
             }
-        }else {
-            if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean)activityMessage.getDeadlineTime().get("isRepeat")){
-                setApplyFailReturnStates(map,APPLIED);//已申请
-            }else {
-                apply(vPlayerActivityMessageVo,map);
+        } else {
+            if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
+                setApplyFailReturnStates(map, APPLIED);//已申请
+            } else {
+                apply(vPlayerActivityMessageVo, map);
             }
 
         }
     }
+
     private Map apply(VPlayerActivityMessageVo vPlayerActivityMessageVo, Map map) {
         //处理表单多次提交
-        if (StringTool.isBlank(SessionManager.getToken(vPlayerActivityMessageVo.getCode(),vPlayerActivityMessageVo.getId()))) {
-            SessionManager.setToken(UUID.randomUUID().toString(),vPlayerActivityMessageVo.getCode(),vPlayerActivityMessageVo.getId());
-        }else {
-            LOG.debug("用户[{0}]活动[{1}]申请还在处理中，别再点了！",SessionManager.getUserId(),vPlayerActivityMessageVo.getId());
+        if (StringTool.isBlank(SessionManager.getToken(vPlayerActivityMessageVo.getCode(), vPlayerActivityMessageVo.getId()))) {
+            SessionManager.setToken(UUID.randomUUID().toString(), vPlayerActivityMessageVo.getCode(), vPlayerActivityMessageVo.getId());
+        } else {
+            LOG.debug("用户[{0}]活动[{1}]申请还在处理中，别再点了！", SessionManager.getUserId(), vPlayerActivityMessageVo.getId());
             return map;
         }
 
@@ -257,11 +267,11 @@ public class PromoController {
         activityPlayerApply.setUserId(SessionManager.getUserId());
 
         activityPlayerApplyVo.setResult(activityPlayerApply);
-        Map<String,Object> resultCode= ServiceTool.vPlayerActivityMessageService().saveActivityApplyInfo(activityPlayerApplyVo, vPlayerActivityMessageVo);
+        Map<String, Object> resultCode = ServiceTool.vPlayerActivityMessageService().saveActivityApplyInfo(activityPlayerApplyVo, vPlayerActivityMessageVo);
 
         boolean flag = false;
         String msg = "";
-        ActivityResultCodeEnum activityResultCodeEnum = EnumTool.enumOf(ActivityResultCodeEnum.class,resultCode.get("resultcode").toString());
+        ActivityResultCodeEnum activityResultCodeEnum = EnumTool.enumOf(ActivityResultCodeEnum.class, resultCode.get("resultcode").toString());
         switch (activityResultCodeEnum) {
             case ACTIVITY_MEET_PRE:
                 msg = LocaleTool.tranMessage(Module.ACTIVITY, "apply.tip.wanting");
@@ -329,14 +339,15 @@ public class PromoController {
                 msg = LocaleTool.tranMessage(Module.ACTIVITY, "apply.tip.limit");
                 break;
         }
-        if (flag){
+        if (flag) {
             Cache.refreshActivityMessages(SessionManager.getSiteId());
         }
         map.put("msg", LocaleTool.tranMessage("player", msg));
         map.put("state", flag);
-        SessionManager.setToken("",vPlayerActivityMessageVo.getCode(),vPlayerActivityMessageVo.getId());
+        SessionManager.setToken("", vPlayerActivityMessageVo.getCode(), vPlayerActivityMessageVo.getId());
         return map;
     }
+
     private void setPlayerApplyCountAndTIime(PlayerActivityMessage activityMessage) {
         ActivityPlayerApplyVo playerApplyVo = new ActivityPlayerApplyVo();
         playerApplyVo.getSearch().setUserId(SessionManager.getUserId());
@@ -345,25 +356,27 @@ public class PromoController {
         activityMessage.setAcount((int) (long) result.get("count"));
         activityMessage.setApplyTime((Timestamp) result.get("applytime"));
     }
+
     private void setApplyFailReturnStates(Map map, String msg) {
         map.put("msg", msg);
         map.put("state", false);
     }
+
     private String getPlayerActivitiesIdsJsonByRankId(Integer rankId, HttpServletRequest request) {
-        Map<String,PlayerActivityMessage> activities = Cache.getActivityMessages();
+        Map<String, PlayerActivityMessage> activities = Cache.getActivityMessages();
         List<String> resultIdList = new ArrayList<>();
         String classifyKey = request.getParameter("classify");
-        if(activities != null){
-            for (PlayerActivityMessage m:activities.values()){
+        if (activities != null) {
+            for (PlayerActivityMessage m : activities.values()) {
 
                 /*过滤玩家注册时间在注册送活动开始时间之前的*/
-                if (SessionManager.getUser()!= null && StringTool.equals(m.getCode(),ActivityTypeEnum.REGIST_SEND.getCode()) &&
+                if (SessionManager.getUser() != null && StringTool.equals(m.getCode(), ActivityTypeEnum.REGIST_SEND.getCode()) &&
                         SessionManager.getUser().getCreateTime().before(m.getStartTime())) continue;
-                if(StringTool.equals(m.getActivityVersion(), SessionManager.getLocale().toString())
-                        && m.getIsDisplay() && isContainUserRank(m,rankId)
-                        && (StringTool.equals(m.getStates(),ActivityStateEnum.PROCESSING.getCode()) || StringTool.equals(m.getStates(),ActivityStateEnum.NOTSTARTED.getCode()))){
+                if (StringTool.equals(m.getActivityVersion(), SessionManager.getLocale().toString())
+                        && m.getIsDisplay() && isContainUserRank(m, rankId)
+                        && (StringTool.equals(m.getStates(), ActivityStateEnum.PROCESSING.getCode()) || StringTool.equals(m.getStates(), ActivityStateEnum.NOTSTARTED.getCode()))) {
                    /*过滤前端活动筛选*/
-                    if (StringTool.isBlank(classifyKey) || StringTool.equals(classifyKey, m.getActivityClassifyKey())){
+                    if (StringTool.isBlank(classifyKey) || StringTool.equals(classifyKey, m.getActivityClassifyKey())) {
 
                         resultIdList.add(m.getSearchId());
                     }
@@ -375,21 +388,23 @@ public class PromoController {
     }
 
     private boolean isContainUserRank(PlayerActivityMessage m, Integer rankId) {
-        String[] rankIds ;
-        if(m.getAllRank()!=null && m.getAllRank()){
+        String[] rankIds;
+        if (m.getAllRank() != null && m.getAllRank()) {
             return true;
-        }else if (m.getRankid()!=null){
+        } else if (m.getRankid() != null) {
             rankIds = m.getRankid().split(",");
-            return  ArrayTool.contains(rankIds,rankId.toString());
+            return ArrayTool.contains(rankIds, rankId.toString());
         }
         return false;
     }
+
     private Integer getPlayerRankId(Integer userId) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(userId);
         userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult().getRankId();
     }
+
     private String getCustomerService() {
         SiteCustomerService siteCustomerService = Cache.getDefaultCustomerService();
         String url = siteCustomerService.getParameter();
@@ -398,7 +413,8 @@ public class PromoController {
         }
         return url;
     }
-    private Long countApplyPlayer(Integer activityId,Date applyStartTime,Date applyEndTime) {
+
+    private Long countApplyPlayer(Integer activityId, Date applyStartTime, Date applyEndTime) {
         ActivityPlayerApplyVo activityPlayerApplyVo = new ActivityPlayerApplyVo();
         activityPlayerApplyVo.setActivityMessageId(activityId);
         activityPlayerApplyVo.setApplyStartTime(applyStartTime);
