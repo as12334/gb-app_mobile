@@ -82,6 +82,7 @@ public class PromoController {
         vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
         vActivityMessageListVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
         vActivityMessageListVo.getPaging().setPageSize(8);
+        LOG.info("是否是试玩账号{0}-{1}-{2}", SessionManager.getUser() != null, SessionManagerCommon.isLotteryDemo(), SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo());
         //通过玩家层级判断是否显示活动
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
