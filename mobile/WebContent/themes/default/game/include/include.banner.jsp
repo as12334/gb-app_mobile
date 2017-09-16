@@ -55,11 +55,11 @@
         <button type="button" class="mui-pull-left mui-btn mui-btn-danger mui-btn-outlined">${views.game_auto['公告']}</button>
         <ul class="mui-list-unstyled gb-notice-list">
             <li>
-                <marquee behavior="scroll" scrollamount="2" direction="left">
+                <%--<marquee behavior="scroll" scrollamount="2" direction="left">--%>
                     <p><c:forEach items="${announcement}" var="a" varStatus="vs">
                         <a data-idx="${vs.index}">${a.content}</a></c:forEach>
                     </p>
-                </marquee>
+               <%-- </marquee>--%>
             </li>
         </ul>
         <%--<div class="mui-list-unstyled gb-notice-list">--%>
