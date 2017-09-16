@@ -29,9 +29,9 @@
             <button type="button" class="mui-btn mui-btn-android mui-btn-block mui-btn-outlined down-app" data-href="${androidUrl}">
                 <i class="mobile-ico ico-and"></i><span>${views.include_auto['Android下载']}</span>
             </button>
-
             <div class="p1"><img src="${resRoot}/lottery/themes/images/p1.png" width="60%"></div>
             <button type="button" class="mui-btn mui-btn-danger mui-btn-block goon" data-href="/mainIndex.html">${views.include_auto['继续访问']}${views.include_auto['连接成功']}</button>
+            <a class="mui-btn mui-btn-block" data-terminal="pc">返回电脑版</a>
             <div class="tit-tips">${views.include_auto['温馨提示']}</div>
         </div>
     </div>
@@ -40,20 +40,8 @@
 
 </html>
 
-<script type="text/javascript" charset="utf-8">
-    mui.init();
-    mui('body').on('tap', 'button', function () {
-        var href = $(this).data('href');
-        mui.openWindow({
-            url: href,
-            id: href,
-            extras: {},
-            createNew: false,
-            show: {autoShow: true},
-            waiting: {
-                autoShow: true,
-                title: ''
-            }
-        })
-    })
+<script>
+    curl(['${resRoot}/lottery/js/ToIndex'],function (Page) {
+            page = new Page();
+        });
 </script>

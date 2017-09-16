@@ -26,7 +26,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-skip="/lottery/mainIndex.html" data-target="2" data-os="${os}" class="right-menu">
+                <a data-skip="/lottery/mainIndex.html" data-target="2" data-os="${os}" data-auto="true" class="right-menu">
                     <span class="iconfont icon-goucaidating"></span>
                     <span>${views.themes_auto['购彩大厅']}</span>
                 </a>

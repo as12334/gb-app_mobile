@@ -63,6 +63,12 @@
                             <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>
                     </li>
+                    <li class="diy-table-view-cell mui-col-xs-3">
+                        <a data-skip="/promo/promo.html">
+                            <span class="home-f-ico ico-service-5"></span>
+                            <span class="lottery-title">优惠活动</span>
+                        </a>
+                    </li>
                     <%--<li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
                         <a href="javascript:">
                             <span class="home-f-ico ico-service-4"></span>
@@ -82,6 +88,14 @@
                 <ul class="mui-table-view mui-table-view-chevron _result">
                     <!-- 热门开奖 -->
                 </ul>
+                <div class="pcAndMobile">
+                    <a data-href="/mainIndex.html">手机版</a>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <a data-terminal="pc" name="toPc">电脑版</a>
+                </div>
+                <div class="row copyright">
+                    <span>Copyright&nbsp;©&nbsp;2009-2017&nbsp;${siteName} 版权所有</span>
+                </div>
                 <div class="margin"></div>
             </div>
         </div>
@@ -99,39 +113,44 @@
                 <img class="mui-media-object draw-list-img" src="${resRoot}/lottery/themes/images/lottery_ico/{{value.code}}.png">
                 <div class="mui-media-body draw-list-right">
                     <span class="title">{{value.name}}</span>
-                    <span class="expect mui-pull-right"><font class="col-blue">{{value.expect}}期</font>&nbsp;
-                                {{value.openTime}}
-                                </span>
+                    <span class="expect mui-pull-right">
+                        <font class="col-blue">{{value.expect}}期</font>&nbsp;
+                        {{value.openTime}}
+                    </span>
                     <p class="mui-ellipsis">
                         {{if value.type=="pk10"}}
-                        <span class="inline-list-2">
-                            {{each value.ball as ball index}}
-                                    <i class="lottery-ball pks-num" num="{{ball}}">{{ball}}</i>
-                            {{/each}}
-                        </span>
+                            <span class="inline-list-2">
+                                {{each value.ball as ball index}}
+                                        <i class="lottery-ball pks-num" num="{{ball}}">{{ball}}</i>
+                                {{/each}}
+                            </span>
                         {{else if value.type=="lhc"}}
-                        <span class="inline-list-2">
-                            {{each value.ball as ball index}}
-                                {{if index==6}}
-                                    <i class="draw-list-i-add">+</i>
-                                {{/if}}
-                                    <i class="lottery-ball lhc-num" num="{{ball}}">{{ball}}</i>
-                            {{/each}}
-                               </span>
-                        <span class="inline-list-2">
-                            {{each value.sx as sx index}}
-                                {{if index==6}}
-                                    <i style="margin-left: 12px"></i>
-                                {{/if}}
-                                    <i class="lottery-block">{{sx}}</i>
-                            {{/each}}
-                        </span>
+                            <span class="inline-list-2">
+                                {{each value.ball as ball index}}
+                                    {{if index==6}}
+                                        <i class="draw-list-i-add">+</i>
+                                    {{/if}}
+                                        <i class="lottery-ball lhc-num" num="{{ball}}">{{ball}}</i>
+                                {{/each}}
+                            </span>
+                            <span class="inline-list-2">
+                                {{each value.sx as sx index}}
+                                    {{if index==6}}
+                                        <i style="margin-left: 12px"></i>
+                                    {{/if}}
+                                        <i class="lottery-block">{{sx}}</i>
+                                {{/each}}
+                            </span>
+                        {{else if value.code=="bjkl8"}}
+                             <span class="inline-list-kl8">
+                                {{each value.ball as ball index}}<i class="lottery-ball" num="{{ball}}">{{ball}}</i>{{/each}}
+                            </span>
                         {{else}}
-                        <span class="inline-list-2">
-                            {{each value.ball as ball index}}
+                            <span class="inline-list-2">
+                                {{each value.ball as ball index}}
                                     <i class="lottery-ball">{{ball}}</i>
-                            {{/each}}
-                        </span>
+                                {{/each}}
+                            </span>
                         {{/if}}
                     </p>
                 </div>
