@@ -58,7 +58,7 @@
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a data-skip="/lottery/lotteryResultHistory/index.html" data-target="1" data-os="${os}">
+                        <a data-bet="/lottery/lotteryResultHistory/index.html" data-os="${os}">
                             <span class="home-f-ico ico-service-3"></span>
                             <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>
@@ -81,7 +81,7 @@
 
                 <div class="content-title home-title">
                     <h4>${views.themes_auto['热门开奖']}</h4>
-                    <a data-skip="/lottery/lotteryResultHistory/index.html" data-target="1" class="mui-pull-right home-more-btn">
+                    <a data-skip="/lottery/lotteryResultHistory/index.html" class="mui-pull-right home-more-btn">
                         ${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span>
                     </a>
                 </div>
