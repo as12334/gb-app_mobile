@@ -66,8 +66,9 @@ public class PromoController {
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
-
-        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        if(ServletTool.isAjaxSoulRequest(request)) {
+            vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        }
         model.addAttribute("command", vPreferentialRecodeListVo);
         return ServletTool.isAjaxSoulRequest(request) ? MY_PROMO_URL + "Partial" : MY_PROMO_URL;
     }
