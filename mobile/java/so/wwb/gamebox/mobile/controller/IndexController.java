@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.init.context.CommonContext;
@@ -135,7 +136,11 @@ public class IndexController extends BaseApiController {
         return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
     }
 
-    /** 查询Banner */
+    /**
+     * 查询Banner
+     * @deprecated since v1057
+     * @see SiteDataFormatHelper
+     */
     private List<Map> getCarousel() {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
@@ -145,7 +150,9 @@ public class IndexController extends BaseApiController {
                     if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString())) {
                         //验证比对缓存结果中的起止时间是否过期
                         if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
-                            resultList.add(m);
+                            if(MapTool.getBoolean(m,"status")==null||MapTool.getBoolean(m,"status")==true){
+                                resultList.add(m);
+                            }
                         }
                     }
                 }
