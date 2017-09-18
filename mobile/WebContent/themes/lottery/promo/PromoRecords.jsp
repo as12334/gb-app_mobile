@@ -20,7 +20,9 @@
     }
 </style>
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <c:if test="${os!='android'}">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    </c:if>
     <h1 class="mui-title">优惠活动</h1>
 </header>
 <div class="mui-content">
