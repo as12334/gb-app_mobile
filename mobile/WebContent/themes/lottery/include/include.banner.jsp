@@ -46,14 +46,15 @@
 <div class="gb-notice gb-anno">
     <a type="button" class="mui-pull-left notice-icon"><i class="iconfont icon-gonggao"></i></a>
     <ul class="mui-list-unstyled gb-anno-list">
-        <li>
-            <marquee behavior="scroll" scrollamount="5" direction="left">
-                <p>
+        <li id="gb-notice">
+           <%-- <marquee behavior="scroll" scrollamount="5" direction="left">--%>
+                <p id="gb-anno-p">
                     <c:forEach items="${announcement}" var="a" varStatus="vs">
                         <a data-idx="${vs.index}">${a.content}</a>
                     </c:forEach>
                 </p>
-            </marquee>
+               <p id="gb-anno-p2"></p>
+           <%-- </marquee>--%>
         </li>
     </ul>
 </div>

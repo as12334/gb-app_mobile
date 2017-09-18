@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-skip="/lottery/lotteryResultHistory/index.html" data-target="1" data-os="${os}" class="right-menu">
+                <a data-url="/lottery/lotteryResultHistory/index.html" data-os="${os}" class="right-menu">
                     <span class="iconfont icon-kaijiangjilu"></span>
                     <span>${views.themes_auto['开奖记录']}</span>
                 </a>
