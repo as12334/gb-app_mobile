@@ -67,11 +67,13 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         if (listVo.getSearch().getEndCreateTime() != null)
             listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         getFund(model);
-
-        //玩家中心不展示派彩相关资金记录
-        listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
-        listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
-        listVo = getService().search(listVo);
+        //修改为先加载资金记录头部 再加载页面 以应对mui框架自带的下拉在app无法降低内存
+        if(ServletTool.isAjaxSoulRequest(request)) {
+            //玩家中心不展示派彩相关资金记录
+            listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
+            listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
+            listVo = getService().search(listVo);
+        }
         listVo = preList(listVo);
         model.addAttribute("command", listVo);
         model.addAttribute("maxDate", SessionManager.getDate().getNow());
