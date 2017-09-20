@@ -104,25 +104,25 @@
                     <c:forEach var="r" items="${openResults}">
                         <li class="mui-table-view-cell">
                             <a class="mui-navigate-right draw-list-a"
-                               data-href="${root}/lottery/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
-                                <img class="mui-media-object draw-list-img" src="${resRoot}/lottery/themes/images/lottery_ico/{{value.code}}.png">
+                               data-href="${root}/lottery/lotteryResultHistory/queryLotteryResultByCode.html?search.code=${r.code}">
+                                <img class="mui-media-object draw-list-img" src="${resRoot}/lottery/themes/images/lottery_ico/${r.code}.png">
                                 <div class="mui-media-body draw-list-right">
-                                    <span class="title">${r.name}</span>
+                                    <span class="title">${dicts.lottery.lottery[r.code]}</span>
                                     <span class="expect mui-pull-right">
                                         <font class="col-blue">${r.expect}期</font>&nbsp;
-                                        ${r.openTime}
+                                        ${soulFn:formatDateTz(r.openTime,  DateFormat.DAY_SECOND, timeZone)}
                                     </span>
                                     <p class="mui-ellipsis">
                                         <c:choose>
                                             <c:when test="${r.type eq 'pk10'}">
                                                 <span class="inline-list-2">
-                                                <c:forEach var="t" items="${r.ball}">
+                                                <c:forEach var="t" items="${fn:split(r.openCode, ',')}">
                                                     <i class="lottery-ball pks-num" num="${t}">${t}</i>
                                                 </c:forEach>
                                             </c:when>
                                             <c:when test="${r.type eq 'lhc'}">
                                                 <span class="inline-list-2">
-                                                <c:forEach var="t" items="${r.ball}" varStatus="vs">
+                                                <c:forEach var="t" items="${fn:split(r.openCode, ',')}" varStatus="vs">
                                                     <c:if test="${vs.index == 6}">
                                                         <i class="draw-list-i-add">+</i>
                                                     </c:if>
@@ -130,7 +130,7 @@
                                                 </c:forEach>
                                                 </span>
                                                 <span class="inline-list-2">
-                                                    <c:forEach var="t" items="${r.sx}" varStatus="vs">
+                                                    <c:forEach var="t" items="${fn:split(r.openCode, ',')}" varStatus="vs">
                                                         <c:if test="${vs.index == 6}">
                                                             <i style="margin-left: 12px"></i>
                                                         </c:if>
@@ -140,13 +140,13 @@
                                             </c:when>
                                             <c:when test="${r.code eq 'bjkl8'}">
                                                 <span class="inline-list-kl8">
-                                                    <c:forEach var="t" items="${r.ball}">
+                                                    <c:forEach var="t" items="${fn:split(r.openCode, ',')}">
                                                         <i class="lottery-ball" num="${t}">${t}</i>
                                                     </c:forEach>
                                                 </span>
                                             </c:when>
                                             <c:otherwise>
-                                                <c:forEach var="t" items="${r.ball}">
+                                                <c:forEach var="t" items="${fn:split(r.openCode, ',')}">
                                                     <i class="lottery-ball">${t}</i>
                                                 </c:forEach>
                                             </c:otherwise>

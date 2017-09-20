@@ -111,10 +111,10 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
-        model.addAttribute("lotteries", getLottery(request, 19));
-        model.addAttribute("openResults", getOpenResult());
         if (ParamTool.isLotterySite()) {
             model.addAttribute("carousels", getCarousel());
+            model.addAttribute("lotteries", getLottery(request, 19));
+            model.addAttribute("openResults", getOpenResult());
         }
         return "/Index";
     }
@@ -193,8 +193,7 @@ public class IndexController extends BaseApiController {
         LotteryResultListVo listVo = new LotteryResultListVo();
         listVo.getSearch().setCodes(codes);
         listVo.getPaging().setPageSize(5);
-        List<LotteryResult> results = ServiceToolBase.lotteryResultService().queryRecentOpenResult(listVo);
-        return results;
+        return ServiceToolBase.lotteryResultService().queryRecentOpenResult(listVo);
     }
 
     /** 查询公告 */
