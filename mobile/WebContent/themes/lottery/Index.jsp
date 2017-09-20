@@ -94,8 +94,6 @@
                     </li>
                 </ul>
 
-                <%@ include file="include/include.lottery.jsp" %>
-
                 <div class="content-title home-title">
                     <h4>${views.themes_auto['热门开奖']}</h4>
                     <a data-skip="/lottery/lotteryResultHistory/index.html" class="mui-pull-right home-more-btn">
