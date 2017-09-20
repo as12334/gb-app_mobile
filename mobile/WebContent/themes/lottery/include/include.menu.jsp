@@ -5,18 +5,14 @@
     <div id="offCanvasSideScroll" class="mui-scroll-wrapper">
         <ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted aside-right-menu">
             <li class="mui-table-view-cell mui-media">
-                <a href="#">
-                <c:choose>
-                    <c:when test="${isLogin}">
-                        <span class="mui-badge mui-badge-primary mui-icon mui-icon-refreshempty" id="refreshBalance"></span>
-                        <img class="mui-media-object mui-pull-left" src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl, 46, 46, resRoot.concat('/lottery/themes/images/member.png'))}">
-                        <div class="mui-media-body">${sysUser.username}<p class="mui-ellipsis">${views.themes_auto['余额']}：<font class="col-red" id="_balance"></font>${views.themes_auto['元']}</p></div>
-                    </c:when>
-                    <c:otherwise>
-                        <img class="mui-media-object mui-pull-left" src="${resRoot}/lottery/themes/images/member.png">
-                        <a class="mui-btn mui-btn-success btn-login">${views.themes_auto['登录']}</a>
-                    </c:otherwise>
-                </c:choose>
+                <a href="#" class="is-login" style="display: none">
+                    <span class="mui-badge mui-badge-primary mui-icon mui-icon-refreshempty" id="refreshBalance"></span>
+                    <img class="mui-media-object mui-pull-left avatar" src="${resRoot}/lottery/themes/images/member.png">
+                    <div class="mui-media-body"><span id="username"></span><p class="mui-ellipsis">${views.themes_auto['余额']}：<font class="col-red" id="_balance"></font></p></div>
+                </a>
+                <a href="#" class="un-login">
+                    <img class="mui-media-object mui-pull-left" src="${resRoot}/lottery/themes/images/member.png">
+                    <p class="h-text">欢迎光临，请先登录</p>
                 </a>
             </li>
             <li class="mui-table-view-cell">
@@ -62,10 +58,11 @@
                 </a>
             </li>
         </ul>
-        <c:if test="${isLogin}">
-        <div class="p-1r">
+        <div class="p-1r is-login" style="display: none">
             <button type="button" class="mui-btn mui-btn-danger mui-btn-block user-logout">${views.themes_auto['退出登录']}</button>
         </div>
-        </c:if>
+        <div class="p-1r un-login">
+            <button type="button" class="mui-btn mui-btn-danger mui-btn-block user-login">登录</button>
+        </div>
     </div>
 </aside>
