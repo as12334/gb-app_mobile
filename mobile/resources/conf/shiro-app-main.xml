@@ -80,6 +80,7 @@
 				/lotteryResult/getOpenResult.html = anon
 				/lotteryDemo/*.html = anon
 				/commonLottery/*.html = anon
+				/getHeadInfo.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>

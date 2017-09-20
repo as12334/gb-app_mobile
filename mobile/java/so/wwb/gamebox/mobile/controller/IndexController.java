@@ -17,6 +17,7 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +70,7 @@ public class IndexController extends BaseApiController {
     private Log LOG = LogFactory.getLog(IndexController.class);
 
     @RequestMapping("/game")
-    public String game(Integer typeId, Model model,HttpServletRequest request) {
+    public String game(Integer typeId, Model model, HttpServletRequest request) {
         List<SiteApiType> apiTypes = getApiTypes();
         if (typeId == null || !NumberTool.isNumber(String.valueOf(typeId))) {
             if (CollectionTool.isNotEmpty(apiTypes)) {
@@ -80,7 +81,7 @@ public class IndexController extends BaseApiController {
                 typeId = ApiTypeEnum.LIVE_DEALER.getCode();
             }
         }
-        if(typeId == 5)
+        if (typeId == 5)
             model.addAttribute("channel", "activity");
         else
             model.addAttribute("channel", "game");
@@ -89,7 +90,7 @@ public class IndexController extends BaseApiController {
         model.addAttribute("carousels", getCarousel());
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysUser", SessionManager.getUser());
-        model.addAttribute("sysDomain",getSiteDomain(request));
+        model.addAttribute("sysDomain", getSiteDomain(request));
         return "/game/Game";
     }
 
@@ -104,17 +105,16 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/mainIndex")
-    public String index(Model model,HttpServletRequest request) {
+    public String index(Model model, HttpServletRequest request) {
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysUser", SessionManager.getUser());
-        model.addAttribute("sysDomain",getSiteDomain(request));
+        model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
             model.addAttribute("carousels", getCarousel());
             model.addAttribute("lotteries", getLottery(request, 19));
-            model.addAttribute("openResults", getOpenResult());
         }
         return "/Index";
     }
@@ -162,6 +162,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 查询Banner
+     *
      * @deprecated since v1057
      */
     private List<Map> getCarousel() {
@@ -173,7 +174,7 @@ public class IndexController extends BaseApiController {
                     if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString())) {
                         //验证比对缓存结果中的起止时间是否过期
                         if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
-                            if(MapTool.getBoolean(m,"status")==null||MapTool.getBoolean(m,"status")==true){
+                            if (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true) {
                                 resultList.add(m);
                             }
                         }
@@ -196,7 +197,9 @@ public class IndexController extends BaseApiController {
         return ServiceToolBase.lotteryResultService().queryRecentOpenResult(listVo);
     }
 
-    /** 查询公告 */
+    /**
+     * 查询公告
+     */
     private List<CttAnnouncement> getAnnouncement() {
         Map<String, CttAnnouncement> announcement = Cache.getSiteAnnouncement();
         List<CttAnnouncement> resultList = new ArrayList<>();
@@ -211,7 +214,9 @@ public class IndexController extends BaseApiController {
         return resultList;
     }
 
-    /** 关于/条款等 */
+    /**
+     * 关于/条款等
+     */
     @RequestMapping("/index/{path}")
     public String staticPage(@PathVariable("path") String path, Model model, HttpServletRequest request) {
         if ("agent".equals(path)) {
@@ -255,11 +260,13 @@ public class IndexController extends BaseApiController {
         }
     }
 
-    /** 用户所在时区时间 */
+    /**
+     * 用户所在时区时间
+     */
     @RequestMapping(value = "/index/getUserTimeZoneDate")
     @ResponseBody
     public String getUserTimeZoneDate() {
-        Map<String, String> map = new HashMap<>(2,1f);
+        Map<String, String> map = new HashMap<>(2, 1f);
         map.put("dateTimeFromat", CommonContext.getDateFormat().getDAY_SECOND());
         map.put("dateTime", SessionManager.getUserDate(CommonContext.getDateFormat().getDAY_SECOND()));
         map.put("time", String.valueOf(new Date().getTime()));
@@ -267,16 +274,16 @@ public class IndexController extends BaseApiController {
         return JsonTool.toJson(map);
     }
 
-    static String getSiteDomain(HttpServletRequest request){
+    static String getSiteDomain(HttpServletRequest request) {
         //125的记忆域名特殊处理
-        if(SessionManager.getAttribute("SESSION_DEFAULTSITE")!=null){
+        if (SessionManager.getAttribute("SESSION_DEFAULTSITE") != null) {
             return SessionManager.getAttribute("SESSION_DEFAULTSITE").toString();
         }
-        String defaultSite="";
-        if(CommonContext.get().getSiteId()==125){
-            SysSite site=Cache.getSysSite().get(CommonContext.get().getSiteId().toString());
-            defaultSite= site.getWebSite();
-        }else {
+        String defaultSite = "";
+        if (CommonContext.get().getSiteId() == 125) {
+            SysSite site = Cache.getSysSite().get(CommonContext.get().getSiteId().toString());
+            defaultSite = site.getWebSite();
+        } else {
             //其他的都是取默认域名
             for (VSysSiteDomain o : Cache.getSiteDomain().values()) {
                 if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
@@ -287,20 +294,20 @@ public class IndexController extends BaseApiController {
                 }
             }
         }
-        if(StringTool.isBlank(defaultSite)){
+        if (StringTool.isBlank(defaultSite)) {
             //未设置的取当前域名
             defaultSite = SessionManager.getDomain(request);
         }
-        SessionManager.setAttribute("SESSION_DEFAULTSITE",defaultSite);
+        SessionManager.setAttribute("SESSION_DEFAULTSITE", defaultSite);
         return defaultSite;
     }
 
     @RequestMapping("/index/getLogoUrl")
     @ResponseBody
     public String getLogoUrl() {
-        Map<String,String> urlMap = new HashMap<>(2,1f);
-        urlMap.put("logoUrl", "/ftl/commonPage/images/app_logo/app_logo_"+ SessionManager.getSiteId() +".png");
-        urlMap.put("iconUrl", "/ftl/commonPage/images/app_icon/app_icon_"+ SessionManager.getSiteId() +".png");
+        Map<String, String> urlMap = new HashMap<>(2, 1f);
+        urlMap.put("logoUrl", "/ftl/commonPage/images/app_logo/app_logo_" + SessionManager.getSiteId() + ".png");
+        urlMap.put("iconUrl", "/ftl/commonPage/images/app_icon/app_icon_" + SessionManager.getSiteId() + ".png");
         return JsonTool.toJson(urlMap);
     }
 
@@ -309,8 +316,8 @@ public class IndexController extends BaseApiController {
     public String getAppUrl(ServletRequest request) {
         Integer siteId = SessionManager.getSiteId();
         String code = "";
-        for(SysSite sysSite : Cache.getSysSite().values()){
-            if(siteId.equals(sysSite.getId())){
+        for (SysSite sysSite : Cache.getSysSite().values()) {
+            if (siteId.equals(sysSite.getId())) {
                 code = sysSite.getCode();
             }
         }
@@ -339,17 +346,20 @@ public class IndexController extends BaseApiController {
     /**
      * app下载页
      * 获取下载地址/二维码
+     *
      * @param model
      * @param request
      * @return
      */
     @RequestMapping("/app/download")
-    public String downloadApp(Model model, ServletRequest request){
+    public String downloadApp(Model model, ServletRequest request) {
         getAppPath(model, request);
         return "/app/Index";
     }
 
-    /** 获取APP下载地址 */
+    /**
+     * 获取APP下载地址
+     */
     private void getAppPath(Model model, ServletRequest request) {
         //获取站点信息
         Integer siteId = SessionManager.getSiteId();
@@ -366,13 +376,13 @@ public class IndexController extends BaseApiController {
         AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
 
         String androidUrl = "";
-        if(androidApp != null)
+        if (androidApp != null)
             androidUrl = "http://" + ParamTool.appDmain(request.getServerName()) + androidApp.getAppUrl() + androidApp.getVersionName() + "/app_" + code + "_" + androidApp.getVersionName() + ".apk";
 
         String iosUrl = "";
-        if(iosApp != null)
+        if (iosApp != null)
             iosUrl = "itms-services://?action=download-manifest&url=" +
-                    "https://" + iosApp.getAppUrl() + "/" + code + "/app_" + code +"_" + iosApp.getVersionName() + ".plist";
+                    "https://" + iosApp.getAppUrl() + "/" + code + "/app_" + code + "_" + iosApp.getVersionName() + ".plist";
 
         model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(androidUrl, 6)));
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(iosUrl, 6)));
@@ -382,17 +392,40 @@ public class IndexController extends BaseApiController {
 
     /**
      * 查询用户信息,判断是否登录
+     *
      * @return
      */
     @RequestMapping("/sysUser")
     @ResponseBody
-    public String getSysUser(){
+    public String getSysUser() {
         SysUser sysUser = SessionManager.getUser();
-        if(sysUser != null){
+        if (sysUser != null) {
             return JsonTool.toJson(sysUser);
-        }else {
+        } else {
             return "unLogin";
         }
+    }
+
+    /**
+     * 查询用户信息,判断是否登录
+     *
+     * @return
+     */
+    @RequestMapping("/getHeadInfo")
+    @ResponseBody
+    public String getHeadInfo(HttpServletRequest request) {
+        SysUser sysUser = SessionManager.getUser();
+        Map map = new HashMap<>(2, 1f);
+        if (sysUser == null) {
+            map.put("isLogin", false);
+        } else {
+            map.put("isLogin", true);
+            map.put("name", sysUser.getUsername());
+            if(StringTool.isNotBlank(sysUser.getAvatarUrl())) {
+                map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46,null));
+            }
+        }
+        return JsonTool.toJson(map);
     }
 
     @RequestMapping("/lotteryDemo/{terminal}")
