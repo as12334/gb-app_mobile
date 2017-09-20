@@ -69,15 +69,30 @@
                             <span class="lottery-title">优惠活动</span>
                         </a>
                     </li>
-                    <%--<li class="diy-table-view-cell mui-col-xs-3 none" style="border-right: none">
-                        <a href="javascript:">
-                            <span class="home-f-ico ico-service-4"></span>
-                            <span class="lottery-title">${views.themes_auto['走势图']}</span>
-                        </a>
-                    </li>--%>
                 </ul>
 
-                <%@ include file="include/include.lottery.jsp" %>
+                <div class="content-title home-title">
+                    <h4>${views.themes_auto['热门彩种']}</h4>
+                    <a data-skip="/lottery/mainIndex.html" data-target="2" class="mui-pull-right home-more-btn moreLottery">
+                        ${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span>
+                    </a>
+                </div>
+                <ul class="mui-table-view mui-grid-view diy-grid-9" id="hotLottery">
+                    <c:forEach var="r" items="${lotteries}">
+                        <li class="diy-table-view-cell mui-col-xs-3 ddd">
+                            <a data-bet="/lottery/${r.type}/${r.code}/index.html" data-status="normal">
+                                <span class="lottery-ico lottery-ico-${r.code}"></span>
+                                <span class="lottery-title">${r.name}</span>
+                            </a>
+                        </li>
+                    </c:forEach>
+                    <li class="diy-table-view-cell mui-col-xs-3">
+                        <a data-skip="/lottery/mainIndex.html">
+                            <span class="lottery-ico lottery-ico-more"></span>
+                            <span class="lottery-title">更多</span>
+                        </a>
+                    </li>
+                </ul>
 
                 <div class="content-title home-title">
                     <h4>${views.themes_auto['热门开奖']}</h4>
@@ -85,8 +100,62 @@
                         ${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span>
                     </a>
                 </div>
-                <ul class="mui-table-view mui-table-view-chevron _result">
-                    <!-- 热门开奖 -->
+                <ul class="mui-table-view mui-table-view-chevron _result ${openResults.size()}">
+                    <c:forEach var="r" items="${openResults}">
+                        <li class="mui-table-view-cell">
+                            <a class="mui-navigate-right draw-list-a"
+                               data-href="${root}/lottery/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
+                                <img class="mui-media-object draw-list-img" src="${resRoot}/lottery/themes/images/lottery_ico/{{value.code}}.png">
+                                <div class="mui-media-body draw-list-right">
+                                    <span class="title">${r.name}</span>
+                                    <span class="expect mui-pull-right">
+                                        <font class="col-blue">${r.expect}期</font>&nbsp;
+                                        ${r.openTime}
+                                    </span>
+                                    <p class="mui-ellipsis">
+                                        <c:choose>
+                                            <c:when test="${r.type eq 'pk10'}">
+                                                <span class="inline-list-2">
+                                                <c:forEach var="t" items="${r.ball}">
+                                                    <i class="lottery-ball pks-num" num="${t}">${t}</i>
+                                                </c:forEach>
+                                            </c:when>
+                                            <c:when test="${r.type eq 'lhc'}">
+                                                <span class="inline-list-2">
+                                                <c:forEach var="t" items="${r.ball}" varStatus="vs">
+                                                    <c:if test="${vs.index == 6}">
+                                                        <i class="draw-list-i-add">+</i>
+                                                    </c:if>
+                                                    <i class="lottery-ball lhc-num" num="${t}">${t}</i>
+                                                </c:forEach>
+                                                </span>
+                                                <span class="inline-list-2">
+                                                    <c:forEach var="t" items="${r.sx}" varStatus="vs">
+                                                        <c:if test="${vs.index == 6}">
+                                                            <i style="margin-left: 12px"></i>
+                                                        </c:if>
+                                                        <i class="lottery-block">${t}</i>
+                                                    </c:forEach>
+                                                </span>
+                                            </c:when>
+                                            <c:when test="${r.code eq 'bjkl8'}">
+                                                <span class="inline-list-kl8">
+                                                    <c:forEach var="t" items="${r.ball}">
+                                                        <i class="lottery-ball" num="${t}">${t}</i>
+                                                    </c:forEach>
+                                                </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:forEach var="t" items="${r.ball}">
+                                                    <i class="lottery-ball">${t}</i>
+                                                </c:forEach>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                    </c:forEach>
                 </ul>
                 <div class="pcAndMobile">
                     <a data-href="/mainIndex.html">手机版</a>
@@ -105,59 +174,6 @@
 </div>
 </body>
 
-<script type="text/html" id="template_myLotteryTemplate">
-        {{each list as value index}}
-        <li class="mui-table-view-cell">
-            <a class="mui-navigate-right draw-list-a"
-               data-href="${root}/lottery/lotteryResultHistory/queryLotteryResultByCode.html?search.code={{value.code}}">
-                <img class="mui-media-object draw-list-img" src="${resRoot}/lottery/themes/images/lottery_ico/{{value.code}}.png">
-                <div class="mui-media-body draw-list-right">
-                    <span class="title">{{value.name}}</span>
-                    <span class="expect mui-pull-right">
-                        <font class="col-blue">{{value.expect}}期</font>&nbsp;
-                        {{value.openTime}}
-                    </span>
-                    <p class="mui-ellipsis">
-                        {{if value.type=="pk10"}}
-                            <span class="inline-list-2">
-                                {{each value.ball as ball index}}
-                                        <i class="lottery-ball pks-num" num="{{ball}}">{{ball}}</i>
-                                {{/each}}
-                            </span>
-                        {{else if value.type=="lhc"}}
-                            <span class="inline-list-2">
-                                {{each value.ball as ball index}}
-                                    {{if index==6}}
-                                        <i class="draw-list-i-add">+</i>
-                                    {{/if}}
-                                        <i class="lottery-ball lhc-num" num="{{ball}}">{{ball}}</i>
-                                {{/each}}
-                            </span>
-                            <span class="inline-list-2">
-                                {{each value.sx as sx index}}
-                                    {{if index==6}}
-                                        <i style="margin-left: 12px"></i>
-                                    {{/if}}
-                                        <i class="lottery-block">{{sx}}</i>
-                                {{/each}}
-                            </span>
-                        {{else if value.code=="bjkl8"}}
-                             <span class="inline-list-kl8">
-                                {{each value.ball as ball index}}<i class="lottery-ball" num="{{ball}}">{{ball}}</i>{{/each}}
-                            </span>
-                        {{else}}
-                            <span class="inline-list-2">
-                                {{each value.ball as ball index}}
-                                    <i class="lottery-ball">{{ball}}</i>
-                                {{/each}}
-                            </span>
-                        {{/if}}
-                    </p>
-                </div>
-            </a>
-        </li>
-        {{/each}}
-</script>
 
 <script src="${resRoot}/js/mui/mui.pullToRefresh.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>

@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.init.context.CommonContext;
@@ -21,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
@@ -31,12 +33,14 @@ import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
-import so.wwb.gamebox.model.company.enums.GameStatusEnum;
-import so.wwb.gamebox.model.company.lottery.po.Lottery;
+import so.wwb.gamebox.model.company.lottery.po.LotteryResult;
+import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
+import so.wwb.gamebox.model.company.lottery.vo.LotteryResultListVo;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.enums.lottery.LotteryEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
@@ -46,6 +50,8 @@ import so.wwb.gamebox.model.master.content.po.CttDocumentI18n;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.web.ServiceToolBase;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
@@ -105,6 +111,8 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain",getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
+        model.addAttribute("lotteries", getLottery(request, 19));
+        model.addAttribute("openResults", getOpenResult());
         if (ParamTool.isLotterySite()) {
             model.addAttribute("carousels", getCarousel());
         }
@@ -112,22 +120,39 @@ public class IndexController extends BaseApiController {
     }
 
     // 彩票站-彩票
-    @RequestMapping("/index/lottery")
-    public String getLottery() {
-        List<Map<String, String>> list = new ArrayList<>();
-        Map<String, Lottery> lotterys = Cache.getLotteryByTerminal(TerminalEnum.MOBILE.getCode());
-        for (Map.Entry<String, Lottery> entry : lotterys.entrySet()) {
-            Lottery lot = entry.getValue();
-            if (StringTool.equals(GameStatusEnum.NORMAL.getCode(), lot.getStatus())) {
-                Map<String, String> map = new HashMap<>(3,1f);
-                map.put("type", lot.getType());
-                map.put("name", I18nTool.getDictsMap(SessionManager.getLocale().toString()).get(so.wwb.gamebox.model.DictEnum.LOTTERY.getModule().getCode()).get(DictEnum.LOTTERY.getType()).get(lot.getCode()));
-                map.put("code", lot.getCode());
-                list.add(map);
-                if (list.size() > 7) break;
+    private List<Map<String, String>> getLottery(HttpServletRequest request, Integer pageSize) {
+        String terminal = fetchTerminalType(request);
+        List<Map<String, String>> lotteryList = new ArrayList<>();
+        List<SiteLottery> lotteries = Cache.getNormalSiteLottery(terminal, SessionManagerCommon.getSiteId());
+        if (!CollectionTool.isEmpty(lotteries)) {
+            if (pageSize == null || lotteries.size() < pageSize) {
+                pageSize = lotteries.size();
+            }
+
+            Map<String, String> dictMap = I18nTool.getDictMapByEnum(SessionManagerCommon.getLocale(), DictEnum.LOTTERY);
+            Map<String, String> map;
+            for (int i = 0; i < pageSize; i++) {
+                SiteLottery lottery = lotteries.get(i);
+                map = new HashMap<>(3, 1f);
+                map.put("type", lottery.getType());
+                map.put("name", dictMap.get(lottery.getCode()));
+                map.put("code", lottery.getCode());
+                lotteryList.add(map);
             }
         }
-        return JsonTool.toJson(list);
+        return lotteryList;
+    }
+
+    private String fetchTerminalType(HttpServletRequest request) {
+        String userAgent = request.getHeader("USER-AGENT");
+        boolean fromMobile = HttpTool.checkMobile(userAgent);
+        String terminalType = "";
+        if (fromMobile) {
+            terminalType = TerminalEnum.MOBILE.getCode();
+        } else {
+            terminalType = TerminalEnum.PC.getCode();
+        }
+        return terminalType;
     }
 
     private List<SiteApiType> getApiTypes() {
@@ -135,7 +160,10 @@ public class IndexController extends BaseApiController {
         return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
     }
 
-    /** 查询Banner */
+    /**
+     * 查询Banner
+     * @deprecated since v1057
+     */
     private List<Map> getCarousel() {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
@@ -145,13 +173,28 @@ public class IndexController extends BaseApiController {
                     if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString())) {
                         //验证比对缓存结果中的起止时间是否过期
                         if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
-                            resultList.add(m);
+                            if(MapTool.getBoolean(m,"status")==null||MapTool.getBoolean(m,"status")==true){
+                                resultList.add(m);
+                            }
                         }
                     }
                 }
             }
         }
         return resultList;
+    }
+
+    private List<LotteryResult> getOpenResult() {
+        //热门开奖彩种包含六合彩、重庆时时彩、北京pk10
+        List<String> codes = new ArrayList<>(3);
+        codes.add(LotteryEnum.HKLHC.getCode());
+        codes.add(LotteryEnum.CQSSC.getCode());
+        codes.add(LotteryEnum.BJPK10.getCode());
+        LotteryResultListVo listVo = new LotteryResultListVo();
+        listVo.getSearch().setCodes(codes);
+        listVo.getPaging().setPageSize(5);
+        List<LotteryResult> results = ServiceToolBase.lotteryResultService().queryRecentOpenResult(listVo);
+        return results;
     }
 
     /** 查询公告 */
