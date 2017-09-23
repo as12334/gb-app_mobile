@@ -3,8 +3,10 @@ package so.wwb.gamebox.mobile.tools;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.security.AesTool;
 import org.soul.commons.security.CryptoTool;
 import org.soul.commons.security.DigestTool;
+import so.wwb.gamebox.model.boss.po.AppUpdate;
 
 import java.awt.*;
 import java.io.*;
@@ -17,7 +19,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/Users/fei/app/";
+    private static final String ROOT_PATH = "/home/fei/app/";
 
     private static final String SALT_CODE = "ONFwe#(*FAS&$-932+)#9JI830*#@<-90-13~32@#%SDF*_(#DSF&*FSE!DO&$DW";
 
@@ -146,6 +148,7 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] ids = new String[]{
+                "11,FHAN,肥肥的",
                 /*
                 "69,7cxt,百发彩票",
                 "70,1wl5,天天彩票",
@@ -201,8 +204,8 @@ public class AppBuildTool {
                 "180,qfxk,皇冠国际",
                 "181,4w3g,超博娱乐",
                 "182,ixuf,雄伟集团",
-                "183,nrpf,美高梅赌场",
-                "185,fyxi,Phoenix Gaming",
+                "183,nrpf,美高梅赌场",*/
+                "185,fyxi,Phoenix Gaming"/*,
                 "186,cwad,赛博体育",
                 "187,b02h,澳门银河",
                 "188,acpb,鸿泰国际",
@@ -227,10 +230,10 @@ public class AppBuildTool {
                 "209,arau,大发OK",
                 "210,1lgt,威廉希尔",
                 "211,3qj8,大发OK",
-                "212,cmu6,金元宝娱乐城",*/
+                "212,cmu6,金元宝娱乐城",
                 "213,8y1c,万豪国际",
                 "215,mjiu,盈泰娱乐",
-                "216,cbe1,COD娱樂"
+                "216,cbe1,COD娱樂"*/
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id; */
@@ -244,8 +247,8 @@ public class AppBuildTool {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
-            getIosPlist(code, "2.1.0", siteId, name);
-            getIosBuild(siteId, name, code);
+//            getIosPlist(code, "2.1.0", siteId, name);
+//            getIosBuild(siteId, name, code);
 //            getIosImage(siteId);
             getAndroidFlavors(siteId, name, code);
 //            getAndroidApk(code, "3.1.5");
@@ -473,8 +476,13 @@ public class AppBuildTool {
     }
 
     public static void main(String[] args) {
-        getAppBuild();
-        System.out.println("---android版本号加密：" + md5SysUserPermission("20", "android"));
-//        System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
+//        getAppBuild();
+        System.out.println("---android版本号加密：" + md5SysUserPermission("21", "android"));
+        try {
+            System.out.println("---android版本号加密：" + AesTool.encrypt("19", AppUpdate.KEY_UPDATE));
+//          System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

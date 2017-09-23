@@ -420,7 +420,7 @@ public class IndexController extends BaseApiController {
             map.put("isLogin", false);
         } else {
             map.put("isLogin", true);
-            map.put("name", sysUser.getUsername());
+            map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if(StringTool.isNotBlank(sysUser.getAvatarUrl())) {
                 map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46,null));
             }

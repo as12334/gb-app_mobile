@@ -10,6 +10,25 @@
     <title>${views.deposit_auto['存款']}</title>
 </head>
 
-<%@ include file="/themes/common/deposit/deposit.deposit.jsp" %>
+<c:choose>
+    <c:when test="${isDemo}">
+        <body class="gb-theme mine-page no-backdrop" >
+            <c:if test="${os ne 'android'}">
+                <header class="mui-bar mui-bar-nav">
+                    <c:if test="${os ne 'app_ios'}">
+                        <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
+                    </c:if>
+                    <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
+                </header>
+            </c:if>
+            <center>
+                <img src="${resRoot}/lottery/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
+            </center>
+        </body>
+    </c:when>
+    <c:otherwise>
+        <%@ include file="/themes/common/deposit/deposit.deposit.jsp" %>
+    </c:otherwise>
+</c:choose>
 
 </html>

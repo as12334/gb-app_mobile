@@ -1,3 +1,4 @@
+<%@ page import="org.soul.commons.lang.string.StringTool" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <c:set var="tid" value="${apiTypeId}"/>
@@ -31,7 +32,7 @@
                 </div>
                 <div class="user mui-hide _rightLogin">
                     <a class="btn mui-btn mui-btn-outlined p-r-0">欢迎！</a>
-                    <a class="btn mui-btn mui-btn-outlined p-l-0" data-skip="/mine/index.html" data-target="4" data-os="${os}"><%=SessionManager.getUserName() %></a>
+                    <a class="btn mui-btn mui-btn-outlined p-l-0 right_username" data-skip="/mine/index.html" data-target="4" data-os="${os}"><%=StringTool.overlayName(SessionManager.getUserName()) %></a>
                     <span class="index-action-menu mui-action-menu"></span>
                 </div>
             </div>
@@ -58,13 +59,13 @@
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3 none">
-                        <a data-bet="/lottery/lotteryResultHistory/index.html" data-os="${os}">
+                        <a data-href="/lottery/lotteryResultHistory/index.html?from=0" data-os="${os}">
                             <span class="home-f-ico ico-service-3"></span>
                             <span class="lottery-title">${views.themes_auto['开奖结果']}</span>
                         </a>
                     </li>
                     <li class="diy-table-view-cell mui-col-xs-3">
-                        <a data-skip="/promo/promo.html">
+                        <a data-href="/promo/promo.html">
                             <span class="home-f-ico ico-service-5"></span>
                             <span class="lottery-title">优惠活动</span>
                         </a>
@@ -73,21 +74,21 @@
 
                 <div class="content-title home-title">
                     <h4>${views.themes_auto['热门彩种']}</h4>
-                    <a data-skip="/lottery/mainIndex.html" data-target="2" class="mui-pull-right home-more-btn moreLottery">
-                        ${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span>
+                    <a data-skip="/lottery/mainIndex.html" data-target="2" data-os="${os}" class="mui-pull-right home-more-btn moreLottery">
+                        ${views.themes_auto['更多']}&gt;&gt;
                     </a>
                 </div>
                 <ul class="mui-table-view mui-grid-view diy-grid-9" id="hotLottery">
                     <c:forEach var="r" items="${lotteries}">
                         <li class="diy-table-view-cell mui-col-xs-3 ddd">
-                            <a data-bet="/lottery/${r.type}/${r.code}/index.html" data-status="normal">
+                            <a data-bet="/lottery/${r.type}/${r.code}/index.html?from=0" data-status="normal">
                                 <span class="lottery-ico lottery-ico-${r.code}"></span>
                                 <span class="lottery-title">${r.name}</span>
                             </a>
                         </li>
                     </c:forEach>
                     <li class="diy-table-view-cell mui-col-xs-3">
-                        <a data-skip="/lottery/mainIndex.html">
+                        <a data-skip="/lottery/mainIndex.html" data-target="2" data-os="${os}">
                             <span class="lottery-ico lottery-ico-more"></span>
                             <span class="lottery-title">更多</span>
                         </a>
@@ -97,7 +98,7 @@
                 <div class="content-title home-title">
                     <h4>${views.themes_auto['热门开奖']}</h4>
                     <a data-skip="/lottery/lotteryResultHistory/index.html" class="mui-pull-right home-more-btn">
-                        ${views.themes_auto['更多']}<span class="mui-icon mui-icon-more-filled"></span>
+                        ${views.themes_auto['更多']}&gt;&gt;
                     </a>
                 </div>
                 <ul class="mui-table-view mui-table-view-chevron _result">
