@@ -81,6 +81,7 @@
 				/lotteryDemo/*.html = anon
 				/commonLottery/*.html = anon
 				/getHeadInfo.html = anon
+				/error/*.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>

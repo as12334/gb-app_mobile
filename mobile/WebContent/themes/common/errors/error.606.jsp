@@ -1,33 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.base.inc.jsp" %>
 
-<body class="gb-theme">
-<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
-    <!-- 主页面容器 -->
-    <div class="mui-inner-wrap">
-        <header class="mui-bar mui-bar-nav gb-header">
-            <h1 class="mui-title" style="color: #ffffff;">${views.errors_auto['网站维护中']}</h1>
-        </header>
-        <div class="mui-content mui-scroll-wrapper gb-navbar">
-            <div class="mui-scroll">
-                <div class="mui-content-padded gb-error">
-                    <div class="mui-row m-y-lg">
-                        <div class="mui-col-xs-3"></div>
-                        <div class="mui-col-xs-6 mui-text-center gb-error-img">
-                            <img src="${resRoot}/images/error/ico-606.png">
-                        </div>
-                        <div class="mui-col-xs-3"></div>
-                    </div>
-                    <p class="mui-text-center">${views.errors_auto['您已被強制踢出']}</p>
-                    <p class="mui-text-center">${views.errors_auto['联系我们']}</p>
-                </div>
-            </div>
-        </div>
-        <div class="mui-off-canvas-backdrop"></div>
-    </div>
+<body class="orange-skin">
+<div class="mui-content">
+    <div class="no-data-img kick-out"></div>
+    <div class="no-data-txt">您已被强制踢出</div>
+    <div class="no-data-txt-2">您的账号有可能在另外一个地点登录或账号长时间未进行任何操作，您被强制踢出。如有疑问请联系 <a href="#">在线客服</a> 我们将竭诚为您服务。</div>
 </div>
 </body>
-
 <script>
     mui('.mui-scroll-wrapper').scroll({indicators: false});
     mui.init({});

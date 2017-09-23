@@ -21,7 +21,7 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                            ModelAndView modelAndView) throws Exception {
         if (modelAndView != null) {
             String url = modelAndView.getViewName();
-            if (!url.startsWith("redirect:") && !url.startsWith("forward:") && !url.startsWith("/errors/")) {
+            if (!url.startsWith("redirect:") && !url.startsWith("forward:") /*&& !url.startsWith("/errors/")*/) {
                 //全局跳转皮肤
                 SysParam param=ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
                 if (param!=null && param.getParamValue()!=null && param.getParamValue().equals("true")) {
