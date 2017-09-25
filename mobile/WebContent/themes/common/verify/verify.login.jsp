@@ -8,7 +8,7 @@
         <div class="mui-inner-wrap">
             <c:if test="${os ne 'android' && os ne 'app_ios'}">
             <header class="mui-bar mui-bar-nav ">
-                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+                <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${views.verify_auto['登录验证']}</h1>
                 <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
             </header>

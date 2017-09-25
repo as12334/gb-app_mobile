@@ -8,7 +8,7 @@
         <!-- 主页面容器 -->
         <div class="mui-inner-wrap">
             <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+                <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">
                     <c:choose>
                         <c:when test="${!empty p.realName}">

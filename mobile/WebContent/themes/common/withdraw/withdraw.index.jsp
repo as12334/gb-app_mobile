@@ -9,7 +9,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${views.withdraw_auto['取款']}</h1>
             <%@ include file="/themes/default/include/include.asset.jsp" %>
         </header>
@@ -66,7 +66,7 @@
                                     <p>${views.withdraw_auto['取款金额最少为'].replace('{0}', soulFn:formatCurrency(rank.withdrawMinNum))}</p>
                                     <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
                                 </div>
-                                <a class="mui-btn mui-btn-blue btn-deposit" data-target="1" data-skip="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
+                                <a class="mui-btn mui-btn-blue btn-deposit" data-target="1" data-os="${os}" data-skip="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
                             </div>
                         </div>
                     </div>

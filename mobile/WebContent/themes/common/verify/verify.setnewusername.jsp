@@ -7,7 +7,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${views.verify_auto['设置新账号']}</h1>
             <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
         </header>
