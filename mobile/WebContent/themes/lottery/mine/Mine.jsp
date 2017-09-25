@@ -10,7 +10,6 @@
     <%@ include file="/include/include.js.jsp" %>
 </head>
 
-<c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
 <body class="gb-theme mine-page">
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
@@ -66,7 +65,7 @@
                             <div class="gb-userlist m-t-sm">
                                 <ul>
                                     <li>
-                                        <a  class="item _app" data-url="/wallet/deposit/index.html" data-demo="${isDemo}">
+                                        <a  class="item _app" data-skip="/wallet/deposit/index.html" data-target="1" data-os="${os}" data-demo="${isDemo}">
                                             <p><img src="${resRoot}/images/my-ico1.png" style="width: 33px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['存款']}</p>

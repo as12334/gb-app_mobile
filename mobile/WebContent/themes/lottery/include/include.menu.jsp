@@ -8,7 +8,7 @@
                 <a href="#" class="is-login" style="display: none">
                     <span class="mui-badge mui-badge-primary mui-icon mui-icon-refreshempty" id="refreshBalance"></span>
                     <img class="mui-media-object mui-pull-left avatar" src="${resRoot}/lottery/themes/images/member.png">
-                    <div class="mui-media-body"><span id="username"></span><p class="mui-ellipsis">${views.themes_auto['余额']}：<font class="col-red" id="_balance"></font></p></div>
+                    <div class="mui-media-body"><span class="right_username"></span><p class="mui-ellipsis">${views.themes_auto['余额']}：<font class="col-red" id="_balance"></font></p></div>
                 </a>
                 <a href="#" class="un-login">
                     <img class="mui-media-object mui-pull-left" src="${resRoot}/lottery/themes/images/member.png">
@@ -34,7 +34,7 @@
                 </a>
             </li>
             <li class="mui-table-view-cell">
-                <a data-url="/lottery/lotteryResultHistory/index.html" data-os="${os}" class="right-menu">
+                <a data-href="/lottery/lotteryResultHistory/index.html?from=" data-os="${os}" class="right-menu _open_lottery">
                     <span class="iconfont icon-kaijiangjilu"></span>
                     <span>${views.themes_auto['开奖记录']}</span>
                 </a>

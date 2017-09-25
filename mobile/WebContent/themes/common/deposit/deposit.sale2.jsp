@@ -21,7 +21,7 @@
                                     <li>
                                         <div class="text-warp">
                                             <span>${views.deposit_auto['不参与优惠']}</span>
-                                            <input name="activityId" type="radio" value=""/>
+                                            <input name="activityId" type="radio" value="" checked="checked"/>
                                         </div>
                                     </li>
 
@@ -30,7 +30,7 @@
                                         <li>
                                             <div class="text-warp">
                                                 <span>${i.activityName}</span>
-                                                <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}" ${vs.index==0?'checked=checked':''}/>
+                                                <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}"/>
                                             </div>
                                         </li>
                                         <%--</c:if>--%>

@@ -140,7 +140,7 @@ public class ApiController extends BaseApiController {
             Map<String, Object> map = new HashMap<>();
             boolean isDemo = Boolean.valueOf(String.valueOf(SessionManager.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO)));
             if (isDemo) {
-                map.put("username", user.getUsername());
+                map.put("username", StringTool.overlayName(user.getUsername()));
             } else {
                 getAppUserInfo(request, user, map);
             }
@@ -156,7 +156,7 @@ public class ApiController extends BaseApiController {
         // API 余额
         map.put("apis", getSiteApis(listVo, request, false));
         if (player != null) {
-            map.put("username", StringTool.overlayString(player.getUsername()));
+            map.put("username", StringTool.overlayName(player.getUsername()));
             map.put("currSign", player.getCurrencySign());
             // 钱包余额
             Double balance = player.getWalletBalance();
