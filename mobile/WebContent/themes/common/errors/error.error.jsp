@@ -5,7 +5,7 @@
 <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-        <header class="mui-bar mui-bar-nav gb-header ${os eq 'android'?'mui-hide':''}"">
+        <header class="mui-bar mui-bar-nav gb-header ${os eq 'android'?'mui-hide':''}">
         <h1 class="mui-title" style="color: #ffffff;">${views.errors_auto['页面不存在']}</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper gb-navbar">

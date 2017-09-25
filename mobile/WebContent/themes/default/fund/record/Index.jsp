@@ -22,7 +22,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-            <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${views.fund_auto['资金记录']}</h1>
             <%@ include file="/themes/default/include/include.asset.jsp" %>
         </header>

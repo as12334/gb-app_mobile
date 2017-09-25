@@ -19,6 +19,7 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
@@ -133,8 +134,8 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
     public boolean checkTxId(@RequestParam("result.bankOrder") String txId) {
         PlayerRechargeListVo listVo = new PlayerRechargeListVo();
         listVo.getSearch().setBankOrder(txId);
-        long count = ServiceTool.playerRechargeService().count(listVo);
-        return count <= 0;
+        listVo.getSearch().setRechargeStatus(RechargeStatusEnum.FAIL.getCode());
+        return ServiceTool.playerRechargeService().isExistsTxId(listVo);
     }
 
 }

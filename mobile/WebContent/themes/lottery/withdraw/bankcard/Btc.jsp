@@ -15,7 +15,7 @@
         <body class="gb-theme mine-page no-backdrop" >
             <c:if test="${os ne 'android'}">
                 <header class="mui-bar mui-bar-nav">
-                    <a class="mui-action-backs mui-icon mui-icon-left-nav mui-pull-left"></a>
+                    <%@ include file="/include/include.toolbar.jsp" %>
                     <h1 class="mui-title">比特币</h1>
                 </header>
             </c:if>

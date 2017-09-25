@@ -6,7 +6,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${messages.common['SystemAnnouncement.'.concat(messageType)]}</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper" style="overflow:visible;height:100%; ${os eq 'android'?'padding-top:0':''}">

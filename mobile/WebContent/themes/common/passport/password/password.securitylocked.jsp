@@ -7,7 +7,7 @@
     <div class="mui-inner-wrap">
         <c:if test="${os ne 'android'}">
         <header class="mui-bar mui-bar-nav">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${views.passport_auto['冻结安全密码']}</h1>
         </header>
         </c:if>

@@ -4,7 +4,7 @@
 
 <body class="gb-theme mine-page index register">
     <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <%@ include file="/include/include.toolbar.jsp" %>
         <h1 class="mui-title">${views.passport_auto['会员注册']}</h1>
         <c:if test="${os ne 'app_ios' }">
         <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>

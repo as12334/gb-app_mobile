@@ -14,7 +14,7 @@
         <!-- 主页面容器 -->
         <div class="mui-inner-wrap">
             <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+                <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${views.index_auto['注册条款']}</h1>
             </header>
             <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
