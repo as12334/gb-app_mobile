@@ -79,7 +79,6 @@
 				/sysUser.html = anon
 				/lotteryResult/getOpenResult.html = anon
 				/lotteryDemo/*.html = anon
-				/demo/lottery.html = anon
 				/commonLottery/*.html = anon
 				/getHeadInfo.html = anon
 				/error/*.html = anon
