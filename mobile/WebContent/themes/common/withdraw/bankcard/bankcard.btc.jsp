@@ -6,7 +6,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${empty userBankCard ? views.withdraw_auto['添加'] : views.withdraw_auto['我的']}${views.withdraw_auto['比特币地址']}</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>

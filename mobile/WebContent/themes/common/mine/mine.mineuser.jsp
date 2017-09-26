@@ -14,7 +14,7 @@
                         (empty noticeContactWayMap['301'].contactValue && noticeContactWayMap['301'].status ne 22) }" var="showTips"></c:set>
         <div class="mui-inner-wrap">
             <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+                <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${views.mine_auto['个人资料']}</h1>
             </header>
             <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>

@@ -7,7 +7,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav">
-            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${views.passport_auto['登录']}</h1>
             <c:if test="${os ne 'app_ios' }">
             <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>

@@ -15,7 +15,7 @@
         <!-- 主页面容器 -->
         <div class="mui-inner-wrap">
             <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-                <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
+                <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${activity.activityName}</h1>
                 <a class="mui-icon mui-icon mui-pull-right icon-gift" data-href="/promo/myPromo.html"><i></i></a>
             </header>
