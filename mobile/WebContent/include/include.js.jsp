@@ -4,6 +4,7 @@
     var language = '${language.replace('_','-')}';
     var isLogin = '${isLogin}';
     var isAutoPay = '${isAutoPay}';
+    var isDemo = '${isDemo}';
 </script>
 <script src="${resComRoot}/js/jquery/jquery-2.1.1.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/common.js?v=${rcVersion}"></script>
