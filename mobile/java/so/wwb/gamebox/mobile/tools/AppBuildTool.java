@@ -1,12 +1,8 @@
 package so.wwb.gamebox.mobile.tools;
 
-import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.security.AesTool;
 import org.soul.commons.security.CryptoTool;
-import org.soul.commons.security.DigestTool;
-import so.wwb.gamebox.model.boss.po.AppUpdate;
 
 import java.awt.*;
 import java.io.*;
@@ -19,25 +15,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/home/fei/app/";
-
-    private static final String SALT_CODE = "ONFwe#(*FAS&$-932+)#9JI830*#@<-90-13~32@#%SDF*_(#DSF&*FSE!DO&$DW";
-
-    private static String sysUserPermissionSalt(String username) {
-        if (StringTool.isNotBlank(username)) {
-            String SALT_SYS_USER_PWD =      "AgDz+&?MB|G{*%bH%pf@w4y8;Avt>0R9en,~.L]|db[16=Jr.)0wa^U@~%QNe(Xk";
-            return SALT_SYS_USER_PWD + username;
-        }
-        return "bnQElt-?a:nCYg@!|>kt42HvjdEaZ_?f.CR`MGKqDrXozKnGFo%*f;{C,|F+H`9r";
-    }
-
-    /**
-     * 安全密码
-     */
-    private static String md5SysUserPermission(String source, String username){
-        String salt = sysUserPermissionSalt(StringTool.lowerCase(username));
-        return DigestTool.getMD5(source, salt);
-    }
+    private static final String ROOT_PATH = "/Users/fei/app/";
 
     private static boolean isUpperCase(String code){
         for(int i = 0; i < code.length(); i++){
@@ -61,7 +39,6 @@ public class AppBuildTool {
         }
         File ipa;
         //判断code是否包含大写字母,
-        //
         if (isUpperCase(code)){
             String newPath = ROOT_PATH + "ios/" +versionName + "/" + code.toLowerCase() + "/";
             ipa = new File(newPath,"Copy of webViewtest.ipa");
@@ -148,11 +125,11 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] ids = new String[]{
-                "11,FHAN,肥肥的",
-                /*
-                "69,7cxt,百发彩票",
+
+                /* "69,7cxt,百发彩票",
+                "26,ocu1,测试站",
                 "70,1wl5,天天彩票",
-                "71,8l6r,超博娱乐",
+               "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
                 "110,cabu,超博娱乐",
                 "111,74bk,新葡京娱乐场",
@@ -204,8 +181,8 @@ public class AppBuildTool {
                 "180,qfxk,皇冠国际",
                 "181,4w3g,超博娱乐",
                 "182,ixuf,雄伟集团",
-                "183,nrpf,美高梅赌场",*/
-                "185,fyxi,Phoenix Gaming"/*,
+                "183,nrpf,美高梅赌场",
+                "185,fyxi,Phoenix Gaming",
                 "186,cwad,赛博体育",
                 "187,b02h,澳门银河",
                 "188,acpb,鸿泰国际",
@@ -233,7 +210,17 @@ public class AppBuildTool {
                 "212,cmu6,金元宝娱乐城",
                 "213,8y1c,万豪国际",
                 "215,mjiu,盈泰娱乐",
-                "216,cbe1,COD娱樂"*/
+                "216,cbe1,COD娱樂",
+                "217,w7ls,云顶国际",
+                "218,osxg,永利娱乐城",
+                "219,tcjp,鼎彩国际",
+                "220,yrdy,皇朝娱乐",
+                "221,ionm,金沙娱乐场",
+                "222,4hwq,美高梅娱乐城",
+                "223,elpc,大咖汇",
+                "225,gwkk,永利娱乐成",*/
+                "226,oiqg,新葡京娱乐场",
+                "227,mkoz,银河娱乐城"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id; */
@@ -247,11 +234,9 @@ public class AppBuildTool {
             Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
-//            getIosPlist(code, "2.1.0", siteId, name);
-//            getIosBuild(siteId, name, code);
-//            getIosImage(siteId);
+            getIosPlist(code, "2.1.0", siteId, name);
+            getIosBuild(siteId, name, code);
             getAndroidFlavors(siteId, name, code);
-//            getAndroidApk(code, "3.1.5");
         }
 
         System.out.println(String.format("共 %d 个站点", ids.length));
@@ -372,117 +357,9 @@ public class AppBuildTool {
         }
     }
 
-    /**
-     * 获取IOS桌面图标和配置信息
-     */
-    public static void getIosImage(Integer siteId){
-        String path = ROOT_PATH + "ios/ios_app_icon/AppIcon-" + siteId + ".appiconset";
-        File imageFile1 = new File(ROOT_PATH + "ios/120x120-icon/app_icon_" + siteId + ".png");
-        File imageFile2 = new File(ROOT_PATH + "ios/180x180-icon/app_icon_" + siteId + ".png");
-
-        File pathFile = new File(path);
-        if(!pathFile.exists()){
-            pathFile.mkdirs();
-            System.out.println("创建目录:" + path +"----成功");
-        }
-        File contentFile = new File(path, "Contents.json");
-
-        imageFile1.renameTo(new File(path + "/app_icon_" + siteId + ".png"));
-        imageFile2.renameTo(new File(path + "/app_icon_" + siteId + "-1.png"));
-        try {
-            contentFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String contents = "{\n" +
-                "  \"images\" : [\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"20x20\",\n" +
-                "      \"scale\" : \"2x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"20x20\",\n" +
-                "      \"scale\" : \"3x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"29x29\",\n" +
-                "      \"scale\" : \"1x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"29x29\",\n" +
-                "      \"scale\" : \"2x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"29x29\",\n" +
-                "      \"scale\" : \"3x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"40x40\",\n" +
-                "      \"scale\" : \"2x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"40x40\",\n" +
-                "      \"scale\" : \"3x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"57x57\",\n" +
-                "      \"scale\" : \"1x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"size\" : \"57x57\",\n" +
-                "      \"scale\" : \"2x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"size\" : \"60x60\",\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"filename\" : \"app_icon_" + siteId + ".png\",\n" +
-                "      \"scale\" : \"2x\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"size\" : \"60x60\",\n" +
-                "      \"idiom\" : \"iphone\",\n" +
-                "      \"filename\" : \"app_icon_" + siteId + "-1.png\",\n" +
-                "      \"scale\" : \"3x\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"info\" : {\n" +
-                "    \"version\" : 1,\n" +
-                "    \"author\" : \"xcode\"\n" +
-                "  }\n" +
-                "}";
-        byte bt[];
-        bt = contents.getBytes();
-        try {
-            FileOutputStream in = new FileOutputStream(contentFile);
-            try {
-                in.write(bt, 0, bt.length);
-                in.close();
-                System.out.println("写入文件:" + contentFile.getName() +"----成功");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(String[] args) {
-//        getAppBuild();
-        System.out.println("---android版本号加密：" + md5SysUserPermission("21", "android"));
-        try {
-            System.out.println("---android版本号加密：" + AesTool.encrypt("19", AppUpdate.KEY_UPDATE));
-//          System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        getAppBuild();
+//        System.out.println("---android版本号加密：" + md5SysUserPermission("21", "android"));
+//        System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
     }
 }

@@ -1,12 +1,14 @@
 package so.wwb.gamebox.mobile.my.controller;
 
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.model.msg.notice.po.NoticeContactWay;
 import org.soul.model.msg.notice.vo.NoticeContactWayListVo;
 import org.soul.model.security.privilege.vo.SysUserProtectionVo;
 import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
@@ -17,12 +19,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.my.form.PersonInfoMobileForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
+import so.wwb.gamebox.model.master.setting.po.FieldSort;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +55,16 @@ public class PersonalInfoController {
             model.addAttribute("sysUserProtectionVo", sysUserProtectionVo);
 
             model.addAttribute("validateRule", JsRuleCreator.create(PersonInfoMobileForm.class));
+            getRegField(model);
             return "/mine/MineUser";
         }
         return "/errors/403";
+    }
+
+    private void getRegField(Model model) {
+        SysParam playerRegisterParam = ParamTool.getSysParam(SiteParamEnum.SETTING_REG_SETTING_FIELD_SETTING);//注册字段设置
+        List<FieldSort> playerFieldSorts = (List<FieldSort>) JsonTool.fromJson(playerRegisterParam == null ? null : playerRegisterParam.getParamValue(), JsonTool.createCollectionType(ArrayList.class, FieldSort.class));
+        model.addAttribute("fields", playerFieldSorts);
     }
 
     /**
@@ -118,7 +131,6 @@ public class PersonalInfoController {
         } else {
             model.addAttribute("noticeContactWays", 0);
         }
-
     }
 
     /**

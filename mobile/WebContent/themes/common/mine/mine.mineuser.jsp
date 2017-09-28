@@ -129,129 +129,140 @@
                                     </div>
                                 </c:otherwise>
                             </c:choose>
-                            <div class="mui-input-group mine-form m-t-sm">
-                                <div class="mui-input-row"><label>${views.mine_auto['手机号']}</label>
-                                    <div class="ct">
-                                        <p class="mui-text-right text-gray">
-                                            <c:choose>
-                                                <c:when test="${noticeContactWayMap['110'].status eq 22}">
-                                                    ${views.mine_auto['已被设为最高级别隐私']}
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:choose>
-                                                        <c:when test="${fn:length(noticeContactWayMap['110'].contactValue)>0}">
-                                                            ${soulFn:overlayString(noticeContactWayMap['110'].contactValue)}
-                                                            <c:if test="${noticeContactWayMap['110'].status eq 11}">
-                                                                ${views.mine_auto['已验证']}
-                                                            </c:if>
-                                                            <c:if test="${noticeContactWayMap['110'].status eq 12}">
-                                                                ${views.mine_auto['未验证']}
-                                                            </c:if>
-                                                            <input type="hidden" name="phone.contactValue" value="${noticeContactWayMap['110'].contactValue}">
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <input type="text" name="phone.contactValue" class="field-input"  placeholder="${views.mine_auto['请输入']}">
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <input name="phone.id" value="${noticeContactWayMap['110'].id}" type="hidden">
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="mui-input-row"><label>${views.mine_auto['注册邮箱']}</label>
-                                    <div class="ct">
-                                        <p class="mui-text-right text-gray">
-                                            <c:choose>
-                                                <c:when test="${noticeContactWayMap['201'].status eq 22}">
-                                                    ${views.mine_auto['已被设为最高级别隐私']}
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:choose>
-                                                        <c:when test="${fn:length(noticeContactWayMap['201'].contactValue)>0}">
-                                                            ${soulFn:overlayString(noticeContactWayMap['201'].contactValue)}
-                                                            <c:if test="${noticeContactWayMap['201'].status eq 11}">
-                                                                ${views.mine_auto['已验证']}
-                                                            </c:if>
-                                                            <c:if test="${noticeContactWayMap['201'].status eq 12}">
-                                                                ${views.mine_auto['未验证']}
-                                                            </c:if>
-                                                            <input type="hidden" name="email.contactValue" value="${noticeContactWayMap['201'].contactValue}">
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <input type="text" name="email.contactValue"  class="field-input" placeholder="${views.mine_auto['请输入']}">
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                    <input name="email.id" value="${noticeContactWayMap['201'].id}" type="hidden">
-                                                </c:otherwise>
-                                            </c:choose>
 
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="mui-input-row"><label>${views.mine_auto['微信']}</label>
-                                    <div class="ct">
-                                        <p class="mui-text-right text-gray">
-                                            <c:choose>
-                                                <c:when test="${noticeContactWayMap['304'].status eq '22'}">
-                                                    ${views.mine_auto['已被设为最高级别隐私']}
-                                                    <input type="hidden" name="weixin.contactValue"
-                                                           value="${noticeContactWays gt 0?noticeContactWayMap["304"].contactValue:''}">
-                                                    <input type="hidden" value="${noticeContactWayMap["304"].id}" name="weixin.id">
-                                                </c:when>
-                                                <c:otherwise>
+                            <div class="mui-input-group mine-form m-t-sm">
+
+                                <c:forEach var="f" items="${fields}">
+                                    <c:if test="${f.name eq '110' && (f.isRequired ne 2 || f.isRegField ne 2)}">
+                                        <div class="mui-input-row"><label>${views.mine_auto['手机号']}</label>
+                                            <div class="ct">
+                                                <p class="mui-text-right text-gray">
                                                     <c:choose>
-                                                        <c:when test="${empty noticeContactWayMap['304'].contactValue}">
-                                                            <input type="text" name="weixin.contactValue"
-                                                                   class="field-input"
-                                                                   value="${noticeContactWays gt 0?noticeContactWayMap["304"].contactValue:''}"
-                                                                   maxlength="30" placeholder="${views.mine_auto['请输入']}">
-                                                            <input type="hidden" value="${noticeContactWayMap["304"].id}" name="weixin.id">
+                                                        <c:when test="${noticeContactWayMap['110'].status eq 22}">
+                                                            ${views.mine_auto['已被设为最高级别隐私']}
                                                         </c:when>
                                                         <c:otherwise>
-                                                            <span class="">${soulFn:overlayString(noticeContactWayMap["304"].contactValue)}</span>
+                                                            <c:choose>
+                                                                <c:when test="${fn:length(noticeContactWayMap['110'].contactValue)>0}">
+                                                                    ${soulFn:overlayString(noticeContactWayMap['110'].contactValue)}
+                                                                    <c:if test="${noticeContactWayMap['110'].status eq 11}">
+                                                                        ${views.mine_auto['已验证']}
+                                                                    </c:if>
+                                                                    <c:if test="${noticeContactWayMap['110'].status eq 12}">
+                                                                        ${views.mine_auto['未验证']}
+                                                                    </c:if>
+                                                                    <input type="hidden" name="phone.contactValue" value="${noticeContactWayMap['110'].contactValue}">
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <input type="text" name="phone.contactValue" class="field-input"  placeholder="${views.mine_auto['请输入']}">
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <input name="phone.id" value="${noticeContactWayMap['110'].id}" type="hidden">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${f.name eq '201' && (f.isRequired ne 2 || f.isRegField ne 2)}">
+                                        <div class="mui-input-row"><label>${views.mine_auto['注册邮箱']}</label>
+                                            <div class="ct">
+                                                <p class="mui-text-right text-gray">
+                                                    <c:choose>
+                                                        <c:when test="${noticeContactWayMap['201'].status eq 22}">
+                                                            ${views.mine_auto['已被设为最高级别隐私']}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:choose>
+                                                                <c:when test="${fn:length(noticeContactWayMap['201'].contactValue)>0}">
+                                                                    ${soulFn:overlayString(noticeContactWayMap['201'].contactValue)}
+                                                                    <c:if test="${noticeContactWayMap['201'].status eq 11}">
+                                                                        ${views.mine_auto['已验证']}
+                                                                    </c:if>
+                                                                    <c:if test="${noticeContactWayMap['201'].status eq 12}">
+                                                                        ${views.mine_auto['未验证']}
+                                                                    </c:if>
+                                                                    <input type="hidden" name="email.contactValue" value="${noticeContactWayMap['201'].contactValue}">
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <input type="text" name="email.contactValue"  class="field-input" placeholder="${views.mine_auto['请输入']}">
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                            <input name="email.id" value="${noticeContactWayMap['201'].id}" type="hidden">
+                                                        </c:otherwise>
+                                                    </c:choose>
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${f.name eq '304' && (f.isRequired ne 2 || f.isRegField ne 2)}">
+                                        <div class="mui-input-row"><label>${views.mine_auto['微信']}</label>
+                                            <div class="ct">
+                                                <p class="mui-text-right text-gray">
+                                                    <c:choose>
+                                                        <c:when test="${noticeContactWayMap['304'].status eq '22'}">
+                                                            ${views.mine_auto['已被设为最高级别隐私']}
                                                             <input type="hidden" name="weixin.contactValue"
                                                                    value="${noticeContactWays gt 0?noticeContactWayMap["304"].contactValue:''}">
                                                             <input type="hidden" value="${noticeContactWayMap["304"].id}" name="weixin.id">
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </p>
-                                    </div>
-
-
-                                </div>
-                                <div class="mui-input-row"><label>QQ</label>
-                                    <div class="ct">
-                                        <p class="mui-text-right text-gray">
-                                            <c:choose>
-                                                <c:when test="${noticeContactWayMap['301'].status eq '22'}">
-                                                    ${views.mine_auto['已被设为最高级别隐私']}
-                                                    <input type="hidden" name="qq.contactValue"
-                                                           value="${noticeContactWays gt 0?noticeContactWayMap["301"].contactValue:''}">
-                                                    <input type="hidden" value="${noticeContactWayMap["301"].id}" name="qq.id">
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:choose>
-                                                        <c:when test="${empty noticeContactWayMap['301'].contactValue}">
-                                                            <input type="text" name="qq.contactValue" class="field-input"
-                                                                   value="${noticeContactWays gt 0?noticeContactWayMap["301"].contactValue:''}"
-                                                                   maxlength="30" placeholder="${views.mine_auto['请输入']}">
-                                                            <input type="hidden" value="${noticeContactWayMap["301"].id}" name="qq.id">
                                                         </c:when>
                                                         <c:otherwise>
-                                                            ${soulFn:overlayString(noticeContactWayMap["301"].contactValue)}
+                                                            <c:choose>
+                                                                <c:when test="${empty noticeContactWayMap['304'].contactValue}">
+                                                                    <input type="text" name="weixin.contactValue"
+                                                                           class="field-input"
+                                                                           value="${noticeContactWays gt 0?noticeContactWayMap["304"].contactValue:''}"
+                                                                           maxlength="30" placeholder="${views.mine_auto['请输入']}">
+                                                                    <input type="hidden" value="${noticeContactWayMap["304"].id}" name="weixin.id">
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="">${soulFn:overlayString(noticeContactWayMap["304"].contactValue)}</span>
+                                                                    <input type="hidden" name="weixin.contactValue"
+                                                                           value="${noticeContactWays gt 0?noticeContactWayMap["304"].contactValue:''}">
+                                                                    <input type="hidden" value="${noticeContactWayMap["304"].id}" name="weixin.id">
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </c:if>
+
+                                    <c:if test="${f.name eq '301' && (f.isRequired ne 2 || f.isRegField ne 2)}">
+                                        <div class="mui-input-row"><label>QQ</label>
+                                            <div class="ct">
+                                                <p class="mui-text-right text-gray">
+                                                    <c:choose>
+                                                        <c:when test="${noticeContactWayMap['301'].status eq '22'}">
+                                                            ${views.mine_auto['已被设为最高级别隐私']}
                                                             <input type="hidden" name="qq.contactValue"
                                                                    value="${noticeContactWays gt 0?noticeContactWayMap["301"].contactValue:''}">
                                                             <input type="hidden" value="${noticeContactWayMap["301"].id}" name="qq.id">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:choose>
+                                                                <c:when test="${empty noticeContactWayMap['301'].contactValue}">
+                                                                    <input type="text" name="qq.contactValue" class="field-input"
+                                                                           value="${noticeContactWays gt 0?noticeContactWayMap["301"].contactValue:''}"
+                                                                           maxlength="30" placeholder="${views.mine_auto['请输入']}">
+                                                                    <input type="hidden" value="${noticeContactWayMap["301"].id}" name="qq.id">
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${soulFn:overlayString(noticeContactWayMap["301"].contactValue)}
+                                                                    <input type="hidden" name="qq.contactValue"
+                                                                           value="${noticeContactWays gt 0?noticeContactWayMap["301"].contactValue:''}">
+                                                                    <input type="hidden" value="${noticeContactWayMap["301"].id}" name="qq.id">
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </c:otherwise>
                                                     </c:choose>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </p>
-                                    </div>
-                                </div>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
                             </div>
                         </div>
                         <c:if test="${showTips}">

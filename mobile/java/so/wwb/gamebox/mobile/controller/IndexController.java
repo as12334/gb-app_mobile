@@ -434,7 +434,7 @@ public class IndexController extends BaseApiController {
         return terminal.equals("h5") ? "redirect:/mainIndex.html" : "/ToIndex";
     }
 
-    @RequestMapping("/lotteryDemo/demoAccount")
+    @RequestMapping("/demo/lottery")
     @ResponseBody
     public boolean lotteryDemo(HttpServletRequest request) {
         createDemoAccount(request);
