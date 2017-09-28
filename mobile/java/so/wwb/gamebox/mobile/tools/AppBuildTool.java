@@ -2,7 +2,9 @@ package so.wwb.gamebox.mobile.tools;
 
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.security.AesTool;
 import org.soul.commons.security.CryptoTool;
+import so.wwb.gamebox.model.boss.po.AppUpdate;
 
 import java.awt.*;
 import java.io.*;
@@ -15,7 +17,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/Users/fei/app/";
+    private static final String ROOT_PATH = "/home/fei/app/";
 
     private static boolean isUpperCase(String code){
         for(int i = 0; i < code.length(); i++){
@@ -126,10 +128,9 @@ public class AppBuildTool {
     private static void getAppBuild(){
         String[] ids = new String[]{
 
-                /* "69,7cxt,百发彩票",
-                "26,ocu1,测试站",
+                "69,7cxt,一指通彩票",
                 "70,1wl5,天天彩票",
-               "71,8l6r,超博娱乐",
+                "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
                 "110,cabu,超博娱乐",
                 "111,74bk,新葡京娱乐场",
@@ -144,9 +145,9 @@ public class AppBuildTool {
                 "121,pnuw,太阳城集团",
                 "123,seck,皇家赌场",
                 "124,98ph,澳门金沙",
-                "125,bqmn,新葡京娱乐场",
                 "126,8wu8,澳门永利娱乐城",
                 "129,0a74,新葡京娱乐城",
+                "130,ixpm,澳门新葡京",
                 "133,xwc7,澳门威尼斯人",
                 "134,o7av,澳门威尼斯人",
                 "135,miv5,澳门金沙娱乐场",
@@ -169,7 +170,6 @@ public class AppBuildTool {
                 "165,g7oq,澳门赌场",
                 "167,hzy3,澳门新葡京赌场",
                 "168,lont,澳门威尼斯人",
-                "169,c79k,澳门银河在线赌场Casino",
                 "171,ihqx,宝开娱乐",
                 "172,izbv,豪森国际",
                 "173,jr3j,濠利会娱乐城",
@@ -177,7 +177,7 @@ public class AppBuildTool {
                 "176,qgjl,全胜娱乐",
                 "177,x1dv,澳门威尼斯人娱乐场",
                 "178,ptxa,点金坊",
-                "179,rosz,威尼斯人",
+                "179,rosz,澳门威尼斯人",
                 "180,qfxk,皇冠国际",
                 "181,4w3g,超博娱乐",
                 "182,ixuf,雄伟集团",
@@ -187,7 +187,7 @@ public class AppBuildTool {
                 "187,b02h,澳门银河",
                 "188,acpb,鸿泰国际",
                 "189,a56r,澳门永利贵宾会",
-                "190,yj4v,万博体育",
+                "190,yj4v,万博体育（ManBetX）",
                 "191,d1hg,澳门赌场",
                 "192,gc7p,星河娱乐城",
                 "193,f9wn,皇冠娱乐",
@@ -202,7 +202,7 @@ public class AppBuildTool {
                 "203,q5tj,中博娱乐城",
                 "205,dfvp,百乐博",
                 "206,lnd9,葡京国际",
-                "207,xlei,BET365",
+                "207,xlei,bet365",
                 "208,npsa,彩中彩",
                 "209,arau,大发OK",
                 "210,1lgt,威廉希尔",
@@ -215,15 +215,18 @@ public class AppBuildTool {
                 "218,osxg,永利娱乐城",
                 "219,tcjp,鼎彩国际",
                 "220,yrdy,皇朝娱乐",
-                "221,ionm,金沙娱乐场",
-                "222,4hwq,美高梅娱乐城",
+                "221,ionm,澳门金沙娱乐场",
+                "222,4hwq,澳门美高梅娱乐城",
                 "223,elpc,大咖汇",
-                "225,gwkk,永利娱乐成",*/
+                "225,gwkk,澳门永利娱乐场",
                 "226,oiqg,新葡京娱乐场",
-                "227,mkoz,银河娱乐城"
+                "227,mkoz,银河娱乐城",
+                "228,idr9,亚盈国际",
+                "800,7vhp,四海娱乐",
+                "801,cx7r,万达彩票"
         };
 
-        /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id > 183 order by ss.id; */
+        /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
 
         File flavor = new File(ROOT_PATH + "android/Flavors.go");
         if (flavor.exists()) flavor.delete();
@@ -359,7 +362,11 @@ public class AppBuildTool {
 
     public static void main(String[] args) {
         getAppBuild();
-//        System.out.println("---android版本号加密：" + md5SysUserPermission("21", "android"));
-//        System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
+        try {
+            System.out.println("---android版本号加密：" + AesTool.encrypt("22", AppUpdate.KEY_UPDATE));
+//            System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
