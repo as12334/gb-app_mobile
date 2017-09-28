@@ -13,7 +13,7 @@ public class CtxLoaderListener extends CommonCtxLoaderListener {
     @Override
     protected void customizeContext(ServletContext sc, ConfigurableWebApplicationContext wac) {
         super.customizeContext(sc, wac);
-        ContextPath="";
+        PassportContextPath="";
     }
 
 }
