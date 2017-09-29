@@ -58,18 +58,18 @@ public abstract class BaseApiController extends LotteryDemoController {
     }
 
     class Relation {
-        private int order;
+        private Integer order;
         private Map<String, Object> map;
 
-        Relation(int order, Map<String, Object> map) {
+        Relation(Integer order, Map<String, Object> map) {
             this.order = order;
             this.map = map;
         }
 
-        public int getOrder() {
+        public Integer getOrder() {
             return order;
         }
-        public void setOrder(int order) {
+        public void setOrder(Integer order) {
             this.order = order;
         }
 
