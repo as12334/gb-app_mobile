@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.tools;
 
+import com.google.common.io.Files;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.security.AesTool;
@@ -17,7 +18,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/home/fei/app/";
+    private static final String ROOT_PATH = "/Users/fei/app/";
 
     private static boolean isUpperCase(String code){
         for(int i = 0; i < code.length(); i++){
@@ -105,21 +106,30 @@ public class AppBuildTool {
                 "\t</array>\n" +
                 "</dict>\n" +
                 "</plist>";
+        writeFile(file, plist);
+
+    }
+
+    /**
+     * 写入文件
+     * @param file
+     * @param name
+     */
+    private static void writeFile(File file, String name) {
         byte bt[];
-        bt = plist.getBytes();
+        bt = name.getBytes();
         try {
             FileOutputStream in = new FileOutputStream(file);
             try {
                 in.write(bt, 0, bt.length);
                 in.close();
-                System.out.println("写入文件:" + file.getName() +"----成功");
+                LOG.info("写入文件:" + file.getName() +"----成功");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -127,8 +137,7 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] ids = new String[]{
-
-                "69,7cxt,一指通彩票",
+                /*"69,7cxt,一指通彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
@@ -220,7 +229,8 @@ public class AppBuildTool {
                 "223,elpc,大咖汇",
                 "225,gwkk,澳门永利娱乐场",
                 "226,oiqg,新葡京娱乐场",
-                "227,mkoz,银河娱乐城",
+                "227,mkoz,银河娱乐城",*/
+                "229,ixyu,美高梅娱乐城",
                 "228,idr9,亚盈国际",
                 "800,7vhp,四海娱乐",
                 "801,cx7r,万达彩票"
@@ -240,9 +250,10 @@ public class AppBuildTool {
             getIosPlist(code, "2.1.0", siteId, name);
             getIosBuild(siteId, name, code);
             getAndroidFlavors(siteId, name, code);
+            buildAndroidProject(siteId, code, name);
         }
 
-        System.out.println(String.format("共 %d 个站点", ids.length));
+        LOG.info(String.format("共 %d 个站点", ids.length));
 
         try {
             // 调用默认程序打开文件
@@ -295,19 +306,42 @@ public class AppBuildTool {
 
     private static String setSiteType(Integer siteId) {
         String siteType = "integrated";
-        if (siteId == 69 || siteId == 70 || siteId == 197)
+        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801)
             siteType = "lottery";
         return siteType;
     }
 
     private static String setTheme(Integer siteId) {
         String theme = "default.skin";
-        if (siteId == 119 || siteId == 171) theme = "blue.skin";
-        else if (siteId == 141 || siteId == 161 || siteId == 207) theme = "green.skin";
-        else if (siteId == 185) theme = "pink.skin";
-        else if (siteId == 69 || siteId == 70 || siteId == 197)
+        if (siteId == 119 || siteId == 171) {
+            theme = "blue.skin";
+        }
+        else if (siteId == 141 || siteId == 161 || siteId == 207) {
+            theme = "green.skin";
+        }
+        else if (siteId == 185) {
+            theme = "pink.skin";
+        }
+        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801) {
             theme = "lottery.skin";
+        }
         return theme;
+    }
+
+    private static void copyTheme(Integer siteId, String from, String to) {
+        try {
+            if (siteId == 119 || siteId == 171) {
+                Files.copy(new File(from, "blue.skin"), new File(to, "blue.skin"));
+            } else if (siteId == 141 || siteId == 161 || siteId == 207) {
+                Files.copy(new File(from, "green.skin"), new File(to, "green.skin"));
+            } else if (siteId == 185) {
+                Files.copy(new File(from, "pink.skin"), new File(to, "pink.skin"));
+            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801) {
+                Files.copy(new File(from, "lottery.skin"), new File(to, "lottery.skin"));
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     private static void appendConent(String fileName, String content) {
@@ -358,6 +392,80 @@ public class AppBuildTool {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 构建Android项目工程
+     * @param siteId 站点ID
+     * @param code 站点CODE
+     */
+    private static void buildAndroidProject(Integer siteId, String code, String name) {
+        String path = ROOT_PATH + "flavors/app_" + code + "/";
+        String resPath = ROOT_PATH + "res/";
+        String logoPath = resPath + "drawable-hdpi/";
+        String skinPAth = resPath + "skin/";
+
+        // 创建工程根目录
+        File pathFile = new File(path);
+        if (!pathFile.exists()) {
+            pathFile.mkdirs();
+            LOG.info("创建Android工程目录【" + siteId + "】" + code);
+        }
+
+        String iconName = String.format("app_icon_%d.png", siteId);
+        String logoName = String.format("app_logo_%d.png", siteId);
+        String makeFile = "makefile";
+
+        String[] mipmaps = {"mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"};
+        try {
+            // 创建mipmap
+            for (String mipmap : mipmaps) {
+                File file = new File(path, mipmap);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+
+                Files.copy(new File(String.format("%s%s/%s", resPath, mipmap, iconName)), new File(file.getPath(), iconName));
+
+                if (!"mipmap-xhdpi".equals(mipmap)) {
+                    Files.copy(new File(String.format("%s%s/ic_launcher_round.png", resPath, mipmap, iconName)), new File(file.getPath(), "ic_launcher_round.png"));
+                }
+            }
+
+            Files.copy(new File(logoPath, logoName), new File(path, logoName));
+            Files.copy(new File(resPath, makeFile), new File(path, makeFile));
+
+            // 复制主题
+            copyTheme(siteId, skinPAth, path);
+
+            //创建参数文件
+            createParamFile(siteId, code, name, path);
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 创建参数文件
+     * @throws IOException
+     */
+    private static void createParamFile(Integer siteId, String code, String name, String path) throws IOException {
+        File paramFile = new File(path, "parameter.properties");
+        paramFile.createNewFile();
+
+        StringBuilder param = new StringBuilder();
+        param.append("${app_name}=").append(name.replace(" ", "_space")).append("\n");
+        param.append("${app_code}=").append(code).append("\n");
+        param.append("${app_sid}=").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\n");
+        param.append("${site_type}=").append(setSiteType(siteId)).append("\n");
+        param.append("${app_logo}=").append("app_logo_").append(siteId).append("\n");
+        param.append("${app_icon}=").append("app_icon_").append(siteId).append("\n");
+        param.append("${applicationId}=").append("com.dawoo.gamebox.sid").append(siteId).append("\n");
+        param.append("${theme}=").append(setTheme(siteId)).append("\n");
+
+        writeFile(paramFile, param.toString());
     }
 
     public static void main(String[] args) {
