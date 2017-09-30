@@ -400,7 +400,10 @@ public class IndexController extends BaseApiController {
     public String getSysUser() {
         SysUser sysUser = SessionManager.getUser();
         if (sysUser != null) {
-            return JsonTool.toJson(sysUser);
+            Map<String, Object> map = new HashMap<>(2);
+            map.put("username", sysUser.getUsername());
+            map.put("avatarUrl", sysUser.getAvatarUrl());
+            return JsonTool.toJson(map);
         } else {
             return "unLogin";
         }
