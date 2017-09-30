@@ -229,11 +229,14 @@ public class AppBuildTool {
                 "223,elpc,大咖汇",
                 "225,gwkk,澳门永利娱乐场",
                 "226,oiqg,新葡京娱乐场",
-                "227,mkoz,银河娱乐城",*/
+                "227,mkoz,银河娱乐城",
                 "229,ixyu,美高梅娱乐城",
                 "228,idr9,亚盈国际",
                 "800,7vhp,四海娱乐",
-                "801,cx7r,万达彩票"
+                "801,cx7r,万达彩票",*/
+                "230,r7pt,金沙娱乐城",
+                "231,vxcb,新濠国际",
+                "232,z1yn,新亚洲"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
