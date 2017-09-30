@@ -198,7 +198,7 @@ public class AppBuildTool {
                 "189,a56r,澳门永利贵宾会",
                 "190,yj4v,万博体育（ManBetX）",
                 "191,d1hg,澳门赌场",
-                "192,gc7p,星河娱乐城",
+                "192,gc7p,金沙娱乐城",
                 "193,f9wn,皇冠娱乐",
                 "195,xjvs,大唐娱乐城",
                 "196,6rrt,澳门巴黎人",
@@ -229,11 +229,15 @@ public class AppBuildTool {
                 "223,elpc,大咖汇",
                 "225,gwkk,澳门永利娱乐场",
                 "226,oiqg,新葡京娱乐场",
-                "227,mkoz,银河娱乐城",*/
+                "227,mkoz,银河娱乐城",
                 "229,ixyu,美高梅娱乐城",
                 "228,idr9,亚盈国际",
+                "229,ixyu,美高梅娱乐城",
                 "800,7vhp,四海娱乐",
-                "801,cx7r,万达彩票"
+                "801,cx7r,万达彩票"*/
+                "230,r7pt,金沙娱乐城",
+                "231,vxcb,新濠国际",
+                "232,z1yn,新亚洲"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
@@ -248,7 +252,7 @@ public class AppBuildTool {
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
             getIosPlist(code, "2.1.0", siteId, name);
-            getIosBuild(siteId, name, code);
+//            getIosBuild(siteId, name, code);
             getAndroidFlavors(siteId, name, code);
             buildAndroidProject(siteId, code, name);
         }
@@ -322,7 +326,7 @@ public class AppBuildTool {
         else if (siteId == 185) {
             theme = "pink.skin";
         }
-        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801) {
+        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 11) {
             theme = "lottery.skin";
         }
         return theme;
@@ -336,7 +340,7 @@ public class AppBuildTool {
                 Files.copy(new File(from, "green.skin"), new File(to, "green.skin"));
             } else if (siteId == 185) {
                 Files.copy(new File(from, "pink.skin"), new File(to, "pink.skin"));
-            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801) {
+            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 11) {
                 Files.copy(new File(from, "lottery.skin"), new File(to, "lottery.skin"));
             }
         } catch (IOException ioe) {
