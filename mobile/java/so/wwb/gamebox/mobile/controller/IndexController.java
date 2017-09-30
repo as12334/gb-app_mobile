@@ -443,6 +443,6 @@ public class IndexController extends BaseApiController {
 
     @Override
     protected String getDemoIndex() {
-        return null;
+        return "/mainIndex";
     }
 }
