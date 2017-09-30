@@ -401,7 +401,7 @@ public class IndexController extends BaseApiController {
         SysUser sysUser = SessionManager.getUser();
         if (sysUser != null) {
             Map<String, Object> map = new HashMap<>(2);
-            map.put("username", sysUser.getUsername());
+            map.put("username", StringTool.overlayName(sysUser.getUsername()));
             map.put("avatarUrl", sysUser.getAvatarUrl());
             return JsonTool.toJson(map);
         } else {
