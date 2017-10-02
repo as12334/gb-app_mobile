@@ -5,7 +5,7 @@
     if (userAgent.contains("MicroMessenger")){
         myos = "wechat";
     } else if (userAgent.contains("Android")) {
-        myos = "browser_android";
+        myos = "h5_android";
     } else if (userAgent.contains("app_android")) {
         myos = "android";
     } else if (userAgent.contains("app_ios")) {
@@ -34,7 +34,7 @@
                     </c:when>
                     <c:otherwise>
                         <div class="mui-content-padded gb-qr">
-                            <c:if test="${os eq 'browser_android' || os eq 'pc'}">
+                            <c:if test="${os eq 'h5_android' || os eq 'pc'}">
                                 <div class="qrcode-img"><img src="data:image/png;base64, ${androidQrcode}"/></div>
                                 <div>
                                     <a data-href="${androidUrl}" class="mui-btn mui-btn-primary btn-download">${views.app_auto['下载Android版']}</a>
