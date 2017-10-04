@@ -255,7 +255,7 @@ public class AppBuildTool {
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
             getIosPlist(code, "2.1.0", siteId, name);
-//            getIosBuild(siteId, name, code);
+            getIosBuild(siteId, name, code);
             getAndroidFlavors(siteId, name, code);
             buildAndroidProject(siteId, code, name);
         }
