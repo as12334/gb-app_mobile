@@ -232,12 +232,15 @@ public class AppBuildTool {
                 "227,mkoz,银河娱乐城",
                 "229,ixyu,美高梅娱乐城",
                 "228,idr9,亚盈国际",
-                "229,ixyu,美高梅娱乐城",
                 "800,7vhp,四海娱乐",
-                "801,cx7r,万达彩票"*/
+                "801,cx7r,万达彩票",*/
                 "230,r7pt,金沙娱乐城",
                 "231,vxcb,新濠国际",
-                "232,z1yn,新亚洲"
+                "232,z1yn,新亚洲",
+                "233,87lr,金沙娱乐城",
+                "235,cspr,美高梅娱乐城",
+                "236,8gez,拉斯维加斯国际",
+                "802,98jb,凤凰彩票"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
@@ -252,7 +255,7 @@ public class AppBuildTool {
             String code = ids[i].split(",")[1];
             String name = ids[i].split(",")[2];
             getIosPlist(code, "2.1.0", siteId, name);
-//            getIosBuild(siteId, name, code);
+            getIosBuild(siteId, name, code);
             getAndroidFlavors(siteId, name, code);
             buildAndroidProject(siteId, code, name);
         }
@@ -310,7 +313,7 @@ public class AppBuildTool {
 
     private static String setSiteType(Integer siteId) {
         String siteType = "integrated";
-        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801)
+        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802)
             siteType = "lottery";
         return siteType;
     }
@@ -326,7 +329,7 @@ public class AppBuildTool {
         else if (siteId == 185) {
             theme = "pink.skin";
         }
-        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 11) {
+        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802) {
             theme = "lottery.skin";
         }
         return theme;
@@ -340,7 +343,7 @@ public class AppBuildTool {
                 Files.copy(new File(from, "green.skin"), new File(to, "green.skin"));
             } else if (siteId == 185) {
                 Files.copy(new File(from, "pink.skin"), new File(to, "pink.skin"));
-            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 11) {
+            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802) {
                 Files.copy(new File(from, "lottery.skin"), new File(to, "lottery.skin"));
             }
         } catch (IOException ioe) {

@@ -64,7 +64,9 @@
                                 <h1><i class="tipbig fail"></i></h1>
                                 <div class="tiptext">
                                     <p>${views.withdraw_auto['取款金额最少为'].replace('{0}', soulFn:formatCurrency(rank.withdrawMinNum))}</p>
-                                    <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
+                                    <c:if test="${!isLotterySite}">
+                                        <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
+                                    </c:if>
                                 </div>
                                 <a class="mui-btn mui-btn-blue btn-deposit" data-target="1" data-os="${os}" data-skip="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
                             </div>
