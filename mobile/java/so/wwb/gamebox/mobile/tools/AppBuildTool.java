@@ -7,7 +7,6 @@ import org.soul.commons.security.AesTool;
 import org.soul.commons.security.CryptoTool;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 
-import java.awt.*;
 import java.io.*;
 
 /**
@@ -136,7 +135,7 @@ public class AppBuildTool {
      * 设置所有站点的配置信息
      */
     private static void getAppBuild(){
-        String[] ids = new String[]{
+        String[] sites = new String[]{
                 /*"69,7cxt,一指通彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
@@ -233,12 +232,12 @@ public class AppBuildTool {
                 "229,ixyu,美高梅娱乐城",
                 "228,idr9,亚盈国际",
                 "800,7vhp,四海娱乐",
-                "801,cx7r,万达彩票",*/
+                "801,cx7r,万达彩票",
                 "230,r7pt,金沙娱乐城",
                 "231,vxcb,新濠国际",
                 "232,z1yn,新亚洲",
                 "233,87lr,金沙娱乐城",
-                "235,cspr,美高梅娱乐城",
+                "235,cspr,美高梅娱乐城",*/
                 "236,8gez,拉斯维加斯国际",
                 "802,98jb,凤凰彩票"
         };
@@ -250,30 +249,30 @@ public class AppBuildTool {
         File build = new File(ROOT_PATH + "ios/Build.go");
         if (build.exists()) build.delete();
 
-        for (int i = 0; i < ids.length; i++) {
-            Integer siteId = Integer.valueOf(ids[i].split(",")[0]);
-            String code = ids[i].split(",")[1];
-            String name = ids[i].split(",")[2];
+        for (int i = 0; i < sites.length; i++) {
+            Integer siteId = Integer.valueOf(sites[i].split(",")[0]);
+            String code = sites[i].split(",")[1];
+            String name = sites[i].split(",")[2];
             getIosPlist(code, "2.1.0", siteId, name);
             getIosBuild(siteId, name, code);
             getAndroidFlavors(siteId, name, code);
             buildAndroidProject(siteId, code, name);
         }
 
-        LOG.info(String.format("共 %d 个站点", ids.length));
+        LOG.info(String.format("共 %d 个站点", sites.length));
 
-        try {
-            // 调用默认程序打开文件
-            Desktop.getDesktop().open(new File(ROOT_PATH + "android/Flavors.go"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } finally {
-            try {
-                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.go"));
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
+//        try {
+//            // 调用默认程序打开文件
+//            Desktop.getDesktop().open(new File(ROOT_PATH + "android/Flavors.go"));
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//        } finally {
+//            try {
+//                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.go"));
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//        }
     }
 
     /**
@@ -433,10 +432,7 @@ public class AppBuildTool {
                 }
 
                 Files.copy(new File(String.format("%s%s/%s", resPath, mipmap, iconName)), new File(file.getPath(), iconName));
-
-                if (!"mipmap-xhdpi".equals(mipmap)) {
-                    Files.copy(new File(String.format("%s%s/ic_launcher_round.png", resPath, mipmap, iconName)), new File(file.getPath(), "ic_launcher_round.png"));
-                }
+                Files.copy(new File(String.format("%s%s/ic_launcher_round.png", resPath, mipmap, iconName)), new File(file.getPath(), "ic_launcher_round.png"));
             }
 
             Files.copy(new File(logoPath, logoName), new File(path, logoName));
