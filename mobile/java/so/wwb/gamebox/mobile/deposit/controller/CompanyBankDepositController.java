@@ -37,7 +37,7 @@ import java.util.Map;
 
 /**
  * 网银存款,银行柜台存款,柜员机转账,柜员机现金存款
- *
+ * <p/>
  * Created by bruce on 16-12-9.
  */
 @Controller
@@ -54,7 +54,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
 
     @RequestMapping("/index")
     @Token(generate = true)
-    public String company(PayAccountVo payAccountVo,Model model) {
+    public String company(PayAccountVo payAccountVo, Model model) {
 
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
@@ -85,8 +85,8 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyBankDeposit2Form form,
-                                      BindingResult result) {
-        return commonDeposit(playerRechargeVo,result);
+                                       BindingResult result) {
+        return commonDeposit(playerRechargeVo, result);
     }
 
     /**
@@ -108,7 +108,17 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
             return playerRechargeVo;
         }
-
+        boolean flag = false;//判断传回来的数据类型是否属于银行存款类型
+        String rechargeType = playerRecharge.getRechargeType();
+        for (String type : RECHARGE_TYPE) {
+            if (type.equals(rechargeType)) {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            playerRecharge.setRechargeType(RechargeTypeEnum.ONLINE_BANK.getCode());
+        }
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
         playerRecharge.setPlayerId(SessionManager.getUserId());
         playerRecharge.setMasterBankType(payAccount.getAccountType());
