@@ -87,7 +87,7 @@ public class IndexController extends BaseApiController {
             model.addAttribute("channel", "game");
         model.addAttribute("apiTypeId", typeId);
         model.addAttribute("apiTypes", apiTypes);
-        model.addAttribute("carousels", getCarousel());
+        model.addAttribute("carousels", getCarousel(request));
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
@@ -113,7 +113,7 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            model.addAttribute("carousels", getCarousel());
+            model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
         return "/Index";
@@ -165,7 +165,7 @@ public class IndexController extends BaseApiController {
      *
      * @deprecated since v1057
      */
-    private List<Map> getCarousel() {
+    private List<Map> getCarousel(HttpServletRequest request) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
         if (carousels != null) {
@@ -175,6 +175,11 @@ public class IndexController extends BaseApiController {
                         //验证比对缓存结果中的起止时间是否过期
                         if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
                             if (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true) {
+                                String link = String.valueOf(m.get("link"));
+                                if (StringTool.isNotBlank(link) && link.contains("${website}")) {
+                                    link = link.replace("${website}", HttpTool.getDomain(request.getRequestURL().toString()));
+                                }
+                                m.put("link", link);
                                 resultList.add(m);
                             }
                         }
@@ -331,8 +336,8 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index/getBanner")
-    public String getBanner(Model model) {
-        model.addAttribute("carousels", getCarousel());
+    public String getBanner(Model model, HttpServletRequest request) {
+        model.addAttribute("carousels", getCarousel(request));
         model.addAttribute("announcement", getAnnouncement());
         return "/game/include/include.banner";
     }
