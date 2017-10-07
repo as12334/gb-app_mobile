@@ -121,6 +121,9 @@ public class SignUpController {
             LOG.debug("玩家注册-介绍人加密原码{0}-", recommendRegisterCode);
         }
 
+        /*邀请人*/
+        params.put("registCode", recommendRegisterCode);
+
         /*当前ip的国家地区*/
         IpBean ipBean = SessionManager.getIpDb();
         Map<String, String> ipLocaleMap = MapTool.newHashMap(
@@ -129,10 +132,8 @@ public class SignUpController {
                 new Pair<String, String>(SysUser.PROP_REGION, ipBean.getStateprov())
         );
         params.put("ipLocale", ipLocaleMap);
-        /*邀请人*/
-        params.put("recommendCode", recommendRegisterCode);
-        /*站点主货币*/
 
+        /*站点主货币*/
         SysSite sysSite = Cache.getSysSite().get(SessionManager.getSiteIdString());
 
         params.put("currency", sysSite.getMainCurrency());

@@ -87,14 +87,6 @@ public class RegisterController {
      */
     private void getRegisterData(Model model, HttpServletRequest request) {
         Map<String, Object> params = new HashMap();
-        String recommendRegisterCode = "";
-        if (StringTool.equals(request.getParameter("utype"), "agent")) {
-            recommendRegisterCode = SessionManager.getAgentRecommendUserCode();
-            LOG.debug("代理注册-介绍人加密原码{0}-", recommendRegisterCode);
-        } else {
-            recommendRegisterCode = SessionManager.getRecommendUserCode();
-            LOG.debug("玩家注册-介绍人加密原码{0}-", recommendRegisterCode);
-        }
 
         /*当前ip的国家地区*/
         IpBean ipBean = SessionManager.getIpDb();
@@ -104,8 +96,6 @@ public class RegisterController {
                 new Pair<String, String>(SysUser.PROP_REGION, ipBean.getStateprov())
         );
         params.put("ipLocale", ipLocaleMap);
-        /*邀请人*/
-        params.put("recommendCode", recommendRegisterCode);
         /*站点主货币*/
         SysSiteVo sysSiteVo = new SysSiteVo();
         sysSiteVo.setSearch(new SysSiteSo());
