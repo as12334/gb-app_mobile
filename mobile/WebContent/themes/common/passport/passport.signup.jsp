@@ -112,7 +112,7 @@
                                     <%--安全问题--%>
                                     <c:when test="${i.name=='securityIssues'}">
                                         <div class="mui-input-row">
-                                            <label style="width: 10%;margin-top: 10px;">${isRequired?'<span class="red">*</span>':''}${views.passport_auto['安全问题']}</label>
+                                            <label style="width: 10%;margin-top: 10px;">${isRequired?'<span class="red">*</span>':''}${views.register['signUp.sysUserProtection.question1']}</label>
                                             <button id="questionButton"
                                                     style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
                                                     ${views.register['signUp.sysUserProtection.question1']}
