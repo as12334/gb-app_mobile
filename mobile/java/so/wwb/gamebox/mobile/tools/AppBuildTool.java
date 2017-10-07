@@ -17,7 +17,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/Users/fei/app/";
+    private static final String ROOT_PATH = "/home/fei/app/";
 
     private static boolean isUpperCase(String code){
         for(int i = 0; i < code.length(); i++){
@@ -136,7 +136,7 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] sites = new String[]{
-                /*"69,7cxt,一指通彩票",
+                "69,7cxt,一指通彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
@@ -237,9 +237,10 @@ public class AppBuildTool {
                 "231,vxcb,新濠国际",
                 "232,z1yn,新亚洲",
                 "233,87lr,金沙娱乐城",
-                "235,cspr,美高梅娱乐城",*/
+                "235,cspr,美高梅娱乐城",
                 "236,8gez,拉斯维加斯国际",
-                "802,98jb,凤凰彩票"
+                "802,98jb,凤凰彩票",
+                "237,akm1,金沙娱乐城"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
@@ -431,11 +432,15 @@ public class AppBuildTool {
                     file.mkdirs();
                 }
 
-                Files.copy(new File(String.format("%s%s/%s", resPath, mipmap, iconName)), new File(file.getPath(), iconName));
+                File icon = new File(file.getPath(), iconName);
+                Files.copy(new File(String.format("%s%s/%s", resPath, mipmap, iconName)), icon);
+                icon.renameTo(new File(icon.getParent(), "app_icon.png"));
                 Files.copy(new File(String.format("%s%s/ic_launcher_round.png", resPath, mipmap, iconName)), new File(file.getPath(), "ic_launcher_round.png"));
             }
 
+            File logo = new File(path, logoName);
             Files.copy(new File(logoPath, logoName), new File(path, logoName));
+            logo.renameTo(new File(path, "app_logo.png"));
             Files.copy(new File(resPath, makeFile), new File(path, makeFile));
 
             // 复制主题
@@ -463,8 +468,8 @@ public class AppBuildTool {
         param.append("${app_code}=").append(code).append("\n");
         param.append("${app_sid}=").append(CryptoTool.aesEncrypt(String.valueOf(siteId), code)).append("\n");
         param.append("${site_type}=").append(setSiteType(siteId)).append("\n");
-        param.append("${app_logo}=").append("app_logo_").append(siteId).append("\n");
-        param.append("${app_icon}=").append("app_icon_").append(siteId).append("\n");
+        param.append("${app_logo}=").append("app_logo").append("\n");
+        param.append("${app_icon}=").append("app_icon").append("\n");
         param.append("${applicationId}=").append("com.dawoo.gamebox.sid").append(siteId).append("\n");
         param.append("${theme}=").append(setTheme(siteId)).append("\n");
 
@@ -474,7 +479,7 @@ public class AppBuildTool {
     public static void main(String[] args) {
         getAppBuild();
         try {
-            System.out.println("---android版本号加密：" + AesTool.encrypt("22", AppUpdate.KEY_UPDATE));
+            System.out.println("---android版本号加密：" + AesTool.encrypt("23", AppUpdate.KEY_UPDATE));
 //            System.out.println("---ios版本号加密：" + md5SysUserPermission("7", "ios"));
         } catch (Exception e) {
             e.printStackTrace();
