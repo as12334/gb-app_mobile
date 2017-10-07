@@ -12,7 +12,7 @@
             <%@ include file="/themes/default/include/include.asset.jsp" %>
             </c:if>
         </header>
-        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <c:choose>
                 <c:when test="${command.result.transactionType eq 'favorable' or command.result.transactionType eq 'backwater' or command.result.transactionType eq 'recommend'}">
                     <div class="mui-scroll">

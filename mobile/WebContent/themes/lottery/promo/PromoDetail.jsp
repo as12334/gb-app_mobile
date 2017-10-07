@@ -24,7 +24,7 @@
                 <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${activity.activityName}</h1>
             </header>
-            <div class="activity-content-bg mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0;padding-bottom:60px"':'style="padding-bottom:60px"'}>
+            <div class="activity-content-bg mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important;padding-bottom:60px"':'style="padding-bottom:60px"'}>
                 <div class="mui-scroll">
                     <div class="mui-row" style="padding: 10px;">
                         <img src="${soulFn:getImagePathWithDefault(domain, activity.activityAffiliated, resRoot.concat('/images/img-sale1.jpg'))}" style="width: 100%;">

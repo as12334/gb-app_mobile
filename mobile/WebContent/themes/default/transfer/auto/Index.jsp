@@ -22,7 +22,7 @@
                 <%@ include file="/themes/default/include/include.asset.jsp" %>
             </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-scroll">
                 <%--api余额--%>
                 <%@include file="Api.jsp" %>

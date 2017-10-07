@@ -16,7 +16,7 @@
             <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${messages.common['SystemAnnouncement.'.concat(messageType)]}</h1>
         </header>
-        <div class="mui-content mui-scroll-wrapper" style="overflow:visible;height:100%; ${os eq 'android'?'padding-top:0':''}">
+        <div class="mui-content mui-scroll-wrapper" style="overflow:visible;height:100%; ${os eq 'android'?'padding-top:0!important':''}">
                 <div class="mui-scroll gb-fund-step notice-detail">
                     <div class="mui-content-padded gb-content">
                         <c:choose>

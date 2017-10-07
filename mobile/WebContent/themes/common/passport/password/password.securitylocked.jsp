@@ -11,7 +11,7 @@
             <h1 class="mui-title">${views.passport_auto['冻结安全密码']}</h1>
         </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-row">
                 <div class="warning-box">
                     <span class="title">${views.passport_auto['密码错误已达上限']}</span>

@@ -17,7 +17,7 @@
                 <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${views.mine_auto['个人资料']}</h1>
             </header>
-            <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+            <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <div class="mui-scroll">
                     <form id="editForm">
                         <div id="validateRule" style="display: none">${validateRule}</div>
