@@ -12,7 +12,7 @@
     </header>
     <!--滚动区域-->
     <div class="mui-content mui-scroll-wrapper mui-fullscreen" ${os eq 'android'?'style="padding-top:0!important"':''}>
-        <div class="mui-scroll">
+        <div>
             <div class="gb-fullpage">
                 <div class="form-wrap">
                     <form id="regForm" class="mui-input-group">
@@ -150,7 +150,7 @@
                                         <div class="mui-input-row">
                                                     <c:set var="name" value="${signUpDataMap[i.name]}"/>
                                                     <c:set var="key" value="signUp.${name}"/>
-                                            <label>${isRequired||isPhone?'<span class="red">*</span>':''}${views.passport_auto['手机号']}</label>
+                                            <label>${isRequired||isPhone?'<span class="red">*</span>':''}${views.register[key]}</label>
                                                     <input type="text" name="${name}" class="mui-input-clear mui-input" placeholder="${views.register[key]}">
 
 
