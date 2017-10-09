@@ -10,7 +10,7 @@
             <h1 class="mui-title">${views.deposit_auto['银行卡转账']}</h1>
         </header>
         <form id="confirmCompanyForm">
-            <div class="mui-content" ${os eq 'android'?'style="padding-top:0"':''}>
+            <div class="mui-content" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <c:choose>
                     <c:when test="${not empty payAccount}">
                         <div class="mui-scroll2">

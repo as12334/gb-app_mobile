@@ -17,7 +17,7 @@
                 <%@ include file="/include/include.toolbar.jsp" %>
                 <h1 class="mui-title">${views.index_auto['注册条款']}</h1>
             </header>
-            <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+            <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <div class="mui-scroll" style="padding: 10px; background: #ffffff">
                     ${not empty terms.value ? terms.value : terms.defaultValue}
                 </div>

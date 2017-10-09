@@ -13,7 +13,7 @@
             <h1 class="mui-title">${views.withdraw_auto['取款']}</h1>
             <%@ include file="/themes/default/include/include.asset.jsp" %>
         </header>
-        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <form name="withdrawform">
             <c:choose>
                 <%--已经有取款订单---%>

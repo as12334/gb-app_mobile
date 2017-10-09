@@ -34,7 +34,7 @@
             <%@include file="/themes/default/include/include.footer.jsp"%>
         </c:if>
         <!--滚动区域-->
-        <div class="index-content mui-content mui-scroll-wrapper mui-fullscreen" id="game-scroll" style="${os eq 'android' or os eq 'app_ios'?'padding-top:0px;':''}">
+        <div class="index-content mui-content mui-scroll-wrapper mui-fullscreen" id="game-scroll" style="${os eq 'android' or os eq 'app_ios'?'padding-top:0!important;':''}">
             <div class="mui-scroll">
                 <div class="gb-fullpage">
                     <!-- 游戏类型 -->

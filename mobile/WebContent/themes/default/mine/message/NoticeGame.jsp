@@ -24,7 +24,7 @@
             <h1 class="mui-title">${views.mine_auto['消息']}</h1>
             <a value="${unReadType}" id="unReadType" hidden></a>
         </header>
-        <div class="mui-content bg-white" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content bg-white" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-row">
                 <div class="gb-panel b-t-0" style="background-color: #f2f2f2;z-index: 1111;position:absolute;width: 100%">
                     <div class="gb-headtabs span3">

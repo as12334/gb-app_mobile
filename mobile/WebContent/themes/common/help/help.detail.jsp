@@ -10,7 +10,7 @@
                 <h1 class="mui-title">${name}</h1>
             </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper" style="${os eq 'android'?'padding-top:0;':''}">
+        <div class="mui-content mui-scroll-wrapper" style="${os eq 'android'?'padding-top:0!important;':''}">
             <div class="mui-scroll">
                 <dl class="fqa mui-collapse">
                     <c:forEach var="document" items="${command}">

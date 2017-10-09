@@ -26,7 +26,7 @@
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.app_auto['下载最新客户端']}</h1>
         </header>
-        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-scroll">
                 <c:choose>
                     <c:when test="${os eq 'wechat'}">

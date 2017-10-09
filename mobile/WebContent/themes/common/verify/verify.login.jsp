@@ -13,7 +13,7 @@
                 <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
             </header>
             </c:if>
-            <div class="mui-content mui-scroll-wrapper" ${(os eq 'android' or os eq 'app_ios')?'style="padding-top:0"':''}>
+            <div class="mui-content mui-scroll-wrapper" ${(os eq 'android' or os eq 'app_ios')?'style="padding-top:0!important"':''}>
                 <div class="mui-scroll">
                     <input type="hidden" name="customer" value="${customerService}" />
                     <c:choose>

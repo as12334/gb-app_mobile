@@ -9,7 +9,7 @@
             <h1 class="mui-title">${views.deposit_auto['比特币支付']}</h1>
         </header>
         <form id="bitcoinForm">
-            <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0"':''}>
+            <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <c:choose>
                     <c:when test="${not empty payAccount}">
                         <div class="${os eq 'app_ios' ? 'mui-scroll':''} mui-scroll2">

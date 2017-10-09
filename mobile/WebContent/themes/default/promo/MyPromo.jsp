@@ -19,7 +19,7 @@
                 <a class="mui-icon mui-pull-right icon-gift" data-href="${root}/game.html?typeId=5"></a>
                 </c:if>
             </header>
-            <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''}>
+            <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <div class="mui-scroll">
                     <div class="mui-row" id="content">
                        <%--  <%@include file="./MyPromoPartial.jsp"%>--%>

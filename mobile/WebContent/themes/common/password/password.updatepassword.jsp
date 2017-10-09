@@ -9,7 +9,7 @@
             <%@ include file="/include/include.toolbar.jsp" %>
             <h1 class="mui-title">${views.password_auto['修改登录密码']}</h1>
         </header>
-        <div class="mui-content mui-scroll-wrapper"  ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper"  ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-scroll">
                 <form id="updatePwdForm">
                     <input type="hidden" name="result.id" value="${command.result.id}">
