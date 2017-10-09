@@ -40,6 +40,18 @@
         <url-pattern>/MonitorData.html</url-pattern>
     </filter-mapping>-->
     <!--MonitorData 结束-->
+    <!--HealthCheck  开始-->
+    <filter>
+        <filter-name>healthCheckFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>healthCheckFilter</filter-name>
+        <url-pattern>/health/check.html</url-pattern>
+    </filter-mapping>
+    <!--HealthCheck  结束-->
     <filter>
         <filter-name>dubboClientFilter</filter-name>
         <filter-class>so.wwb.gamebox.web.filter.DubboClientFilter</filter-class>
