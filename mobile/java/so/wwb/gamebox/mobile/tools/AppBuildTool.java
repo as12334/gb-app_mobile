@@ -136,7 +136,7 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] sites = new String[]{
-                /*"69,7cxt,一指通彩票",
+                "69,7cxt,一指通彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
@@ -240,7 +240,7 @@ public class AppBuildTool {
                 "235,cspr,美高梅娱乐城",
                 "236,8gez,拉斯维加斯国际",
                 "802,98jb,凤凰彩票",
-                "237,akm1,金沙娱乐城",*/
+                "237,akm1,金沙娱乐城",
                 "238,wlf6,BET365",
                 "803,yg9x,头彩"
         };
