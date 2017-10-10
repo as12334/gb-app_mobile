@@ -45,12 +45,14 @@
                     <span>${views.themes_auto['会员中心']}</span>
                 </a>
             </li>
+            <c:if test="${!isDemo}">
             <li class="mui-table-view-cell">
                 <a data-href="/message/gameNotice.html" class="right-menu">
                     <span class="iconfont icon-xinxizhongxin"></span>
                     <span>${views.themes_auto['消息中心']}</span>
                 </a>
             </li>
+            </c:if>
             <li class="mui-table-view-cell">
                 <a class="right-menu customer" data-os="${os}">
                     <span class="iconfont icon-zaixiankefu"></span>
