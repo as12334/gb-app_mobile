@@ -21,7 +21,7 @@
                 </h1>
                 <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
             </header>
-            <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+            <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <div class="mui-scroll">
                     <form id="nameForm">
                         <gb:token/>

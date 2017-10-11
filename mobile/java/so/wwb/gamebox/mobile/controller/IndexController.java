@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
@@ -34,14 +35,12 @@ import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
-import so.wwb.gamebox.model.company.lottery.po.LotteryResult;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
-import so.wwb.gamebox.model.company.lottery.vo.LotteryResultListVo;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
-import so.wwb.gamebox.model.enums.lottery.LotteryEnum;
+import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
@@ -51,12 +50,10 @@ import so.wwb.gamebox.model.master.content.po.CttDocumentI18n;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
-import so.wwb.gamebox.web.ServiceToolBase;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -190,18 +187,6 @@ public class IndexController extends BaseApiController {
         return resultList;
     }
 
-    private List<LotteryResult> getOpenResult() {
-        //热门开奖彩种包含六合彩、重庆时时彩、北京pk10
-        List<String> codes = new ArrayList<>(3);
-        codes.add(LotteryEnum.HKLHC.getCode());
-        codes.add(LotteryEnum.CQSSC.getCode());
-        codes.add(LotteryEnum.BJPK10.getCode());
-        LotteryResultListVo listVo = new LotteryResultListVo();
-        listVo.getSearch().setCodes(codes);
-        listVo.getPaging().setPageSize(5);
-        return ServiceToolBase.lotteryResultService().queryRecentOpenResult(listVo);
-    }
-
     /**
      * 查询公告
      */
@@ -316,25 +301,6 @@ public class IndexController extends BaseApiController {
         return JsonTool.toJson(urlMap);
     }
 
-    @RequestMapping("/index/getAppUrl")
-    @ResponseBody
-    public String getAppUrl(ServletRequest request) {
-        Integer siteId = SessionManager.getSiteId();
-        String code = "";
-        for (SysSite sysSite : Cache.getSysSite().values()) {
-            if (siteId.equals(sysSite.getId())) {
-                code = sysSite.getCode();
-            }
-        }
-        AppUpdateVo vo = new AppUpdateVo();
-        vo.getSearch().setAppType("android");
-        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
-        AppUpdate app = appUpdateService.queryNewApp(vo);
-
-        return "/android/" + code + "/app_" + code + "_" +
-                app.getVersionName() + ".apk";
-    }
-
     @RequestMapping("/index/getBanner")
     public String getBanner(Model model, HttpServletRequest request) {
         model.addAttribute("carousels", getCarousel(request));
@@ -357,7 +323,7 @@ public class IndexController extends BaseApiController {
      * @return
      */
     @RequestMapping("/app/download")
-    public String downloadApp(Model model, ServletRequest request) {
+    public String downloadApp(Model model, HttpServletRequest request) {
         getAppPath(model, request);
         return "/app/Index";
     }
@@ -365,40 +331,58 @@ public class IndexController extends BaseApiController {
     /**
      * 获取APP下载地址
      */
-    private void getAppPath(Model model, ServletRequest request) {
+    private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
-        Integer siteId = SessionManager.getSiteId();
-        String code = Cache.getSysSite().get(siteId.toString()).getCode();
-        Cache.getSysSite().get(siteId.toString());
-        //获取android APP信息
+        String code = CommonContext.get().getSiteCode();
+        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
+
+        String os = OsTool.getOsInfo(request);
+        if (OSTypeEnum.IOS.getCode().equals(os)) {
+            // 获取IOS信息
+            getIosInfo(model, code, appUpdateService);
+        } else if (OSTypeEnum.ANDROID.getCode().equals(os)) {
+            // 获取android APP信息
+            getAndroidInfo(model, request, code, appUpdateService);
+        } else {
+            getIosInfo(model, code, appUpdateService);
+            getAndroidInfo(model, request, code, appUpdateService);
+        }
+    }
+
+    /**
+     * 获取android APP信息
+     */
+    private void getAndroidInfo(Model model, HttpServletRequest request, String code, IAppUpdateService appUpdateService) {
         AppUpdateVo androidVo = new AppUpdateVo();
         androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
-        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
         AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
+        if (androidApp != null) {
+            String versionName = androidApp.getVersionName();
+            String url = String.format("https://%s%s%s/app_%s_%s.apk", ParamTool.appDmain(request.getServerName()), androidApp.getAppUrl(),
+                    versionName, code, versionName);
+            model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
+            model.addAttribute("androidUrl", url);
+        }
+    }
 
+    /**
+     * 获取IOS信息
+     */
+    private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService) {
         AppUpdateVo iosVo = new AppUpdateVo();
         iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
         AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
-
-        String androidUrl = "";
-        if (androidApp != null)
-            androidUrl = "http://" + ParamTool.appDmain(request.getServerName()) + androidApp.getAppUrl() + androidApp.getVersionName() + "/app_" + code + "_" + androidApp.getVersionName() + ".apk";
-
-        String iosUrl = "";
-        if (iosApp != null)
-            iosUrl = "itms-services://?action=download-manifest&url=" +
-                    "https://" + iosApp.getAppUrl() + "/" + code + "/app_" + code + "_" + iosApp.getVersionName() + ".plist";
-
-        model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(androidUrl, 6)));
-        model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(iosUrl, 6)));
-        model.addAttribute("androidUrl", androidUrl);
-        model.addAttribute("iosUrl", iosUrl);
+        if (iosApp != null) {
+            String versionName = iosApp.getVersionName();
+            String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/app_%s_%s.plist", iosApp.getAppUrl(),
+                    versionName, code, versionName);
+            model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
+            model.addAttribute("iosUrl", url);
+        }
     }
 
     /**
      * 查询用户信息,判断是否登录
-     *
-     * @return
      */
     @RequestMapping("/sysUser")
     @ResponseBody
@@ -416,8 +400,6 @@ public class IndexController extends BaseApiController {
 
     /**
      * 查询用户信息,判断是否登录
-     *
-     * @return
      */
     @RequestMapping("/getHeadInfo")
     @ResponseBody

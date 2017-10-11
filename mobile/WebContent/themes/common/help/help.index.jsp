@@ -10,7 +10,7 @@
                 <h1 class="mui-title">${views.help_auto['帮助中心']}</h1>
             </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper " style="${os eq 'android'?'padding-top:0;':''}">
+        <div class="mui-content mui-scroll-wrapper " style="${os eq 'android'?'padding-top:0!important;':''}">
             <div class="mui-scroll">
                 <ul class="mui-table-view">
                     <c:forEach items="${command}" var="helpMenu">

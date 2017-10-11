@@ -13,7 +13,15 @@
                         <input type="hidden" id="lottery-id" value="${a.apiId}" />
                     </c:if>
                     <a data-lottery-id="${a.apiId}" data-lotto-idx="${vs.index}" class="${vs.index == 0 ? 'active' : ''}">
-                        <img src="${resRoot}/images/api/api-lottery-${a.apiId}.png">
+                        <c:choose>
+                            <c:when test="${centerId == -3   && a.apiId == 22}">
+                                <img src="${resRoot}/images/api/api-lottery-22-2.png">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${resRoot}/images/api/api-lottery-${a.apiId}.png">
+                            </c:otherwise>
+                        </c:choose>
+
                         <span class="mui-tab-label api-name">
                                 ${gbFn:getApiName(a.apiId.toString())}
                         </span>

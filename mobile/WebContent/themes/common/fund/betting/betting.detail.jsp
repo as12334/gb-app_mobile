@@ -12,7 +12,7 @@
                 <%@ include file="/themes/default/include/include.asset.jsp" %>
             </c:if>
         </header>
-        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-scroll">
                 <div class="mui-row">
                     <c:set var="r" value="${command.result}"/>

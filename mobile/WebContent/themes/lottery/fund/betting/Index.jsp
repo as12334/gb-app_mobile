@@ -21,7 +21,7 @@
                 <h1 class="mui-title">${views.fund_auto['投注记录']}</h1>
                 <a class="mui-icon mui-icon-home mui-pull-right" data-href="/mainIndex.html"></a>
             </header>
-            <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''} >
+            <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''} >
                 <div class="mui-scroll">
                     <div class="mui-row">
                         <div class="mui-input-group mine-form">

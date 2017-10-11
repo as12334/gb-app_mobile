@@ -26,7 +26,7 @@
             <h1 class="mui-title">${views.fund_auto['资金记录']}</h1>
             <%@ include file="/themes/default/include/include.asset.jsp" %>
         </header>
-        <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0"':''}>
+        <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <div class="mui-scroll">
 
                 <%@ include file="/themes/common/fund/record/record.index.jsp" %>
