@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<c:set var="isDemo" value="<%=SessionManagerCommon.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO) %>" />
+<c:set var="isDemo" value="<%=SessionManagerCommon.isLotteryDemo() %>" />
 <nav class="mui-bar mui-bar-buttom mui-bar-tab mui-hide _footerMenu">
     <a class="mui-tab-item mui-action ${channel == 'index' ? 'mui-active' : ''}" data-href="/mainIndex.html" >
         <span class="mui-icon bar-buttom-icon iconfont icon-shouye"></span>

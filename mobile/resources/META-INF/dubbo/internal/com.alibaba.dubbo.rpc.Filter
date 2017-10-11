@@ -1,1 +1,1 @@
-lotteryDubboConsumerFilter=so.wwb.gamebox.web.filter.ConsumerFilter
+specifyDatasourceConsumerFilter=so.wwb.gamebox.web.filter.SpecifyDatasourceConsumerFilter

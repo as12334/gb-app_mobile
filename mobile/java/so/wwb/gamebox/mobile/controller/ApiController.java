@@ -138,8 +138,7 @@ public class ApiController extends BaseApiController {
         SysUser user = SessionManager.getUser();
         if(user != null) {
             Map<String, Object> map = new HashMap<>();
-            boolean isDemo = Boolean.valueOf(String.valueOf(SessionManager.getAttribute(SessionManagerCommon.SESSION_IS_LOTTERY_DEMO)));
-            if (isDemo) {
+            if (SessionManagerCommon.isLotteryDemo()) {
                 map.put("username", StringTool.overlayName(user.getUsername()));
             } else {
                 getAppUserInfo(request, user, map);

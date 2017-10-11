@@ -17,7 +17,7 @@
                     registry="zookeeperClient"
                     application="dubboApplication"
                     version="${dubbo.version}"
-                    filter="dubboConsumerFilter,lotteryDubboConsumerFilter"
+                    filter="specifyDSConsumerFilter"
     />
 
     <!-- 到这里调用 -->
