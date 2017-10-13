@@ -136,7 +136,7 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] sites = new String[]{
-                "69,7cxt,一指通彩票",
+                /*"69,7cxt,一指通彩票",
                 "70,1wl5,天天彩票",
                 "71,8l6r,超博娱乐",
                 "76,XH5Z,澳门永利",
@@ -242,7 +242,9 @@ public class AppBuildTool {
                 "802,98jb,凤凰彩票",
                 "237,akm1,金沙娱乐城",
                 "238,wlf6,BET365",
-                "803,yg9x,头彩"
+                "803,yg9x,头彩",
+                "239,5e7b,云顶娱乐",*/
+                "805,yrxk,亿彩汇"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
