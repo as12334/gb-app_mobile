@@ -136,114 +136,33 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] sites = new String[]{
-                /*"69,7cxt,一指通彩票",
-                "70,1wl5,天天彩票",
-                "71,8l6r,超博娱乐",
-                "76,XH5Z,澳门永利",
-                "110,cabu,超博娱乐",
-                "111,74bk,新葡京娱乐场",
-                "112,SNRM,威尼斯人娱乐",
-                "113,jwdg,伟德娱乐",
-                "114,ojlj,金沙娱乐场",
-                "116,bldz,电子777娱乐",
-                "117,yytt,澳门威尼斯人",
-                "118,ys3q,澳门星际娱乐",
-                "119,nu9r,UEDBET",
-                "120,cvqb,演示站点",
-                "121,pnuw,太阳城集团",
-                "123,seck,皇家赌场",
-                "124,98ph,澳门金沙",
-                "126,8wu8,永利娱乐城",
-                "129,0a74,新葡京娱乐城",
-                "130,ixpm,澳门新葡京",
-                "133,xwc7,澳门威尼斯人",
-                "134,o7av,澳门威尼斯人",
-                "135,miv5,澳门金沙娱乐场",
-                "136,5rdu,澳门威尼斯人",
-                "140,ix2i,澳门威尼斯人",
-                "141,hihk,BET365",
-                "142,vbgt,新葡京娱乐场",
-                "143,zhcu,太阳城娱乐城",
-                "150,zz1g,威尼斯人",
-                "151,tloz,bet365",
-                "153,cqkv,澳门威尼斯人",
-                "155,zqq5,澳门银河娱乐城",
-                "156,xmil,新葡京娱乐场",
-                "157,uhte,澳门金沙赌场",
-                "158,7p44,九狮国际娱乐城",
-                "159,mhi7,威尼斯人赌场",
-                "161,n0o7,BET365亚洲",
-                "162,bgst,葡京娱乐场",
-                "163,duzr,FUNGAME",
-                "165,g7oq,澳门赌场",
-                "167,hzy3,新葡京赌场",
-                "168,lont,澳门威尼斯人",
-                "171,ihqx,宝开娱乐",
-                "172,izbv,豪森国际",
-                "173,jr3j,濠利会娱乐城",
-                "175,x0le,银河娱乐城",
-                "176,qgjl,全胜娱乐",
-                "177,x1dv,威尼斯人娱乐场",
-                "178,ptxa,点金坊",
-                "179,rosz,澳门威尼斯人",
-                "180,qfxk,皇冠国际",
-                "181,4w3g,超博娱乐",
-                "182,ixuf,雄伟集团",
-                "183,nrpf,美高梅赌场",
-                "185,fyxi,Phoenix Gaming",
-                "186,cwad,赛博体育",
-                "187,b02h,澳门银河",
-                "188,acpb,鸿泰国际",
-                "189,a56r,永利贵宾会",
-                "190,yj4v,万博体育",
-                "191,d1hg,澳门赌场",
-                "192,gc7p,星河娱乐城",
-                "193,f9wn,皇冠娱乐",
-                "195,xjvs,大唐娱乐城",
-                "196,6rrt,澳门巴黎人",
-                "197,sn2m,完美彩票",
-                "198,urbr,金沙娱乐场",
-                "199,n5ns,澳门威尼斯人",
-                "200,cghs,钱多多娱乐城",
-                "201,vtfw,澳门威尼斯人",
-                "202,ucuy,博亿娱乐城",
-                "203,q5tj,中博娱乐城",
-                "205,dfvp,百乐博",
-                "206,lnd9,葡京国际",
-                "207,xlei,bet365",
-                "208,npsa,彩中彩",
-                "209,arau,大发OK",
-                "210,1lgt,威廉希尔",
-                "211,3qj8,大发OK",
-                "212,cmu6,金元宝娱乐城",
-                "213,8y1c,万豪国际",
-                "215,mjiu,盈泰娱乐",
-                "216,cbe1,COD娱樂",
-                "217,w7ls,云顶国际",
-                "218,osxg,永利娱乐城",
-                "219,tcjp,鼎彩国际",
-                "220,yrdy,皇朝娱乐",
-                "221,ionm,金沙娱乐场",
-                "222,4hwq,美高梅娱乐城",
-                "223,elpc,大咖汇",
-                "225,gwkk,永利娱乐场",
-                "226,oiqg,新葡京娱乐场",
-                "227,mkoz,银河娱乐城",
-                "229,ixyu,美高梅娱乐城",
-                "228,idr9,亚盈国际",
-                "800,7vhp,四海娱乐",
-                "801,cx7r,万达彩票",
-                "230,r7pt,金沙娱乐城",
-                "231,vxcb,新濠国际",
-                "232,z1yn,新亚洲",
-                "233,87lr,金沙娱乐城",
-                "235,cspr,美高梅娱乐城",
-                "236,8gez,拉斯维加斯国际",
-                "802,98jb,凤凰彩票",
-                "237,akm1,金沙娱乐城",
-                "238,wlf6,BET365",
-                "803,yg9x,头彩",
-                "239,5e7b,云顶娱乐",*/
+                /*"69,7cxt,一指通彩票",        "70,1wl5,天天彩票",          "71,8l6r,超博娱乐",        "76,XH5Z,澳门永利",
+                "110,cabu,超博娱乐",         "111,74bk,新葡京娱乐场",     "112,SNRM,威尼斯人娱乐",    "113,jwdg,伟德娱乐",
+                "114,ojlj,金沙娱乐场",       "116,bldz,电子777娱乐",     "117,yytt,澳门威尼斯人",    "118,ys3q,澳门星际娱乐",
+                "119,nu9r,UEDBET",          "120,cvqb,演示站点",        "121,pnuw,太阳城集团",      "123,seck,皇家赌场",
+                "124,98ph,澳门金沙",         "126,8wu8,永利娱乐城",       "129,0a74,新葡京娱乐城",    "130,ixpm,澳门新葡京",
+                "133,xwc7,澳门威尼斯人",      "134,o7av,澳门威尼斯人",     "135,miv5,澳门金沙娱乐场",   "136,5rdu,澳门威尼斯人",
+                "140,ix2i,澳门威尼斯人",      "141,hihk,BET365",         "142,vbgt,新葡京娱乐场",     "143,zhcu,太阳城娱乐城",
+                "150,zz1g,威尼斯人",         "151,tloz,bet365",         "153,cqkv,澳门威尼斯人",     "155,zqq5,澳门银河娱乐城",
+                "156,xmil,新葡京娱乐场",     "157,uhte,澳门金沙赌场",      "158,7p44,九狮国际娱乐城",  "159,mhi7,威尼斯人赌场",
+                "161,n0o7,BET365亚洲",      "162,bgst,葡京娱乐场",       "163,duzr,FUNGAME",        "165,g7oq,澳门赌场",
+                "167,hzy3,新葡京赌场",       "168,lont,澳门威尼斯人",      "171,ihqx,宝开娱乐",        "172,izbv,豪森国际",
+                "173,jr3j,濠利会娱乐城",     "175,x0le,银河娱乐城",       "176,qgjl,全胜娱乐",        "177,x1dv,威尼斯人娱乐场",
+                "178,ptxa,点金坊",           "179,rosz,澳门威尼斯人",     "180,qfxk,皇冠国际",         "181,4w3g,超博娱乐",
+                "182,ixuf,雄伟集团",         "183,nrpf,美高梅赌场",       "185,fyxi,Phoenix Gaming",  "186,cwad,赛博体育",
+                "187,b02h,澳门银河",         "188,acpb,鸿泰国际",         "189,a56r,永利贵宾会",       "190,yj4v,万博体育",
+                "191,d1hg,澳门赌场",         "192,gc7p,星河娱乐城",       "193,f9wn,皇冠娱乐",        "195,xjvs,大唐娱乐城",
+                "196,6rrt,澳门巴黎人",        "197,sn2m,完美彩票",         "198,urbr,金沙娱乐场",      "199,n5ns,澳门威尼斯人",
+                "200,cghs,钱多多娱乐城",      "201,vtfw,澳门威尼斯人",     "202,ucuy,博亿娱乐城",       "203,q5tj,中博娱乐城",
+                "205,dfvp,百乐博",           "206,lnd9,葡京国际",         "207,xlei,bet365",         "208,npsa,彩中彩",
+                "209,arau,大发OK",           "210,1lgt,威廉希尔",         "211,3qj8,大发OK",         "212,cmu6,金元宝娱乐城",
+                "213,8y1c,万豪国际",         "215,mjiu,盈泰娱乐",         "216,cbe1,COD娱樂",         "217,w7ls,云顶国际",
+                "218,osxg,永利娱乐城",        "219,tcjp,鼎彩国际",         "220,yrdy,皇朝娱乐",        "221,ionm,金沙娱乐场",
+                "222,4hwq,美高梅娱乐城",      "223,elpc,大咖汇",           "225,gwkk,永利娱乐场",      "226,oiqg,新葡京娱乐场",
+                "227,mkoz,银河娱乐城",        "229,ixyu,美高梅娱乐城",      "228,idr9,亚盈国际",       "800,7vhp,四海娱乐",
+                "801,cx7r,万达彩票",          "230,r7pt,金沙娱乐城",       "231,vxcb,新濠国际",        "232,z1yn,新亚洲",
+                "233,87lr,金沙娱乐城",        "235,cspr,美高梅娱乐城",      "236,8gez,拉斯维加斯国际",   "802,98jb,凤凰彩票",
+                "237,akm1,金沙娱乐城",        "238,wlf6,BET365",          "803,yg9x,头彩",           "239,5e7b,云顶娱乐",*/
                 "805,yrxk,亿彩汇"
         };
 
@@ -317,7 +236,7 @@ public class AppBuildTool {
 
     private static String setSiteType(Integer siteId) {
         String siteType = "integrated";
-        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802 || siteId == 803)
+        if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802 || siteId == 803 || siteId == 805)
             siteType = "lottery";
         return siteType;
     }
@@ -333,7 +252,7 @@ public class AppBuildTool {
         else if (siteId == 185) {
             theme = "pink.skin";
         }
-        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802 || siteId == 803) {
+        else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802 || siteId == 803 || siteId == 805) {
             theme = "lottery.skin";
         }
         return theme;
@@ -347,7 +266,7 @@ public class AppBuildTool {
                 Files.copy(new File(from, "green.skin"), new File(to, "green.skin"));
             } else if (siteId == 185) {
                 Files.copy(new File(from, "pink.skin"), new File(to, "pink.skin"));
-            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802 || siteId == 803) {
+            } else if (siteId == 69 || siteId == 70 || siteId == 197 || siteId == 800 || siteId == 801 || siteId == 802 || siteId == 803 || siteId == 805) {
                 Files.copy(new File(from, "lottery.skin"), new File(to, "lottery.skin"));
             }
         } catch (IOException ioe) {
