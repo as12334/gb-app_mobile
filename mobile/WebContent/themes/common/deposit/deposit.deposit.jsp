@@ -26,7 +26,7 @@
                         <div class="bank-selector">
                             <p>${views.deposit_auto['请选择支付方式']}</p>
                             <c:choose>
-                                <c:when test="${fn:length(payAccountMap) > 0}">
+                                <c:when test="${fn:length(payAccountMap) > 0 || !empty digiccyAccountInfo}">
                                     <div class="ct">
                                         <ul id="depositWay">
                                             <c:forEach items="${payAccountMap}" var="p">
@@ -55,6 +55,9 @@
                                                     <li><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit_auto['比特币支付']}</a></li>
                                                 </c:if>
                                             </c:forEach>
+                                            <c:if test="${!empty digiccyAccountInfo}">
+                                                <li><a data-bitcoin="/wallet/deposit/digiccy/index.html">数字货币支付</a></li>
+                                            </c:if>
                                         </ul>
                                         <div class="clearfix"></div>
                                     </div>
