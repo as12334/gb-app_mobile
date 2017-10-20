@@ -233,6 +233,13 @@
                                             </p>
                                         </div>
                                     </c:when>
+                                    <c:when test="${command.result.fundType eq 'digiccy_scan'}">
+                                        <div class="hd">
+                                            <p>
+                                                <span class="pay-third ${bankCode}"/>
+                                            </p>
+                                        </div>
+                                    </c:when>
                                     <c:otherwise>
                                         <div class="hd">
                                             <p>
