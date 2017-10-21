@@ -152,7 +152,7 @@ public class IndexController extends BaseApiController {
     private List<Map> getCarousel(HttpServletRequest request) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
-        String webSite= ServletTool.getRequestDomainWithSechmaPort(request);
+        String webSite= ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
                 if (CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type"))) {
