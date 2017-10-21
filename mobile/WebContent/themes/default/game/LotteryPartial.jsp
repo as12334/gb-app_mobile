@@ -13,7 +13,7 @@
                 <c:if test="${g.gameId == gi.key}">
                     <div class="mui-col-xs-4">
                         <%--彩票KG和BB只支持跳转彩票大厅，并不支持跳转子类--%>
-                        <a class="item _api" data-api-type-id="4" data-api-id="${g.apiId}" data-code="${g.code}" data-status="${g.status}">
+                        <a class="item _api" data-api-type-id="4" data-api-id="${g.apiId}" data-game-code="${g.apiId == 10||g.apiId==2?'':g.code}" data-status="${g.status}">
                             <p>
                                 <img data-src="${soulFn:getImagePath(domain, gi.value.cover)}"
                                      src="${soulFn:getImagePath(domain, gi.value.cover)}"/>
