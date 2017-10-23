@@ -70,7 +70,7 @@ public class AppBuildTool {
                 "\t\t\t\t\t<key>kind</key>\n" +
                 "\t\t\t\t\t<string>software-package</string>\n" +
                 "\t\t\t\t\t<key>url</key>\n" +
-                "\t\t\t\t\t<string>https://dsda3112.com/ios/" + code + "/app_" + code + "_" + versionName + ".ipa</string>\n" +
+                "\t\t\t\t\t<string>https://dsda3112.com/ios/" + versionName + "/app_" + code + "_" + versionName + ".ipa</string>\n" +
                 "\t\t\t\t</dict>\n" +
                 "\t\t\t\t<dict>\n" +
                 "\t\t\t\t\t<key>kind</key>\n" +
