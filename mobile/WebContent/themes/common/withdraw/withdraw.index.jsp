@@ -15,6 +15,10 @@
         </header>
         <div class="mui-content mui-scroll-wrapper" ${os eq 'android'?'style="padding-top:0!important"':''}>
             <form name="withdrawform">
+            <c:set var="totalBalance" value="${not empty player.walletBalance?player.walletBalance:0}"></c:set>
+            <c:if test="${not empty apiBalance}">
+                <c:set var="totalBalance" value="${totalBalance + apiBalance}"></c:set>
+            </c:if>
             <c:choose>
                 <%--已经有取款订单---%>
                 <c:when test="${hasOrder}">
@@ -57,7 +61,7 @@
                     </div>
                 </c:when>
                 <%--余额是否充足--%>
-                <c:when test="${rank.withdrawMinNum > player.walletBalance}">
+                <c:when test="${rank.withdrawMinNum > totalBalance}">
                     <div class="mui-scroll">
                         <div class="withdraw-out">
                             <div class="withdraw-not">
@@ -133,7 +137,7 @@
                                                 <p class="mui-text-right text-gray">
                                                     <c:set var="minAmount" value="${rank.withdrawMinNum}" />
                                                     <c:set var="maxAmount" value="${rank.withdrawMaxNum}" />
-                                                    <input type="hidden" name="walletBalance" value="${player.walletBalance}"/>
+                                                    <input type="hidden" name="walletBalance" value="${totalBalance}"/>
                                                     <input type="text" class="gb-money" placeholder="${currencySign}${minAmount}-${currencySign}${maxAmount}"
                                                         ${hasBank? '' : 'disabled'}
                                                            step="1"
