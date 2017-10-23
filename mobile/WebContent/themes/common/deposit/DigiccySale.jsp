@@ -23,12 +23,12 @@
                         <option value="${i.id}">${i.classifyKeyName}&nbsp;&nbsp;${i.activityName}</option>
                     </c:forEach>
                 </select>
-                <input name="search.transactionNo" value="${playerRecharge.transactionNo}"/>
+                <input type="hidden" name="search.transactionNo" value="${playerRecharge.transactionNo}"/>
             </div>
         </div>
         <div class="pro-btn">
-            <a class="next-btn" name="confirmSale" sale-url="${root}/wallet/deposit/digiccy/saveSale.html">${views.themes_auto['确认']}</a>
-            <a class="agin-btn" name="cancelSale">${views.themes_auto['取消']}</a>
+            <a class="next-btn" id="confirmSale" sale-url="${root}/wallet/deposit/digiccy/saveSale.html">${views.themes_auto['确认']}</a>
+            <a class="agin-btn" id="cancelSale">${views.themes_auto['取消']}</a>
         </div>
         <div class="close">
         </div>
