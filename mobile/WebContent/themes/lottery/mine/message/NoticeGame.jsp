@@ -16,6 +16,23 @@
 </head>
 
 <body class="gb-theme mine-page">
+<c:choose>
+    <c:when test="${isDemo}">
+        <body class="gb-theme mine-page no-backdrop" >
+        <c:if test="${os ne 'android'}">
+            <header class="mui-bar mui-bar-nav">
+                <c:if test="${os ne 'app_ios'}">
+                    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+                </c:if>
+                <h1 class="mui-title">${views.mine_auto['消息']}</h1>
+            </header>
+        </c:if>
+        <center>
+            <img src="${resRoot}/lottery/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
+        </center>
+        </body>
+    </c:when>
+    <c:otherwise>
 <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
@@ -109,6 +126,8 @@
         <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
+    </c:otherwise>
+</c:choose>
 </body>
 <div id="popover" class="mui-popover" style="height: 50%;">
     <div class="mui-scroll-wrapper popover-scroll" >
