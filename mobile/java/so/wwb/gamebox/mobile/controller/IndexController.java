@@ -362,8 +362,8 @@ public class IndexController extends BaseApiController {
         AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
         if (iosApp != null) {
             String versionName = iosApp.getVersionName();
-            String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/app_%s_%s.plist", iosApp.getAppUrl(),
-                    versionName, code, versionName);
+            String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", iosApp.getAppUrl(),
+                    versionName, code, code, versionName);
             model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
             model.addAttribute("iosUrl", url);
         }

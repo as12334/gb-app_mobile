@@ -286,6 +286,10 @@ public class TransferController extends WalletBaseController {
 
         if (isMaintain(api, siteApi))
             return getErrorMessage(TransferResultStatusEnum.API_STATUS_MAINTAIN.getCode(), playerTransferVo.getResult().getApiId());
+        //试玩模式下不允许转账
+        if(SessionManagerCommon.getDemoModelEnum()!=null){
+            return getErrorMessage(TransferResultStatusEnum.TRANSFER_DEMO_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
+        }
         return null;
     }
 
