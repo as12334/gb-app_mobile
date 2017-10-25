@@ -25,6 +25,7 @@ import so.wwb.gamebox.model.company.sys.so.SysSiteSo;
 import so.wwb.gamebox.model.company.sys.vo.SysSiteVo;
 import so.wwb.gamebox.model.master.setting.enums.FieldSortEnum;
 import so.wwb.gamebox.model.master.setting.po.FieldSort;
+import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -35,7 +36,7 @@ import java.util.*;
  * Created by bruce on 16-9-5.
  */
 @Controller
-public class RegisterController {
+public class RegisterController extends BaseDemoController{
 
     private static final Log LOG = LogFactory.getLog(RegisterController.class);
 
@@ -162,4 +163,18 @@ public class RegisterController {
         return isValid;
     }
 
+    @RequestMapping(value = "mobile/demo/index")
+    protected String demoIndex(HttpServletRequest request) {
+        if(!ParamTool.isLotterySite()){
+            return "/";
+        }else {
+            createDemoAccount(request);
+            return getDemoIndex();
+        }
+    }
+
+    @Override
+    protected String getDemoIndex() {
+        return null;
+    }
 }
