@@ -7,7 +7,6 @@ import org.soul.commons.security.AesTool;
 import org.soul.commons.security.CryptoTool;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 
-import java.awt.*;
 import java.io.*;
 
 /**
@@ -70,7 +69,7 @@ public class AppBuildTool {
                 "\t\t\t\t\t<key>kind</key>\n" +
                 "\t\t\t\t\t<string>software-package</string>\n" +
                 "\t\t\t\t\t<key>url</key>\n" +
-                "\t\t\t\t\t<string>https://dsda3112.com/ios/" + versionName + "/app_" + code + "_" + versionName + ".ipa</string>\n" +
+                "\t\t\t\t\t<string>https://dsda3112.com/ios/" + versionName + "/" + code + "/app_" + code + "_" + versionName + ".ipa</string>\n" +
                 "\t\t\t\t</dict>\n" +
                 "\t\t\t\t<dict>\n" +
                 "\t\t\t\t\t<key>kind</key>\n" +
@@ -163,15 +162,12 @@ public class AppBuildTool {
                 "227,mkoz,银河娱乐城",        "229,ixyu,美高梅娱乐城",      "228,idr9,亚盈国际",       "800,7vhp,四海娱乐",
                 "801,cx7r,万达彩票",          "230,r7pt,金沙娱乐城",       "231,vxcb,新濠国际",        "232,z1yn,新亚洲",
                 "233,87lr,金沙娱乐城",        "235,cspr,美高梅娱乐城",      "236,8gez,拉斯维加斯国际",   "802,98jb,凤凰彩票",
-                "237,akm1,金沙娱乐城",        "238,wlf6,BET365",          "803,yg9x,头彩",           "239,5e7b,云顶娱乐",*/
-//                "805,yrxk,亿彩汇",
-//                "251,e2ce,威尼斯人",
-//                "252,pox4,COBO超博",
-//                "253,7rda,澳门威尼斯人",
-//                "255,p0a7,澳门威尼斯人",
+                "237,akm1,金沙娱乐城",        "238,wlf6,BET365",          "803,yg9x,头彩",           "239,5e7b,云顶娱乐",
+                "805,yrxk,亿彩汇",            "251,e2ce,威尼斯人",         "252,pox4,COBO超博",       "253,7rda,澳门威尼斯人",*/
+                "255,p0a7,澳门威尼斯人",
 //                "256,vqwq,星博国际",
 //                "257,wnmt,盛大国际",
-                "258,yqgk,金凯娱乐"
+//                "258,yqgk,金凯娱乐"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
@@ -185,26 +181,26 @@ public class AppBuildTool {
             Integer siteId = Integer.valueOf(sites[i].split(",")[0]);
             String code = sites[i].split(",")[1];
             String name = sites[i].split(",")[2];
-            getIosPlist(code, "2.1.0", siteId, name);
+            getIosPlist(code, "3.0.0", siteId, name);
             getIosBuild(siteId, name, code);
-            getAndroidFlavors(siteId, name, code);
-            buildAndroidProject(siteId, code, name);
+//            getAndroidFlavors(siteId, name, code);
+//            buildAndroidProject(siteId, code, name);
         }
 
         LOG.info(String.format("共 %d 个站点", sites.length));
 
-        try {
-            // 调用默认程序打开文件
-            Desktop.getDesktop().open(new File(ROOT_PATH + "android/Flavors.go"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } finally {
-            try {
-                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.go"));
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
+//        try {
+//            // 调用默认程序打开文件
+//            Desktop.getDesktop().open(new File(ROOT_PATH + "android/Flavors.go"));
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//        } finally {
+//            try {
+//                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.go"));
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//        }
     }
 
     /**
