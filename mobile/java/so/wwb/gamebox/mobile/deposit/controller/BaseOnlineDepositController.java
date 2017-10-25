@@ -130,9 +130,9 @@ public class BaseOnlineDepositController extends BaseDepositController {
      */
     Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
         if (result.hasErrors()) {
-            Map<String, Object> messageMap = new HashMap<>(2,1f);
+            Map<String, Object> messageMap = new HashMap<>(2, 1f);
             messageMap.put("state", false);
-            messageMap.put("msg", LocaleTool.tranMessage("deposit_auto","请检查提交的数据是否正确"));
+            messageMap.put("msg", LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
             return messageMap;
         }
 
@@ -164,7 +164,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     }
 
     private Map<String, Object> getResultMsg(boolean isSuccess, String msg, String transactionNo) {
-        Map<String, Object> map = new HashMap<>(3,1f);
+        Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("state", isSuccess);
         if (isSuccess) {
             map.put("orderNo", transactionNo);
@@ -320,7 +320,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
      * 查询符合玩家条件收款账号
      */
     List<PayAccount> searchPayAccount(String type, String accountType) {
-        Map<String, Object> map = new HashMap<>(4,1f);
+        Map<String, Object> map = new HashMap<>(4, 1f);
         map.put("playerId", SessionManager.getUserId());
         map.put("type", type);
         map.put("accountType", accountType);
@@ -337,18 +337,18 @@ public class BaseOnlineDepositController extends BaseDepositController {
     private PayAccount getScanCodePayAccount(PlayerRank rank, String rechargeType) {
         PayAccount payAccount = null;
         if (RechargeTypeEnum.ALIPAY_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode());
+            payAccount = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), rechargeType);
         } else if (RechargeTypeEnum.WECHATPAY_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.WECHAT.getCode());
+            payAccount = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), rechargeType);
         } else if (RechargeTypeEnum.QQWALLET_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode());
+            payAccount = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), rechargeType);
         }
         return payAccount;
     }
 
-    PayAccount getScanPay(PlayerRank rank, String accountType) {
+    PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
         List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), accountType);
-        return getRotationOnlinePayAccount(rank, payAccounts);
+        return getRotationOnlinePayAccount(rank, payAccounts, rechargeType);
     }
 
     /**
@@ -382,20 +382,22 @@ public class BaseOnlineDepositController extends BaseDepositController {
         List<String> channels = (List<String>) CollectionTool.intersection(currencyChannels, bankChannels);
 
         List<PayAccount> pAccounts = CollectionQueryTool.inQuery(payAccounts, PayAccount.PROP_BANK_CODE, channels);
-        return getRotationOnlinePayAccount(rank, pAccounts);
+        return getRotationOnlinePayAccount(rank, pAccounts, RechargeTypeEnum.ONLINE_DEPOSIT.getCode());
     }
 
     /**
      * 获取收款账号（根据轮流入款获取指定收款账号）
      * 金流顺序
      */
-    PayAccount getRotationOnlinePayAccount(PlayerRank rank, List<PayAccount> payAccounts) {
+    PayAccount getRotationOnlinePayAccount(PlayerRank rank, List<PayAccount> payAccounts, String rechargeType) {
         if (CollectionTool.isEmpty(payAccounts)) {
             return null;
         }
         //轮流打开，根据最后一条线上支付存款记录确认收款账号
         if (rank.getIsTakeTurns() == null || rank.getIsTakeTurns()) {
-            Integer payAccountId = ServiceTool.playerRechargeService().searchLastPayAccountId(new PlayerRechargeVo());
+            PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+            playerRechargeVo.getSearch().setRechargeType(rechargeType);
+            Integer payAccountId = ServiceTool.playerRechargeService().searchLastPayAccountId(playerRechargeVo);
             if (payAccountId == null) {
                 return payAccounts.get(0);
             } else {

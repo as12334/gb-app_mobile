@@ -47,17 +47,17 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
         PayAccount payAccountForScan = null;
         if (ALIPAY.equals(type)) {
             //支付宝收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode());
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
             model.addAttribute("scanPay", RechargeTypeEnum.ALIPAY_SCAN.getCode());
         }
         if (WECHATPAY.equals(type)) {
             //微信支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.WECHAT.getCode());
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), RechargeTypeEnum.WECHATPAY_SCAN.getCode());
             model.addAttribute("scanPay", RechargeTypeEnum.WECHATPAY_SCAN.getCode());
         }
         if (QQWALLET.equals(type)) {
             //微信支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode());
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_SCAN.getCode());
             model.addAttribute("scanPay", RechargeTypeEnum.QQWALLET_SCAN.getCode());
         }
         model.addAttribute("payAccountForScan", payAccountForScan);
