@@ -24,6 +24,7 @@ import so.wwb.gamebox.model.master.enums.RankFeeType;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
@@ -120,6 +121,22 @@ public class BaseDepositController extends BaseCommonDepositController {
         //玩家非首存，查询存就送优惠
         List<VActivityMessage> activityList = CollectionQueryTool.query(vActivityMessages, Criteria.add(VActivityMessage.PROP_CODE, Operator.EQ, ActivityTypeEnum.DEPOSIT_SEND.getCode()));
         return setClassifyKeyName(activityList);
+    }
+
+    /**
+     * 获取优惠
+     *
+     * @param type
+     * @return
+     */
+    public List<VActivityMessage> searchSales(String type) {
+        if (StringTool.isBlank(type)) {
+            return null;
+        }
+        VActivityMessageListVo listVo = new VActivityMessageListVo();
+        listVo.getSearch().setDepositWay(type);
+        listVo = playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        return setClassifyKeyName(listVo.getResult());
     }
 
     /**

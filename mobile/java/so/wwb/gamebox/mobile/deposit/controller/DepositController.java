@@ -119,6 +119,8 @@ public class DepositController extends BaseCommonDepositController {
         }
 
         fastRecharge(payAccountMap);
+        //是否支持数字货币
+        model.addAttribute("digiccyAccountInfo", ParamTool.getDigiccyAccountInfo());
         model.addAttribute("payAccountMap", payAccountMap);
         model.addAttribute("isLotterySite", ParamTool.isLotterySite());
         return DEPOSIT_URI;

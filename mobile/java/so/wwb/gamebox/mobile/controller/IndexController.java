@@ -12,6 +12,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.qrcode.QrcodeDisTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
@@ -23,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -31,7 +31,6 @@ import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
-import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
@@ -118,7 +117,7 @@ public class IndexController extends BaseApiController {
 
     // 彩票站-彩票
     private List<Map<String, String>> getLottery(HttpServletRequest request, Integer pageSize) {
-        String terminal = fetchTerminalType(request);
+        String terminal = SessionManagerCommon.fetchTerminalType(request);
         List<Map<String, String>> lotteryList = new ArrayList<>();
         List<SiteLottery> lotteries = Cache.getNormalSiteLottery(terminal, SessionManagerCommon.getSiteId());
         if (!CollectionTool.isEmpty(lotteries)) {
@@ -140,18 +139,6 @@ public class IndexController extends BaseApiController {
         return lotteryList;
     }
 
-    private String fetchTerminalType(HttpServletRequest request) {
-        String userAgent = request.getHeader("USER-AGENT");
-        boolean fromMobile = HttpTool.checkMobile(userAgent);
-        String terminalType = "";
-        if (fromMobile) {
-            terminalType = TerminalEnum.MOBILE.getCode();
-        } else {
-            terminalType = TerminalEnum.PC.getCode();
-        }
-        return terminalType;
-    }
-
     private List<SiteApiType> getApiTypes() {
         Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
         return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
@@ -165,6 +152,7 @@ public class IndexController extends BaseApiController {
     private List<Map> getCarousel(HttpServletRequest request) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
+        String webSite= ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
                 if (CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type"))) {
@@ -174,7 +162,7 @@ public class IndexController extends BaseApiController {
                             if (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true) {
                                 String link = String.valueOf(m.get("link"));
                                 if (StringTool.isNotBlank(link) && link.contains("${website}")) {
-                                    link = link.replace("${website}", HttpTool.getDomain(request.getRequestURL().toString()));
+                                    link = link.replace("${website}", webSite);
                                 }
                                 m.put("link", link);
                                 resultList.add(m);
@@ -374,8 +362,8 @@ public class IndexController extends BaseApiController {
         AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
         if (iosApp != null) {
             String versionName = iosApp.getVersionName();
-            String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/app_%s_%s.plist", iosApp.getAppUrl(),
-                    versionName, code, versionName);
+            String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", iosApp.getAppUrl(),
+                    versionName, code, code, versionName);
             model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
             model.addAttribute("iosUrl", url);
         }
