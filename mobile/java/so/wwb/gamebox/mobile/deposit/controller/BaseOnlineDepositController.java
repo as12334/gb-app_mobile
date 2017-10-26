@@ -5,6 +5,7 @@ import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.string.RandomStringTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -149,7 +150,15 @@ public class BaseOnlineDepositController extends BaseDepositController {
             return getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(),
                     MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
         }
-
+        boolean randomAmount = payAccount.getRandomAmount();
+        if (randomAmount){
+            Double rechargeAmount = playerRecharge.getRechargeAmount();
+            if (rechargeAmount.intValue() == rechargeAmount){
+                double random = Double.parseDouble(RandomStringTool.random(2,11,99,false,true))*0.01;
+                rechargeAmount+= random;
+                playerRecharge.setRechargeAmount(rechargeAmount);
+            }
+        }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
                 playerRechargeVo.getResult().getRechargeType());
         if (playerRechargeVo.isSuccess()) {
