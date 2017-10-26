@@ -22,7 +22,7 @@
             </header>
         </c:if>
         <center>
-            <img src="${resRoot}/lottery/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
+            <img src="${resRoot}/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
         </center>
         </body>
     </c:when>

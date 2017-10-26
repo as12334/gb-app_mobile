@@ -58,6 +58,7 @@
                             <p class="no-account">${views.passport_auto['没有账号']}？</p>
                             <div class="login-line"></div>
                             <button class="mui-btn mui-btn-primary btn-reg" data-href="/signUp/index.html" type="button">${views.passport_auto['免费开户']}</button>
+                            <button class="mui-btn mui-btn-primary btn-reg btn-demo" type="button">${views.passport_auto['免费试玩']}</button>
                         </div>
                     </div>
                 </div>
@@ -76,4 +77,5 @@
 <script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/jquery/jquery-2.1.1.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/global.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/plugin/layer.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/passport/Login.js?v=${rcVersion}"></script>

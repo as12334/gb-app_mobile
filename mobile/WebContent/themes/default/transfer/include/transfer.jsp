@@ -9,11 +9,11 @@
                 <c:if test="${os ne 'app_ios'}">
                     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
                 </c:if>
-                <h1 class="mui-title">${views.transfer_auto['额度转换']}</h1>
+                <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
             </header>
         </c:if>
         <center>
-            <img src="${resRoot}/lottery/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
+            <img src="${resRoot}/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
         </center>
         </body>
     </c:when>
