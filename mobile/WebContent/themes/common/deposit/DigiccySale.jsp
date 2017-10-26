@@ -26,9 +26,8 @@
                 <input type="hidden" name="search.transactionNo" value="${playerRecharge.transactionNo}"/>
             </div>
         </div>
-        <div class="pro-btn">
+        <div class="pro-btn" style="text-align: center;">
             <a class="next-btn" id="confirmSale" sale-url="${root}/wallet/deposit/digiccy/saveSale.html">${views.themes_auto['确认']}</a>
-            <a class="agin-btn" id="cancelSale">${views.themes_auto['取消']}</a>
         </div>
         <div class="close">
         </div>
