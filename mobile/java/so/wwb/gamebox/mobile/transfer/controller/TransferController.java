@@ -272,7 +272,7 @@ public class TransferController extends WalletBaseController {
         if (playerTransferVo.getResult().getTransferAmount() <= 0) {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_ERROR_AMOUNT.getCode(), playerTransferVo.getResult().getApiId());
         }
-        if (isDemo()) {//如果是demo，不让转账
+        if (!ParamTool.isAllowTransfer(SessionManager.getSiteId())) {//站点是否允许转账
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_SWITCH_CLOSE.getCode(), playerTransferVo.getResult().getApiId());
         }
         Integer apiId = playerTransferVo.getResult().getApiId();
@@ -298,16 +298,6 @@ public class TransferController extends WalletBaseController {
      */
     private boolean isMaintain(Api api, SiteApi siteApi) {
         return GameStatusEnum.DISABLE.getCode().equals(api.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(api.getSystemStatus()) || GameStatusEnum.DISABLE.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(siteApi.getSystemStatus());
-    }
-
-    /**
-     * 判断站点是否是demo
-     *
-     * @return
-     */
-    private boolean isDemo() {
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.IS_DEMO);
-        return sysParam != null && sysParam.getParamValue().equals("true");
     }
 
     /**
