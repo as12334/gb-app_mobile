@@ -48,7 +48,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/mine")
-public class MyController {
+public class MineController {
     private static final String MY_INDEX = "/mine/Mine";
     private static final String GAME_PAGE = "/my/GamePage";
     private static final int PROMO_RECORD_DAYS = -7;

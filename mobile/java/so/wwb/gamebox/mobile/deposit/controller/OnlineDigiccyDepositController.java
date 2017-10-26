@@ -153,17 +153,15 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
     public Map<String, Object> saveSale(PlayerRechargeVo playerRechargeVo) {
         String transactionNo = playerRechargeVo.getSearch().getTransactionNo();
         Integer activityId = playerRechargeVo.getActivityId();
-        Map<String, Object> map = new HashMap<>(2, 1f);
+        Map<String, Object> map = new HashMap<>(1, 1f);
         if (StringTool.isBlank(transactionNo)) {
             LOG.info("保存数字货币优惠参数不全:没有指定交易号");
             map.put("state", false);
-            map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.digiccyRecharge.applySaleFail", new Object[0]));
             return map;
         }
         if (activityId == null) {
             map.put("state", true);
             LOG.info("保存数字货币优惠:玩家未选择优惠,交易号{0}", transactionNo);
-            map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.digiccyRecharge.applySaleSuccess", new Object[0]));
             return map;
         }
         playerRechargeVo.setSysUser(SessionManager.getUser());
@@ -174,11 +172,6 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
             LOG.error(e);
         }
         map.put("state", playerRechargeVo.isSuccess());
-        if (playerRechargeVo.isSuccess()) {
-            map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.digiccyRecharge.applySaleSuccess", new Object[0]));
-        } else {
-            map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.digiccyRecharge.applySaleFail", new Object[0]));
-        }
         return map;
     }
 

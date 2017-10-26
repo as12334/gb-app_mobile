@@ -10,39 +10,60 @@
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
 </head>
 <body class="gb-theme mine-page">
-<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
-    <!-- 主页面容器 -->
-    <div class="mui-inner-wrap">
+
+<c:choose>
+    <c:when test="${isDemo}">
+        <body class="gb-theme mine-page no-backdrop" >
         <c:if test="${os ne 'android'}">
             <header class="mui-bar mui-bar-nav">
                 <c:if test="${os ne 'app_ios'}">
-                    <%@ include file="/include/include.toolbar.jsp" %>
+                    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
                 </c:if>
                 <h1 class="mui-title">${views.transfer_auto['资金管理转账']}</h1>
-                <%@ include file="/themes/default/include/include.asset.jsp" %>
             </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''}>
-            <div class="mui-scroll">
-                <%--转账--%>
-                <div id="transfer">
-                    <%@include file="./include/transfer.jsp" %>
-                </div>
-                <%--api余额--%>
+        <center>
+            <img src="${resRoot}/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
+        </center>
+        </body>
+    </c:when>
+    <c:otherwise>
+        <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
+            <!-- 主页面容器 -->
+            <div class="mui-inner-wrap">
+                <c:if test="${os ne 'android'}">
+                    <header class="mui-bar mui-bar-nav">
+                        <c:if test="${os ne 'app_ios'}">
+                            <%@ include file="/include/include.toolbar.jsp" %>
+                        </c:if>
+                        <h1 class="mui-title">${views.transfer_auto['资金管理转账']}</h1>
+                        <%@ include file="/themes/default/include/include.asset.jsp" %>
+                    </header>
+                </c:if>
+                <div class="mui-content mui-scroll-wrapper" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''}>
+                    <div class="mui-scroll">
+                            <%--转账--%>
+                        <div id="transfer">
+                            <%@include file="./include/transfer.jsp" %>
+                        </div>
+                            <%--api余额--%>
 
-                <div class="mui-row" style="height: 30px;">
-                    <button id="refreshAllApiBalance" class="mui-btn mui-pull-right"
-                            style="margin-right: 10px;font-size: 12px; padding: 3px 10px;line-height: 1.4;">${views.transfer_auto['刷新余额']}
-                    </button>
+                        <div class="mui-row" style="height: 30px;">
+                            <button id="refreshAllApiBalance" class="mui-btn mui-pull-right"
+                                    style="margin-right: 10px;font-size: 12px; padding: 3px 10px;line-height: 1.4;">${views.transfer_auto['刷新余额']}
+                            </button>
+                        </div>
+                        <div id="apiBalance">
+                            <%@include file="./include/api.jsp" %>
+                        </div>
+                    </div>
                 </div>
-                <div id="apiBalance">
-                    <%@include file="./include/api.jsp" %>
-                </div>
+                <div class="mui-off-canvas-backdrop"></div>
             </div>
         </div>
-        <div class="mui-off-canvas-backdrop"></div>
-    </div>
-</div>
+    </c:otherwise>
+</c:choose>
+
 </body>
 <%@ include file="/include/include.base.js.common.jsp" %>
 <script type="text/javascript"

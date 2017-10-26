@@ -51,10 +51,10 @@ public class OnlineDepositController extends BaseOnlineDepositController {
         List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(),
                 PayAccountAccountType.THIRTY.getCode());
         Map<String, PayAccount> payAccountMap = getOnlinePayAccountMap(pr, payAccounts);
-        if (payAccountMap != null && payAccountMap.size()>0) {
+        if (payAccountMap != null && payAccountMap.size() > 0) {
             model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
             //收款账号
-            getOnlineAccounts(model,payAccountMap);
+            getOnlineAccounts(model, payAccountMap);
             model.addAttribute("rank", pr);
             model.addAttribute("currency", getCurrencySign());
             model.addAttribute("rechargeType", RechargeTypeEnum.ONLINE_DEPOSIT.getCode());
@@ -63,7 +63,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
         return ONLINE_URI;
     }
 
-    private void getOnlineAccounts(Model model,Map<String, PayAccount> payAccountMap) {
+    private void getOnlineAccounts(Model model, Map<String, PayAccount> payAccountMap) {
         List<Map<String, String>> bankList = new ArrayList<>();
         Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString())
                 .get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
@@ -71,7 +71,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
         for (Map.Entry<String, PayAccount> entry : entrySet) {
             String bankCode = entry.getKey();
             PayAccount payAccount = entry.getValue();
-            Map<String, String> map = new HashMap<>(4,1f);
+            Map<String, String> map = new HashMap<>(4, 1f);
             map.put("value", bankCode);
             map.put("text", i18nMap.get(bankCode));
             map.put("min", payAccount.getSingleDepositMin() == null ? null : CurrencyTool.formatCurrency(payAccount.getSingleDepositMin()));
@@ -128,7 +128,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
                 continue;
             }
             List<PayAccount> pAccounts = CollectionQueryTool.inQuery(payAccounts, PayAccount.PROP_BANK_CODE, channels);
-            PayAccount payAccount = getRotationOnlinePayAccount(rank, pAccounts);
+            PayAccount payAccount = getRotationOnlinePayAccount(rank, pAccounts, RechargeTypeEnum.ONLINE_DEPOSIT.getCode());
             if (payAccount != null) {
                 payAccountMap.put(bank.getBankName(), payAccount);
             }

@@ -6,7 +6,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelation;
 import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
 import so.wwb.gamebox.web.cache.Cache;
-import so.wwb.gamebox.web.lottery.controller.LotteryDemoController;
+import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import java.util.Map;
  *
  * Created by LeTu on 2017/3/31.
  */
-public abstract class BaseApiController extends LotteryDemoController {
+public abstract class BaseApiController extends BaseDemoController {
 
     List<Map<String,Object>> getApiType() {
         List<SiteApiTypeRelationI18n> relationI18ns;

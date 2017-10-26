@@ -55,6 +55,7 @@ import so.wwb.gamebox.web.defense.biz.annotataion.Defense;
 import so.wwb.gamebox.web.defense.biz.enums.DefenseAction;
 import so.wwb.gamebox.web.defense.core.DefenseRs;
 import so.wwb.gamebox.web.defense.core.IDefenseRs;
+import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +69,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/signUp")
-public class SignUpController {
+public class SignUpController extends BaseDemoController {
 
     private static final Log LOG = LogFactory.getLog(SignUpController.class);
 
@@ -495,4 +496,8 @@ public class SignUpController {
         userRegisterVo.getSysUser().setRegisterSite(domain);
     }
 
+    @Override
+    protected String getDemoIndex() {
+        return "/";
+    }
 }
