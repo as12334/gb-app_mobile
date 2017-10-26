@@ -30,7 +30,7 @@
                         <div class="mui-input-group mine-form m-t-sm">
                             <div class="mui-input-row title-wrap">
                                 <span class="title">${dicts.digiccy.digiccy_currency[i.currency]}</span>
-                                <span class="mui-pull-right m-r-sm">余额&nbsp;<span class="text-green ye-num"><fmt:formatNumber value="${empty i.amount?0:i.amount}" pattern="#.########"/></span>
+                                <span class="mui-pull-right m-r-sm">${views.themes_auto['余额']}&nbsp;<span class="text-green ye-num"><fmt:formatNumber value="${empty i.amount?0:i.amount}" pattern="#.########"/></span>
                                 <button type="button" class="mui-btn" name="refresh" currency="${i.currency}">${views.themes_auto['刷新']}</button></span>
                             </div>
 

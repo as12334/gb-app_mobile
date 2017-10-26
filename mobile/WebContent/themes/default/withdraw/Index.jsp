@@ -13,6 +13,26 @@
     <%@ include file="/include/include.js.jsp" %>
 </head>
 
-<%@ include file="/themes/common/withdraw/withdraw.index.jsp" %>
+
+<c:choose>
+    <c:when test="${isDemo}">
+        <body class="gb-theme mine-page no-backdrop" >
+        <c:if test="${os ne 'android'}">
+            <header class="mui-bar mui-bar-nav">
+                <%@ include file="/include/include.toolbar.jsp" %>
+                <h1 class="mui-title">${views.withdraw_auto['取款']}</h1>
+            </header>
+        </c:if>
+        <center>
+            <img src="${resRoot}/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
+        </center>
+        </body>
+    </c:when>
+    <c:otherwise>
+        <%@ include file="/themes/common/withdraw/withdraw.index.jsp" %>
+    </c:otherwise>
+</c:choose>
+
+
 
 </html>
