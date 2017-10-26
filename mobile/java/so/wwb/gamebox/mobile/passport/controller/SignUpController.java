@@ -95,13 +95,6 @@ public class SignUpController extends BaseDemoController {
         }
     };
 
-    @RequestMapping("/freeLogin")
-    @Defense(action = DefenseAction.PLAYER_REGISTER)
-    public String freeLogin(UserRegisterVo userRegisterVo, HttpServletRequest request) {
-        Map freeAccount = super.createFreeAccount(userRegisterVo, request);
-        return "/Index";
-    }
-
     /**
      * 跳转到注册页面
      *

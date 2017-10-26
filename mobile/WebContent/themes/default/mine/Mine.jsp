@@ -74,7 +74,7 @@
                             <div class="gb-userlist m-t-sm">
                                 <ul>
                                     <li>
-                                        <a  class="item" data-skip="/wallet/deposit/index.html" data-target="1" data-os="${os}">
+                                        <a  class="item" data-skip="/wallet/deposit/index.html" data-target="1" data-os="${os}" data-demo="${S_DEMO_MODEL}">
                                             <p><img src="${resRoot}/images/my-ico1.png" style="width: 33px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['存款']}</p>
@@ -82,7 +82,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="" class="item" data-url="${root}/wallet/withdraw/index.html">
+                                        <a href="" class="item" data-url="${root}/wallet/withdraw/index.html" data-demo="${S_DEMO_MODEL}">
                                             <p><img src="${resRoot}/images/my-ico2.png" style="width: 28px;" alt=""></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['取款']}</p>
@@ -93,7 +93,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="item" data-skip="${root}/transfer/index.html" data-target="2" data-os="${os}">
+                                        <a class="item" data-skip="${root}/transfer/index.html" data-target="2" data-os="${os}" data-demo="${S_DEMO_MODEL}">
                                             <p><img src="${resRoot}/images/my-ico3.png" style="width: 42px;" alt=""></p>
                                             <div class="ct" data-url="mine-exchange.html">
                                                 <p>${views.mine_auto['额度转换']}</p>
@@ -152,7 +152,7 @@
                                 <ul>
                                     <c:if test="${isCash}">
                                         <li>
-                                            <a href="" class="item" data-url="${root}/bankCard/page/addCard.html">
+                                            <a href="" class="item" data-url="${root}/bankCard/page/addCard.html" data-demo="${S_DEMO_MODEL}">
                                                 <p><img src="${resRoot}/images/my-ico7.png" style="width: 31px;" alt=""></p>
                                                 <div class="ct">
                                                     <p>${views.mine_auto['银行卡']}</p>
@@ -168,7 +168,7 @@
                                     </c:if>
                                    <c:if test="${isBit}">
                                        <li>
-                                           <a href="" class="item" data-url="${root}/bankCard/page/addBtc.html">
+                                           <a href="" class="item" data-url="${root}/bankCard/page/addBtc.html" data-demo="${S_DEMO_MODEL}">
                                                <p><img src="${resRoot}/images/my-ico12.png" style="width: 33px;" alt=""></p>
                                                <div class="ct">
                                                    <p>${views.themes_auto['比特币钱包']}</p>
@@ -189,7 +189,7 @@
                                     </li>
                                     <c:if test="${len!=2}">
                                         <li>
-                                            <a class="item" data-url="${root}/passport/securityPassword/edit.html">
+                                            <a class="item" data-url="${root}/passport/securityPassword/edit.html" data-demo="${S_DEMO_MODEL}">
                                                 <p><img src="${resRoot}/images/my-ico11.png" style="width: 26px;"></p>
                                                 <div class="ct">
                                                     <p>${views.mine_auto['修改安全密码']}</p>
@@ -206,7 +206,7 @@
                                 <ul>
                                     <c:if test="${len==2}">
                                         <li>
-                                            <a class="item" data-url="${root}/passport/securityPassword/edit.html">
+                                            <a class="item" data-url="${root}/passport/securityPassword/edit.html" data-demo="${S_DEMO_MODEL}">
                                                 <p><img src="${resRoot}/images/my-ico11.png" style="width: 26px;"></p>
                                                 <div class="ct">
                                                     <p>${views.mine_auto['修改安全密码']}</p>
@@ -215,7 +215,7 @@
                                         </li>
                                     </c:if>
                                     <li>
-                                        <a class="item" data-url="${root}/my/password/editPassword.html">
+                                        <a class="item" data-url="${root}/my/password/editPassword.html" data-demo="${S_DEMO_MODEL}">
                                             <p><img src="${resRoot}/images/my-ico10.png" style="width: 30px;"></p>
                                             <div class="ct">
                                                 <p>${views.mine_auto['修改登录密码']}</p>

@@ -46,5 +46,16 @@
     <div class="user mui-hide _rightUnLogin">
         <a class="btn mui-btn mui-btn-outlined btn-login">${views.include_auto['登录']}</a>
         <a class="btn mui-btn mui-btn-outlined btn-register" data-href="/signUp/index.html">${views.include_auto['注册']}</a>
+        <a class="btn mui-btn mui-btn-outlined btn-try" >免费试玩</a>
     </div>
 </div>
+
+
+<script>
+    curl(['${resRoot}/js/freetry','site/game/ApiLogin'],
+        function (Page,ApiLogin) {
+            page = new Page();
+            page.apiLogin = new ApiLogin();
+        }
+    );
+</script>
