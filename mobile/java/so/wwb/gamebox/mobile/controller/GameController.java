@@ -8,6 +8,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
@@ -15,7 +16,6 @@ import org.soul.commons.query.sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -292,7 +292,7 @@ public class GameController {
      */
     @RequestMapping("/openGame")
     public String openGame(String apiId, String url, boolean first, boolean idx, Model model) {
-        model.addAttribute("url", HttpTool.formatUrl(url));
+        model.addAttribute("url", ServletTool.formatUrl(url));
         model.addAttribute("apiId", apiId);
         model.addAttribute("flag", 1);  // 显示关闭
         model.addAttribute("first", first);

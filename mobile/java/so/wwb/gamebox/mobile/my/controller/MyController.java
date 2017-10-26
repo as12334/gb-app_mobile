@@ -6,13 +6,13 @@ import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.math.NumberTool;
+import org.soul.commons.net.ServletTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.security.HttpTool;
 import so.wwb.gamebox.iservice.master.report.IPlayerRecommendAwardService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
@@ -69,7 +69,7 @@ public class MyController {
     public String gamePage(Model model, HttpServletRequest request) {
         String url = request.getParameter("url");
         if (StringTool.isNotBlank(url)) {
-            model.addAttribute("url", HttpTool.formatUrl(url));
+            model.addAttribute("url", ServletTool.formatUrl(url));
         }
         return GAME_PAGE;
     }

@@ -56,7 +56,7 @@
                                                 </c:if>
                                             </c:forEach>
                                             <c:if test="${!empty digiccyAccountInfo}">
-                                                <li><a data-bitcoin="/wallet/deposit/digiccy/index.html">数字货币支付</a></li>
+                                                <li><a data-bitcoin="/wallet/deposit/digiccy/index.html">${views.themes_auto['数字货币支付']}</a></li>
                                             </c:if>
                                         </ul>
                                         <div class="clearfix"></div>
