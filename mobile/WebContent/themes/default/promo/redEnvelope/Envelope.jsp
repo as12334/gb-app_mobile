@@ -30,7 +30,7 @@
                 ${views.promo_auto['获得了0元']}
             </p>
             <%--<input class="inputClass btnFont" onclick="applyMoney()" id="haveAwardPageBtn_2" value="" type="button"/>--%>
-            <input class="inputClass btnFont" onclick="closePage('haveAwardPage','lotteryPage')" id="noAwardPageBtn_1" type="button"/>
+            <input class="inputClass btnFont" onclick="onceAgain()" id="haveAwardPageBtn_2" type="button"/>
         </div>
         <!--规则页面-->
         <div class="divBg divClass" id="explainPage">

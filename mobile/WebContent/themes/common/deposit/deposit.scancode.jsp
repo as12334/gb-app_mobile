@@ -27,6 +27,12 @@
                                name="result.rechargeAmount" id="result.rechargeAmount" autocomplete="off"/>
                     </div>
                 </div>
+                <!--随机额度提示-->
+                <c:if test="${payAccountForScan.randomAmount eq true}">
+                <div class="mui-input-row" id="randomAmountMsg">
+                    <input style="width: 200px;" type="randomAmountMsg"  name="randomAmountMsg" value="当前支付方式已开启随机额度！" disabled/>
+                </div>
+                </c:if>
                 <%@include file="./ChooseAmount.jsp"%>
             </div>
             <div class="mui-row">
