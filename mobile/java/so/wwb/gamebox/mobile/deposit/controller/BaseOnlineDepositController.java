@@ -150,13 +150,15 @@ public class BaseOnlineDepositController extends BaseDepositController {
             return getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(),
                     MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
         }
-        boolean randomAmount = payAccount.getRandomAmount();
-        if (randomAmount){
-            Double rechargeAmount = playerRecharge.getRechargeAmount();
-            if (rechargeAmount.intValue() == rechargeAmount){
-                double random = Double.parseDouble(RandomStringTool.random(2,11,99,false,true))*0.01;
-                rechargeAmount+= random;
-                playerRecharge.setRechargeAmount(rechargeAmount);
+        if (payAccount.getRandomAmount()!=null) {
+            boolean randomAmount = payAccount.getRandomAmount();
+            if (randomAmount) {
+                Double rechargeAmount = playerRecharge.getRechargeAmount();
+                if (rechargeAmount.intValue() == rechargeAmount) {
+                    double random = Double.parseDouble(RandomStringTool.random(2, 11, 99, false, true)) * 0.01;
+                    rechargeAmount += random;
+                    playerRecharge.setRechargeAmount(rechargeAmount);
+                }
             }
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
