@@ -27,7 +27,7 @@ public class OnlineScanDepositForm implements IForm {
     @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "单笔存款最低为{0}，最高为{1}", checkClass = OnlineScanDepositController.class, checkMethod = "checkScanCodeAmount", additionalProperties = {"result.rechargeType"})
     @Max(message = "deposit_auto.单笔存款最高为99", value = 99999999)
-    @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 1)
+    @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 0)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }

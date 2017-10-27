@@ -29,7 +29,7 @@ public class DepositForm implements IForm {
     @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = OnlineDepositController.class, checkMethod = "checkAmount", additionalProperties = {"result.payerBank"})
     @Max(message = "valid.rechargeForm.rechargeAmountMax", value = 99999999)
-    @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 1)
+    @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 0)
     @Comment("存款金额")
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
