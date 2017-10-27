@@ -223,5 +223,14 @@ public class ServiceTool extends ServiceToolBase {
     public static IAutoTranferServcice getAutoTranferServcice() {
         return getService(IAutoTranferServcice.class);
     }
+    /**
+     * 返回内容管理-浮动图片表远程服务实例
+     *
+     * @return 内容管理-浮动图片表远程服务实例
+     */
+    public static so.wwb.gamebox.iservice.master.content.ICttFloatPicService cttFloatPicService() {
+        return getService(so.wwb.gamebox.iservice.master.content.ICttFloatPicService.class);
+    }
+
     //endregion your codes 1
 }

@@ -17,7 +17,9 @@ import org.soul.commons.qrcode.QrcodeDisTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
+import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,9 +48,13 @@ import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
 import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
 import so.wwb.gamebox.model.master.content.po.CttDocumentI18n;
+import so.wwb.gamebox.model.master.content.po.CttFloatPic;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
+import so.wwb.gamebox.model.master.content.vo.CttFloatPicVo;
+import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -112,8 +118,79 @@ public class IndexController extends BaseApiController {
             model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+        showMoneyActivityFloat(model);
         return "/Index";
     }
+
+    /**
+     * 显示红包浮动图
+     * @param model
+     */
+    private void showMoneyActivityFloat(Model model){
+        CttFloatPic cttFloatPic = queryMoneyActivityFloat();
+        if(cttFloatPic!=null){
+            model.addAttribute("showMoneyActivityFloat",true);
+            PlayerActivityMessage moneyActivity = findMoneyActivity();
+            if(moneyActivity!=null){
+                model.addAttribute("moneyActivity",moneyActivity);
+                String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
+                model.addAttribute("activityId",activityId);
+            }
+        }
+    }
+
+    /**
+     * 查找红包活动
+     * @return
+     */
+    private PlayerActivityMessage findMoneyActivity(){
+        Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
+        String lang = SessionManagerBase.getLocale().toString();
+        Iterator<String> iter = activityMessages.keySet().iterator();
+        Date justNow = new Date();
+        PlayerActivityMessage playerActivityMessage = null;
+        while(iter.hasNext()){
+            String key = iter.next();
+            if(key.endsWith(lang)){
+                playerActivityMessage = activityMessages.get(key);
+                Date startTime = playerActivityMessage.getStartTime();
+                Date endTime = playerActivityMessage.getEndTime();
+                if(!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())){
+                    //不是红包活动继续
+                    continue;
+                }
+                if(playerActivityMessage.getIsDeleted()){
+                    continue;
+                }
+                if(!playerActivityMessage.getIsDisplay()){
+                    continue;
+                }
+                if(startTime.before(justNow)&&justNow.before(endTime)){
+                    return playerActivityMessage;
+                }
+
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 查询红包浮动图
+     */
+    private CttFloatPic queryMoneyActivityFloat(){
+        Map<String, CttFloatPic> floatPicMap = Cache.getFloatPic();
+        Iterator<String> iter = floatPicMap.keySet().iterator();
+        CttFloatPic tempFloatPic = null;
+        while (iter.hasNext()){
+            String key = iter.next();
+            CttFloatPic cttFloatPic = floatPicMap.get(key);
+            if("2".equals(cttFloatPic.getPicType())&&cttFloatPic.getStatus()){
+                tempFloatPic = cttFloatPic;
+            }
+        }
+        return tempFloatPic;
+    }
+
 
     // 彩票站-彩票
     private List<Map<String, String>> getLottery(HttpServletRequest request, Integer pageSize) {

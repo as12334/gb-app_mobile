@@ -66,12 +66,11 @@
                 </c:if>
             </nav>
 
-            <%@ include file="./redEnvelope/Envelope.jsp" %>
+
 
             <div class="mui-off-canvas-backdrop"></div>
         </div>
     </div>
 </body>
 <soul:import res="site/promo/PromoDetail"/>
-<script src="${resRoot}/js/promo/redEnvelope/Envelope.js?v=${rcVersion}"></script>
 </html>
