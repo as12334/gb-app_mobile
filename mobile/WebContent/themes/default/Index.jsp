@@ -29,6 +29,24 @@
 
         <!--底部-->
         <%@include file="/themes/default/include/include.footer.jsp" %>
+        <!--浮窗广告轮播-->
+        <div class="ads-slider">
+            <a href="javascript:" class="close-ads"></a>
+            <div class="mui-slider">
+                <div class="mui-slider-group">
+                    <c:if test="${not empty activityId && not empty cttFloatPicItem}">
+                        <div class="mui-slider-item"><a href="javascript:void(0)" id="float_idx"><img src="${resRoot}/images/ads-banner-01.png" /></a></div>
+                    </c:if>
+                    <%--<div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png" /></a></div>--%>
+                </div>
+                <div class="mui-slider-indicator">
+                    <c:if test="${not empty activityId}">
+                        <div class="mui-indicator mui-active"></div>
+                    </c:if>
+                    <%--<div class="mui-indicator"></div>--%>
+                </div>
+            </div>
+        </div>
         <!-- 内容 -->
         <div class="index-content mui-content mui-scroll-wrapper _cacheContent" id="mui-refresh">
             <div class="mui-scroll">
