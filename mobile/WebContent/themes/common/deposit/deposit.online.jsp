@@ -40,7 +40,9 @@
                 <!--随机额度提示-->
                 <c:if test="${account.randomAmount eq true}">
                 <div class="mui-input-row" id="randomAmountMsg">
-                    <input style="width: 200px;" type="randomAmountMsg"  name="randomAmountMsg" value="当前支付方式已开启随机额度！" disabled/>
+                    <marquee scrollamount="5" direction="left" >
+                        <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="为了提高对账速度及成功率,当前支付方式已开启随机额度，整数存款金额将随机增加0.11~0.99元！" disabled/>
+                    </marquee>
                 </div>
                 </c:if>
                 <%@include file="./ChooseAmount.jsp"%>
