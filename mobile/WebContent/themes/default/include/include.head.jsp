@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.head.jsp" %>
+<link rel="stylesheet" type="text/css" href="${resRoot}/themes/hb/style.css?v=${rcVersion}" />
 <script>var siteType='default';</script>
 <c:choose>
     <c:when test="${siteId == 22 || siteId == 119 || siteId == 171}"> <!-- blue -->

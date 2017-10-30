@@ -45,10 +45,8 @@ import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
-import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
-import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
-import so.wwb.gamebox.model.master.content.po.CttDocumentI18n;
-import so.wwb.gamebox.model.master.content.po.CttFloatPic;
+import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
+import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.content.vo.CttFloatPicVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -118,25 +116,51 @@ public class IndexController extends BaseApiController {
             model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
-        showMoneyActivityFloat(model);
+
+        initFloatPic(model);
         return "/Index";
+    }
+
+    private void initFloatPic(Model model) {
+        List<Map> floatList = new ArrayList();
+        showMoneyActivityFloat(floatList);
+
+        model.addAttribute("floatList",floatList);
     }
 
     /**
      * 显示红包浮动图
-     * @param model
+     * @param floatList
      */
-    private void showMoneyActivityFloat(Model model){
+    private void showMoneyActivityFloat(List<Map> floatList){
         CttFloatPic cttFloatPic = queryMoneyActivityFloat();
         if(cttFloatPic!=null){
-            model.addAttribute("showMoneyActivityFloat",true);
             PlayerActivityMessage moneyActivity = findMoneyActivity();
+            CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
             if(moneyActivity!=null){
-                model.addAttribute("moneyActivity",moneyActivity);
                 String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
-                model.addAttribute("activityId",activityId);
+                Map floatMap = new HashMap();
+                floatMap.put("type","moneyActivity");
+                floatMap.put("activityId",activityId);
+                floatMap.put("floatItem",cttFloatPicItem);
+                floatList.add(floatMap);
             }
         }
+    }
+
+    private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic){
+        CttFloatPicItem item = null;
+        Map<String, CttFloatPicItem> floatPicItemMap = Cache.getFloatPicItem();
+        Iterator<String> iter = floatPicItemMap.keySet().iterator();
+        while (iter.hasNext()){
+            String key = iter.next();
+            CttFloatPicItem cttFloatPicItem = floatPicItemMap.get(key);
+            if(cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())){
+                item = cttFloatPicItem;
+                break;
+            }
+        }
+        return item;
     }
 
     /**
@@ -184,8 +208,9 @@ public class IndexController extends BaseApiController {
         while (iter.hasNext()){
             String key = iter.next();
             CttFloatPic cttFloatPic = floatPicMap.get(key);
-            if("2".equals(cttFloatPic.getPicType())&&cttFloatPic.getStatus()){
+            if(CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType())&&cttFloatPic.getStatus()){
                 tempFloatPic = cttFloatPic;
+                break;
             }
         }
         return tempFloatPic;

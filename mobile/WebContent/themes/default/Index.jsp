@@ -29,6 +29,36 @@
 
         <!--底部-->
         <%@include file="/themes/default/include/include.footer.jsp" %>
+        <!--浮窗广告轮播-->
+        <c:if test="${not empty floatList}">
+            <div class="ads-slider">
+                <a href="javascript:" class="close-ads"></a>
+                <div class="mui-slider">
+                    <div class="mui-slider-group">
+                        <c:forEach var="item" items="${floatList}">
+                            <c:if test="${item.type=='moneyActivity'}">
+                                <div class="mui-slider-item">
+                                    <a objectId="${item.activityId}" href="#" id="float_idx">
+                                        <img data-src="${soulFn:getImagePath(domain,item.floatItem.normalEffect)}" src="${soulFn:getThumbPath(domain,item.floatItem.normalEffect,0,0)}">
+                                    <%--<img src="${resRoot}/images/ads-banner-01.png" />--%>
+                                    </a>
+                                </div>
+                            </c:if>
+                            <%--<div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png" /></a></div>--%>
+                        </c:forEach>
+
+                    </div>
+                    <div class="mui-slider-indicator">
+                        <c:forEach var="item" items="${floatList}">
+                            <c:if test="${item.type=='moneyActivity'}">
+                                <div class="mui-indicator mui-active"></div>
+                            </c:if>
+                        </c:forEach>
+                        <%--<div class="mui-indicator"></div>--%>
+                    </div>
+                </div>
+            </div>
+        </c:if>
         <!-- 内容 -->
         <div class="index-content mui-content mui-scroll-wrapper _cacheContent" id="mui-refresh">
             <div class="mui-scroll">
