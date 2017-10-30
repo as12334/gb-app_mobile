@@ -123,24 +123,26 @@ public class IndexController extends BaseApiController {
 
     private void initFloatPic(Model model) {
         List<Map> floatList = new ArrayList();
-        showMoneyActivityFloat(model,floatList);
+        showMoneyActivityFloat(floatList);
 
         model.addAttribute("floatList",floatList);
     }
 
     /**
      * 显示红包浮动图
-     * @param model
+     * @param floatList
      */
-    private void showMoneyActivityFloat(Model model,List<Map> floatList){
+    private void showMoneyActivityFloat(List<Map> floatList){
         CttFloatPic cttFloatPic = queryMoneyActivityFloat();
         if(cttFloatPic!=null){
             PlayerActivityMessage moneyActivity = findMoneyActivity();
+            CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
             if(moneyActivity!=null){
                 String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
                 Map floatMap = new HashMap();
                 floatMap.put("type","moneyActivity");
                 floatMap.put("activityId",activityId);
+                floatMap.put("floatItem",cttFloatPicItem);
                 floatList.add(floatMap);
             }
         }
@@ -208,6 +210,7 @@ public class IndexController extends BaseApiController {
             CttFloatPic cttFloatPic = floatPicMap.get(key);
             if(CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType())&&cttFloatPic.getStatus()){
                 tempFloatPic = cttFloatPic;
+                break;
             }
         }
         return tempFloatPic;
