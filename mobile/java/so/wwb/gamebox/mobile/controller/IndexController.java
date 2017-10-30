@@ -116,25 +116,32 @@ public class IndexController extends BaseApiController {
             model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
-        showMoneyActivityFloat(model);
+
+        initFloatPic(model);
         return "/Index";
+    }
+
+    private void initFloatPic(Model model) {
+        List<Map> floatList = new ArrayList();
+        showMoneyActivityFloat(model,floatList);
+
+        model.addAttribute("floatList",floatList);
     }
 
     /**
      * 显示红包浮动图
      * @param model
      */
-    private void showMoneyActivityFloat(Model model){
+    private void showMoneyActivityFloat(Model model,List<Map> floatList){
         CttFloatPic cttFloatPic = queryMoneyActivityFloat();
         if(cttFloatPic!=null){
-            model.addAttribute("showMoneyActivityFloat",true);
-            CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
-            model.addAttribute("cttFloatPicItem",cttFloatPicItem);
             PlayerActivityMessage moneyActivity = findMoneyActivity();
             if(moneyActivity!=null){
-                model.addAttribute("moneyActivity",moneyActivity);
                 String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
-                model.addAttribute("activityId",activityId);
+                Map floatMap = new HashMap();
+                floatMap.put("type","moneyActivity");
+                floatMap.put("activityId",activityId);
+                floatList.add(floatMap);
             }
         }
     }
