@@ -19,7 +19,9 @@
                     ${views.promo_auto['剩余抽奖次数']}
                 </div>
                 <div style="text-align: center;font-size: 18px;color: #fff;" id="lottery_time_tip-msg" class="mui-hide">
-                    ${views.promo_auto['下次开始时间']}<br><span id="next_lottery_time"></span>
+                    ${views.promo_auto['下次开始时间']}<br>
+                        <span>${timeZone.getDisplayName()}</span><br>
+                        <span id="next_lottery_time"></span>
                 </div>
             </div>
         </div>
