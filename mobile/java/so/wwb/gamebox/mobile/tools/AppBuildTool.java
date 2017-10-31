@@ -136,7 +136,7 @@ public class AppBuildTool {
      */
     private static void getAppBuild(){
         String[] sites = new String[]{
-                "69,7cxt,一指通彩票",        "70,1wl5,天天彩票",          "71,8l6r,超博娱乐",        "76,XH5Z,澳门永利",
+                /*"69,7cxt,一指通彩票",        "70,1wl5,天天彩票",          "71,8l6r,超博娱乐",        "76,XH5Z,澳门永利",
                 "110,cabu,超博娱乐",         "111,74bk,新葡京娱乐场",     "112,SNRM,威尼斯人娱乐",    "113,jwdg,伟德娱乐",
                 "114,ojlj,金沙娱乐场",       "116,bldz,电子777娱乐",     "117,yytt,澳门威尼斯人",    "118,ys3q,澳门星际娱乐",
                 "119,nu9r,UEDBET",          "121,pnuw,太阳城集团",      "123,seck,皇家赌场",
@@ -164,10 +164,9 @@ public class AppBuildTool {
                 "233,87lr,金沙娱乐城",        "235,cspr,美高梅娱乐城",      "236,8gez,拉斯维加斯国际",   "802,98jb,凤凰彩票",
                 "237,akm1,金沙娱乐城",        "238,wlf6,BET365",          "803,yg9x,头彩",           "239,5e7b,云顶娱乐",
                 "805,yrxk,亿彩汇",            "251,e2ce,威尼斯人",         "252,pox4,COBO超博",       "253,7rda,澳门威尼斯人",
-//                "255,p0a7,澳门威尼斯人",
-                "256,vqwq,星博国际",          "257,wnmt,盛大国际",          "258,yqgk,金凯娱乐",
-//                "259,2ztl,拉斯维加斯",
-                "260,jzgy,拉斯维加斯"
+                "255,p0a7,澳门威尼斯人",       "256,vqwq,星博国际",          "257,wnmt,盛大国际",          "258,yqgk,金凯娱乐",*/
+                "259,2ztl,拉斯维加斯",
+//                "260,jzgy,拉斯维加斯"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
@@ -183,8 +182,8 @@ public class AppBuildTool {
             String name = sites[i].split(",")[2];
             getIosPlist(code, "3.0", siteId, name);
             getIosBuild(siteId, name, code);
-//            getAndroidFlavors(siteId, name, code);
-//            buildAndroidProject(siteId, code, name);
+            getAndroidFlavors(siteId, name, code);
+            buildAndroidProject(siteId, code, name);
         }
 
         LOG.info(String.format("共 %d 个站点", sites.length));
