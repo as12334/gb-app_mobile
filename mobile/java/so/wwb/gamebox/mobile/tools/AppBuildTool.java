@@ -17,7 +17,7 @@ public class AppBuildTool {
 
     private static final Log LOG = LogFactory.getLog(AppBuildTool.class);
 
-    private static final String ROOT_PATH = "/home/tony/app/";
+    private static final String ROOT_PATH = "/home/fei/app/";
 
     private static boolean isUpperCase(String code){
         for(int i = 0; i < code.length(); i++){
@@ -165,8 +165,8 @@ public class AppBuildTool {
                 "237,akm1,金沙娱乐城",        "238,wlf6,BET365",          "803,yg9x,头彩",           "239,5e7b,云顶娱乐",
                 "805,yrxk,亿彩汇",            "251,e2ce,威尼斯人",         "252,pox4,COBO超博",       "253,7rda,澳门威尼斯人",
                 "255,p0a7,澳门威尼斯人",       "256,vqwq,星博国际",         "257,wnmt,盛大国际",        "258,yqgk,金凯娱乐",
-                "259,2ztl,拉斯维加斯",        "260,jzgy,拉斯维加斯",*/        "261,xmwf,澳门威尼斯人",        "262,nt6y,9发bet",
-                "263,n6pg,太阳城集团",        "806,ywo4,万濠彩票",             "807,hjnl,凤凰彩票"
+                "259,2ztl,拉斯维加斯",        "260,jzgy,拉斯维加斯",        "261,xmwf,澳门威尼斯人",        "262,nt6y,9发bet",
+                "263,n6pg,太阳城集团",        "806,ywo4,万濠彩票",             "807,hjnl,凤凰彩票"*/    "265,x70n,美高梅"
 
         };
 
@@ -174,7 +174,7 @@ public class AppBuildTool {
 
         File flavor = new File(ROOT_PATH + "android/Flavors.go");
         if (flavor.exists()) flavor.delete();
-        File build = new File(ROOT_PATH + "ios/Build.go");
+        File build = new File(ROOT_PATH + "ios/Build.pch");
         if (build.exists()) build.delete();
 
         for (int i = 0; i < sites.length; i++) {
@@ -196,7 +196,7 @@ public class AppBuildTool {
 //            ioe.printStackTrace();
 //        } finally {
 //            try {
-//                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.go"));
+//                Desktop.getDesktop().open(new File(ROOT_PATH + "ios/Build.pch"));
 //            } catch (IOException ioe) {
 //                ioe.printStackTrace();
 //            }
@@ -317,12 +317,12 @@ public class AppBuildTool {
                 System.out.println("创建目录:" + path + "----成功");
             }
 
-            File file = new File(path + "/Build.go");
+            File file = new File(path + "/Build.pch");
             if (file.createNewFile()) {
-                System.out.println("创建文件: app/ios/Build.go！");
+                System.out.println("创建文件: app/ios/Build.pch！");
             }
 
-            appendConent(path + "/Build.go", builder.toString());
+            appendConent(path + "/Build.pch", builder.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
