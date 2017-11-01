@@ -18,6 +18,3 @@
         <link rel="stylesheet" type="text/css" href="${resRoot}/themes/default/style.css?v=${rcVersion}" />
     </c:otherwise>
 </c:choose>
-<input type="hidden" id="activityId" value="${activityId}">
-<%@ include file="../promo/redEnvelope/Envelope.jsp" %>
-<script src="${resRoot}/js/promo/redEnvelope/Envelope.js?v=${rcVersion}"></script>
