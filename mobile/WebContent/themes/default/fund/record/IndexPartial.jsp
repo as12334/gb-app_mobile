@@ -5,7 +5,19 @@
         <c:forEach items="${command.result}" var="s">
             <tr data-href="${root}/fund/record/details.html?searchId=${command.getSearchId(s.id)}">
                 <td><span class="text-gray">${soulFn:formatDateTz(s.createTime, DateFormat.DAY,timeZone)}</span></td>
-                <td><span class="text-green2">${soulFn:formatCurrency(s.transactionMoney)}</span></td>
+                <td>
+                    <c:set value="${s._describe}" var="_describe"/>
+                    <c:if test="${s.transactionMoney!=0}">
+                        <span class="text-green2">${soulFn:formatCurrency(s.transactionMoney)}</span>
+                    </c:if>
+                    <c:if test="${_describe['bitAmount']>0}">
+                        <c:if test="${s.transactionMoney!=0}">
+                            <br/>
+                        </c:if>
+                        <c:set var="digiccySymbol" value="${dicts.common.currency_symbol[_describe['bankCode']]}"/>
+                        <span class="text-green2">${empty digiccySymbol?'Ƀ':digiccySymbol}<fmt:formatNumber value="${_describe['bitAmount']}" pattern="#.########"/></span>
+                    </c:if>
+                </td>
                 <td>${dicts.common.transaction_type[s.transactionType]}</td>
                 <td>
                     <c:choose>
