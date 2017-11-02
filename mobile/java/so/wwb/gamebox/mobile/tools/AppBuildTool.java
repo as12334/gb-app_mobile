@@ -166,8 +166,8 @@ public class AppBuildTool {
                 "805,yrxk,亿彩汇",            "251,e2ce,威尼斯人",         "252,pox4,COBO超博",       "253,7rda,澳门威尼斯人",
                 "255,p0a7,澳门威尼斯人",       "256,vqwq,星博国际",         "257,wnmt,盛大国际",        "258,yqgk,金凯娱乐",
                 "259,2ztl,拉斯维加斯",        "260,jzgy,拉斯维加斯",        "261,xmwf,澳门威尼斯人",        "262,nt6y,9发bet",
-                "263,n6pg,太阳城集团",        "806,ywo4,万濠彩票",             "807,hjnl,凤凰彩票"*/    "265,x70n,美高梅"
-
+                "263,n6pg,太阳城集团",        "806,ywo4,万濠彩票",             "807,hjnl,凤凰彩票"     "265,x70n,美高梅"*/
+                "125,bqmn,464彩票"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id WHERE si.locale = 'zh_CN' AND si."type"='site_name' AND ss.status<>'2' AND ss.id not in (75,80) AND ss.id > 183 order by ss.id; */
