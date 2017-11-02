@@ -43,6 +43,12 @@ public class DepositController extends BaseCommonDepositController {
     private static final String WECHATPAY = "wechatpay";
     /*QQ钱包支付*/
     private static final String QQWALLET = "qqwallet";
+    /*京东钱包支付*/
+    private static final String JDWALLET = "jdwallet";
+    /*百度钱包支付*/
+    private static final String BDWALLET = "bdwallet";
+    /*一码付支付*/
+    private static final String ONECODEPAY = "onecodepay";
 
     private static final String OTHERFAST = "other";
 
@@ -123,6 +129,13 @@ public class DepositController extends BaseCommonDepositController {
         model.addAttribute("digiccyAccountInfo", ParamTool.getDigiccyAccountInfo());
         model.addAttribute("payAccountMap", payAccountMap);
         model.addAttribute("isLotterySite", ParamTool.isLotterySite());
+
+//        SysParam sysParam=ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_OPEN_ACCOUNTS);
+//        String isOpenAccounts= sysParam.getParamValue();
+////        if ("true".equals(isOpenAccounts)){
+//            model.addAttribute("isOpenAccounts",isOpenAccounts);
+//            model.addAttribute("payAccountsList",payAccounts);
+////        }
         return DEPOSIT_URI;
     }
 
@@ -145,12 +158,24 @@ public class DepositController extends BaseCommonDepositController {
                 tempMap.put(payAccount.getBankCode(), payAccount);
             }
         }
-        //调整顺序微信、支付宝、其他
+        //调整顺序微信、支付宝、京东、百度、一码付、其他
         if (tempMap.get(WECHATPAY) != null) {
             payAccountMap.put(RechargeTypeEnum.WECHATPAY_FAST.getCode(),tempMap.get(WECHATPAY));
         }
         if (tempMap.get(ALIPAY) != null) {
             payAccountMap.put(RechargeTypeEnum.ALIPAY_FAST.getCode(),tempMap.get(ALIPAY));
+        }
+        if(tempMap.get(QQWALLET) != null){
+            payAccountMap.put(RechargeTypeEnum.QQWALLET_FAST.getCode(),tempMap.get(QQWALLET));
+        }
+        if(tempMap.get(JDWALLET) != null){
+            payAccountMap.put(RechargeTypeEnum.JDWALLET_FAST.getCode(),tempMap.get(JDWALLET));
+        }
+        if(tempMap.get(BDWALLET) != null){
+            payAccountMap.put(RechargeTypeEnum.BDWALLET_FAST.getCode(),tempMap.get(BDWALLET));
+        }
+        if(tempMap.get(ONECODEPAY) != null){
+            payAccountMap.put(RechargeTypeEnum.ONECODEPAY_FAST.getCode(),tempMap.get(ONECODEPAY));
         }
         if (tempMap.get(OTHERFAST) != null) {
             payAccountMap.put(RechargeTypeEnum.OTHER_FAST.getCode(),tempMap.get(OTHERFAST));
