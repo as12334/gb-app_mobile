@@ -14,6 +14,18 @@
                 <c:if test="${payAccount.bankCode eq 'alipay'}">
                     ${views.deposit_auto['转账到支付宝']}
                 </c:if>
+                <c:if test="${payAccount.bankCode eq 'qqwallet'}">
+                    ${views.deposit_auto['转账到QQ钱包']}
+                </c:if>
+                <c:if test="${payAccount.bankCode eq 'jdwallet'}">
+                    ${views.deposit_auto['转账到京东钱包']}
+                </c:if>
+                <c:if test="${payAccount.bankCode eq 'bdwallet'}">
+                    ${views.deposit_auto['转账到百度钱包']}
+                </c:if>
+                <c:if test="${payAccount.bankCode eq 'onecodepay'}">
+                    ${views.deposit_auto['转账到一码付']}
+                </c:if>
                 <c:if test="${payAccount.bankCode eq 'other'}">
                     ${payAccount.customBankName}
                 </c:if>
@@ -42,6 +54,18 @@
                                                 </c:if>
                                                 <c:if test="${payAccount.bankCode eq 'alipay'}">
                                                     ${views.deposit_auto['支付宝二维码']}
+                                                </c:if>
+                                                <c:if test="${payAccount.bankCode eq 'qqwallet'}">
+                                                    ${views.deposit_auto['QQ钱包二维码']}
+                                                </c:if>
+                                                <c:if test="${payAccount.bankCode eq 'jdwallet'}">
+                                                    ${views.deposit_auto['京东钱包二维码']}
+                                                </c:if>
+                                                <c:if test="${payAccount.bankCode eq 'bdwallet'}">
+                                                    ${views.deposit_auto['百度钱包二维码']}
+                                                </c:if>
+                                                <c:if test="${payAccount.bankCode eq 'onecodepay'}">
+                                                    ${views.deposit_auto['一码付二维码']}
                                                 </c:if>
                                                 <c:if test="${payAccount.bankCode eq 'other'}">
                                                     ${views.themes_auto['二维码']}
@@ -123,6 +147,22 @@
                                         <c:if test="${payAccount.bankCode eq 'alipay'}">
                                             <c:set value="${views.deposit_auto['您的支付宝账号']}" var="n"></c:set>
                                             <c:set value="${views.deposit_auto['请输入支付宝账号']}" var="m"></c:set>
+                                        </c:if>
+                                        <c:if test="${payAccount.bankCode eq 'qqwallet'}">
+                                            <c:set value="${views.deposit_auto['您的QQ钱包账号']}" var="n"></c:set>
+                                            <c:set value="${views.deposit_auto['请输入QQ钱包账号']}" var="m"></c:set>
+                                        </c:if>
+                                        <c:if test="${payAccount.bankCode eq 'jdwallet'}">
+                                            <c:set value="${views.deposit_auto['您的京东钱包账号']}" var="n"></c:set>
+                                            <c:set value="${views.deposit_auto['请输入京东钱包账号']}" var="m"></c:set>
+                                        </c:if>
+                                        <c:if test="${payAccount.bankCode eq 'bdwallet'}">
+                                            <c:set value="${views.deposit_auto['您的百度钱包账号']}" var="n"></c:set>
+                                            <c:set value="${views.deposit_auto['请输入百度钱包账号']}" var="m"></c:set>
+                                        </c:if>
+                                        <c:if test="${payAccount.bankCode eq 'onecodepay'}">
+                                            <c:set value="${views.deposit_auto['您的一码付账号']}" var="n"></c:set>
+                                            <c:set value="${views.deposit_auto['请输入一码付账号']}" var="m"></c:set>
                                         </c:if>
                                         <c:if test="${payAccount.bankCode eq 'other'}">
                                             <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
