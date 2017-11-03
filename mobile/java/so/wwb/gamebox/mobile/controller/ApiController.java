@@ -27,6 +27,8 @@ import so.wwb.gamebox.model.company.site.po.VSiteApi;
 import so.wwb.gamebox.model.company.site.vo.VSiteApiListVo;
 import so.wwb.gamebox.model.company.site.vo.VSiteApiVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
+import so.wwb.gamebox.model.enums.DemoModelEnum;
+import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.CurrencyEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerApi;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
@@ -64,6 +66,19 @@ public class ApiController extends BaseApiController {
         setAccount(playerApiAccountVo, request);
 
         if (checkApiStatus(playerApiAccountVo)) {
+            DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
+            if(demoModel!=null){
+                //平台试玩免转不可用
+                //纯彩票试玩免转不可用
+                playerApiAccountVo.setTrial(true);
+                Integer apiId = playerApiAccountVo.getApiId();
+                if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)&&
+                        apiId!=Integer.valueOf(ApiProviderEnum.PL.getCode()) &&
+                        apiId!=Integer.valueOf(ApiProviderEnum.DWT.getCode())){
+                    //模拟账号免转可用
+                    playerApiAccountVo.setTrial(false);
+                }
+            }
             playerApiAccountVo = ServiceTool.playerApiAccountService().loginApi(playerApiAccountVo);
         } else {
             playerApiAccountVo.setLoginSuccess(false);
