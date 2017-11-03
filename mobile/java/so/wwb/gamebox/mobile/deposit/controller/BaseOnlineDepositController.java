@@ -408,6 +408,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (rank.getIsTakeTurns() == null || rank.getIsTakeTurns()) {
             PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
             playerRechargeVo.getSearch().setRechargeType(rechargeType);
+            playerRechargeVo.getSearch().setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
+            playerRechargeVo.setRankId(rank.getId());
             Integer payAccountId = ServiceTool.playerRechargeService().searchLastPayAccountId(playerRechargeVo);
             if (payAccountId == null) {
                 return payAccounts.get(0);
