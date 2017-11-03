@@ -72,9 +72,9 @@ public class ApiController extends BaseApiController {
                 //纯彩票试玩免转不可用
                 playerApiAccountVo.setTrial(true);
                 Integer apiId = playerApiAccountVo.getApiId();
-                if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)&&
-                        apiId!=Integer.valueOf(ApiProviderEnum.PL.getCode()) &&
-                        apiId!=Integer.valueOf(ApiProviderEnum.DWT.getCode())){
+                if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)&&(
+                        apiId==Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                                apiId==Integer.valueOf(ApiProviderEnum.DWT.getCode()))){
                     //模拟账号免转可用
                     playerApiAccountVo.setTrial(false);
                 }
