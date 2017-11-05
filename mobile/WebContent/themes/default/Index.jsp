@@ -7,9 +7,13 @@
     <%@ include file="/themes/default/include/include.head.jsp" %>
     <title>${siteName}</title>
     <%@ include file="/include/include.js.jsp" %>
+    <script src="${resRoot}/js/promo/redEnvelope/Envelope.js?v=${rcVersion}"></script>
 </head>
 
 <body class="gb-theme index">
+<input type="hidden" id="activityId" value="${activityId}">
+<%@ include file="promo/redEnvelope/Envelope.jsp" %>
+
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
@@ -38,10 +42,8 @@
                         <c:forEach var="item" items="${floatList}">
                             <c:if test="${item.type=='moneyActivity'}">
                                 <div class="mui-slider-item">
-                                    <a objectId="${item.activityId}" href="#" id="float_idx">
-                                        <img data-src="${soulFn:getImagePath(domain,item.floatItem.normalEffect)}" src="${soulFn:getThumbPath(domain,item.floatItem.normalEffect,0,0)}">
-                                    <%--<img src="${resRoot}/images/ads-banner-01.png" />--%>
-                                    </a>
+                                    <img class="float_idx" objectId="${item.activityId}" data-src="${soulFn:getImagePath(domain,item.floatItem.normalEffect)}"
+                                         src="${soulFn:getThumbPath(domain,item.floatItem.normalEffect,0,0)}">
                                 </div>
                             </c:if>
                             <%--<div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png" /></a></div>--%>
