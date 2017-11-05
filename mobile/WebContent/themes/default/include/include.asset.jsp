@@ -50,6 +50,7 @@
     </div>
 </div>
 
+<%--
 
 <script>
     curl(['${resRoot}/js/freetry','site/game/ApiLogin'],
@@ -58,4 +59,4 @@
             page.apiLogin = new ApiLogin();
         }
     );
-</script>
+</script>--%>
