@@ -4,13 +4,15 @@ import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.query.sort.Direction;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
-import so.wwb.gamebox.model.*;
+import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
@@ -128,15 +130,19 @@ public class DepositController extends BaseCommonDepositController {
             scanPay(scanPayAccountForUnionpay, payAccountMap, RechargeTypeEnum.UNION_PAY_SCAN.getCode(), UNIONPAY);
 
             //网银存款,柜员机/柜台存款
-            company(companyPayAccount, payAccountMap);
-
+            PlayerRank rank = getRank();
+            boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
+            if (isMultipleAccount) {
+                payAccountMap.put("company_deposit", getCompanyPayAccounts(companyPayAccount));
+            } else {
+                payAccountMap.put("company_deposit", company(companyPayAccount));
+            }
             //电子支付:微信,支付宝,其它
-            electronicPay(electronicPayAccount, payAccountMap);
-
+            electronicPay(electronicPayAccount, payAccountMap, isMultipleAccount);
             //比特币支付
             bitcoinPay(bitcoinPayAccount, payAccountMap);
-
             model.addAttribute("command", new PayAccountVo());
+            model.addAttribute("isMultipleAccount", isMultipleAccount);
         }
 
         fastRecharge(payAccountMap);
@@ -144,13 +150,6 @@ public class DepositController extends BaseCommonDepositController {
         model.addAttribute("digiccyAccountInfo", ParamTool.getDigiccyAccountInfo());
         model.addAttribute("payAccountMap", payAccountMap);
         model.addAttribute("isLotterySite", ParamTool.isLotterySite());
-
-//        SysParam sysParam=ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_OPEN_ACCOUNTS);
-//        String isOpenAccounts= sysParam.getParamValue();
-////        if ("true".equals(isOpenAccounts)){
-//            model.addAttribute("isOpenAccounts",isOpenAccounts);
-//            model.addAttribute("payAccountsList",payAccounts);
-////        }
         return DEPOSIT_URI;
     }
 
@@ -166,12 +165,51 @@ public class DepositController extends BaseCommonDepositController {
         }
     }
 
-    private void electronicPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
-        Map<String, PayAccount> tempMap = new HashMap<>();
+    private Map<String, List<PayAccount>> getElectronicPays(List<PayAccount> payAccounts) {
+        Map<String, List<PayAccount>> electronicAccountMap = new HashMap<>();
+        String bankCode;
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
+        Map<String, Integer> countMap = new HashMap<>();
         for (PayAccount payAccount : payAccounts) {
-            if (tempMap.get(payAccount.getBankCode()) == null) {
-                tempMap.put(payAccount.getBankCode(), payAccount);
+            bankCode = payAccount.getBankCode();
+            if (electronicAccountMap.get(bankCode) == null) {
+                electronicAccountMap.put(bankCode, new ArrayList<PayAccount>());
+                countMap.put(bankCode, 1);
+            } else {
+                countMap.put(bankCode, countMap.get(bankCode) + 1);
             }
+            if (StringTool.isBlank(payAccount.getAliasName())) {
+                if (BankCodeEnum.OTHER.getCode().equals(payAccount.getBankCode())) {
+                    payAccount.setAliasName(payAccount.getCustomBankName());
+                } else {
+                    payAccount.setAliasName(i18n.get(payAccount.getBankCode()) + countMap.get(payAccount.getBankCode()));
+                }
+            }
+            electronicAccountMap.get(bankCode).add(payAccount);
+        }
+        return electronicAccountMap;
+    }
+
+    private Map<String, List<PayAccount>> electronicPay(List<PayAccount> payAccounts) {
+        Map<String, List<PayAccount>> electronicAccountMap = new HashMap<>();
+        String bankCode;
+        for (PayAccount payAccount : payAccounts) {
+            bankCode = payAccount.getBankCode();
+            if (electronicAccountMap.get(bankCode) != null) {
+                continue;
+            }
+            electronicAccountMap.put(bankCode, new ArrayList<PayAccount>());
+            electronicAccountMap.get(bankCode).add(payAccount);
+        }
+        return electronicAccountMap;
+    }
+
+    private void electronicPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap, boolean isMultipleAccount) {
+        Map<String, List<PayAccount>> tempMap;
+        if (isMultipleAccount) {
+            tempMap = getElectronicPays(payAccounts);
+        } else {
+            tempMap = electronicPay(payAccounts);
         }
         //调整顺序微信、支付宝、京东、百度、一码付、其他
         if (tempMap.get(WECHATPAY) != null) {
@@ -195,14 +233,12 @@ public class DepositController extends BaseCommonDepositController {
         if (tempMap.get(OTHERFAST) != null) {
             payAccountMap.put(RechargeTypeEnum.OTHER_FAST.getCode(), tempMap.get(OTHERFAST));
         }
-
     }
 
-    private void company(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
+    private List<Map<String, Object>> company(List<PayAccount> payAccounts) {
         List<String> bankCodes = new ArrayList<>();
         List<Map<String, Object>> bankList = new ArrayList<>();
-        Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString())
-                .get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
         for (PayAccount payAccount : payAccounts) {
             String bankCode = payAccount.getBankCode();
             if (!bankCodes.contains(bankCode)) {
@@ -212,12 +248,39 @@ public class DepositController extends BaseCommonDepositController {
                 if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     bankMap.put("text", payAccount.getCustomBankName());
                 } else {
-                    bankMap.put("text", i18nMap.get(bankCode));
+                    bankMap.put("text", i18n.get(bankCode));
                 }
                 bankList.add(bankMap);
             }
         }
-        payAccountMap.put("company_deposit", bankList);
+        return bankList;
+    }
+
+    private List<Map<String, Object>> getCompanyPayAccounts(List<PayAccount> accounts) {
+        List<Map<String, Object>> bankList = new ArrayList<>();
+        Map<String, Integer> countMap = new HashMap<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
+        Map<String, Object> bankMap;
+        for (PayAccount payAccount : accounts) {
+            String bankCode = payAccount.getBankCode();
+            bankMap = new HashMap<>(2, 1f);
+            if (StringTool.isBlank(payAccount.getAliasName())) {
+                if (countMap.get(bankCode) == null) {
+                    countMap.put(bankCode, 1);
+                } else {
+                    countMap.put(bankCode, countMap.get(bankCode) + 1);
+                }
+                if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
+                    payAccount.setAliasName(i18n.get(payAccount.getCustomBankName()));
+                } else {
+                    payAccount.setAliasName(i18n.get(payAccount.getBankCode()) + countMap.get(payAccount.getBankCode()));
+                }
+            }
+            bankMap.put("text", payAccount.getAliasName());
+            bankMap.put("value", payAccount.getId());
+            bankList.add(bankMap);
+        }
+        return bankList;
     }
 
     private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap,
