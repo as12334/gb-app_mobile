@@ -33,7 +33,7 @@
                                                 <c:if test="${p.key eq 'online_deposit'}">
                                                     <li key="${p.key}"><a data-online="/wallet/deposit/online/index.html">${views.deposit[p.key]}</a></li>
                                                 </c:if>
-                                                <c:if test="${p.key eq 'wechatpay_scan' || p.key eq 'alipay_scan'||p.key eq 'qqwallet_scan'}">
+                                                <c:if test="${p.key eq 'wechatpay_scan' || p.key eq 'alipay_scan'||p.key eq 'qqwallet_scan'|| p.key eq 'jdpay_scan' || p.key eq 'bdwallet_san' || p.key eq 'union_pay_scan'}">
                                                     <li key="${p.key}"><a data-scan="/wallet/deposit/online/scan/scanCode/${p.value}.html">${views.deposit[p.key]}</a></li>
                                                 </c:if>
 

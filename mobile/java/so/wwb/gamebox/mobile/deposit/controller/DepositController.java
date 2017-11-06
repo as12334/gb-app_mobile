@@ -47,6 +47,8 @@ public class DepositController extends BaseCommonDepositController {
     private static final String JDWALLET = "jdwallet";
     /*百度钱包支付*/
     private static final String BDWALLET = "bdwallet";
+    /*银联钱包支付*/
+    private static final String UNIONPAY =  "unionpay";
     /*一码付支付*/
     private static final String ONECODEPAY = "onecodepay";
 
@@ -76,6 +78,9 @@ public class DepositController extends BaseCommonDepositController {
             List<PayAccount> scanPayAccountForWechat = new ArrayList<>(0);
             List<PayAccount> scanPayAccountForAlipay = new ArrayList<>(0);
             List<PayAccount> scanPayAccountForQQwallet = new ArrayList<>(0);
+            List<PayAccount> scanPayAccountForJD = new ArrayList<>(0);
+            List<PayAccount> scanPayAccountForBD = new ArrayList<>(0);
+            List<PayAccount> scanPayAccountForUnionpay = new ArrayList<>(0);
             List<PayAccount> electronicPayAccount = new ArrayList<>(0);
             List<PayAccount> companyPayAccount = new ArrayList<>(0);
             List<PayAccount> bitcoinPayAccount = new ArrayList<>(0);
@@ -91,6 +96,12 @@ public class DepositController extends BaseCommonDepositController {
                         scanPayAccountForAlipay.add(payAccount);
                     } else  if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)){
                         scanPayAccountForQQwallet.add(payAccount);
+                    } else  if (PayAccountAccountType.JD_PAY.getCode().equals(accountType)){
+                        scanPayAccountForJD.add(payAccount);
+                    } else  if (PayAccountAccountType.BAIFU_PAY.getCode().equals(accountType)){
+                        scanPayAccountForBD.add(payAccount);
+                    } else  if (PayAccountAccountType.UNION_PAY.getCode().equals(accountType)){
+                        scanPayAccountForUnionpay.add(payAccount);
                     }
                 } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(type)) {
                     if (PayAccountAccountType.BANKACCOUNT.getCode().equals(accountType)) {
@@ -111,6 +122,9 @@ public class DepositController extends BaseCommonDepositController {
             scanPay(scanPayAccountForWechat, payAccountMap, RechargeTypeEnum.WECHATPAY_SCAN.getCode(), WECHATPAY);
             scanPay(scanPayAccountForAlipay, payAccountMap, RechargeTypeEnum.ALIPAY_SCAN.getCode(), ALIPAY);
             scanPay(scanPayAccountForQQwallet,payAccountMap,RechargeTypeEnum.QQWALLET_SCAN.getCode(),QQWALLET);
+            scanPay(scanPayAccountForJD,payAccountMap,RechargeTypeEnum.JDPAY_SCAN.getCode(),JDWALLET);
+            scanPay(scanPayAccountForBD,payAccountMap,RechargeTypeEnum.BDWALLET_SAN.getCode(),BDWALLET);
+            scanPay(scanPayAccountForUnionpay,payAccountMap,RechargeTypeEnum.UNION_PAY_SCAN.getCode(),UNIONPAY);
 
             //网银存款,柜员机/柜台存款
             company(companyPayAccount, payAccountMap);
