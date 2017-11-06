@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.*;
+import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -48,7 +49,7 @@ public class DepositController extends BaseCommonDepositController {
     /*百度钱包支付*/
     private static final String BDWALLET = "bdwallet";
     /*银联钱包支付*/
-    private static final String UNIONPAY =  "unionpay";
+    private static final String UNIONPAY = "unionpay";
     /*一码付支付*/
     private static final String ONECODEPAY = "onecodepay";
 
@@ -94,13 +95,13 @@ public class DepositController extends BaseCommonDepositController {
                         scanPayAccountForWechat.add(payAccount);
                     } else if (PayAccountAccountType.ALIPAY.getCode().equals(accountType)) {
                         scanPayAccountForAlipay.add(payAccount);
-                    } else  if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)){
+                    } else if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)) {
                         scanPayAccountForQQwallet.add(payAccount);
-                    } else  if (PayAccountAccountType.JD_PAY.getCode().equals(accountType)){
+                    } else if (PayAccountAccountType.JD_PAY.getCode().equals(accountType)) {
                         scanPayAccountForJD.add(payAccount);
-                    } else  if (PayAccountAccountType.BAIFU_PAY.getCode().equals(accountType)){
+                    } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(accountType)) {
                         scanPayAccountForBD.add(payAccount);
-                    } else  if (PayAccountAccountType.UNION_PAY.getCode().equals(accountType)){
+                    } else if (PayAccountAccountType.UNION_PAY.getCode().equals(accountType)) {
                         scanPayAccountForUnionpay.add(payAccount);
                     }
                 } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(type)) {
@@ -121,10 +122,10 @@ public class DepositController extends BaseCommonDepositController {
             //微信扫码
             scanPay(scanPayAccountForWechat, payAccountMap, RechargeTypeEnum.WECHATPAY_SCAN.getCode(), WECHATPAY);
             scanPay(scanPayAccountForAlipay, payAccountMap, RechargeTypeEnum.ALIPAY_SCAN.getCode(), ALIPAY);
-            scanPay(scanPayAccountForQQwallet,payAccountMap,RechargeTypeEnum.QQWALLET_SCAN.getCode(),QQWALLET);
-            scanPay(scanPayAccountForJD,payAccountMap,RechargeTypeEnum.JDPAY_SCAN.getCode(),JDWALLET);
-            scanPay(scanPayAccountForBD,payAccountMap,RechargeTypeEnum.BDWALLET_SAN.getCode(),BDWALLET);
-            scanPay(scanPayAccountForUnionpay,payAccountMap,RechargeTypeEnum.UNION_PAY_SCAN.getCode(),UNIONPAY);
+            scanPay(scanPayAccountForQQwallet, payAccountMap, RechargeTypeEnum.QQWALLET_SCAN.getCode(), QQWALLET);
+            scanPay(scanPayAccountForJD, payAccountMap, RechargeTypeEnum.JDPAY_SCAN.getCode(), JDWALLET);
+            scanPay(scanPayAccountForBD, payAccountMap, RechargeTypeEnum.BDWALLET_SAN.getCode(), BDWALLET);
+            scanPay(scanPayAccountForUnionpay, payAccountMap, RechargeTypeEnum.UNION_PAY_SCAN.getCode(), UNIONPAY);
 
             //网银存款,柜员机/柜台存款
             company(companyPayAccount, payAccountMap);
@@ -161,7 +162,7 @@ public class DepositController extends BaseCommonDepositController {
             }
         }
         if (tempMap.get(BITCOIN) != null) {
-            payAccountMap.put(RechargeTypeEnum.BITCOIN_FAST.getCode(),tempMap.get(BITCOIN));
+            payAccountMap.put(RechargeTypeEnum.BITCOIN_FAST.getCode(), tempMap.get(BITCOIN));
         }
     }
 
@@ -174,25 +175,25 @@ public class DepositController extends BaseCommonDepositController {
         }
         //调整顺序微信、支付宝、京东、百度、一码付、其他
         if (tempMap.get(WECHATPAY) != null) {
-            payAccountMap.put(RechargeTypeEnum.WECHATPAY_FAST.getCode(),tempMap.get(WECHATPAY));
+            payAccountMap.put(RechargeTypeEnum.WECHATPAY_FAST.getCode(), tempMap.get(WECHATPAY));
         }
         if (tempMap.get(ALIPAY) != null) {
-            payAccountMap.put(RechargeTypeEnum.ALIPAY_FAST.getCode(),tempMap.get(ALIPAY));
+            payAccountMap.put(RechargeTypeEnum.ALIPAY_FAST.getCode(), tempMap.get(ALIPAY));
         }
-        if(tempMap.get(QQWALLET) != null){
-            payAccountMap.put(RechargeTypeEnum.QQWALLET_FAST.getCode(),tempMap.get(QQWALLET));
+        if (tempMap.get(QQWALLET) != null) {
+            payAccountMap.put(RechargeTypeEnum.QQWALLET_FAST.getCode(), tempMap.get(QQWALLET));
         }
-        if(tempMap.get(JDWALLET) != null){
-            payAccountMap.put(RechargeTypeEnum.JDWALLET_FAST.getCode(),tempMap.get(JDWALLET));
+        if (tempMap.get(JDWALLET) != null) {
+            payAccountMap.put(RechargeTypeEnum.JDWALLET_FAST.getCode(), tempMap.get(JDWALLET));
         }
-        if(tempMap.get(BDWALLET) != null){
-            payAccountMap.put(RechargeTypeEnum.BDWALLET_FAST.getCode(),tempMap.get(BDWALLET));
+        if (tempMap.get(BDWALLET) != null) {
+            payAccountMap.put(RechargeTypeEnum.BDWALLET_FAST.getCode(), tempMap.get(BDWALLET));
         }
-        if(tempMap.get(ONECODEPAY) != null){
-            payAccountMap.put(RechargeTypeEnum.ONECODEPAY_FAST.getCode(),tempMap.get(ONECODEPAY));
+        if (tempMap.get(ONECODEPAY) != null) {
+            payAccountMap.put(RechargeTypeEnum.ONECODEPAY_FAST.getCode(), tempMap.get(ONECODEPAY));
         }
         if (tempMap.get(OTHERFAST) != null) {
-            payAccountMap.put(RechargeTypeEnum.OTHER_FAST.getCode(),tempMap.get(OTHERFAST));
+            payAccountMap.put(RechargeTypeEnum.OTHER_FAST.getCode(), tempMap.get(OTHERFAST));
         }
 
     }
@@ -206,9 +207,9 @@ public class DepositController extends BaseCommonDepositController {
             String bankCode = payAccount.getBankCode();
             if (!bankCodes.contains(bankCode)) {
                 bankCodes.add(bankCode);
-                Map<String, Object> bankMap = new HashMap<>(2,1f);
+                Map<String, Object> bankMap = new HashMap<>(2, 1f);
                 bankMap.put("value", payAccount.getId());
-                if (StringTool.equals("other_bank", bankCode)) {
+                if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     bankMap.put("text", payAccount.getCustomBankName());
                 } else {
                     bankMap.put("text", i18nMap.get(bankCode));
@@ -216,7 +217,7 @@ public class DepositController extends BaseCommonDepositController {
                 bankList.add(bankMap);
             }
         }
-        payAccountMap.put("company_deposit",bankList);
+        payAccountMap.put("company_deposit", bankList);
     }
 
     private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap,
@@ -228,13 +229,13 @@ public class DepositController extends BaseCommonDepositController {
 
     private void online(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
         if (payAccounts.size() > 0) {
-            payAccountMap.put(RechargeTypeEnum.ONLINE_DEPOSIT.getCode(),"onlinepay");
+            payAccountMap.put(RechargeTypeEnum.ONLINE_DEPOSIT.getCode(), "onlinepay");
         }
     }
 
     private List<PayAccount> searchPayAccounts() {
         PayAccountListVo listVo = new PayAccountListVo();
-        Map<String, Object> map = new HashMap<>(3,1f);
+        Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("playerId", SessionManager.getUserId());
         map.put("currency", SessionManager.getUser().getDefaultCurrency());
         map.put("terminal", TerminalEnum.MOBILE.getCode());
@@ -264,6 +265,7 @@ public class DepositController extends BaseCommonDepositController {
 
     /**
      * 快速充值
+     *
      * @param model
      */
     private void fastRecharge(Model model) {
