@@ -9,6 +9,7 @@ import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
 import so.wwb.gamebox.mobile.deposit.controller.BaseDepositController;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Pattern;
@@ -37,7 +38,8 @@ public class CompanyElectronicDepositForm implements IForm {
     }
 
     @Comment("存款账号")
-    @NotBlank(message = "valid.rechargeForm.payerBankcardNotBlank")
+    @Depends(property ="result.rechargeType", operator = Operator.NE,value= RechargeTypeEnum.RECHARGE_TYPE_ONECODEPAY_FASE,message = "valid.rechargeForm.payerBankcardNotBlank")
+    //@NotBlank(message = "valid.rechargeForm.payerBankcardNotBlank")
     @Length(message = "valid.rechargeForm.payerBankcardLength", max = 20)
     public String getResult_payerBankcard() {
         return result_payerBankcard;
