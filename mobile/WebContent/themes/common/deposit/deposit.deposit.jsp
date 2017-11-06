@@ -42,7 +42,7 @@
                                                         <li><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}">${c.text}</a></li>
                                                     </c:forEach>
                                                 </c:if>
-                                                <c:if test="${p.key eq 'wechatpay_fast' || p.key eq 'alipay_fast'}">
+                                                <c:if test="${p.key eq 'wechatpay_fast' || p.key eq 'alipay_fast'||p.key eq 'qqwallet_fast'||p.key eq 'jdwallet_fast'||p.key eq 'bdwallet_fast'||p.key eq 'onecodepay_fast'}">
                                                     <li><a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit[p.key]}</a></li>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'other_fast'}">

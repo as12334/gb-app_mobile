@@ -43,6 +43,14 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     private static final String ALIPAY = "alipay";
     /*微信支付*/
     private static final String WECHATPAY = "wechatpay";
+    /*QQ钱包*/
+    private static final String QQWALLET = "qqwallet";
+    /*京东钱包*/
+    private static final String JDWALLET = "jdwallet";
+    /*百度钱包*/
+    private static final String BDWALLET = "bdwallet";
+    /*一码付*/
+    private static final String ONECODEPAY = "onecodepay";
 
     @RequestMapping("/index")
     @Token(generate = true)
@@ -120,6 +128,14 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
             rechargeType = RechargeTypeEnum.WECHATPAY_FAST.getCode();
         } else if (ALIPAY.equals(bankCode)) {
             rechargeType = RechargeTypeEnum.ALIPAY_FAST.getCode();
+        }else if (QQWALLET.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.QQWALLET_FAST.getCode();
+        }else if (JDWALLET.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.JDWALLET_FAST.getCode();
+        }else if (BDWALLET.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.BDWALLET_FAST.getCode();
+        }else if (ONECODEPAY.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.ONECODEPAY_FAST.getCode();
         }
         return rechargeType;
     }
