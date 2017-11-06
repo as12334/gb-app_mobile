@@ -42,11 +42,24 @@
                                                         <li><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}">${c.text}</a></li>
                                                     </c:forEach>
                                                 </c:if>
-                                                <c:if test="${p.key eq 'wechatpay_fast' || p.key eq 'alipay_fast'||p.key eq 'qqwallet_fast'||p.key eq 'jdwallet_fast'||p.key eq 'bdwallet_fast'||p.key eq 'onecodepay_fast'}">
-                                                    <li><a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit[p.key]}</a></li>
-                                                </c:if>
-                                                <c:if test="${p.key eq 'other_fast'}">
-                                                    <li><a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(p.value.id)}">${p.value.customBankName}</a></li>
+                                                <c:if test="${p.key eq 'other_fast'|| p.key eq 'wechatpay_fast' || p.key eq 'alipay_fast'||p.key eq 'qqwallet_fast'||p.key eq 'jdwallet_fast'||p.key eq 'bdwallet_fast'||p.key eq 'onecodepay_fast'}">
+                                                    <c:forEach items="${p.value}" var="i">
+                                                        <li>
+                                                            <a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(i.id)}">
+                                                                <c:choose>
+                                                                    <c:when test="${isMultipleAccount}">
+                                                                        ${i.aliasName}
+                                                                    </c:when>
+                                                                    <c:when test="${p.key eq 'other_fast'}">
+                                                                        ${i.customBankName}
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        ${views.deposit[p.key]}
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </a>
+                                                        </li>
+                                                    </c:forEach>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'isFastRecharge'}">
                                                     <li><a data-fastRecharge="${p.value}">${views.deposit_auto['快速充值中心']}</a></li>
