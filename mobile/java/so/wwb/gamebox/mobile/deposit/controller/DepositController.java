@@ -326,40 +326,6 @@ public class DepositController extends BaseCommonDepositController {
         return BANK_NOTICE_URI;
     }
 
-    /**
-     * 快速充值
-     *
-     * @param model
-     */
-    private void fastRecharge(Model model) {
-        SysParam rechargeUrlParam = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL);
-        if (rechargeUrlParam == null || StringTool.isBlank(rechargeUrlParam.getParamValue())) {
-            model.addAttribute(IS_FAST_RECHARGE, false);
-            return;
-        }
-
-        model.addAttribute("rechargeUrlParam", rechargeUrlParam); //快速充值地址
-        //是否包含全部层级
-        SysParam allRank = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL_ALL_RANK);
-        if (allRank != null && "true".equals(allRank.getParamValue())) {
-            model.addAttribute(IS_FAST_RECHARGE, true);
-            return;
-        }
-        SysParam ranksParam = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL_RANKS);
-        boolean isFastRecharge = false;
-        if (ranksParam != null && StringTool.isNotBlank(ranksParam.getParamValue())) {
-            PlayerRank rank = getRank();
-            String[] ranks = ranksParam.getParamValue().split(",");
-            for (String rankId : ranks) {
-                if (String.valueOf(rank.getId()).equals(rankId)) {
-                    isFastRecharge = true;
-                    break;
-                }
-            }
-        }
-        model.addAttribute(IS_FAST_RECHARGE, isFastRecharge);
-    }
-
     private void fastRecharge(Map<String, Object> payAccountMap) {
         String url = getFastRechargeUrl();
         if (StringTool.isNotBlank(url)) {
