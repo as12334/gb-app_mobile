@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.query.sort.Direction;
@@ -72,78 +73,13 @@ public class DepositController extends BaseCommonDepositController {
     @RequestMapping("/index")
     public String index(Model model) {
 
-        Map<String, Object> payAccountMap = new LinkedHashMap<>();
+        Map<String, Object> payAccountMap = getPayAccountMap();
 
-        List<PayAccount> payAccounts = searchPayAccounts();
-        if (payAccounts != null && payAccounts.size() > 0) {
-
-            List<PayAccount> onlinePayAccount = new ArrayList<>(0);
-            List<PayAccount> scanPayAccountForWechat = new ArrayList<>(0);
-            List<PayAccount> scanPayAccountForAlipay = new ArrayList<>(0);
-            List<PayAccount> scanPayAccountForQQwallet = new ArrayList<>(0);
-            List<PayAccount> scanPayAccountForJD = new ArrayList<>(0);
-            List<PayAccount> scanPayAccountForBD = new ArrayList<>(0);
-            List<PayAccount> scanPayAccountForUnionpay = new ArrayList<>(0);
-            List<PayAccount> electronicPayAccount = new ArrayList<>(0);
-            List<PayAccount> companyPayAccount = new ArrayList<>(0);
-            List<PayAccount> bitcoinPayAccount = new ArrayList<>(0);
-            for (PayAccount payAccount : payAccounts) {
-                String type = payAccount.getType();
-                String accountType = payAccount.getAccountType();
-                if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(type)) {
-                    if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) {
-                        onlinePayAccount.add(payAccount);
-                    } else if (PayAccountAccountType.WECHAT.getCode().equals(accountType)) {
-                        scanPayAccountForWechat.add(payAccount);
-                    } else if (PayAccountAccountType.ALIPAY.getCode().equals(accountType)) {
-                        scanPayAccountForAlipay.add(payAccount);
-                    } else if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)) {
-                        scanPayAccountForQQwallet.add(payAccount);
-                    } else if (PayAccountAccountType.JD_PAY.getCode().equals(accountType)) {
-                        scanPayAccountForJD.add(payAccount);
-                    } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(accountType)) {
-                        scanPayAccountForBD.add(payAccount);
-                    } else if (PayAccountAccountType.UNION_PAY.getCode().equals(accountType)) {
-                        scanPayAccountForUnionpay.add(payAccount);
-                    }
-                } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(type)) {
-                    if (PayAccountAccountType.BANKACCOUNT.getCode().equals(accountType)) {
-                        companyPayAccount.add(payAccount);
-                    } else if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) {
-                        if (BITCOIN.equals(payAccount.getBankCode())) {
-                            bitcoinPayAccount.add(payAccount);
-                        } else {
-                            electronicPayAccount.add(payAccount);
-                        }
-                    }
-                }
-            }
-            //线上支付
-            online(onlinePayAccount, payAccountMap);
-
-            //微信扫码
-            scanPay(scanPayAccountForWechat, payAccountMap, RechargeTypeEnum.WECHATPAY_SCAN.getCode(), WECHATPAY);
-            scanPay(scanPayAccountForAlipay, payAccountMap, RechargeTypeEnum.ALIPAY_SCAN.getCode(), ALIPAY);
-            scanPay(scanPayAccountForQQwallet, payAccountMap, RechargeTypeEnum.QQWALLET_SCAN.getCode(), QQWALLET);
-            scanPay(scanPayAccountForJD, payAccountMap, RechargeTypeEnum.JDPAY_SCAN.getCode(), JDWALLET);
-            scanPay(scanPayAccountForBD, payAccountMap, RechargeTypeEnum.BDWALLET_SAN.getCode(), BDWALLET);
-            scanPay(scanPayAccountForUnionpay, payAccountMap, RechargeTypeEnum.UNION_PAY_SCAN.getCode(), UNIONPAY);
-
-            //网银存款,柜员机/柜台存款
-            PlayerRank rank = getRank();
-            boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
-            if (isMultipleAccount) {
-                payAccountMap.put("company_deposit", getCompanyPayAccounts(companyPayAccount));
-            } else {
-                payAccountMap.put("company_deposit", company(companyPayAccount));
-            }
-            //电子支付:微信,支付宝,其它
-            electronicPay(electronicPayAccount, payAccountMap, isMultipleAccount);
-            //比特币支付
-            bitcoinPay(bitcoinPayAccount, payAccountMap);
-            model.addAttribute("command", new PayAccountVo());
-            model.addAttribute("isMultipleAccount", isMultipleAccount);
-        }
+        //网银存款,柜员机/柜台存款
+        PlayerRank rank = getRank();
+        boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
+        model.addAttribute("command", new PayAccountVo());
+        model.addAttribute("isMultipleAccount", isMultipleAccount);
 
         fastRecharge(payAccountMap);
         //是否支持数字货币
@@ -151,6 +87,86 @@ public class DepositController extends BaseCommonDepositController {
         model.addAttribute("payAccountMap", payAccountMap);
         model.addAttribute("isLotterySite", ParamTool.isLotterySite());
         return DEPOSIT_URI;
+    }
+
+    private Map getPayAccountMap() {
+        List<PayAccount> payAccounts = searchPayAccounts();
+        Map<String, Object> payAccountMap = new LinkedHashMap<>();
+
+        if (CollectionTool.isEmpty(payAccounts) && payAccounts.size() <= 0) {
+            return payAccountMap;
+        }
+
+        List<PayAccount> onlinePayAccount = new ArrayList<>(0);
+        List<PayAccount> scanPayAccountForWechat = new ArrayList<>(0);
+        List<PayAccount> scanPayAccountForAlipay = new ArrayList<>(0);
+        List<PayAccount> scanPayAccountForQQwallet = new ArrayList<>(0);
+        List<PayAccount> scanPayAccountForJD = new ArrayList<>(0);
+        List<PayAccount> scanPayAccountForBD = new ArrayList<>(0);
+        List<PayAccount> scanPayAccountForUnionpay = new ArrayList<>(0);
+        List<PayAccount> electronicPayAccount = new ArrayList<>(0);
+        List<PayAccount> companyPayAccount = new ArrayList<>(0);
+        List<PayAccount> bitcoinPayAccount = new ArrayList<>(0);
+        for (PayAccount payAccount : payAccounts) {
+            String type = payAccount.getType();
+            String accountType = payAccount.getAccountType();
+            if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(type)) {
+                if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) {
+                    onlinePayAccount.add(payAccount);
+                } else if (PayAccountAccountType.WECHAT.getCode().equals(accountType)) {
+                    scanPayAccountForWechat.add(payAccount);
+                } else if (PayAccountAccountType.ALIPAY.getCode().equals(accountType)) {
+                    scanPayAccountForAlipay.add(payAccount);
+                } else if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)) {
+                    scanPayAccountForQQwallet.add(payAccount);
+                } else if (PayAccountAccountType.JD_PAY.getCode().equals(accountType)) {
+                    scanPayAccountForJD.add(payAccount);
+                } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(accountType)) {
+                    scanPayAccountForBD.add(payAccount);
+                } else if (PayAccountAccountType.UNION_PAY.getCode().equals(accountType)) {
+                    scanPayAccountForUnionpay.add(payAccount);
+                }
+            } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(type)) {
+                if (PayAccountAccountType.BANKACCOUNT.getCode().equals(accountType)) {
+                    companyPayAccount.add(payAccount);
+                } else if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) {
+                    if (BITCOIN.equals(payAccount.getBankCode())) {
+                        bitcoinPayAccount.add(payAccount);
+                    } else {
+                        electronicPayAccount.add(payAccount);
+                    }
+                }
+            }
+        }
+
+        //线上支付
+        online(onlinePayAccount, payAccountMap);
+
+        //微信扫码
+        scanPay(scanPayAccountForWechat, payAccountMap, RechargeTypeEnum.WECHATPAY_SCAN.getCode(), WECHATPAY);
+        scanPay(scanPayAccountForAlipay, payAccountMap, RechargeTypeEnum.ALIPAY_SCAN.getCode(), ALIPAY);
+        scanPay(scanPayAccountForQQwallet, payAccountMap, RechargeTypeEnum.QQWALLET_SCAN.getCode(), QQWALLET);
+        scanPay(scanPayAccountForJD, payAccountMap, RechargeTypeEnum.JDPAY_SCAN.getCode(), JDWALLET);
+        scanPay(scanPayAccountForBD, payAccountMap, RechargeTypeEnum.BDWALLET_SAN.getCode(), BDWALLET);
+        scanPay(scanPayAccountForUnionpay, payAccountMap, RechargeTypeEnum.UNION_PAY_SCAN.getCode(), UNIONPAY);
+
+        //网银存款,柜员机/柜台存款
+        PlayerRank rank = getRank();
+        boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
+        if (isMultipleAccount) {
+            payAccountMap.put("company_deposit", getCompanyPayAccounts(companyPayAccount));
+            //电子支付:微信,支付宝,其它
+            payAccountMap.put("electronicPay", getElectronicPays(electronicPayAccount));
+        } else {
+            payAccountMap.put("company_deposit", company(companyPayAccount));
+            //电子支付:微信,支付宝,其它
+            payAccountMap.put("electronicPay", electronicPay(electronicPayAccount));
+        }
+
+        //比特币支付
+        bitcoinPay(bitcoinPayAccount, payAccountMap);
+
+        return payAccountMap;
     }
 
     private void bitcoinPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
@@ -165,73 +181,77 @@ public class DepositController extends BaseCommonDepositController {
         }
     }
 
-    private Map<String, List<PayAccount>> getElectronicPays(List<PayAccount> payAccounts) {
-        Map<String, List<PayAccount>> electronicAccountMap = new HashMap<>();
+    private List<PayAccount> getElectronicPays(List<PayAccount> payAccounts) {
         String bankCode;
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
         Map<String, Integer> countMap = new HashMap<>();
         for (PayAccount payAccount : payAccounts) {
             bankCode = payAccount.getBankCode();
-            if (electronicAccountMap.get(bankCode) == null) {
-                electronicAccountMap.put(bankCode, new ArrayList<PayAccount>());
+            if (countMap.get(bankCode) == null) {
                 countMap.put(bankCode, 1);
             } else {
                 countMap.put(bankCode, countMap.get(bankCode) + 1);
+            }
+        }
+
+        Map<String, Integer> numMap = new HashMap<>();
+        for (PayAccount payAccount : payAccounts) {
+            bankCode = payAccount.getBankCode();
+            if (numMap.get(bankCode) == null) {
+                numMap.put(bankCode, 1);
+            } else {
+                numMap.put(bankCode, numMap.get(bankCode) + 1);
             }
             if (StringTool.isBlank(payAccount.getAliasName())) {
                 if (BankCodeEnum.OTHER.getCode().equals(payAccount.getBankCode())) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
                 } else {
-                    payAccount.setAliasName(i18n.get(payAccount.getBankCode()) + countMap.get(payAccount.getBankCode()));
+                    if (countMap.get(bankCode) > 1) {
+                        payAccount.setAliasName(i18n.get(payAccount.getBankCode()) + numMap.get(payAccount.getBankCode()));
+                    } else {
+                        payAccount.setAliasName(i18n.get(payAccount.getBankCode()));
+                    }
+
                 }
             }
-            electronicAccountMap.get(bankCode).add(payAccount);
+
+            electronicPay(payAccount);
         }
-        return electronicAccountMap;
+        return payAccounts;
     }
 
-    private Map<String, List<PayAccount>> electronicPay(List<PayAccount> payAccounts) {
-        Map<String, List<PayAccount>> electronicAccountMap = new HashMap<>();
-        String bankCode;
-        for (PayAccount payAccount : payAccounts) {
-            bankCode = payAccount.getBankCode();
-            if (electronicAccountMap.get(bankCode) != null) {
-                continue;
+    private List<PayAccount> electronicPay(List<PayAccount> payAccounts) {
+        List<String> bankCodes = new ArrayList<>();
+        Iterator<PayAccount> iterator = payAccounts.iterator();
+        while (iterator.hasNext()) {
+            PayAccount payAccount = iterator.next();
+            if (bankCodes.contains(payAccount.getBankCode())) {
+                iterator.remove();
+            } else {
+                bankCodes.add(payAccount.getBankCode());
             }
-            electronicAccountMap.put(bankCode, new ArrayList<PayAccount>());
-            electronicAccountMap.get(bankCode).add(payAccount);
+            electronicPay(payAccount);
         }
-        return electronicAccountMap;
+
+        return payAccounts;
     }
 
-    private void electronicPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap, boolean isMultipleAccount) {
-        Map<String, List<PayAccount>> tempMap;
-        if (isMultipleAccount) {
-            tempMap = getElectronicPays(payAccounts);
-        } else {
-            tempMap = electronicPay(payAccounts);
-        }
-        //调整顺序微信、支付宝、京东、百度、一码付、其他
-        if (tempMap.get(WECHATPAY) != null) {
-            payAccountMap.put(RechargeTypeEnum.WECHATPAY_FAST.getCode(), tempMap.get(WECHATPAY));
-        }
-        if (tempMap.get(ALIPAY) != null) {
-            payAccountMap.put(RechargeTypeEnum.ALIPAY_FAST.getCode(), tempMap.get(ALIPAY));
-        }
-        if (tempMap.get(QQWALLET) != null) {
-            payAccountMap.put(RechargeTypeEnum.QQWALLET_FAST.getCode(), tempMap.get(QQWALLET));
-        }
-        if (tempMap.get(JDWALLET) != null) {
-            payAccountMap.put(RechargeTypeEnum.JDWALLET_FAST.getCode(), tempMap.get(JDWALLET));
-        }
-        if (tempMap.get(BDWALLET) != null) {
-            payAccountMap.put(RechargeTypeEnum.BDWALLET_FAST.getCode(), tempMap.get(BDWALLET));
-        }
-        if (tempMap.get(ONECODEPAY) != null) {
-            payAccountMap.put(RechargeTypeEnum.ONECODEPAY_FAST.getCode(), tempMap.get(ONECODEPAY));
-        }
-        if (tempMap.get(OTHERFAST) != null) {
-            payAccountMap.put(RechargeTypeEnum.OTHER_FAST.getCode(), tempMap.get(OTHERFAST));
+    private void electronicPay(PayAccount payAccount) {
+        String bankCode = payAccount.getBankCode();
+        if (WECHATPAY.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.WECHATPAY_FAST.getCode());
+        }else  if (ALIPAY.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.ALIPAY_FAST.getCode());
+        }else  if (QQWALLET.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.QQWALLET_FAST.getCode());
+        }else  if (JDWALLET.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.JDWALLET_FAST.getCode());
+        } else if (BDWALLET.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.BDWALLET_FAST.getCode());
+        }else if (ONECODEPAY.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.ONECODEPAY_FAST.getCode());
+        }else  if (OTHERFAST.equals(bankCode)) {
+            payAccount.setRechargeType(RechargeTypeEnum.OTHER_FAST.getCode());
         }
     }
 
@@ -261,25 +281,43 @@ public class DepositController extends BaseCommonDepositController {
         Map<String, Integer> countMap = new HashMap<>();
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
         Map<String, Object> bankMap;
+
         for (PayAccount payAccount : accounts) {
             String bankCode = payAccount.getBankCode();
-            bankMap = new HashMap<>(2, 1f);
             if (StringTool.isBlank(payAccount.getAliasName())) {
                 if (countMap.get(bankCode) == null) {
                     countMap.put(bankCode, 1);
                 } else {
                     countMap.put(bankCode, countMap.get(bankCode) + 1);
                 }
+            }
+        }
+        Map<String, Integer> numMap = new HashMap<>();
+        for (PayAccount payAccount : accounts) {
+            String bankCode = payAccount.getBankCode();
+            bankMap = new HashMap<>(2, 1f);
+
+            if (StringTool.isBlank(payAccount.getAliasName())) {
+                if (numMap.get(bankCode) == null) {
+                    numMap.put(bankCode, 1);
+                } else {
+                    numMap.put(bankCode, numMap.get(bankCode) + 1);
+                }
                 if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     payAccount.setAliasName(i18n.get(payAccount.getCustomBankName()));
                 } else {
-                    payAccount.setAliasName(i18n.get(payAccount.getBankCode()) + countMap.get(payAccount.getBankCode()));
+                    if (countMap.get(bankCode) > 1) {
+                        payAccount.setAliasName(i18n.get(payAccount.getBankCode()) + numMap.get(payAccount.getBankCode()));
+                    } else {
+                        payAccount.setAliasName(i18n.get(payAccount.getBankCode()));
+                    }
                 }
             }
             bankMap.put("text", payAccount.getAliasName());
             bankMap.put("value", payAccount.getId());
             bankList.add(bankMap);
         }
+
         return bankList;
     }
 
