@@ -16,7 +16,7 @@
                     check="false" scope="remote"
                     registry="zookeeperClient"
                     application="dubboApplication"
-                    version="${dubbo.version}"
+                    version="${belong.idc}${dubbo.version}"
                     filter="specifyDatasourceConsumerFilter"
     />
 
