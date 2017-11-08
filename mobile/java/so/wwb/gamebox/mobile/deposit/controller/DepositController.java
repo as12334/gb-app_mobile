@@ -73,11 +73,11 @@ public class DepositController extends BaseCommonDepositController {
     @RequestMapping("/index")
     public String index(Model model) {
 
-        Map<String, Object> payAccountMap = getPayAccountMap();
-
         //网银存款,柜员机/柜台存款
         PlayerRank rank = getRank();
         boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
+        Map<String, Object> payAccountMap = getPayAccountMap(isMultipleAccount);
+
         model.addAttribute("command", new PayAccountVo());
         model.addAttribute("isMultipleAccount", isMultipleAccount);
 
@@ -89,7 +89,7 @@ public class DepositController extends BaseCommonDepositController {
         return DEPOSIT_URI;
     }
 
-    private Map getPayAccountMap() {
+    private Map getPayAccountMap(boolean isMultipleAccount) {
         List<PayAccount> payAccounts = searchPayAccounts();
         Map<String, Object> payAccountMap = new LinkedHashMap<>();
 
@@ -151,8 +151,6 @@ public class DepositController extends BaseCommonDepositController {
         scanPay(scanPayAccountForUnionpay, payAccountMap, RechargeTypeEnum.UNION_PAY_SCAN.getCode(), UNIONPAY);
 
         //网银存款,柜员机/柜台存款
-        PlayerRank rank = getRank();
-        boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
         if (isMultipleAccount) {
             payAccountMap.put("company_deposit", getCompanyPayAccounts(companyPayAccount));
             //电子支付:微信,支付宝,其它
