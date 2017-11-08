@@ -181,10 +181,13 @@ public class DepositController extends BaseCommonDepositController {
         }
     }
 
+
+
     private List<PayAccount> getElectronicPays(List<PayAccount> payAccounts) {
         String bankCode;
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
         Map<String, Integer> countMap = new HashMap<>();
+
         for (PayAccount payAccount : payAccounts) {
             bankCode = payAccount.getBankCode();
             if (countMap.get(bankCode) == null) {
@@ -203,7 +206,7 @@ public class DepositController extends BaseCommonDepositController {
                 numMap.put(bankCode, numMap.get(bankCode) + 1);
             }
             if (StringTool.isBlank(payAccount.getAliasName())) {
-                if (BankCodeEnum.OTHER.getCode().equals(payAccount.getBankCode())) {
+                if (BankCodeEnum.OTHER.getCode().equals(payAccount.getBankCode()) || BankCodeEnum.OTHER_BANK.getCode().equals(payAccount.getBankCode())) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
                 } else {
                     if (countMap.get(bankCode) > 1) {
@@ -303,7 +306,8 @@ public class DepositController extends BaseCommonDepositController {
                 } else {
                     numMap.put(bankCode, numMap.get(bankCode) + 1);
                 }
-                if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
+
+                if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode) || StringTool.equals(BankCodeEnum.OTHER.getCode(),bankCode)) {
                     payAccount.setAliasName(i18n.get(payAccount.getCustomBankName()));
                 } else {
                     if (countMap.get(bankCode) > 1) {
