@@ -4,63 +4,18 @@
 <html>
 <head>
     <title>${siteName}</title>
-    <%@include file="include/include.head.jsp"%>
+    <%@include file="include/include.head.jsp" %>
 </head>
 
 <body>
 <!-- 侧滑导航根容器 -->
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
-    <aside class="mui-off-canvas-left">
-        <div class="mui-scroll-wrapper side-menu-scroll-wrapper">
-            <div class="mui-scroll">
-                <!-- 菜单具体展示内容 -->
-                <!--个人信息部分-->
-                <div class="person-info">
-                    <!--登录前-->
-                    <div class="un-login" hidden>
-                        <p>欢迎观临，请先登录</p>
-                        <a type="button" class="mui-btn mui-btn-success  btn-login">用户登录</a>
-                    </div>
-                    <!--登陆后-->
-                    <div class="login">
-                        <i class="icon-person"></i>
-                        <p>EVEN_999</p>
-                        <a type="button" class="mui-btn mui-btn-success  btn-person">个人中心</a>
-                    </div>
-                </div>
-                <!--side-nav-->
-                <div class="side-nav">
-                    <ul class="mui-list-unstyled">
-                        <li class="active"><a href="index.html">首页</a></li>
-                        <li><a href="promo.html">优惠活动</a></li>
-                        <li><a href="">下载客户端</a></li>
-                        <li><a href="">账户存款</a></li>
-                        <li><a href="">关于我们</a></li>
-                        <li><a href="">常见问题</a></li>
-                        <li><a href="">在线客服</a></li>
-                        <li><a href="">注册条款</a></li>
-                        <li class=" lang zh-CN">
-                            <a href="">语言</a>
-                        </li>
-                    </ul>
-                    <a type="button" class="mui-btn mui-btn-success  btn-logout">退出登录</a>
-                </div>
-            </div>
-        </div>
-    </aside>
+    <%@include file="common/LeftMenu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-action-menu mui-icon-bars mui-pull-left"></a>
-            <a href="download.html" class="btn-download"></a>
-            <a type="button" class="mui-btn mui-btn-success mui-pull-right btn-login" href="login.html">登录/注册</a>
-            <a type="button" class="mui-btn mui-btn-success mui-pull-right btn-demo">试玩</a>
-            <img src="../../mobile-v3/images/logo.png" alt="logo" class="logo" />
-            <!--易记域名-->
-            <section class="yjym">易记域名：www.1136.mb.com</section>
-        </header>
+        <%@include file="common/Head.jsp"%>
         <div class="mui-content mui-scroll-wrapper">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
@@ -68,9 +23,12 @@
                 <section class="mui-slider banner-slide">
                     <div class="close-slide"></div>
                     <div class="mui-slider-group">
-                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg" /></a></div>
-                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg" /></a></div>
-                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg" /></a></div>
+                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg"/></a>
+                        </div>
+                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg"/></a>
+                        </div>
+                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg"/></a>
+                        </div>
                     </div>
                 </section>
                 <!--公告-->
@@ -79,7 +37,7 @@
                     <div class="notice-list">
                         <marquee behavior="scroll" scrollamount="2" direction="left">
                             <p>
-                                <a href="" >111尊敬的用户您好！本站于20161206进行升级！</a>
+                                <a href="">111尊敬的用户您好！本站于20161206进行升级！</a>
                                 <a href="">222尊敬的用户您好！本站于20161206进行升级！</a>
                                 <a href="">333尊敬的用户您好！本站于20161206进行升级！</a>
                                 <a href="">444尊敬的用户您好！本站于20161206进行升级！</a>
@@ -228,19 +186,22 @@
                             <div id="lottery1" class="mui-control-content mui-active">
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">YZT</div>
                                     </a>
                                 </li>
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">安徽快3</div>
                                     </a>
                                 </li>
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">安徽快3</div>
                                     </a>
                                 </li>
@@ -248,19 +209,22 @@
                             <div id="lottery2" class="mui-control-content">
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">KG</div>
                                     </a>
                                 </li>
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">安徽快3</div>
                                     </a>
                                 </li>
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">安徽快3</div>
                                     </a>
                                 </li>
@@ -268,19 +232,22 @@
                             <div id="lottery3" class="mui-control-content">
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">BBIN</div>
                                     </a>
                                 </li>
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">安徽快3</div>
                                     </a>
                                 </li>
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                     <a href="#">
-                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt="" class="lottery-img" />
+                                        <img src="../../mobile-v3/images/lottery/lottery-demo.png" alt=""
+                                             class="lottery-img"/>
                                         <div class="mui-media-body">安徽快3</div>
                                     </a>
                                 </li>
@@ -319,29 +286,7 @@
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->
-        <footer class="mui-bar mui-bar-tab">
-            <a class="mui-tab-item">
-                <span class="mui-icon icon-deposit"></span>
-                <span class="mui-tab-label">存款</span>
-            </a>
-            <a class="mui-tab-item" href="promo.html">
-                <span class="mui-icon icon-promo"></span>
-                <span class="mui-tab-label">优惠</span>
-            </a>
-            <a class="mui-tab-item mui-active" href="index.html">
-                <span class="mui-icon icon-home"></span>
-                <span class="mui-tab-label">首页</span>
-            </a>
-            <a class="mui-tab-item">
-                <span class="mui-icon icon-service"></span>
-                <span class="mui-tab-label">客服</span>
-            </a>
-            <a class="mui-tab-item" href="mine.html">
-                <span class="mui-icon icon-mine"></span>
-                <span class="mui-tab-label">我的</span>
-            </a>
-        </footer>
-
+        <%@include file="common/Footer.jsp"%>
     </div>
 </div>
 <!--语言弹窗-->
@@ -380,7 +325,7 @@
         <div class="hongbao"><!--未能拆时加disabled类名-->
             <div class="icon-open"></div>
             <div class="hongbao-time-txt">下次拆红包开始时间为</div>
-            <div class="hongbao-time">2017-11-11  11:11:11</div>
+            <div class="hongbao-time">2017-11-11 11:11:11</div>
             <a href="javascript:" class="btn-rule" id="btn-rule"></a>
             <!--红包规则元素-->
             <div class="hongbao-rule">
@@ -420,63 +365,5 @@
         <a href="javascript:" id="btn-ok" class="btn-ok"></a>
     </div>
 </div>
-<!--红包html结束-->
-<script src="../../mobile-v3/js/mui/mui.min.js"></script>
-<script src="../../mobile-v3/js/jquery/jquery-2.1.1.js"></script>
-<script src="../../mobile-v3/js/common.js"></script>
-<script src="../../mobile-v3/js/jquery/jquery.nicescroll.min.js"></script>
-<script type="text/javascript">
-    $(function(){
-        /*红包脚本开始*/
-        $(function(){
-            /*展开右下角红包*/
-            $("#hongbao").on("tap",function(){
-                $(this).addClass('hide_hongbao');
-                $("#hongbao_detail").fadeIn(1000);
-            });
-            /*关闭红包*/
-            $("#hongbao_detail .icon-close").on('click',function(){
-                $(this).parents('.hongbao_detail').fadeOut(1000);
-                $("#hongbao").removeClass('hide_hongbao');
-            });
-            /*打开红包规则*/
-            $("#btn-rule").on('tap',function(){
-                $('.hongbao-rule').show();
-                /*自定义滚动条*/
-                $(".hongbao-rule .txt").niceScroll(".nice-wrapper", {
-                    cursorwidth: "12px",
-                    cursorcolor:"#c0111c",
-                    cursorborder: "1px solid #d2aa48"
-                });
-            });
-            /*关闭红包规则*/
-            $(".icon-close-rule").on('tap',function(){
-                $(".hongbao-rule").hide();
-            });
-            /*打开红包*/
-            $(".hongbao").not(".disabled").find(".icon-open").on('tap',function(){
-                var hongbao_win = false;//是否中奖变量
-                $(this).parents(".hongbao_inner").addClass('opened');
-                $(this).hide();
-                $(".btn-rule").hide();
-                $(".hongbao-time-txt").hide();
-                $(".hongbao-time").hide();
-                if(hongbao_win){
-                    $(".win-hongbao.tips").show();
-                }else{
-                    $(".lose-hongbao.tips").show();
-                }
-            });
-            $("#btn-ok").on("tap",function(){
-                $(".hongbao_inner").removeClass("opened");
-                $(".icon-open").show();
-                $(".btn-rule").show();
-                $(".hongbao-time-txt").show();
-                $(".hongbao-time").show();
-                $(".tips").hide();
-            });
-        });
-        /*红包脚本结束*/
-    });
-</script>
+</body>
 </html>
