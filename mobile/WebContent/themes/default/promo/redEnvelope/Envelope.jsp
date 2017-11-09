@@ -53,6 +53,6 @@
         <div class="caidai"></div>
         <div class="hongbao-light"></div>
         <!--关闭红包继续抽奖按钮-->
-        <button style="border: none; background: none;" id="btn-ok" class="btn-ok" onclick="onceAgain()"></button>
+        <button style="border: none; background-color: rgba(0, 0, 0, 0);" id="btn-ok" class="btn-ok" onclick="onceAgain()"></button>
     </div>
 </div>
