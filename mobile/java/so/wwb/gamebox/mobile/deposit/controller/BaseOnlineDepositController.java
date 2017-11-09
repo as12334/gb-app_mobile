@@ -284,7 +284,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 Integer min = payAccount.getSingleDepositMin();
                 if (min == null) {
 //                    min = rank.getOnlinePayMin();
-                    min = 1;
+                    min = 0;
                 }
                 if ((max != null && max < rechargeAmount) || (min != null && min > rechargeAmount)) {
                     tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountOver", min, max);
@@ -411,6 +411,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (rank.getIsTakeTurns() == null || rank.getIsTakeTurns()) {
             PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
             playerRechargeVo.getSearch().setRechargeType(rechargeType);
+            playerRechargeVo.getSearch().setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
+            playerRechargeVo.setRankId(rank.getId());
             Integer payAccountId = ServiceTool.playerRechargeService().searchLastPayAccountId(playerRechargeVo);
             if (payAccountId == null) {
                 return payAccounts.get(0);
