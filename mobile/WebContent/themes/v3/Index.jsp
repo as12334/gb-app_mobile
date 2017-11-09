@@ -365,5 +365,6 @@
         <a href="javascript:" id="btn-ok" class="btn-ok"></a>
     </div>
 </div>
+<%@include file="include/include.js.jsp"%>
 </body>
 </html>

@@ -16,9 +16,14 @@
 
 <%--<link rel="bookmark" href="${resRoot}/mobile-v3/favicon.ico">
 <link rel="shortcut icon" href="../../mobile-v3/favicon.ico">--%>
-<link rel="stylesheet" href="${resRoot}/../mobile-v3/themes/mui.min.css" />
-<link rel="stylesheet" href="${resRoot}/mobile-v3/themes/common.css" />
-<link rel="stylesheet" href="${resRoot}/mobile-v3/themes/index.css" />
-<link rel="stylesheet" href="${resRoot}/mobile-v3/themes/default/style.css" />
-<link rel="stylesheet" href="${resRoot}/mobile-v3/themes/hongbao.css" />
+<c:set var="v3JsRoot" value="${fn:split(resRoot, '/')}"/>
+
+<script>
+    v3JsRoot = '${v3JsRoot}';
+</script>
+<link rel="stylesheet" href="${v3JsRoot}/mobile-v3/themes/mui.min.css" />
+<link rel="stylesheet" href="${v3JsRoot}/mobile-v3/themes/common.css" />
+<link rel="stylesheet" href="${v3JsRoot}/mobile-v3/themes/index.css" />
+<link rel="stylesheet" href="${v3JsRoot}/mobile-v3/themes/default/style.css" />
+<link rel="stylesheet" href="${v3JsRoot}/mobile-v3/themes/hongbao.css" />
 
