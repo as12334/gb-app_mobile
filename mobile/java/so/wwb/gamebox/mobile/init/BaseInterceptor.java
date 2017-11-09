@@ -27,7 +27,7 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                 if (param!=null && param.getParamValue()!=null && param.getParamValue().equals("true")) {
                     modelAndView.setViewName("/themes/lottery" + url);
                 } else {
-                    modelAndView.setViewName("/themes/default" + url);
+                    modelAndView.setViewName("/themes/v3" + url);
                 }
             }
         }
