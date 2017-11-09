@@ -215,7 +215,7 @@
                                         </div>
                                     </c:when>
                                     <c:when test="${command.result.fundType eq 'qqwallet_scan'||command.result.fundType eq 'alipay_scan'||command.result.fundType eq 'other_fast' || command.result.fundType eq 'wechatpay_scan'||command.result.fundType eq 'wechatpay_fast' || command.result.fundType eq 'alipay_fast'||command.result.fundType eq 'bitcoin_fast'
-                                                    ||command.result.fundType eq 'onecodepay_fast'||command.result.fundType eq 'jdwallet_fast'||command.result.fundType eq 'bdwallet_fast'||command.result.fundType eq 'union_pay_scan'||command.result.fundType eq 'bdwallet_scan'
+                                                    ||command.result.fundType eq 'onecodepay_fast'|| command.result.fundType eq 'qqwallet_fast'||command.result.fundType eq 'jdwallet_fast'||command.result.fundType eq 'bdwallet_fast'||command.result.fundType eq 'union_pay_scan'||command.result.fundType eq 'bdwallet_scan'
                                                     ||command.result.fundType eq 'jdpay_scan'}">
 
                                         <div class="hd">
