@@ -191,13 +191,32 @@
                                             <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
                                         </c:if>
 
-                                        <c:if test="${payAccount.bankCode ne 'onecodepay'}">
-                                            <label>${n}</label>
-                                            <div class="ct">
-                                                <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
-                                            </div>
-                                        </c:if>
+                                        <c:choose>
+                                            <c:when test="${payAccount.bankCode eq 'onecodepay'}"></c:when>
+                                            <c:when test="${payAccount.bankCode eq 'alipay'}">
+                                                <label>${n}</label>
+                                                <div class="ct">
+                                                    <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" autocomplete="off">
+                                                </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <label>${n}</label>
+                                                <div class="ct">
+                                                    <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
+                                    <c:if test="${payAccount.bankCode eq 'alipay'}">
+                                        <div class="mui-row m-l-sm">
+                                            <div class="gb-form-notice">
+                                                <p><img src="${resRoot}/images/ico-notice.png" height="12px;" alt="">
+                                                    “支付宝”转账到“支付宝”，请填写昵称；
+                                                    “支付宝”转账到“银行卡”，请填写真实姓名；
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </c:if>
                                     <div class="mui-input-row">
                                         <label>${views.deposit_auto['金额']}</label>
                                         <div class="ct">
