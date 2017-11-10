@@ -32,6 +32,9 @@
                                     </c:if>
                                 </c:forEach>
                             </c:if>
+                            <c:if test="${not empty activity}">
+                                ${activity.activityDescription}
+                            </c:if>
                         </div>
                     </div>
                     <button class="icon-close-rule" onclick="closeRule()" style="border: none;"></button>
