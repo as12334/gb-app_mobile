@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.init;
 
+import org.soul.commons.lang.string.StringTool;
 import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -8,7 +9,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,10 +30,11 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                 if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {
                     modelAndView.setViewName("/themes/lottery" + url);
                 } else {
-                    if (handler instanceof HandlerMethod) {
+                    SysParam upgradParam = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_MOBILE_UPGRADE);
+                    if (upgradParam != null && StringTool.isNotBlank(upgradParam.getParamValue()) && String.valueOf(true).equals(upgradParam.getParamValue()) && handler instanceof HandlerMethod) {
                         HandlerMethod handlerMethod = (HandlerMethod) handler;
                         Upgrade upgrade = handlerMethod.getMethodAnnotation(Upgrade.class);
-                        if (upgrade.upgrade()) {
+                        if (upgrade != null && upgrade.upgrade()) {
                             modelAndView.setViewName("/themes/v3" + url);
                         } else {
                             modelAndView.setViewName("/themes/default" + url);
