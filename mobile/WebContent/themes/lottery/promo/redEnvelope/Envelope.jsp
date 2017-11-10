@@ -40,7 +40,7 @@
             <!--中奖时的提示-->
             <div class="win-hongbao tips">
                 <div class="ttxt-1">恭喜您</div>
-                <div class="ttxt-2">获得20元</div>
+                <div class="ttxt-2">获得0元</div>
             </div>
             <!--未中奖时的提示-->
             <div class="lose-hongbao tips">
