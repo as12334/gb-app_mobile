@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
@@ -105,6 +106,7 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/mainIndex")
+    @Upgrade(upgrade = true)
     public String index(Model model, HttpServletRequest request) {
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
@@ -125,37 +127,38 @@ public class IndexController extends BaseApiController {
         List<Map> floatList = new ArrayList();
         showMoneyActivityFloat(floatList);
 
-        model.addAttribute("floatList",floatList);
+        model.addAttribute("floatList", floatList);
     }
 
     /**
      * 显示红包浮动图
+     *
      * @param floatList
      */
-    private void showMoneyActivityFloat(List<Map> floatList){
+    private void showMoneyActivityFloat(List<Map> floatList) {
         CttFloatPic cttFloatPic = queryMoneyActivityFloat();
-        if(cttFloatPic!=null){
+        if (cttFloatPic != null) {
             PlayerActivityMessage moneyActivity = findMoneyActivity();
             CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
-            if(moneyActivity!=null){
+            if (moneyActivity != null) {
                 String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
                 Map floatMap = new HashMap();
-                floatMap.put("type","moneyActivity");
-                floatMap.put("activityId",activityId);
-                floatMap.put("floatItem",cttFloatPicItem);
+                floatMap.put("type", "moneyActivity");
+                floatMap.put("activityId", activityId);
+                floatMap.put("floatItem", cttFloatPicItem);
                 floatList.add(floatMap);
             }
         }
     }
 
-    private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic){
+    private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic) {
         CttFloatPicItem item = null;
         Map<String, CttFloatPicItem> floatPicItemMap = Cache.getFloatPicItem();
         Iterator<String> iter = floatPicItemMap.keySet().iterator();
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             String key = iter.next();
             CttFloatPicItem cttFloatPicItem = floatPicItemMap.get(key);
-            if(cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())){
+            if (cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())) {
                 item = cttFloatPicItem;
                 break;
             }
@@ -165,31 +168,32 @@ public class IndexController extends BaseApiController {
 
     /**
      * 查找红包活动
+     *
      * @return
      */
-    private PlayerActivityMessage findMoneyActivity(){
+    private PlayerActivityMessage findMoneyActivity() {
         Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
         String lang = SessionManagerBase.getLocale().toString();
         Iterator<String> iter = activityMessages.keySet().iterator();
         Date justNow = new Date();
         PlayerActivityMessage playerActivityMessage = null;
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             String key = iter.next();
-            if(key.endsWith(lang)){
+            if (key.endsWith(lang)) {
                 playerActivityMessage = activityMessages.get(key);
                 Date startTime = playerActivityMessage.getStartTime();
                 Date endTime = playerActivityMessage.getEndTime();
-                if(!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())){
+                if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
                     //不是红包活动继续
                     continue;
                 }
-                if(playerActivityMessage.getIsDeleted()){
+                if (playerActivityMessage.getIsDeleted()) {
                     continue;
                 }
-                if(!playerActivityMessage.getIsDisplay()){
+                if (!playerActivityMessage.getIsDisplay()) {
                     continue;
                 }
-                if(startTime.before(justNow)&&justNow.before(endTime)){
+                if (startTime.before(justNow) && justNow.before(endTime)) {
                     return playerActivityMessage;
                 }
 
@@ -201,14 +205,14 @@ public class IndexController extends BaseApiController {
     /**
      * 查询红包浮动图
      */
-    private CttFloatPic queryMoneyActivityFloat(){
+    private CttFloatPic queryMoneyActivityFloat() {
         Map<String, CttFloatPic> floatPicMap = Cache.getFloatPic();
         Iterator<String> iter = floatPicMap.keySet().iterator();
         CttFloatPic tempFloatPic = null;
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             String key = iter.next();
             CttFloatPic cttFloatPic = floatPicMap.get(key);
-            if(CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType())&&cttFloatPic.getStatus()){
+            if (CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType()) && cttFloatPic.getStatus()) {
                 tempFloatPic = cttFloatPic;
                 break;
             }
@@ -254,7 +258,7 @@ public class IndexController extends BaseApiController {
     private List<Map> getCarousel(HttpServletRequest request) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
-        String webSite= ServletTool.getDomainFullAddress(request);
+        String webSite = ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
                 if (CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type"))) {
@@ -501,8 +505,8 @@ public class IndexController extends BaseApiController {
         } else {
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
-            if(StringTool.isNotBlank(sysUser.getAvatarUrl())) {
-                map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46,null));
+            if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
+                map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
             }
         }
         return JsonTool.toJson(map);
