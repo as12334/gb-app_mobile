@@ -90,9 +90,9 @@
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form m-t-sm">
                                     <div class="mui-input-row">
-                                        <label>${views.deposit_auto['您的比特币地址']}</label>
+                                        <label for="result.payerBankcard">${views.deposit_auto['您的比特币地址']}</label>
                                         <div class="ct">
-                                            <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${views.deposit_auto['请输入比特币地址']}" autocomplete="off">
+                                            <input type="text" id="result.payerBankcard" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${views.deposit_auto['请输入比特币地址']}" autocomplete="off">
                                         </div>
                                     </div>
 

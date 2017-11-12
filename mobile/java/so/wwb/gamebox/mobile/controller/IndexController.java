@@ -143,6 +143,8 @@ public class IndexController extends BaseApiController {
                 floatMap.put("type","moneyActivity");
                 floatMap.put("activityId",activityId);
                 floatMap.put("floatItem",cttFloatPicItem);
+                floatMap.put("cttFloatPic",cttFloatPic);
+                floatMap.put("description",moneyActivity.getActivityDescription());
                 floatList.add(floatMap);
             }
         }
