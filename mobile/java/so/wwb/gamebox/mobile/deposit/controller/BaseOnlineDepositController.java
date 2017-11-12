@@ -356,6 +356,12 @@ public class BaseOnlineDepositController extends BaseDepositController {
             payAccount = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), rechargeType);
         } else if (RechargeTypeEnum.QQWALLET_SCAN.getCode().equals(rechargeType)) {
             payAccount = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), rechargeType);
+        } else if (RechargeTypeEnum.JDPAY_SCAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), rechargeType);
+        }else if (RechargeTypeEnum.BDWALLET_SAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), rechargeType);
+        }else if (RechargeTypeEnum.UNION_PAY_SCAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), rechargeType);
         }
         return payAccount;
     }

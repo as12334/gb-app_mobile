@@ -36,6 +36,12 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     private static final String WECHATPAY = "wechatpay";
     /*QQ钱包*/
     private static final String QQWALLET = "qqwallet";
+    /*京东*/
+    private static final String JDWALLET = "jdwallet";
+    /*百度*/
+    private static final String BDWALLET ="bdwallet";
+    /*银联*/
+    private static final String UNIONPAY = "unionpay";
 
     /**
      * 扫码支付
@@ -59,6 +65,21 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
             //微信支付收款账号
             payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_SCAN.getCode());
             model.addAttribute("scanPay", RechargeTypeEnum.QQWALLET_SCAN.getCode());
+        }
+        if(JDWALLET.equals(type)){
+            //京东支付收款账号
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), RechargeTypeEnum.JDPAY_SCAN.getCode());
+            model.addAttribute("scanPay", RechargeTypeEnum.JDPAY_SCAN.getCode());
+        }
+        if(BDWALLET.equals(type)){
+            //百度支付收款账号
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), RechargeTypeEnum.BDWALLET_SAN.getCode());
+            model.addAttribute("scanPay", RechargeTypeEnum.BDWALLET_SAN.getCode());
+        }
+        if(UNIONPAY.equals(type)){
+            //银联支付收款账号
+            payAccountForScan = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), RechargeTypeEnum.UNION_PAY_SCAN.getCode());
+            model.addAttribute("scanPay", RechargeTypeEnum.UNION_PAY_SCAN.getCode());
         }
         model.addAttribute("payAccountForScan", payAccountForScan);
         model.addAttribute("currency", getCurrencySign());

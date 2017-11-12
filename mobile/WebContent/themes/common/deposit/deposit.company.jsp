@@ -29,7 +29,14 @@
                                         <div class="hd">
                                             <c:set var="isOther" value="${payAccount.bankCode=='other_bank'}"/>
                                             <p><span class="mui-pull-right">${views.deposit_auto['储蓄卡']}</span>
-                                                <span class="pay-bank ${payAccount.bankCode}" style="margin-right: -30px;"></span>
+                                                <c:choose>
+                                                    <c:when test="${isOther}">
+                                                        <span style="margin-right: -30px;">${payAccount.customBankName}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="pay-bank ${payAccount.bankCode}" style="margin-right: -30px;"></span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </p>
                                         </div>
                                         <div class="ct">
