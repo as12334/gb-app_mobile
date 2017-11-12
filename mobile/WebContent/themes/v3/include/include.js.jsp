@@ -1,5 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="include.inc.jsp"%>
+<script type="text/javascript" src="${root}/mobile/message_<%=SessionManagerCommon.getLocale().toString()%>.js?v=${rcVersion}"></script>
 <script>
     var curTheme = '${curTheme}';
     var root = '${root}';
