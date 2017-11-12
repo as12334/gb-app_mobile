@@ -143,9 +143,11 @@ public class IndexController extends BaseApiController {
             if (moneyActivity != null) {
                 String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
                 Map floatMap = new HashMap();
-                floatMap.put("type", "moneyActivity");
-                floatMap.put("activityId", activityId);
-                floatMap.put("floatItem", cttFloatPicItem);
+                floatMap.put("type","moneyActivity");
+                floatMap.put("activityId",activityId);
+                floatMap.put("floatItem",cttFloatPicItem);
+                floatMap.put("cttFloatPic",cttFloatPic);
+                floatMap.put("description",moneyActivity.getActivityDescription());
                 floatList.add(floatMap);
             }
         }
