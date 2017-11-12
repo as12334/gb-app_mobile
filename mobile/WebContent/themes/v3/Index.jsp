@@ -366,5 +366,6 @@
     </div>
 </div>
 <%@include file="include/include.js.jsp"%>
+<script type="text/javascript" src="${resRoot}/js/head/Head.js"></script>
 </body>
 </html>

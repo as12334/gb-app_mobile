@@ -83,6 +83,8 @@
 				/getHeadInfo.html = anon
 				/error/*.html = anon
 				/lottery/lhc/*/getZodiacMap.html = anon
+				/downLoad/downLoad.html = anon
+				/downLoad/downLoadIOS.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>
