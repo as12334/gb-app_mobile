@@ -36,10 +36,9 @@
         <!--浮窗广告轮播-->
         <c:if test="${not empty floatList}">
             <div class="ads-slider hongbao-slide-wrap hongbao-wrap" id="hongbao">
-                <a href="javascript:" class="close-ads"></a>
+                <div class="icon-close"></div>
                 <div class="mui-slider hongbao-slider">
                     <div class="mui-slider-group">
-
                         <c:forEach var="item" items="${floatList}">
                             <c:if test="${item.type=='moneyActivity'}">
                                 <c:choose>
