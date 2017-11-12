@@ -12,6 +12,18 @@
         <c:if test="${payAccount.bankCode eq 'alipay'}">
             ${views.deposit_auto['转账到支付宝']}
         </c:if>
+        <c:if test="${payAccount.bankCode eq 'qqwallet'}">
+            ${views.deposit_auto['转账到QQ钱包']}
+        </c:if>
+        <c:if test="${payAccount.bankCode eq 'jdwallet'}">
+            ${views.deposit_auto['转账到京东钱包']}
+        </c:if>
+        <c:if test="${payAccount.bankCode eq 'bdwallet'}">
+            ${views.deposit_auto['转账到百度钱包']}
+        </c:if>
+        <c:if test="${payAccount.bankCode eq 'onecodepay'}">
+            ${views.deposit_auto['转账到一码付']}
+        </c:if>
         <c:if test="${payAccount.bankCode eq 'other'}">
             ${payAccount.customBankName}
         </c:if>

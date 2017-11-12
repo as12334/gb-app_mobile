@@ -284,7 +284,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 Integer min = payAccount.getSingleDepositMin();
                 if (min == null) {
 //                    min = rank.getOnlinePayMin();
-                    min = 1;
+                    min = 0;
                 }
                 if ((max != null && max < rechargeAmount) || (min != null && min > rechargeAmount)) {
                     tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountOver", min, max);
@@ -356,6 +356,12 @@ public class BaseOnlineDepositController extends BaseDepositController {
             payAccount = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), rechargeType);
         } else if (RechargeTypeEnum.QQWALLET_SCAN.getCode().equals(rechargeType)) {
             payAccount = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), rechargeType);
+        } else if (RechargeTypeEnum.JDPAY_SCAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), rechargeType);
+        }else if (RechargeTypeEnum.BDWALLET_SAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), rechargeType);
+        }else if (RechargeTypeEnum.UNION_PAY_SCAN.getCode().equals(rechargeType)) {
+            payAccount = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), rechargeType);
         }
         return payAccount;
     }
@@ -411,6 +417,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (rank.getIsTakeTurns() == null || rank.getIsTakeTurns()) {
             PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
             playerRechargeVo.getSearch().setRechargeType(rechargeType);
+            playerRechargeVo.getSearch().setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
+            playerRechargeVo.setRankId(rank.getId());
             Integer payAccountId = ServiceTool.playerRechargeService().searchLastPayAccountId(playerRechargeVo);
             if (payAccountId == null) {
                 return payAccounts.get(0);

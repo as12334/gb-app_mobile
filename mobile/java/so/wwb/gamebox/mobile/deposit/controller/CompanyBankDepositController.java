@@ -66,7 +66,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
             isHide(model, SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING);
             model.addAttribute("bank", Cache.getBank().get(payAccount.getBankCode()));
             model.addAttribute("validateRule", JsRuleCreator.create(CompanyBankDeposit2Form.class));
-            getRechargeType(model);
+            getRechargeType(model, payAccount);
         }
 
         model.addAttribute("payAccount", payAccount);
@@ -142,11 +142,14 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
      *
      * @param model
      */
-    private void getRechargeType(Model model) {
+    private void getRechargeType(Model model, PayAccount payAccount) {
         List<Map<String, Object>> rechargeTypeList = new ArrayList<>(RECHARGE_TYPE.length);
         Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString())
                 .get(Module.FUND.getCode()).get(DictEnum.FUND_RECHARGE_TYPE.getType());
         for (String rechargeType : RECHARGE_TYPE) {
+            if (payAccount.getSupportAtmCounter() != null && !payAccount.getSupportAtmCounter() && !RechargeTypeEnum.ONLINE_BANK.getCode().equals(rechargeType)) {
+                continue;
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("value", rechargeType);
             map.put("text", i18nMap.get(rechargeType));
