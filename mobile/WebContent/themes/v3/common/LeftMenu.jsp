@@ -23,7 +23,9 @@
                 <ul class="mui-list-unstyled">
                     <li class="active"><a href="index.html">首页</a></li>
                     <li><a href="promo.html">优惠活动</a></li>
-                    <li><a href="javascript:void(0);" class="downLoad">下载客户端</a></li>
+                    <li>
+                        <soul:button target="${root}/downLoad/downLoad.html" text="" opType="href" cssClass="">下载客户端</soul:button>
+                    </li>
                     <li><a href="">账户存款</a></li>
                     <li><a href="">关于我们</a></li>
                     <li><a href="">常见问题</a></li>

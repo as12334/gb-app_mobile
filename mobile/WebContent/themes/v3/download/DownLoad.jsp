@@ -27,15 +27,14 @@
                 <div class="tit">${siteName}</div>
                 <div class="des">下载APP 再也无需输入网址</div>
                 <div class="btn-wrap">
-                    <a href="javascript:void(0)" class="btn-download ios">点击下载iOS版</a>
-                    <a href="javascript:void(0)" data-value="${androidUrl}" class="btn-download android">点击下载安卓版</a>
+                    <soul:button target="${root}/downLoad/downLoadIOS.html" text="" opType="href" cssClass="btn-download ios">点击下载iOS版</soul:button>
+                    <soul:button target="${androidUrl}" text="" opType="href" cssClass="btn-download android">点击下载安卓版</soul:button>
                 </div>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
     </div>
 </div>
 <%@ include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/head/Head.js"></script>
-<script type="text/javascript" src="${resRoot}/js/footer/Footer.js"></script>
+<script type="text/javascript" src="${resRoot}/js/download/DownLoad.js"></script>
 </html>
 
