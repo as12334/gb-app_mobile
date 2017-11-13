@@ -28,13 +28,13 @@
                 <!-- 主界面具体展示内容 -->
                 <img src="${resRoot}/images/apple-download-ios-bg.png" class="h-bg"/>
                 <img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="app-logo" />
-                <a href="javascript:void(0)" data-value="${iosUrl}" class="btn-install">点击安装</a>
+                <soul:button target="${iosUrl}" text="" opType="href" cssClass="btn-install">点击安装</soul:button>
                 <img src="${resRoot}/images/apple-down.png" class="down-step"/>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
     </div>
 </div>
 <%@ include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/head/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/download/DownLoad.js"></script>
 </html>
 
