@@ -5,9 +5,6 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp"%>
-    <link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
-    <link rel="bookmark" href="${resRoot}/favicon.ico">
-    <link rel="shortcut icon" href="${resRoot}/favicon.ico">
 </head>
 
 <body>
@@ -26,7 +23,7 @@
         <div class="mui-content mui-scroll-wrapper mui-content-without-footer-address download-content">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
-                <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" class="app-logo" />
+                <img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="app-logo" />
                 <div class="tit">${siteName}</div>
                 <div class="des">下载APP 再也无需输入网址</div>
                 <div class="btn-wrap">
@@ -39,5 +36,6 @@
 </div>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/head/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/footer/Footer.js"></script>
 </html>
 

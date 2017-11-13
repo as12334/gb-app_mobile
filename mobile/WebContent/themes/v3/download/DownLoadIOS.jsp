@@ -27,7 +27,7 @@
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <img src="${resRoot}/images/apple-download-ios-bg.png" class="h-bg"/>
-                <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" class="app-logo" />
+                <img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="app-logo" />
                 <a href="javascript:void(0)" data-value="${iosUrl}" class="btn-install">点击安装</a>
                 <img src="${resRoot}/images/apple-down.png" class="down-step"/>
             </div> <!--mui-scroll 闭合标签-->
