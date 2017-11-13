@@ -1,24 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
+<c:set var="uri" value="<%=request.getRequestURI()%>"/>
 <footer class="mui-bar mui-bar-tab">
-    <a class="mui-tab-item">
+    <soul:button target="${root}/wallet/deposit/index.html" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
         <span class="mui-icon icon-deposit"></span>
         <span class="mui-tab-label">存款</span>
-    </a>
-    <a class="mui-tab-item" href="promo.html">
+    </soul:button>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
         <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">优惠</span>
-    </a>
-    <a class="mui-tab-item mui-active" href="index.html">
-        <span class="mui-icon icon-home"></span>
+    </soul:button>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${uri eq '' || uri eq '/' ||fn:contains(uri, 'mainIndex')?'mui-active':''}">
+        <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">首页</span>
-    </a>
-    <a class="mui-tab-item">
-        <span class="mui-icon icon-service"></span>
+    </soul:button>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
+        <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">客服</span>
-    </a>
-    <a class="mui-tab-item" href="mine.html">
-        <span class="mui-icon icon-mine"></span>
+    </soul:button>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
+        <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">我的</span>
-    </a>
+    </soul:button>
 </footer>
