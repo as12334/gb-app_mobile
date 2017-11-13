@@ -10,7 +10,7 @@
         <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">优惠</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${uri eq '' || uri eq '/' ||fn:contains(uri, 'mainIndex')?'mui-active':''}">
         <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">首页</span>
     </soul:button>
