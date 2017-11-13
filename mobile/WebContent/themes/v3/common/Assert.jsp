@@ -2,14 +2,14 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <div class="login-info" id="login-info" style="display: none">
-    <div class="user_name">a*1</div>
-    <div class="money">￥0.00</div>
-    <div class="ex open">
+    <div class="user_name"></div>
+    <div class="money"></div>
+    <div class="ex">
         <table>
             <tbody>
             <tr>
                 <td>总资产</td>
-                <td><span class="bar-asset" style="padding-right: 0; color: #ffffff">￥0</span></td>
+                <td><span class="bar-asset" style="padding-right: 0; color: #ffffff"></span></td>
             </tr>
             </tbody>
         </table>
@@ -27,12 +27,11 @@
             <div class="mui-scroll">
                 <table id="api-balance">
                     <tbody>
-                        <c:forEach items="${siteApi}" var="i">
-                            <tr data="${i.value.apiId}">
-                                <td>${gbFn:getApiName(i.value.apiId.toString())}</td>
-                                <td class="_money" name="money_${i.value.apiId}">￥0</td>
-                            </tr>
-                        </c:forEach>
+                        <%--异步求出需展示的api--%>
+                        <%--<tr data="${i.value.apiId}">
+                            <td>${gbFn:getApiName(i.value.apiId.toString())}</td>
+                            <td class="_money" name="money_${i.value.apiId}"></td>
+                        </tr>--%>
                     </tbody>
                 </table>
             </div>

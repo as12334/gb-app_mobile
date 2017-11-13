@@ -49,11 +49,11 @@ import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
-import so.wwb.gamebox.model.master.content.vo.CttFloatPicVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -143,11 +143,11 @@ public class IndexController extends BaseApiController {
             if (moneyActivity != null) {
                 String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
                 Map floatMap = new HashMap();
-                floatMap.put("type","moneyActivity");
-                floatMap.put("activityId",activityId);
-                floatMap.put("floatItem",cttFloatPicItem);
-                floatMap.put("cttFloatPic",cttFloatPic);
-                floatMap.put("description",moneyActivity.getActivityDescription());
+                floatMap.put("type", "moneyActivity");
+                floatMap.put("activityId", activityId);
+                floatMap.put("floatItem", cttFloatPicItem);
+                floatMap.put("cttFloatPic", cttFloatPic);
+                floatMap.put("description", moneyActivity.getActivityDescription());
                 floatList.add(floatMap);
             }
         }
@@ -530,5 +530,26 @@ public class IndexController extends BaseApiController {
     @Override
     protected String getDemoIndex() {
         return "/mainIndex";
+    }
+
+    /**
+     * 查询用户信息,判断是否登录
+     */
+    @RequestMapping("/userInfo")
+    @ResponseBody
+    @Upgrade(upgrade = true)
+    public String userInfo(HttpServletRequest request) {
+        SysUser sysUser = SessionManager.getUser();
+        Map map = new HashMap<>(3, 1f);
+        if (sysUser == null) {
+            map.put("isLogin", false);
+        } else {
+            map.put("isLogin", true);
+            map.put("name", StringTool.overlayName(sysUser.getUsername()));
+            PlayerApiListVo playerApiListVo = new PlayerApiListVo();
+            playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
+            map.put("asset", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+        }
+        return JsonTool.toJson(map);
     }
 }
