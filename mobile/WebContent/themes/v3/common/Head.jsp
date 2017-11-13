@@ -2,9 +2,12 @@
 <%@ include file="../include/include.inc.jsp" %>
 <header class="mui-bar mui-bar-nav">
     <a class="mui-icon mui-action-menu mui-icon-bars mui-pull-left"></a>
-    <a href="javascript:void(0);" class="btn-download"></a>
-    <a type="button" class="mui-btn mui-btn-success mui-pull-right btn-login" href="login.html">登录/注册</a>
-    <a type="button" class="mui-btn mui-btn-success mui-pull-right btn-demo">试玩</a>
+    <soul:button target="${root}/downLoad/downLoad.html" text="" opType="href" cssClass="btn-download"/>
+    <div id="notLogin">
+        <soul:button target="${root}/login/commonLogin.html" text="登录/注册" opType="href" cssClass="mui-btn mui-btn-success mui-pull-right btn-login"/>
+        <soul:button target="" text="试玩" opType="href" cssClass="mui-btn mui-btn-success mui-pull-right btn-demo"/>
+    </div>
+    <%@include file="Assert.jsp"%>
     <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt="logo" class="logo">
     <!--易记域名-->
     <section class="yjym">易记域名：${domain}</section>

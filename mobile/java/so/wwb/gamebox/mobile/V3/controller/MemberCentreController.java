@@ -35,6 +35,7 @@ import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +53,8 @@ public class MemberCentreController {
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
-    public String mine(Model model) {
+    public String mine(Model model, Integer skip) {
+        model.addAttribute("skip", skip);
         return "/membercentre/Mine";
     }
 
@@ -62,7 +64,7 @@ public class MemberCentreController {
     @RequestMapping("/getUserInfo")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public String getUserInfo(){
+    public String getUserInfo() {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
         Map<String, Object> userInfo = new HashMap<>();
