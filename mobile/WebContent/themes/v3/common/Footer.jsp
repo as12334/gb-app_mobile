@@ -17,7 +17,7 @@
         <span class="mui-icon icon-service"></span>
         <span class="mui-tab-label">客服</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${skip == 4?'mui-active':''}">
+    <soul:button target="${root}/memberCentre/index" text="" opType="href" cssClass="mui-tab-item ${skip == 4?'mui-active':''}">
         <span class="mui-icon icon-mine"></span>
         <span class="mui-tab-label">我的</span>
     </soul:button>
