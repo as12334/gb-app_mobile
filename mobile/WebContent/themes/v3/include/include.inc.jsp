@@ -33,7 +33,7 @@
 <c:set var="siteCurrency" value="<%=SupportLocale.querySiteCurrencyBySiteId() %>" />
 <c:set var="siteCurrencySign" value="<%=SupportLocale.querySiteCurrencySignBySiteId()  %>" />
 
-<c:set var="rcVersion" value="<%= Cache.getRcVersion(SpringTool.getBean(CommonConf.class).getDubboVersion()) %>"/>
+<c:set var="rcVersion" value="<%= Cache.getRcVersion() %>"/>
 <c:set var="domain" value="<%= request.getServerName() %>"/>
 
 <c:set var="root" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getRoot(),request.getServerName()) %>' />
