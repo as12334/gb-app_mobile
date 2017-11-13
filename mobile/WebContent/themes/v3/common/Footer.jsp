@@ -1,25 +1,24 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
-<c:set var="uri" value="<%=request.getRequestURI()%>"/>
 <footer class="mui-bar mui-bar-tab">
-    <soul:button target="${root}/wallet/deposit/index.html" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
+    <soul:button target="${root}/wallet/deposit/index.html" text="" opType="href" cssClass="mui-tab-item ${skip == 0?'mui-active':''}">
         <span class="mui-icon icon-deposit"></span>
         <span class="mui-tab-label">存款</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${skip == 1?'mui-active':''}">
         <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">优惠</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${uri eq '' || uri eq '/' ||fn:contains(uri, 'mainIndex')?'mui-active':''}">
-        <span class="mui-icon icon-promo"></span>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${empty skip || skip == 2?'mui-active':''}">
+        <span class="mui-icon icon-home"></span>
         <span class="mui-tab-label">首页</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
-        <span class="mui-icon icon-promo"></span>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${skip == 3?'mui-active':''}">
+        <span class="mui-icon icon-service"></span>
         <span class="mui-tab-label">客服</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${fn:contains(uri, '/wallet/deposit')?'mui-active':''}">
-        <span class="mui-icon icon-promo"></span>
+    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${skip == 4?'mui-active':''}">
+        <span class="mui-icon icon-mine"></span>
         <span class="mui-tab-label">我的</span>
     </soul:button>
 </footer>
