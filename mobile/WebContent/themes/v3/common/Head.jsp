@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-icon mui-action-menu mui-icon-bars mui-pull-left"></a>
+    <soul:button target="leftMenu" text="" opType="function" cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
     <soul:button target="${root}/downLoad/downLoad.html" text="" opType="href" cssClass="btn-download"/>
     <div id="notLogin">
         <soul:button target="${root}/login/commonLogin.html" text="登录/注册" opType="href" cssClass="mui-btn mui-btn-success mui-pull-right btn-login"/>
