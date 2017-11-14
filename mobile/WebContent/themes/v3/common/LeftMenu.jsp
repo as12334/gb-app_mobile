@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <aside class="mui-off-canvas-left mui-transitioning mui-active" style="visibility: visible; z-index: 0;">
-    <div class="mui-scroll-wrapper side-menu-scroll-wrapper" data-scroll="6">
-        <div class="mui-scroll" style="transform: translate3d(0px, 0px, 0px) translateZ(0px);">
+    <div class="mui-scroll-wrapper side-menu-scroll-wrapper">
+        <div class="mui-scroll">
             <!-- 菜单具体展示内容 -->
             <!--个人信息部分-->
             <div class="person-info">
@@ -39,7 +39,7 @@
                     <li><a href="">在线客服</a></li>
                     <li><a href="">注册条款</a></li>
                     <li class="lang ${fn:replace(language, '_', '-')}">
-                        <a href="">语言</a>
+                        <soul:button target="lang" text="语言" opType="function"/>
                     </li>
                 </ul>
                 <div class="login">
@@ -47,5 +47,14 @@
                 </div>
             </div>
         </div>
-        <div class="mui-scrollbar mui-scrollbar-vertical"><div class="mui-scrollbar-indicator" style="transition-duration: 0ms; display: none; height: 663px; transform: translate3d(0px, 0px, 0px) translateZ(0px);"></div></div></div>
+    </div>
 </aside>
+<!--语言弹窗-->
+<ul class="lang-menu">
+    <c:set var="siteLang" value="<%=Cache.getAvailableSiteLanguage()%>"/>
+    <c:forEach var="i" items="${siteLang}">
+        <li class="${fn:replace(i.value.language, '_', '-')} ${language eq i.value.language?' current':''}">
+            <a href="">${dicts.common.language[i.value.language]}</a>
+        </li>
+    </c:forEach>
+</ul>
