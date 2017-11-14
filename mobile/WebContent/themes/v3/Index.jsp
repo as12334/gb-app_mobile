@@ -368,5 +368,6 @@
 <%@include file="include/include.js.jsp"%>
 <script type="text/javascript" src="${resRoot}/js/Index.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Footer.js"></script>
 </body>
 </html>

@@ -13,7 +13,7 @@
         <span class="mui-icon icon-home"></span>
         <span class="mui-tab-label">首页</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${skip == 3?'mui-active':''}">
+    <soul:button target="loadCustomer" text="" opType="function" cssClass="mui-tab-item ${skip == 3?'mui-active':''}">
         <span class="mui-icon icon-service"></span>
         <span class="mui-tab-label">客服</span>
     </soul:button>
