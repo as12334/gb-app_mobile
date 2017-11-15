@@ -488,7 +488,7 @@ public class SignUpController extends BaseDemoController {
      */
     private void checkRegisterFormAgentDomain(UserRegisterVo userRegisterVo, HttpServletRequest request) {
         String domain = SessionManager.getDomain(request);
-        VSysSiteDomain sysDomain  = Cache.getSiteDomain().get(domain);
+        VSysSiteDomain sysDomain  = Cache.getSiteDomain(domain);
         if (sysDomain != null && sysDomain.getAgentId()!=null){
             userRegisterVo.getSysUser().setOwnerId(sysDomain.getAgentId());
             LOG.debug("【玩家注册】通过代理独立域名{0}－代理id{1}",domain,sysDomain.getAgentId());
