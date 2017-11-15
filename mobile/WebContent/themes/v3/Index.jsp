@@ -289,85 +289,9 @@
         <%@include file="common/Footer.jsp"%>
     </div>
 </div>
-<!--语言弹窗-->
-<ul class="lang-menu">
-    <li class="current zh-CN"><a href="">中文</a></li><!--当前语言版本加current-->
-    <li class="en-US"><a href="">English</a></li>
-    <li class="ja-JP"><a href="">日文</a></li>
-</ul>
-<!--红包html开始  通过改变hongbao-wrap的class来改变红包样式，一共三种（hb_type_1,hb_type_2,hb_type_3）-->
-<div class="hongbao-slide-wrap hongbao-wrap" id="hongbao">
-    <div class="mui-slider hongbao-slider">
-        <div class="mui-slider-group">
-            <div class="mui-slider-item hb_type_1">
-                <div class="img"></div>
-                <div class="extra"></div>
-            </div>
-            <div class="mui-slider-item hb_type_2">
-                <div class="img"></div>
-                <div class="extra"></div>
-            </div>
-            <div class="mui-slider-item hb_type_3">
-                <div class="img"></div>
-                <div class="extra"></div>
-            </div>
-        </div>
-        <div class="mui-slider-indicator">
-            <div class="mui-indicator mui-active"></div>
-            <div class="mui-indicator"></div>
-            <div class="mui-indicator"></div>
-        </div>
-    </div>
-</div>
-<div id="hongbao_detail" class="hongbao_detail">
-    <div class="hongbao_inner">
-        <div class="icon-close"></div>
-        <div class="hongbao"><!--未能拆时加disabled类名-->
-            <div class="icon-open"></div>
-            <div class="hongbao-time-txt">下次拆红包开始时间为</div>
-            <div class="hongbao-time">2017-11-11 11:11:11</div>
-            <a href="javascript:" class="btn-rule" id="btn-rule"></a>
-            <!--红包规则元素-->
-            <div class="hongbao-rule">
-                <div class="txt">
-                    <div class="nice-wrapper">
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                        游戏规则游戏规则
-                    </div>
-                </div>
-                <a href="javascript:" class="icon-close-rule"></a>
-            </div>
-            <!--中奖时的提示-->
-            <div class="win-hongbao tips">
-                <div class="ttxt-1">恭喜您</div>
-                <div class="ttxt-2">获得20元</div>
-            </div>
-            <!--未中奖时的提示-->
-            <div class="lose-hongbao tips">
-                <div class="ttxt-1">很遗憾</div>
-                <div class="ttxt-2">还差一点就中奖了呦！</div>
-            </div>
-        </div>
-        <div class="hongbao_extra"></div>
-        <!--拆开红包时的彩带和光环-->
-        <div class="caidai"></div>
-        <div class="hongbao-light"></div>
-        <!--关闭红包继续抽奖按钮-->
-        <a href="javascript:" id="btn-ok" class="btn-ok"></a>
-    </div>
-</div>
 <%@include file="include/include.js.jsp"%>
 <script type="text/javascript" src="${resRoot}/js/Index.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
-<script type="text/javascript" src="${resRoot}/js/common/Footer.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 </body>
 </html>
