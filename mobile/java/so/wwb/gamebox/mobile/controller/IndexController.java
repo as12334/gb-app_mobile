@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
+import so.wwb.gamebox.iservice.company.sys.IVSysSiteDomainService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
@@ -42,6 +43,7 @@ import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.company.sys.vo.VSysSiteDomainListVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
@@ -371,7 +373,11 @@ public class IndexController extends BaseApiController {
             defaultSite = site.getWebSite();
         } else {
             //其他的都是取默认域名
-            for (VSysSiteDomain o : Cache.getSiteDomain().values()) {
+            VSysSiteDomainListVo vSysSiteDomainListVo=new VSysSiteDomainListVo();
+            vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
+            List<VSysSiteDomain> domainList= DubboTool.getService(IVSysSiteDomainService.class).loadSiteDomain(vSysSiteDomainListVo);
+
+            for (VSysSiteDomain o : domainList) {
                 if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
                     if (o.getPageUrl() != null && o.getIsDefault() != null && o.getPageUrl().equals(DomainPageUrlEnum.INDEX.getCode()) && o.getIsDefault()) {
                         defaultSite = o.getDomain();

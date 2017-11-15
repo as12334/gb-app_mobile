@@ -101,7 +101,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
 
     public String getDomain(String domain, PayAccount payAccount) {
         domain = domain.replace("http://", "");
-        VSysSiteDomain siteDomain = Cache.getSiteDomain().get(domain);
+        VSysSiteDomain siteDomain = Cache.getSiteDomain(domain);
         Boolean sslEnabled = false;
         if (siteDomain != null && siteDomain.getSslEnabled() != null && siteDomain.getSslEnabled()) {
             sslEnabled = true;
