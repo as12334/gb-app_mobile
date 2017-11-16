@@ -12,11 +12,11 @@
 	<import resource="classpath:/conf/shiro-app-main.xml"/>
 	<import resource="classpath*:/conf/lottery-mobile-dubbo-consumer.xml"/>
 
+	<import resource="classpath*:conf/notify-bean-aop.xml"/>
+	<import resource="classpath*:conf/notify-bean-intercept.xml"/>
+	<import resource="classpath*:conf/service-notify-consumer.xml"/>
+
 	<context:property-placeholder location="classpath*:conf/*-conf.properties" ignore-unresolvable="true"/>
-
-	<context:annotation-config/>
-
-	<aop:aspectj-autoproxy/>
 
 	<context:component-scan base-package="so.wwb.gamebox.mobile">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
