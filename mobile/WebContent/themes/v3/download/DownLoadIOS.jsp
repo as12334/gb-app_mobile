@@ -5,9 +5,6 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp"%>
-    <link rel="bookmark" href="${resRoot}/favicon.ico">
-    <link rel="shortcut icon" href="${resRoot}/favicon.ico">
-    <link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
 </head>
 
 <body>

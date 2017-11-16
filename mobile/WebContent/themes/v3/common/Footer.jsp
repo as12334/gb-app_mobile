@@ -5,7 +5,7 @@
         <span class="mui-icon icon-deposit"></span>
         <span class="mui-tab-label">存款</span>
     </soul:button>
-    <soul:button target="" text="" opType="href" cssClass="mui-tab-item ${skip == 1?'mui-active':''}">
+    <soul:button target="${root}/discounts/index.html" text="" opType="href" cssClass="mui-tab-item ${skip == 1?'mui-active':''}">
         <span class="mui-icon icon-promo"></span>
         <span class="mui-tab-label">优惠</span>
     </soul:button>

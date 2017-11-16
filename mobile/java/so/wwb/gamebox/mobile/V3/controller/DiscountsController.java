@@ -7,6 +7,8 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.web.init.BaseConfigManager;
+import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +19,13 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
+import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
+import javax.servlet.http.HttpServletRequest;
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,7 +50,7 @@ public class DiscountsController {
     @RequestMapping("/activityType")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public String getActivityType() {
+    public String getActivityType(HttpServletRequest request) {
         String localLanguage = SessionManager.getLocale().toString();
         Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
         Map<String, SiteI18n> tempMap = new LinkedHashMap<>();
@@ -59,13 +64,19 @@ public class DiscountsController {
         VActivityMessageListVo vActivityMessageListVo = getActivityMessage(new VActivityMessageListVo());
 
         Map<String,Object> activity = MapTool.newHashMap();
-        setMapValue(vActivityMessageListVo,activity);
+        setMapValue(vActivityMessageListVo,activity,request);
         activity.put("type",tempMap);
 
         return JsonTool.toJson(activity);
     }
 
-    private void setMapValue(VActivityMessageListVo vActivityMessageListVo,Map activity){
+    private void setMapValue(VActivityMessageListVo vActivityMessageListVo,Map activity,HttpServletRequest request){
+        for(VActivityMessage a : vActivityMessageListVo.getResult()){
+            String resRootFull = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName());
+            String activityAffiliated = ImageTag.getImagePathWithDefault(request.getServerName(),a.getActivityAffiliated(),resRootFull.concat("'/images/img-sale1.jpg'"));
+            a.setActivityAffiliated(activityAffiliated);
+        }
+
         activity.put("message",vActivityMessageListVo.getResult());
         activity.put("pageNumber",vActivityMessageListVo.getPaging().getPageNumber());
         activity.put("lastPageNumber",vActivityMessageListVo.getPaging().getLastPageNumber());
@@ -77,7 +88,7 @@ public class DiscountsController {
     @RequestMapping("/promo")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public String promo(VActivityMessageListVo vActivityMessageListVo ,String type,Integer pageNumber) {
+    public String promo(VActivityMessageListVo vActivityMessageListVo ,String type,Integer pageNumber,HttpServletRequest request) {
         if(!StringTool.isBlank(type)){
             vActivityMessageListVo.getSearch().setActivityClassifyKey(type);
         }
@@ -85,7 +96,7 @@ public class DiscountsController {
         vActivityMessageListVo = getActivityMessage(vActivityMessageListVo);
 
         Map<String,Object> activity = MapTool.newHashMap();
-        setMapValue(vActivityMessageListVo,activity);
+        setMapValue(vActivityMessageListVo,activity,request);
 
         return JsonTool.toJson(activity);
     }

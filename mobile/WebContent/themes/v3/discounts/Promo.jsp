@@ -14,24 +14,18 @@
     <%@ include file="../common/LeftMenu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-       <%@include file="../common/Head.jsp"%>
-        <div class="mui-content mui-scroll-wrapper">
+        <%@include file="../common/Head.jsp" %>
+        <div class="mui-content mui-scroll-wrapper" id="pullrefresh">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <!--优惠列表-->
                 <section class="promo">
                     <div class="promo-sorts">
-                        <%--<a type="button" data-value="" class="mui-btn btn-promo-sort active">全部</a>--%>
-                        <soul:button activityType=""  callback="" target="activityType" text="" opType="function" cssClass="mui-btn btn-promo-sort active">全部</soul:button>
+                        <soul:button activityType="" callback="" target="activityType" text="" opType="function"
+                                     cssClass="mui-btn btn-promo-sort active">全部</soul:button>
                     </div>
-                    <div  id="pullrefresh">
-                        <ul class="promo-list mui-list-unstyled">
-                            <%--<li><a href=""><img src="${resRoot}/images/promo/promo01.png"/></a></li>
-                            <li><a href=""><img src="${resRoot}/images/promo/promo02.png"/></a></li>
-                            <li><a href=""><img src="${resRoot}/images/promo/promo03.png"/></a></li>--%>
-                        </ul>
-                    </div>
-
+                    <ul class="promo-list mui-list-unstyled">
+                    </ul>
                 </section>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
@@ -42,8 +36,8 @@
             <a href="javascript:" class="close-ads"></a>
             <div class="mui-slider">
                 <div class="mui-slider-group">
-                    <div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png" /></a></div>
-                    <div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png" /></a></div>
+                    <div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png"/></a></div>
+                    <div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png"/></a></div>
                 </div>
             </div>
         </div>
@@ -58,5 +52,6 @@
     <li class="ja-JP"><a href="">日文</a></li>
 </ul>
 <%@ include file="../include/include.js.jsp" %>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/discounts/Promo.js"></script>
 </html>
