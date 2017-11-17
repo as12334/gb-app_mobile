@@ -7,6 +7,7 @@
     <title>${activity.activityName}</title>
     <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/hb/style.css?v=${rcVersion}" />
+    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/hongbao.css?v=${rcVersion}" />
     <%@ include file="/include/include.js.jsp" %>
     <style>
         .gb-imgs>.ct ul li {
