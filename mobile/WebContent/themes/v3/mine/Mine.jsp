@@ -5,6 +5,7 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
+    <link rel="stylesheet" href="${resComRoot}/themes/public-mod.css">
 </head>
 
 <body>
