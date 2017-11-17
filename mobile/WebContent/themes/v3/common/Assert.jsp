@@ -1,6 +1,7 @@
 <%--@elvariable id="siteApi" type="java.util.Map<java.lang.String,so.wwb.gamebox.model.company.site.po.SiteApi>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
+<div class="mui-hide-bar" style="display: none;"></div>
 <div class="login-info" id="login-info" style="display: none">
     <div class="user_name"></div>
     <div class="money"></div>
@@ -18,7 +19,7 @@
             <tbody>
             <tr>
                 <td>钱包</td>
-                <td class="bar-wallet">￥0</td>
+                <td class="bar-wallet"></td>
             </tr>
             </tbody>
         </table>
@@ -37,8 +38,19 @@
             </div>
         </div>
         <div class="ct">
-            <p><a class="go btn-refresh">刷新额度</a></p>
-            <p><a class="go btn-deposit">存款</a></p>
+            <c:if test="${!isAutoPay}">
+                <p>
+                    <soul:button target="refreshApi" text="${views.include_auto['刷新额度']}" opType="function" cssClass="go btn-refresh" ></soul:button>
+                </p>
+            </c:if>
+            <c:if test="${isAutoPay}">
+                <p>
+                    <soul:button target="recovery" text="${views.include_auto['一键回收']}" opType="function" cssClass="go btn-recovery"></soul:button>
+                </p>
+            </c:if>
+            <p>
+                <soul:button target="${root}/wallet/deposit/index.html" text="${views.include_auto['存款']}" opType="href" cssClass="go btn-deposit"></soul:button>
+            </p>
         </div>
     </div>
 </div>

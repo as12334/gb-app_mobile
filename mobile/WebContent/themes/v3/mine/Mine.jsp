@@ -5,6 +5,7 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
+    <link rel="stylesheet" href="${resComRoot}/themes/public-mod.css">
 </head>
 
 <body>
@@ -16,7 +17,7 @@
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav mui-bar-blue mui-bar-mine">
-            <a class="mui-icon mui-action-menu mui-icon-bars mui-pull-left"></a>
+            <soul:button target="leftMenu" text="" opType="function" cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
             <h1 class="mui-title">我的</h1>
             <a href="" class="mui-icon icon-gift mui-pull-right"></a>
             <a href="" class="mui-icon icon-message mui-pull-right">
@@ -33,7 +34,8 @@
                             <div class="ct">
                                 <img src="${resRoot}/images/avatar.png" class="avatar">
                                 <p></p>
-                                <a class="btn mui-btn mui-btn-outlined user-logout">退出登录</a>
+                                <%--<a class="btn mui-btn mui-btn-outlined user-logout">退出登录</a>--%>
+                                <soul:button target="loginOut" text="退出登录" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
                             </div>
                             <p class="money-info">
 			            <span class="span">
@@ -74,6 +76,9 @@
 							        <img src="${resRoot}/images/my-ico3.png" class="mine-item-img"/>
 						        </span>
                                 <p>额度转换</p>
+                                <p>
+                                    <small id="transferAmount"></small>
+                                </p>
                             </soul:button>
                         </li>
                     </ul>
@@ -104,43 +109,70 @@
                             </soul:button>
                         </li>
                     </ul>
+                    <c:set var="len" value="0"/>
                     <ul class="mui-list-unstyled list-mine-item"><!--第三行-->
+                        <c:if test="${isCash}">
+                            <li class="mui-col-xs-4">
+                                <soul:button target="${root}/bankCard/page/addCard.html" text="" opType="href" cssClass="">
+                                    <span class="item-img-wrap">
+							            <img src="${resRoot}/images/my-ico7.png" class="mine-item-img"/>
+                                    </span>
+                                    <p>银行卡</p>
+                                    <span id="bankImg" class="ext-info with-icon "> </span>
+                                    <c:set var="len" value="${len+1}"/>
+                                </soul:button>
+                            </li>
+                        </c:if>
+                        <c:if test="${isBit}">
+                            <li class="mui-col-xs-4">
+                                <soul:button target="${root}/bankCard/page/addBtc.html" text="" opType="href" cssClass="">
+						        <span class="item-img-wrap">
+							        <img src="${resRoot}/images/my-ico12.png" class="mine-item-img"/>
+						        </span>
+                                    <p>比特币钱包</p>
+                                    <p>
+                                        <small id="btcNumber"></small>
+                                    </p>
+                                </soul:button>
+                            </li>
+                            <c:set var="len" value="${len+1}"/>
+                        </c:if>
+                        <li class="mui-col-xs-4">
+                            <soul:button target="${root}/message/gameNotice.html?isSendMessage=true" text="" opType="href" cssClass="">
+                                <span class="item-img-wrap">
+                                    <img src="${resRoot}/images/my-ico9.png" class="mine-item-img"/>
+                                </span>
+                                <p>${views.mine_auto['申请优惠']}</p>
+                            </soul:button>
+                        </li>
+                        <c:if test="${len!=2}">
+                            <li class="mui-col-xs-4">
+                                <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href" cssClass="">
+						        <span class="item-img-wrap">
+							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
+						        </span>
+                                    <p>修改安全密码</p>
+                                </soul:button>
+                            </li>
+                        </c:if>
+                    </ul>
+                    <ul class="mui-list-unstyled list-mine-item"><!--第四行-->
+                        <c:if test="${len==2}">
+                            <li class="mui-col-xs-4">
+                                <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href" cssClass="">
+						        <span class="item-img-wrap">
+							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
+						        </span>
+                                    <p>修改安全密码</p>
+                                </soul:button>
+                            </li>
+                        </c:if>
                         <li class="mui-col-xs-4">
                             <soul:button target="${root}/my/password/editPassword.html" text="" opType="href" cssClass="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico10.png" class="mine-item-img"/>
 						        </span>
                                 <p>修改登录密码</p>
-                            </soul:button>
-                        </li>
-                        <li class="mui-col-xs-4">
-                            <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href" cssClass="">
-						        <span class="item-img-wrap">
-							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
-						        </span>
-                                <p>修改安全密码</p>
-                            </soul:button>
-                        </li>
-                        <li class="mui-col-xs-4">
-                            <soul:button target="" text="" opType="href" cssClass="">
-						        <span class="item-img-wrap">
-							        <img src="${resRoot}/images/my-ico7.png" class="mine-item-img"/>
-						        </span>
-                                <p>银行卡</p>
-                                <span class="ext-info with-icon icon-bank1"> ***0945</span>
-                            </soul:button>
-                        </li>
-                    </ul>
-                    <ul class="mui-list-unstyled list-mine-item"><!--第四行-->
-                        <li class="mui-col-xs-4">
-                            <soul:button target="${root}/bankCard/page/addBtc.html" text="" opType="href" cssClass="">
-						        <span class="item-img-wrap">
-							        <img src="${resRoot}/images/my-ico12.png" class="mine-item-img"/>
-						        </span>
-                                <p>比特币钱包</p>
-                                <p>
-                                    <small id="btcNumber"></small>
-                                </p>
                             </soul:button>
                         </li>
                         <%--<li class="mui-col-xs-4">
@@ -167,5 +199,6 @@
     <li class="ja-JP"><a href="">日文</a></li>
 </ul>
 <%@ include file="../include/include.js.jsp" %>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/membercentre/MemberCentre.js"></script>
 </html>

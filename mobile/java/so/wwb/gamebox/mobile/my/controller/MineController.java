@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.master.report.IPlayerRecommendAwardService;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.ParamTool;
@@ -55,6 +56,7 @@ public class MineController {
     private static final int RECOMMEND_DAYS = -1;
 
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String index(Model model) {
         model.addAttribute("channel", "mine");
         //玩家信息
@@ -79,6 +81,7 @@ public class MineController {
      */
     @RequestMapping("/userInfo")
     @ResponseBody
+    @Upgrade(upgrade = true)
     public String getFund() {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
@@ -185,7 +188,7 @@ public class MineController {
         }
         userInfo.put("unReadCount", number + advisoryUnReadCount);
         //用户个人信息
-        userInfo.put("username", sysUser.getUsername());
+        userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
         userInfo.put("avatarUrl", sysUser.getAvatarUrl());
         userInfo.put("loginTime", sysUser.getLoginTime());
         userInfo.put("currency", getCurrencySign());

@@ -86,6 +86,9 @@
 				/downLoad/downLoad.html = anon
 				/downLoad/downLoadIOS.html = anon
 				/userInfo.html = anon
+				/discounts/index.html = anon
+				/discounts/activityType.html = anon
+				/discounts/promo.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>
