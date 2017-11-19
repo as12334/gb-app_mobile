@@ -19,32 +19,10 @@
         <div class="mui-content mui-scroll-wrapper">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
-                <!--轮播-->
-                <section class="mui-slider banner-slide">
-                    <div class="close-slide"></div>
-                    <div class="mui-slider-group">
-                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg"/></a>
-                        </div>
-                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg"/></a>
-                        </div>
-                        <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/banner-01.jpg"/></a>
-                        </div>
-                    </div>
-                </section>
-                <!--公告-->
-                <section class="notice">
-                    <button type="button" class="mui-btn mui-btn-primary btn-title">公告</button>
-                    <div class="notice-list">
-                        <marquee behavior="scroll" scrollamount="2" direction="left">
-                            <p>
-                                <a href="">111尊敬的用户您好！本站于20161206进行升级！</a>
-                                <a href="">222尊敬的用户您好！本站于20161206进行升级！</a>
-                                <a href="">333尊敬的用户您好！本站于20161206进行升级！</a>
-                                <a href="">444尊敬的用户您好！本站于20161206进行升级！</a>
-                            </p>
-                        </marquee>
-                    </div>
-                </section>
+                <!--轮播和公告-->
+                <div class="_banner">
+                    <%@include file="include/include.banner.jsp"%>
+                </div>
                 <!--导航-->
                 <section class="nav">
                     <div class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">

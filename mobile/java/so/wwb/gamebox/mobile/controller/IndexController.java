@@ -117,9 +117,13 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            model.addAttribute("carousels", getCarousel(request));
+            //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+
+        //查询Banner和公告
+        model.addAttribute("carousels", getCarousel(request));
+        model.addAttribute("announcement",getAnnouncement());
 
         initFloatPic(model);
         return "/Index";
