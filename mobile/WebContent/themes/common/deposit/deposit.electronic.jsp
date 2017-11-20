@@ -212,6 +212,7 @@
                                             <div class="gb-form-notice">
                                                 <p><img src="${resRoot}/images/ico-notice.png" height="12px;" alt="">
                                                     “支付宝”转账到“支付宝”，请填写昵称；
+                                                    <br>
                                                     “支付宝”转账到“银行卡”，请填写真实姓名；
                                                 </p>
                                             </div>
