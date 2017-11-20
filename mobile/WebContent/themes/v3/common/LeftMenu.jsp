@@ -23,7 +23,7 @@
                 <ul class="mui-list-unstyled">
                     <li class="active home"><soul:button target="${root}/mainIndex.html" text="首页" opType="href"/></li>
                     <li class="pro"><a href="promo.html">优惠活动</a></li>
-                    <li class="download"><a href="">下载客户端</a></li>
+                    <li class="download"><soul:button target="${root}/downLoad/downLoad.html" text="下载客户端" opType="href"/><%-- <a href="">下载客户端</a>--%></li>
                     <li class="pc"><a href="">电脑版</a></li>
                     <li class="trans"> <soul:button target="${root}/transfer/index.html" text="转账" opType="href"/></li>
                     <li class="deposit"><soul:button target="${root}/wallet/deposit/index.html" text="账户存款" opType="href"/></li>
