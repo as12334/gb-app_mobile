@@ -21,7 +21,7 @@
                 <!-- 主界面具体展示内容 -->
                 <!--轮播和公告-->
                 <div class="_banner">
-                    <%@include file="include/include.banner.jsp"%>
+                    <%@include file="index.include/include.banner.jsp"%>
                 </div>
                 <!--导航-->
                 <section class="nav">
@@ -267,7 +267,12 @@
         <%@include file="common/Footer.jsp"%>
     </div>
 </div>
+<!--浮窗广告轮播-->
+<%@include file="index.include/Envelope.jsp"%>
 <%@include file="include/include.js.jsp"%>
+<script type="text/javascript" src="${resRoot}/js/jquery/jquery.nicescroll.min.js"></script>
+<script src="${resRoot}/js/mui/mui.pullToRefresh.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/Index.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
