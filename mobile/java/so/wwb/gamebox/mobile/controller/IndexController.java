@@ -112,7 +112,8 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/mainIndex")
     @Upgrade(upgrade = true)
-    public String index(Model model, HttpServletRequest request) {
+    public String index(Model model, HttpServletRequest request,Integer skip) {
+        model.addAttribute("skip",skip);
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
