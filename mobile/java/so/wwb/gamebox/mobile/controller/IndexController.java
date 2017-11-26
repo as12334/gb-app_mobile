@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dubbo.DubboTool;
@@ -27,8 +28,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
-import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.iservice.company.sys.IVSysSiteDomainService;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.mobile.tools.ServiceTool;
@@ -39,7 +40,9 @@ import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
+import so.wwb.gamebox.model.company.setting.po.ApiType;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
+import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
@@ -123,9 +126,12 @@ public class IndexController extends BaseApiController {
 
         //查询Banner和公告
         model.addAttribute("carousels", getCarousel(request));
-        model.addAttribute("announcement",getAnnouncement());
+        model.addAttribute("announcement", getAnnouncement());
 
         initFloatPic(model);
+
+        //查询游戏类型对应的分类
+        model.addAttribute("SiteApiRelationI18n",getSiteApiRelationI18n());
         return "/Index";
     }
 
@@ -134,6 +140,24 @@ public class IndexController extends BaseApiController {
         showMoneyActivityFloat(floatList);
 
         model.addAttribute("floatList", floatList);
+    }
+
+    private Map<String, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n() {
+        Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
+
+        Map<String, ApiType> apiType = Cache.getApiType();
+        Map<String, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
+        for (String api : apiType.keySet()) {
+            List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
+            for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
+
+                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api)) {
+                    i18ns.add(relationI18n);
+                    siteApiRelation.put(api,i18ns);
+                }
+            }
+        }
+        return siteApiRelation;
     }
 
     /**
@@ -377,9 +401,9 @@ public class IndexController extends BaseApiController {
             defaultSite = site.getWebSite();
         } else {
             //其他的都是取默认域名
-            VSysSiteDomainListVo vSysSiteDomainListVo=new VSysSiteDomainListVo();
+            VSysSiteDomainListVo vSysSiteDomainListVo = new VSysSiteDomainListVo();
             vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
-            List<VSysSiteDomain> domainList= DubboTool.getService(IVSysSiteDomainService.class).loadSiteDomain(vSysSiteDomainListVo);
+            List<VSysSiteDomain> domainList = DubboTool.getService(IVSysSiteDomainService.class).loadSiteDomain(vSysSiteDomainListVo);
 
             for (VSysSiteDomain o : domainList) {
                 if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
