@@ -112,7 +112,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/mainIndex")
     @Upgrade(upgrade = true)
-    public String index(Model model, HttpServletRequest request,Integer skip) {
+    public String index(Model model, HttpServletRequest request,Integer skip,String path) {
         model.addAttribute("skip",skip);
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
@@ -133,6 +133,12 @@ public class IndexController extends BaseApiController {
 
         //查询游戏类型对应的分类
         model.addAttribute("SiteApiRelationI18n",getSiteApiRelationI18n());
+
+        //关于我们/注册条款
+        model.addAttribute("path",path);
+        if(StringTool.isNotBlank(path)){
+            getAboutAndTerms(path,model,request);
+        }
         return "/Index";
     }
 
@@ -329,6 +335,23 @@ public class IndexController extends BaseApiController {
             }
         }
         return resultList;
+    }
+
+    /**
+     * 关于/条款
+     * */
+    private void getAboutAndTerms(String path,Model model,HttpServletRequest request){
+        if ("about".equals(path)) {
+            CttDocumentI18nListVo listVo = initDocument("aboutUs");
+            CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
+            model.addAttribute("about", cttDocumentI18n);
+        } else if ("terms".equals(path) || "protocol".equals(path)) {
+            SiteI18n terms = Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString());
+            model.addAttribute("terms", terms);
+        }
     }
 
     /**

@@ -5,7 +5,7 @@
     <c:forEach var="type" items="${SiteApiRelationI18n}" varStatus="status">
         <c:choose>
             <c:when test="${type.key == 1}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 active" data-list="live">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 ${empty path ? 'active':''}" data-list="live">
                     <c:forEach var="i18n" items="${type.value}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                             <%--<a href="#" class="_api"
@@ -48,13 +48,6 @@
                 <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="sports">
                     <c:forEach var="i18n" items="${type.value}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-<%--                            <a href="#" class="_api"
-                               data-api-id="${i18n.apiId}"
-                               data-api-type-id="${i18n.apiTypeId}"
-                               data-status="">
-                                <span class="api-item png"></span>  <!--根据class的不同来显示api图标-->
-                                <div class="mui-media-body">${i18n.name}</div>
-                            </a>--%>
                             <soul:button dataApiId="${i18n.apiId}"
                                          dataApiType-id="${i18n.apiTypeId}"
                                          dataApiName="${i18n.name}"
@@ -94,4 +87,15 @@
             </soul:button>
         </li>
     </ul>
+    <div class="mui-table-view mui-grid-view mui-grid-9 ${not empty path && path == 'about' ? 'active':''}" data-list="about">
+        <c:if test="${not empty about}">
+            <c:set var="c" value="${about.content == null ? '' : about.content}" />
+            ${c.replace("${company}", siteName)}
+        </c:if>
+    </div>
+    <div class="mui-table-view mui-grid-view mui-grid-9 ${not empty path && path == 'terms' ? 'active':''}" data-list="terms">
+        <c:if test="${not empty terms}">
+            ${not empty terms.value ? terms.value : terms.defaultValue}
+        </c:if>
+    </div>
 </section>
