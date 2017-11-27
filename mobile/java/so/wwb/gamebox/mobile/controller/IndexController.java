@@ -487,7 +487,7 @@ public class IndexController extends BaseApiController {
     private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
+        IAppUpdateService appUpdateService = ServiceTool.appUpdateService();
 
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {
