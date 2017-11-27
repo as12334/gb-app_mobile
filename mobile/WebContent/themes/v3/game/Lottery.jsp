@@ -14,13 +14,13 @@
                         <c:set var="tempType" value=""/>
                         <c:choose>
                             <c:when test="${centerId == -3   && a.apiId == 22}">
-                                <c:set var="tempType" value="yzt"/>
+                                <c:set var="tempType" value="api-icon-4-22-1"/>
                             </c:when>
                             <c:when test="${a.apiId == 10}">
-                                <c:set var="tempType" value="bb"/>
+                                <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
                             </c:when>
                             <c:when test="${a.apiId == 2}">
-                                <c:set var="tempType" value="kg"/>
+                                <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
                             </c:when>
                         </c:choose>
                         <a href="#lottery-${a.apiId}" data-lottery-id="${a.apiId}"

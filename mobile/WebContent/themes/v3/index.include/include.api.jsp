@@ -19,7 +19,7 @@
                                          dataApiTypeId="${i18n.apiTypeId}"
                                          dataApiName="${i18n.name}"
                                          target="goGame" text="" opType="function" cssClass="_api">
-                                <span class="api-item bb"></span>  <!--根据class的不同来显示api图标-->
+                                <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span>  <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
                             </soul:button>
                         </li>
@@ -35,7 +35,7 @@
                             <soul:button
                                     target="${root}/game/getGameByApiId.html?search.apiId=${i18n.apiId}&search.apiTypeId=${i18n.apiTypeId}"
                                     text="" opType="href" cssClass="">
-                                <span class="api-item png"></span> <!--根据class的不同来显示api图标-->
+                                <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span> <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
                             </soul:button>
                         </li>
@@ -59,7 +59,7 @@
                                          dataApiType-id="${i18n.apiTypeId}"
                                          dataApiName="${i18n.name}"
                                          target="goGame" text="" opType="function" cssClass="_api">
-                                <span class="api-item png"></span>  <!--根据class的不同来显示api图标-->
+                                <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span>  <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
                             </soul:button>
                         </li>
@@ -81,7 +81,7 @@
             <soul:button
                     target="${root}/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish"
                     text="" opType="href" cssClass="">
-                <span class="api-item ag"></span> <!--根据class的不同来显示api图标-->
+                <span class="api-item api-icon-2-9"></span> <!--根据class的不同来显示api图标-->
                 <div class="mui-media-body">AG</div>
             </soul:button>
         </li>
@@ -89,7 +89,7 @@
             <soul:button
                     target="${root}/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2"
                     text="" opType="href" cssClass="">
-                <span class="api-item gg"></span> <!--根据class的不同来显示api图标-->
+                <span class="api-item api-icon-2-28"></span> <!--根据class的不同来显示api图标-->
                 <div class="mui-media-body">GG</div>
             </soul:button>
         </li>
