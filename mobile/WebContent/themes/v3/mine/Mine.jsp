@@ -19,10 +19,14 @@
         <header class="mui-bar mui-bar-nav mui-bar-blue mui-bar-mine">
             <soul:button target="leftMenu" text="" opType="function" cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
             <h1 class="mui-title">我的</h1>
-            <a href="" class="mui-icon icon-gift mui-pull-right"></a>
-            <a href="" class="mui-icon icon-message mui-pull-right">
+            <%--<a href="" class="mui-icon icon-gift mui-pull-right"></a>--%>
+            <soul:button target="${root}/discounts/index.html?skip=1" text="" opType="href" cssClass="mui-icon icon-gift mui-pull-right"/>
+            <soul:button target="${root}/message/gameNotice.html" text="" opType="href" cssClass="mui-icon icon-message mui-pull-right" >
                 <span class="mui-badge mui-badge-danger unReadCount"></span>
-            </a>
+            </soul:button>
+            <%--<a href="" class="mui-icon icon-message mui-pull-right">
+                <span class="mui-badge mui-badge-danger unReadCount"></span>
+            </a>--%>
         </header>
         <div class="mui-content mui-scroll-wrapper mui-content-without-footer-address mine-content">
             <div class="mui-scroll">

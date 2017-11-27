@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
+import so.wwb.gamebox.iservice.company.sys.IVSysSiteDomainService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -37,7 +39,9 @@ import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
+import so.wwb.gamebox.model.company.setting.po.ApiType;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
+import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
@@ -107,7 +111,8 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/mainIndex")
     @Upgrade(upgrade = true)
-    public String index(Model model, HttpServletRequest request) {
+    public String index(Model model, HttpServletRequest request,Integer skip,String path) {
+        model.addAttribute("skip",skip);
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
@@ -121,9 +126,18 @@ public class IndexController extends BaseApiController {
 
         //查询Banner和公告
         model.addAttribute("carousels", getCarousel(request));
-        model.addAttribute("announcement",getAnnouncement());
+        model.addAttribute("announcement", getAnnouncement());
 
         initFloatPic(model);
+
+        //查询游戏类型对应的分类
+        model.addAttribute("SiteApiRelationI18n",getSiteApiRelationI18n());
+
+        //关于我们/注册条款
+        model.addAttribute("path",path);
+        if(StringTool.isNotBlank(path)){
+            getAboutAndTerms(path,model,request);
+        }
         return "/Index";
     }
 
@@ -132,6 +146,24 @@ public class IndexController extends BaseApiController {
         showMoneyActivityFloat(floatList);
 
         model.addAttribute("floatList", floatList);
+    }
+
+    private Map<String, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n() {
+        Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
+
+        Map<String, ApiType> apiType = Cache.getApiType();
+        Map<String, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
+        for (String api : apiType.keySet()) {
+            List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
+            for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
+
+                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api)) {
+                    i18ns.add(relationI18n);
+                    siteApiRelation.put(api,i18ns);
+                }
+            }
+        }
+        return siteApiRelation;
     }
 
     /**
@@ -305,6 +337,23 @@ public class IndexController extends BaseApiController {
     }
 
     /**
+     * 关于/条款
+     * */
+    private void getAboutAndTerms(String path,Model model,HttpServletRequest request){
+        if ("about".equals(path)) {
+            CttDocumentI18nListVo listVo = initDocument("aboutUs");
+            CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
+            model.addAttribute("about", cttDocumentI18n);
+        } else if ("terms".equals(path) || "protocol".equals(path)) {
+            SiteI18n terms = Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString());
+            model.addAttribute("terms", terms);
+        }
+    }
+
+    /**
      * 关于/条款等
      */
     @RequestMapping("/index/{path}")
@@ -375,7 +424,7 @@ public class IndexController extends BaseApiController {
             defaultSite = site.getWebSite();
         } else {
             //其他的都是取默认域名
-            VSysSiteDomainListVo vSysSiteDomainListVo=new VSysSiteDomainListVo();
+            VSysSiteDomainListVo vSysSiteDomainListVo = new VSysSiteDomainListVo();
             vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
             List<VSysSiteDomain> domainList= ServiceTool.vSysSiteDomainService().loadSiteDomain(vSysSiteDomainListVo);
 
@@ -438,7 +487,7 @@ public class IndexController extends BaseApiController {
     private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = ServiceTool.appUpdateService();
+        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
 
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {

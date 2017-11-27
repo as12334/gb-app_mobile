@@ -38,7 +38,8 @@ public class DiscountsController {
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
-    public String index(Model model) {
+    public String index(Model model,Integer skip) {
+        model.addAttribute("skip",skip);
         return "/discounts/Promo";
     }
 

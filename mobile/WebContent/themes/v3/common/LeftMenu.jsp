@@ -22,15 +22,15 @@
             <div class="side-nav">
                 <ul class="mui-list-unstyled">
                     <li class="active home"><soul:button target="${root}/mainIndex.html" text="首页" opType="href"/></li>
-                    <li class="pro"><a href="promo.html">优惠活动</a></li>
+                    <li class="pro"><soul:button target="${root}/discounts/index.html?skip=1" text="优惠活动" opType="href" cssClass=""/></li>
                     <li class="download"><soul:button target="${root}/downLoad/downLoad.html" text="下载客户端" opType="href"/><%-- <a href="">下载客户端</a>--%></li>
                     <li class="pc"><a href="">电脑版</a></li>
                     <li class="trans"> <soul:button target="${root}/transfer/index.html" text="转账" opType="href"/></li>
                     <li class="deposit"><soul:button target="${root}/wallet/deposit/index.html" text="账户存款" opType="href"/></li>
-                    <li class="about"><a href="">关于我们</a></li>
-                    <li class="question"><a href="">常见问题</a></li>
+                    <li class="about"><soul:button target="${root}/mainIndex.html?path=about" text="关于我们" opType="href"/><%--<a href="">关于我们</a>--%></li>
+                    <li class="question"><soul:button target="${root}/help/firstType.html" text="常见问题" opType="href"/><%--<a href="">常见问题</a>--%></li>
                     <li class="service"><soul:button target="loadCustomer" text="在线客服" opType="function"/></li>
-                    <li class="reg_rules"><a href="">注册条款</a></li>
+                    <li class="reg_rules"><soul:button target="${root}/mainIndex.html?path=terms" text="注册条款" opType="href"/><%--<a href="">注册条款</a>--%></li>
                     <li class="lang ${fn:replace(language, '_', '-')}">
                         <soul:button target="lang" text="语言" opType="function"/>
                     </li>
