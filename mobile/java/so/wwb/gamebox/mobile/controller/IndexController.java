@@ -4,7 +4,6 @@ import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.I18nTool;
@@ -26,12 +25,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
-import so.wwb.gamebox.iservice.company.sys.IVSysSiteDomainService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
@@ -379,7 +377,7 @@ public class IndexController extends BaseApiController {
             //其他的都是取默认域名
             VSysSiteDomainListVo vSysSiteDomainListVo=new VSysSiteDomainListVo();
             vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
-            List<VSysSiteDomain> domainList= DubboTool.getService(IVSysSiteDomainService.class).loadSiteDomain(vSysSiteDomainListVo);
+            List<VSysSiteDomain> domainList= ServiceTool.vSysSiteDomainService().loadSiteDomain(vSysSiteDomainListVo);
 
             for (VSysSiteDomain o : domainList) {
                 if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
@@ -440,7 +438,7 @@ public class IndexController extends BaseApiController {
     private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
+        IAppUpdateService appUpdateService = ServiceTool.appUpdateService();
 
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {

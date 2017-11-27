@@ -12,8 +12,8 @@ import org.soul.model.session.SessionKey;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
@@ -37,7 +37,6 @@ import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 
 import java.util.*;
 
-import static so.wwb.gamebox.mobile.tools.ServiceTool.playerRechargeService;
 
 /**
  * Created by bruce on 16-12-10.
@@ -135,7 +134,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         }
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(type);
-        listVo = playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        listVo = ServiceTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
         return setClassifyKeyName(listVo.getResult());
     }
 
@@ -218,7 +217,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         } else if (isReturnFee && rank.getReturnFeeCount() != null && rank.getReturnFeeCount() > 0 && rank.getReturnTime() != null) {
             listVo.getSearch().setStartTime(DateTool.addHours(now, -rank.getReturnTime()));
         }
-        return playerRechargeService().searchPlayerRechargeCount(listVo);
+        return ServiceTool.playerRechargeService().searchPlayerRechargeCount(listVo);
     }
 
     /**

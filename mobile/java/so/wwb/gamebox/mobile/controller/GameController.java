@@ -16,8 +16,8 @@ import org.soul.commons.query.sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -34,8 +34,6 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-
-import static so.wwb.gamebox.mobile.tools.ServiceTool.vSiteApiService;
 
 /**
  * 游戏Controller
@@ -80,7 +78,7 @@ public class GameController {
         listVo.getSearch().setSiteId(SessionManager.getSiteId());
         listVo.getSearch().setLocale(SessionManager.getSiteLocale().toString());
         listVo.getSearch().setApiTypeId(apiType);
-        listVo = vSiteApiService().queryMobileSiteApi(listVo);
+        listVo = ServiceTool.vSiteApiService().queryMobileSiteApi(listVo);
         if(apiType.equals(4)){
             listVo.setResult(CollectionQueryTool.sort(listVo.getResult(), Order.desc(VSiteApi.PROP_API_ID)));
         }

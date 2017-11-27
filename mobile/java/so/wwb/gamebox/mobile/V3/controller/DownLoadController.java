@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.V3.controller;
 
-import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.log.Log;
@@ -9,6 +8,7 @@ import org.soul.commons.qrcode.QrcodeDisTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -48,7 +48,7 @@ public class DownLoadController {
     private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = DubboTool.getService(IAppUpdateService.class);
+        IAppUpdateService appUpdateService = ServiceTool.appUpdateService();
 
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {

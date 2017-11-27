@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.my.controller;
 
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.math.NumberTool;
@@ -13,10 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.iservice.master.report.IPlayerRecommendAwardService;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -139,7 +137,7 @@ public class MineController {
         playerRecommendAwardListVo.getSearch().setUserId(userId);
         playerRecommendAwardListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), RECOMMEND_DAYS));
         playerRecommendAwardListVo.getSearch().setEndTime(SessionManager.getDate().getToday());
-        userInfo.put("recomdAmount", DubboTool.getService(IPlayerRecommendAwardService.class).searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
+        userInfo.put("recomdAmount", ServiceTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
 
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();

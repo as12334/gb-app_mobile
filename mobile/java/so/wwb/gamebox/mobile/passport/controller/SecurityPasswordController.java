@@ -20,9 +20,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
@@ -34,7 +34,6 @@ import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.AccountVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
-import so.wwb.gamebox.web.ServiceToolBase;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
@@ -439,7 +438,7 @@ public class SecurityPasswordController {
         SysUser user = SessionManagerCommon.getUser();
         accountVo.setResult(user);
         accountVo.setChooseFreezeTime(FreezeTime.THREE.getCode());
-        UserPlayer userPlayer = ServiceToolBase.userPlayerService().freezeAccountBalance(accountVo);
+        UserPlayer userPlayer = ServiceTool.userPlayerService().freezeAccountBalance(accountVo);
         sendNotice(user, userPlayer);
     }
 
@@ -453,7 +452,7 @@ public class SecurityPasswordController {
                             DateTool.formatDate(userPlayer.getBalanceFreezeEndTime(),
                                     locale, timeZone, CommonContext.getDateFormat().getDAY_SECOND())),
                     new Pair(NoticeParamEnum.USER.getCode(), user.getUsername()));
-            ServiceToolBase.noticeService().publish(noticeVo);
+            ServiceTool.noticeService().publish(noticeVo);
             LOG.debug("余额自动冻结发送站内信成功");
         } catch (Exception ex) {
             LOG.error(ex, "安全码输入错误次数超过5次，余额自动冻结时发送站内信失败");

@@ -7,7 +7,7 @@
     <artifactId>mobile</artifactId>
     <packaging>war</packaging>
     <properties>
-        <soul.version>1.0.7.3-SNAPSHOT</soul.version>
+        <soul.version>1.0.7.5-SNAPSHOT</soul.version>
         <api.version>2.0.0.1-SNAPSHOT</api.version>
         <monitor.version>1.0.0-SNAPSHOT</monitor.version>
         <gamebox.version>1.0.0-SNAPSHOT</gamebox.version>

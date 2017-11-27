@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.web.session.SessionManagerBase;
@@ -9,9 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
-import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.master.digiccy.po.UserDigiccy;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyListVo;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyVo;
@@ -20,7 +18,6 @@ import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
-import so.wwb.gamebox.web.ServiceToolBase;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +38,7 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
     public String index(Model model) {
         UserDigiccyListVo userDigiccyListVo = new UserDigiccyListVo();
         userDigiccyListVo.getSearch().setUserId(SessionManagerBase.getUserId());
-        List<UserDigiccy> userDigiccyList = ServiceToolBase.userDigiccyService().getUserDigiccis(userDigiccyListVo);
+        List<UserDigiccy> userDigiccyList = ServiceTool.userDigiccyService().getUserDigiccis(userDigiccyListVo);
         model.addAttribute("userDigiccyList", userDigiccyList);
         return DIGICCY_URI;
     }

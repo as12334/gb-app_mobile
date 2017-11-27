@@ -1,8 +1,8 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.model.security.privilege.vo.SysUserVo;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
 /**
