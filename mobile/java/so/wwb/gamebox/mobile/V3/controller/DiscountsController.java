@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -13,10 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.iservice.master.player.IPlayerRankService;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
@@ -40,7 +38,8 @@ public class DiscountsController {
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
-    public String index(Model model) {
+    public String index(Model model,Integer skip) {
+        model.addAttribute("skip",skip);
         return "/discounts/Promo";
     }
 
@@ -115,7 +114,7 @@ public class DiscountsController {
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(DubboTool.getService(IPlayerRankService.class).searchRankByPlayerId(sysUserVo).getId());
+            vActivityMessageListVo.getSearch().setRankId(ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
         vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         return vActivityMessageListVo;

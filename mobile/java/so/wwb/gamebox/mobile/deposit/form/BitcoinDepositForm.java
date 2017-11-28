@@ -7,13 +7,11 @@ import org.soul.commons.validation.form.constraints.Depends;
 import org.soul.commons.validation.form.constraints.Remote;
 import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
-import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
 import so.wwb.gamebox.mobile.deposit.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.deposit.controller.CompanyBitcoinDepositController;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Pattern;
 
 /**
  * 比特币支付表单验证

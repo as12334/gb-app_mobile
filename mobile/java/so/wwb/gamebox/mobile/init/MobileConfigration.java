@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.init;
 
 import org.soul.web.init.BaseCtxLoaderListener;
-import org.soul.web.support.BaseWebConf;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.web.init.ExtBaseWebConf;

@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.transfer.controller;
 
 import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.SystemTool;
-import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;

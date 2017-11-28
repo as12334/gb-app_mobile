@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.nav.controller;
 
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.dubbo.DubboTool;
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
@@ -17,9 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.iservice.master.player.IPlayerRankService;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
@@ -87,7 +85,7 @@ public class PromoController {
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(DubboTool.getService(IPlayerRankService.class).searchRankByPlayerId(sysUserVo).getId());
+            vActivityMessageListVo.getSearch().setRankId(ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
         vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         //首页只展示部分优惠
@@ -134,7 +132,7 @@ public class PromoController {
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo().booleanValue()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(DubboTool.getService(IPlayerRankService.class).searchRankByPlayerId(sysUserVo).getId());
+            vActivityMessageListVo.getSearch().setRankId(ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
         vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
 

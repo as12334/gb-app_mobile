@@ -16,8 +16,9 @@ import org.soul.commons.query.sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -34,8 +35,6 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-
-import static so.wwb.gamebox.mobile.tools.ServiceTool.vSiteApiService;
 
 /**
  * 游戏Controller
@@ -80,7 +79,7 @@ public class GameController {
         listVo.getSearch().setSiteId(SessionManager.getSiteId());
         listVo.getSearch().setLocale(SessionManager.getSiteLocale().toString());
         listVo.getSearch().setApiTypeId(apiType);
-        listVo = vSiteApiService().queryMobileSiteApi(listVo);
+        listVo = ServiceTool.vSiteApiService().queryMobileSiteApi(listVo);
         if(apiType.equals(4)){
             listVo.setResult(CollectionQueryTool.sort(listVo.getResult(), Order.desc(VSiteApi.PROP_API_ID)));
         }
@@ -119,6 +118,7 @@ public class GameController {
         return CollectionQueryTool.sort(typeRelationList,Order.asc(SiteApiTypeRelation.PROP_ORDER_NUM));
     }
     @RequestMapping("/getGameByApiId")
+    @Upgrade(upgrade = true)
     public String getGameByApiId(SiteGameListVo listVo, Model model) {
         String redirectUrl = "/game/%sPartial";
         SiteGameSo so = listVo.getSearch();
@@ -134,6 +134,22 @@ public class GameController {
         model.addAttribute("command", listVo);
 
         return redirectUrl;
+    }
+
+    @RequestMapping("/getCasinoGameByApiId")
+    @Upgrade(upgrade = true)
+    public String getCasinoGameByApiId(SiteGameListVo listVo, Model model){
+        SiteGameSo so = listVo.getSearch();
+
+        Integer apiId = so.getApiId();
+        if (NumberTool.isNumber(String.valueOf(apiId)) && apiId > 0) {
+            listVo = getGames(listVo);
+            model.addAttribute("gameI18n", getGameI18nMap(listVo));
+        }
+        model.addAttribute("apiId", apiId);
+        model.addAttribute("command", listVo);
+
+        return "/game/PullfreshCasinoPartial";
     }
 
     /**
@@ -200,7 +216,8 @@ public class GameController {
         Criteria criteria = Criteria.add(SiteGame.PROP_API_TYPE_ID, Operator.EQ, so.getApiTypeId())
                 .addAnd(Criteria.add(SiteGame.PROP_API_ID, Operator.EQ, so.getApiId()))
                 .addAnd(Criteria.add(SiteGame.PROP_TERMINAL, Operator.EQ, SupportTerminal.PHONE.getCode()))
-                .addAnd(Criteria.add(SiteGame.PROP_STATUS, Operator.NE, GameStatusEnum.DISABLE.getCode()));
+                .addAnd(Criteria.add(SiteGame.PROP_STATUS, Operator.NE, GameStatusEnum.DISABLE.getCode()))
+                .addAnd(Criteria.add(SiteGame.PROP_GAME_TYPE,Operator.EQ,so.getGameType()));
 
         List<Integer> gameIds = CollectionTool.extractToList(siteGameI18n, SiteGame.PROP_GAME_ID);
         if (gameIds != null && gameIds.size() == 0) {

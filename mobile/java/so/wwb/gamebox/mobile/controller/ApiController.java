@@ -13,8 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
@@ -43,9 +43,6 @@ import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-
-import static so.wwb.gamebox.mobile.tools.ServiceTool.playerApiService;
-import static so.wwb.gamebox.mobile.tools.ServiceTool.vSiteApiService;
 
 /**
  * Created by jeff on 2016/1/12.
@@ -214,7 +211,7 @@ public class ApiController extends BaseApiController {
         listVo.getSearch().setPlayerId(userId);
         listVo.setApis(Cache.getApi());
         listVo.setSiteApis(Cache.getSiteApi());
-        double assets = playerApiService().queryPlayerAssets(listVo);
+        double assets = ServiceTool.playerApiService().queryPlayerAssets(listVo);
         return CurrencyTool.formatCurrency(assets);
     }
 
@@ -287,7 +284,7 @@ public class ApiController extends BaseApiController {
         listVo.getSearch().setStatus(GameStatusEnum.DISABLE.getCode());
         listVo.getSearch().setSiteId(SessionManager.getSiteId());
         listVo.getSearch().setLocale(SessionManager.getSiteLocale().toString());
-        listVo = vSiteApiService().queryAllSiteApi(listVo);
+        listVo = ServiceTool.vSiteApiService().queryAllSiteApi(listVo);
         return listVo.getResult();
     }
 
@@ -345,7 +342,7 @@ public class ApiController extends BaseApiController {
         vSiteApiVo.getSearch().setSiteId(SessionManager.getSiteId());
         vSiteApiVo.getSearch().setLocale(SessionManager.getSiteLocale().toString());
         vSiteApiVo.getSearch().setApiId(apiId);
-        return vSiteApiService().queryOneApiStatus(vSiteApiVo);
+        return ServiceTool.vSiteApiService().queryOneApiStatus(vSiteApiVo);
     }
 
     private Map<String, Object> getApiDetail(Integer apiId, Integer apiTypeId) {

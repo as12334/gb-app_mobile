@@ -4,6 +4,7 @@ import org.soul.commons.bean.Pair;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -14,7 +15,6 @@ import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
-import org.soul.commons.locale.DateQuickPicker;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
@@ -23,11 +23,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.my.form.SecurityPasswordForm;
 import so.wwb.gamebox.mobile.my.form.UpdateSecurityPasswordForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -42,7 +42,6 @@ import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.AccountVo;
 import so.wwb.gamebox.model.master.player.vo.UpdatePasswordVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
-import so.wwb.gamebox.web.ServiceToolBase;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
@@ -325,7 +324,7 @@ public class UpdateSecurityPasswordController {
         SysUser user = SessionManagerCommon.getUser();
 
         userPlayerVo.setSysUser(user);
-        SysUser sysUser = ServiceToolBase.userPlayerService().updateUserErrorTimes(userPlayerVo);
+        SysUser sysUser = ServiceTool.userPlayerService().updateUserErrorTimes(userPlayerVo);
         SessionManagerCommon.setUser(sysUser);
     }
 
@@ -403,7 +402,7 @@ public class UpdateSecurityPasswordController {
         SysUser user = SessionManagerCommon.getUser();
         accountVo.setResult(user);
         accountVo.setChooseFreezeTime(FreezeTime.THREE.getCode());
-        UserPlayer userPlayer = ServiceToolBase.userPlayerService().freezeAccountBalance(accountVo);
+        UserPlayer userPlayer = ServiceTool.userPlayerService().freezeAccountBalance(accountVo);
         sendNotice(user, userPlayer);
     }
 
@@ -417,7 +416,7 @@ public class UpdateSecurityPasswordController {
                              DateTool.formatDate(userPlayer.getBalanceFreezeEndTime(),
                              locale, timeZone, CommonContext.getDateFormat().getDAY_SECOND())),
                     new Pair(NoticeParamEnum.USER.getCode(), user.getUsername()));
-            ServiceToolBase.noticeService().publish(noticeVo);
+            ServiceTool.noticeService().publish(noticeVo);
             LOG.debug("余额自动冻结发送站内信成功");
         } catch (Exception ex) {
             LOG.error(ex, "安全码输入错误次数超过5次，余额自动冻结时发送站内信失败");
@@ -477,11 +476,11 @@ public class UpdateSecurityPasswordController {
         sysUserVo.getResult().setSecpwdErrorTimes(0);
         sysUserVo.getResult().setSecpwdFreezeEndTime(new Date());
         sysUserVo.getResult().setSecpwdFreezeStartTime(new Date());
-        sysUserVo = ServiceToolBase.sysUserService().updateOnly(sysUserVo);
+        sysUserVo = ServiceTool.sysUserService().updateOnly(sysUserVo);
         if(SessionManagerCommon.isCurrentSiteMaster()){
             sysUserVo._setDataSourceId(SessionManagerCommon.getSiteParentId());
             sysUserVo.getResult().setId(SessionManagerCommon.getSiteUserId());
-            sysUserVo = ServiceToolBase.sysUserService().updateOnly(sysUserVo);
+            sysUserVo = ServiceTool.sysUserService().updateOnly(sysUserVo);
         }
         //改变session中user的权限密码
         if (sysUserVo.isSuccess()) {

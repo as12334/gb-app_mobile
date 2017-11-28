@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.init;
 
 import org.soul.commons.spring.utils.SpringTool;
-import org.soul.web.init.BaseConfigManager;
 import so.wwb.gamebox.web.init.ExtBaseConfigManager;
 
 /**

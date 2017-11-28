@@ -15,9 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.ServiceTool;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.master.enums.PlayerStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
@@ -27,7 +27,6 @@ import so.wwb.gamebox.model.master.player.po.PlayerTransaction;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.*;
-import so.wwb.gamebox.web.ServiceToolBase;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.fund.controller.BaseWithdrawController;
@@ -221,12 +220,12 @@ public class WithdrawController extends BaseWithdrawController {
         vo.getResult().setPermissionPwd(AuthTool.md5SysUserPermission(password, user.getUsername()));
         vo.getResult().setSecpwdErrorTimes(0);
         vo.getResult().setSecpwdFreezeEndTime(new Date());
-        vo = ServiceToolBase.sysUserService().updateOnly(vo);
+        vo = ServiceTool.sysUserService().updateOnly(vo);
 
         if (SessionManagerCommon.isCurrentSiteMaster()) {
             vo._setDataSourceId(SessionManagerCommon.getSiteParentId());
             vo.getResult().setId(SessionManagerCommon.getSiteUserId());
-            vo = ServiceToolBase.sysUserService().updateOnly(vo);
+            vo = ServiceTool.sysUserService().updateOnly(vo);
         }
 
         // 改变session中user的权限密码
