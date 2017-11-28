@@ -172,7 +172,8 @@ public class AppBuildTool {
 //                "268,q1mv,bet365",
 //                "270,57h0,LOVEBET",
 //                "273,1pff,太阳城集团",
-                "300,slla,皇冠娱乐城"
+//                "300,slla,皇冠娱乐城"
+                "271,zrax,VIPBET"
         };
 
         /* SELECT '"'||ss.id||','||ss.code||','||si."value"||'",' FROM sys_site ss LEFT JOIN site_i18n si ON ss."id" = si.site_id
