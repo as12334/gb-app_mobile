@@ -1,4 +1,3 @@
-<%--@elvariable id="siteApi" type="java.util.Map<java.lang.String,so.wwb.gamebox.model.company.site.po.SiteApi>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <div class="mui-hide-bar" style="display: none;"></div>

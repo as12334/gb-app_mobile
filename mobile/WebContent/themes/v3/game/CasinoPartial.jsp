@@ -43,16 +43,6 @@
                                             <c:if test="${g.gameId == gi.key}">
                                                 <%--BB电子不支持直接进入电子游戏，需进入大厅--%>
                                                 <div class="mui-col-xs-3">
-                                                    <%--<a href="#" data-api-type-id="2" data-api-id="${g.apiId}"
-                                                       <c:if test="${g.apiId!=10}">data-game-id="${g.gameId}"
-                                                       data-game-code="${g.code}"</c:if>
-                                                       data-status="${g.status}">
-                                                        <div class="img-wrap">
-                                                            <img data-src="${soulFn:getImagePath(domain, gi.value.cover)}"
-                                                                 src="${soulFn:getImagePath(domain, gi.value.cover)}"/>
-                                                        </div>
-                                                        <p>${gbFn:getGameName(g.gameId)}</p>
-                                                    </a>--%>
                                                     <soul:button dataApiTypeId="2"
                                                                  dataApiId="${g.apiId}"
                                                                  dataStatus="${g.status}"
@@ -101,11 +91,6 @@
     </div>
 </div>
 <!--语言弹窗-->
-<%--<ul class="lang-menu">
-    <li class="current zh-CN"><a href="">中文</a></li><!--当前语言版本加current-->
-    <li class="en-US"><a href="">English</a></li>
-    <li class="ja-JP"><a href="">日文</a></li>
-</ul>--%>
 <%@include file="../common/LangMenu.jsp"%>
 <%@include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js"></script>
