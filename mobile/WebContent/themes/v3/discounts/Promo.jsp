@@ -46,12 +46,14 @@
 <input value="1" id="pageNumber" hidden>
 <input value="1" id="lastPageNumber" hidden>
 <!--语言弹窗-->
-<ul class="lang-menu">
+<%--<ul class="lang-menu">
     <li class="current zh-CN"><a href="">中文</a></li><!--当前语言版本加current-->
     <li class="en-US"><a href="">English</a></li>
     <li class="ja-JP"><a href="">日文</a></li>
-</ul>
+</ul>--%>
+<%@ include file="../common/LangMenu.jsp"%>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/discounts/Promo.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 </html>
