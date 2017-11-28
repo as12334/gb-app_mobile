@@ -50,7 +50,7 @@ public class CompanyBankDeposit2Form implements IForm {
     }
 
     @Comment("存款人")
-    @Pattern(message = "valid.rechargeForm.payerName.pattern", regexp = RegExpConstants.REALNAME)
+    @Pattern(message = "valid.rechargeForm.payerName.pattern", regexp = RegExpConstants.PAYERNAME)
     @Depends(message = "deposit_auto.存款人不能为空",property = "result.rechargeType",operator = Operator.NE,value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
     @Length(min = 2, max = 30)
     public String getResult_payerName() {
