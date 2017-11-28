@@ -8,13 +8,6 @@
                 <ul class="mui-table-view mui-grid-view mui-grid-9 ${empty path ? 'active':''}" data-list="live">
                     <c:forEach var="i18n" items="${type.value}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                            <%--<a href="#" class="_api"
-                               data-api-id="${i18n.apiId}"
-                               data-api-type-id="${i18n.apiTypeId}"
-                               data-status="">
-                                <span class="api-item bb"></span>  <!--根据class的不同来显示api图标-->
-                                <div class="mui-media-body">${i18n.name}</div>
-                            </a>--%>
                             <soul:button dataApiId="${i18n.apiId}"
                                          dataApiTypeId="${i18n.apiTypeId}"
                                          dataApiName="${i18n.name}"

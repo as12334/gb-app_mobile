@@ -13,8 +13,8 @@
 <!-- 优先使用 IE 最新版本和 Chrome -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-<link rel="bookmark" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png">
-<link rel="shortcut icon" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png">
+<link rel="bookmark" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
+<link rel="shortcut icon" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
 
 <link rel="stylesheet" href="${resRoot}/themes/mui.min.css" />
 <link rel="stylesheet" href="${resRoot}/themes/common.css" />

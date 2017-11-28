@@ -27,9 +27,6 @@
                            class="mui-tab-item ${vs.index == 0 ? 'mui-active':''} a ${tempType}">${a.name}</a>
                     </li>
                 </c:forEach>
-                <%--<li><a href="#lottery4" class="mui-tab-item mui-active yzt">一指通彩票</a></li>
-                <li><a href="#lottery5" class="mui-tab-item kg">KG彩票</a></li>
-                <li><a href="#lottery6" class="mui-tab-item bb">BBIN彩票</a></li>--%>
             </ul>
         </div>
     </div>
