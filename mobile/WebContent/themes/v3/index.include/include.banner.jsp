@@ -60,7 +60,7 @@
         <marquee behavior="scroll" scrollamount="0" direction="left">
             <p>
                 <c:forEach items="${announcement}" var="a" varStatus="vs">
-                    <a data-idx="${vs.index}">${a.content}</a>
+                    <soul:button target="showNotice" opType="function" text="" data-idx="${vs.index}">${a.content}</soul:button>
                 </c:forEach>
             </p>
         </marquee>
