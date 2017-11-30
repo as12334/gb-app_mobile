@@ -48,18 +48,16 @@
     <input type="hidden" name="gb.token" value="">
 
     <div class="hongbao_inner">
-        <div class="icon-close" onclick="closePage()"></div>
-        <%--<button class="icon-close" onclick="closePage()" style="width: 50px; height: 48px;  border: none;"></button>--%>
+        <soul:button text="" opType="function" target="closePage" cssClass="icon-close"/>
         <div class="hongbao"><!--未能拆时加disabled类名-->
-            <div id="lotteryPages" <%--style="margin-top: 159px;"--%>>
-                <div class="icon-open" onclick="lottery()"><%--<button style="width: 83px; height: 83px; border: none; background: none;" onclick="lottery()"></button>--%></div>
+            <div id="lotteryPages">
+                <soul:button target="lottery" opType="function" text="" cssClass="icon-open"/>
                 <div class="hongbao-time-txt">下次拆红包开始时间为</div>
                 <div class="hongbao-time">2017-11-11  11:11:11</div>
-                <a href="javascript:void(0);" class="btn-rule" id="btn-rule" onclick="openRule()"></a>
+                <soul:button opType="function" text="" target="openRule" cssClass="btn-rule"/>
                 <div style="text-align: center;font-size: 18px;color: #fff;" id="tip-msgs">
                     你还有<span style="font-size: 18px;padding: 0 5px;color: gold" id="ramain-count">0</span>次抽奖机会
                 </div>
-                <%--<button class="btn-rule" id="btn-rule" onclick="openRule()" style="border: none;"></button>--%>
                 <!--红包规则元素-->
                 <div class="hongbao-rule">
                     <div class="txt">
@@ -67,14 +65,14 @@
                              <c:if test="${not empty floatList}">
                                  <c:forEach items="${floatList}" var="item">
                                      <c:if test="${item.type=='moneyActivity'}">
-                                         <input id="description" value="${item.description}" hidden/>
+                                         <c:set var="description" value="${item.description}"/>
                                      </c:if>
                                  </c:forEach>
                              </c:if>
                         </div>
                     </div>
-                    <%--<button class="icon-close-rule" onclick="closeRule()" style="border: none;"></button>--%>
-                    <a href="javascript:void(0);" class="icon-close-rule" onclick="closeRule()"></a>
+                    <input id="description" value="${description}" hidden/>
+                    <soul:button opType="function" target="closeRule" text="" cssClass="icon-close-rule"/>
                 </div>
             </div>
             <!--中奖时的提示-->
@@ -93,7 +91,6 @@
         <div class="caidai"></div>
         <div class="hongbao-light"></div>
         <!--关闭红包继续抽奖按钮-->
-        <%--<button style="border: none; background-color: rgba(0, 0, 0, 0);" id="btn-ok" class="btn-ok" onclick="onceAgain()"></button>--%>
-        <a href="javascript:void(0);" id="btn-ok" class="btn-ok" onclick="onceAgain()"></a>
+        <soul:button opType="function" target="onceAgain" text="" cssClass="btn-ok"/>
     </div>
 </div>
