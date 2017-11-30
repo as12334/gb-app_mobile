@@ -74,12 +74,12 @@
                     <c:if test="${os eq 'h5_android' || os eq 'pc'}">
                         <div class="qrcode-img"><img src="data:image/png;base64, ${androidQrcode}"/></div>
                         <div>
-                            <a data-href="${androidUrl}" class="mui-btn mui-btn-primary btn-download">${views.app_auto['下载Android版']}</a>
+                            <a href="${androidUrl}" class="mui-btn mui-btn-primary btn-download">${views.app_auto['下载Android版']}</a>
                         </div>
                     </c:if>
                     <c:if test="${os eq 'ios' || os eq 'pc'}">
                         <div class="qrcode-img"><img src="data:image/png;base64, ${iosQrcode}"/></div>
-                        <a data-href="${iosUrl}" class="mui-btn mui-btn-primary  btn-download">${views.app_auto['下载IOS版']}</a>
+                        <a href="${iosUrl}" class="mui-btn mui-btn-primary  btn-download">${views.app_auto['下载IOS版']}</a>
                         <div class="par-1" style="display: none">
                             <img src="${resRoot}/images/ios/img01.png"/>
                             <div class="logo-big">
