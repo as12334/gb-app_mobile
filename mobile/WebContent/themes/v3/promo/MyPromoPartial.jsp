@@ -67,4 +67,3 @@
     </c:otherwise>
 </c:choose>
 <input value="${command.paging.lastPageNumber}" id="lastPageNumber" hidden>
-<input value="${command.paging.pageNumber}" id="pageNumber" hidden>

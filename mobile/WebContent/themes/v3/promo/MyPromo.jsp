@@ -16,6 +16,7 @@
                 <h1 class="mui-title">${views.promo_auto['我的优惠记录']}</h1>
                 <soul:button text="" opType="href" target="${root}/discounts/index.html?skip=1" cssClass="mui-icon mui-pull-right icon-gift"/>
             </header>
+            <input value="1" id="pageNumber" hidden>
             <div class="mui-content mui-scroll-wrapper content-without-notice content-without-footer" id="refreshContainer" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <div class="mui-scroll">
                     <div class="promo-record-content" id="content">
