@@ -9,6 +9,7 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
+    <link rel="stylesheet" href="${resRoot}/themes/layer.css"/>
 </head>
 
 <body>
@@ -93,6 +94,7 @@
 <!--语言弹窗-->
 <%@include file="../common/LangMenu.jsp"%>
 <%@include file="../include/include.js.jsp" %>
+<script src="${resComRoot}/js/mobile/layer.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>

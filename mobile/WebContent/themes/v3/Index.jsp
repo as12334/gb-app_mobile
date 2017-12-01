@@ -5,6 +5,7 @@
 <head>
     <title>${siteName}</title>
     <%@include file="include/include.head.jsp" %>
+    <link rel="stylesheet" href="${resRoot}/themes/layer.css"/>
 </head>
 
 <body>
@@ -36,6 +37,7 @@
 <!--浮窗广告轮播-->
 <%@include file="index.include/Envelope.jsp"%>
 <%@include file="include/include.js.jsp"%>
+<script src="${resComRoot}/js/mobile/layer.js"></script>
 <script type="text/javascript" src="${resRoot}/js/jquery/jquery.nicescroll.min.js"></script>
 <script src="${resRoot}/js/mui/mui.pullToRefresh.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>
