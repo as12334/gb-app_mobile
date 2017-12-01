@@ -22,4 +22,5 @@
 <link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css" />
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
+<link rel="stylesheet" href="${resRoot}/themes/showload.css"/>
 

@@ -17,6 +17,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.master.player.IPlayerRankService;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
@@ -60,6 +62,7 @@ public class PromoController {
      * 我的优惠记录
      */
     @RequestMapping("/myPromo")
+    @Upgrade(upgrade = true)
     public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo, Model model, HttpServletRequest request) {
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
@@ -142,6 +145,7 @@ public class PromoController {
     }
 
     @RequestMapping("/promoDetail")
+    @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
         vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageVo = ServiceTool.vPlayerActivityMessageService().search(vActivityMessageVo);
