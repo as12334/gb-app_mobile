@@ -7,11 +7,14 @@
             <c:when test="${type.key == 1}">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 ${empty path ? 'active':''}" data-list="live">
                     <c:forEach var="i18n" items="${type.value}">
+                        <c:set var="apiStatus"
+                               value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                             <soul:button dataApiId="${i18n.apiId}"
                                          dataApiTypeId="${i18n.apiTypeId}"
                                          dataApiName="${i18n.name}"
-                                         target="goGame" text="" opType="function" cssClass="_api">
+                                         dataStatus="${apiStatus}"
+                                         target="goApiGame" text="" opType="function" cssClass="_api">
                                 <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span>  <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
                             </soul:button>
@@ -40,11 +43,14 @@
             <c:when test="${type.key == 3}">
                 <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="sports">
                     <c:forEach var="i18n" items="${type.value}">
+                        <c:set var="apiStatus"
+                               value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                             <soul:button dataApiId="${i18n.apiId}"
                                          dataApiType-id="${i18n.apiTypeId}"
                                          dataApiName="${i18n.name}"
-                                         target="goGame" text="" opType="function" cssClass="_api">
+                                         dataStatus="${apiStatus}"
+                                         target="goApiGame" text="" opType="function" cssClass="_api">
                                 <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span>  <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
                             </soul:button>
@@ -80,12 +86,14 @@
             </soul:button>
         </li>
     </ul>
+    <!--关于我们-->
     <div class="mui-table-view mui-grid-view mui-grid-9 ${not empty path && path == 'about' ? 'active':''}" data-list="about">
         <c:if test="${not empty about}">
             <c:set var="c" value="${about.content == null ? '' : about.content}" />
             ${c.replace("${company}", siteName)}
         </c:if>
     </div>
+    <!--注册条款-->
     <div class="mui-table-view mui-grid-view mui-grid-9 ${not empty path && path == 'terms' ? 'active':''}" data-list="terms">
         <c:if test="${not empty terms}">
             ${not empty terms.value ? terms.value : terms.defaultValue}

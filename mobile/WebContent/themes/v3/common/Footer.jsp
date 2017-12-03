@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
-<footer class="mui-bar mui-bar-tab">
+<footer class="mui-bar mui-bar-tab mui-hide footerMenu">
     <soul:button target="${root}/wallet/deposit/index.html" text="" opType="href" cssClass="mui-tab-item">
         <span class="mui-icon icon-deposit"></span>
         <span class="mui-tab-label">存款</span>
