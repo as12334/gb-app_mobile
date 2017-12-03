@@ -13,15 +13,12 @@
                     <li>
                         <c:set var="tempType" value=""/>
                         <c:choose>
-                            <c:when test="${centerId == -3   && a.apiId == 22}">
+                            <c:when test="${centerId == -3 && a.apiId == 22}">
                                 <c:set var="tempType" value="api-icon-4-22-1"/>
                             </c:when>
-                            <c:when test="${a.apiId == 10}">
+                            <c:otherwise>
                                 <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
-                            </c:when>
-                            <c:when test="${a.apiId == 2}">
-                                <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
-                            </c:when>
+                            </c:otherwise>
                         </c:choose>
                         <a href="#lottery-${a.apiId}" data-lottery-id="${a.apiId}"
                            class="mui-tab-item ${vs.index == 0 ? 'mui-active':''} a ${tempType}">${a.name}</a>
