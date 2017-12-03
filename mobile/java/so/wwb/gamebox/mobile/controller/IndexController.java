@@ -148,18 +148,18 @@ public class IndexController extends BaseApiController {
         model.addAttribute("floatList", floatList);
     }
 
-    private Map<String, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n() {
+    private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n() {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
+        List<SiteApiType> siteApiTypes = getApiTypes();
 
-        Map<String, ApiType> apiType = Cache.getApiType();
-        Map<String, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        for (String api : apiType.keySet()) {
+        Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
+        for (SiteApiType api : siteApiTypes) {
             List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
             for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
 
-                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api)) {
+                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(),api.getApiTypeId().toString())) {
                     i18ns.add(relationI18n);
-                    siteApiRelation.put(api,i18ns);
+                    siteApiRelation.put(api.getApiTypeId(),i18ns);
                 }
             }
         }

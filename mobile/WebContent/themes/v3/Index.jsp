@@ -36,6 +36,7 @@
 </div>
 <!--浮窗广告轮播-->
 <%@include file="index.include/Envelope.jsp"%>
+</body>
 <%@include file="include/include.js.jsp"%>
 <script src="${resComRoot}/js/mobile/layer.js"></script>
 <script type="text/javascript" src="${resRoot}/js/jquery/jquery.nicescroll.min.js"></script>
@@ -46,5 +47,4 @@
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
 <script type="text/javascript" src="${resRoot}/js/envelope/Envelope.js"></script>
-</body>
 </html>

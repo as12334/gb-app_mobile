@@ -47,6 +47,7 @@
 <input value="1" id="lastPageNumber" hidden>
 <!--语言弹窗-->
 <%@ include file="../common/LangMenu.jsp"%>
+</body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/discounts/Promo.js"></script>

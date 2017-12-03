@@ -3,9 +3,10 @@
 
 <section class="api-grid">
     <c:forEach var="type" items="${SiteApiRelationI18n}" varStatus="status">
+        <c:set var="show" value="${empty path && status.index == 0 ? 'active':''}"/>
         <c:choose>
             <c:when test="${type.key == 1}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 ${empty path ? 'active':''}" data-list="live">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="live">
                     <c:forEach var="i18n" items="${type.value}">
                         <c:set var="apiStatus"
                                value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
@@ -25,7 +26,7 @@
         </c:choose>
         <c:choose>
             <c:when test="${type.key == 2}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="casino">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="casino">
                     <c:forEach var="i18n" items="${type.value}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                             <soul:button
@@ -41,7 +42,7 @@
         </c:choose>
         <c:choose>
             <c:when test="${type.key == 3}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="sports">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="sports">
                     <c:forEach var="i18n" items="${type.value}">
                         <c:set var="apiStatus"
                                value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
@@ -61,7 +62,7 @@
         </c:choose>
         <c:choose>
             <c:when test="${type.key == 4}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="lottery">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="lottery">
                     <!--彩票导航-->
                     <%@include file="../game/Lottery.jsp" %>
                 </ul>

@@ -198,6 +198,7 @@
 </div>
 <!--语言弹窗-->
 <%@include file="../common/LangMenu.jsp"%>
+</body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/membercentre/MemberCentre.js"></script>

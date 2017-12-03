@@ -93,6 +93,7 @@
 </div>
 <!--语言弹窗-->
 <%@include file="../common/LangMenu.jsp"%>
+</body>
 <%@include file="../include/include.js.jsp" %>
 <script src="${resComRoot}/js/mobile/layer.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js"></script>

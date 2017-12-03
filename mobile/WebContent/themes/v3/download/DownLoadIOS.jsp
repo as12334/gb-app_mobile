@@ -31,6 +31,7 @@
         </div>  <!--mui-content 闭合标签-->
     </div>
 </div>
+</body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/download/DownLoad.js"></script>
 </html>
