@@ -13,7 +13,9 @@
                 </div>
                 <!--登陆后-->
                 <div class="login" style="display: none;">
-                    <i class="icon-person"></i>
+                    <i class="icon-person">
+                        <img width="100%" height="100%" alt="" id="avatarImg">
+                    </i>
                     <p></p>
                     <soul:button target="${root}/mine/index.html?channel=mine" text="个人中心" opType="href" cssClass="mui-btn mui-btn-success btn-person" tag="button"/>
                 </div>
