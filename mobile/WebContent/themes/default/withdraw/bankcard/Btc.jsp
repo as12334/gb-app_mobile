@@ -13,3 +13,4 @@
 <%@ include file="/themes/common/withdraw/bankcard/bankcard.btc.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/fund/betting/betting.detail.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

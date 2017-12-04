@@ -45,3 +45,4 @@
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
 </body>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

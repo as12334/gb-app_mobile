@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.base.inc.jsp" %>
-<script>
-    var resRoot = '${resRoot}';
-</script>
 <!DOCTYPE html>
 <html>
 <head>
     <title>606 | ${views.themes_auto['强制踢出']}</title>
+    <script>
+        var resRoot = '${resRoot}';
+    </script>
     <%@ include file="/themes/default/include/include.head.jsp" %>
     <script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 </head>
@@ -18,3 +18,4 @@
 </div>
 </body>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

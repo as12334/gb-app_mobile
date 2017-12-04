@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/fund/record/record.details.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

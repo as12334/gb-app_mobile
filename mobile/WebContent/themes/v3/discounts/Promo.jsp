@@ -52,3 +52,4 @@
 <script type="text/javascript" src="${resRoot}/js/discounts/Promo.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

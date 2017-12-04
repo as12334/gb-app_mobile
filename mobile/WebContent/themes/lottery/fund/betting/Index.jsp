@@ -70,3 +70,4 @@
 </html>
 <%--<script src="${resRoot}/js/fund/betting/Index.js?v=${rcVersion}"></script>--%>
 <soul:import res="site/fund/betting/Index"/>
+<%@ include file="/include/include.footer.jsp" %>

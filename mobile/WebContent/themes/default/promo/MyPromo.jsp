@@ -33,3 +33,4 @@
 
 <soul:import res="site/promo/MyPromo"/>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

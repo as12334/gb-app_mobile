@@ -18,3 +18,4 @@
 <%@ include file="/themes/common/deposit/deposit.result.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

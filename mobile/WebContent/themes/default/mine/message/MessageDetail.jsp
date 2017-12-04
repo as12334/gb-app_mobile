@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/mine/message/message.messagedetail.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

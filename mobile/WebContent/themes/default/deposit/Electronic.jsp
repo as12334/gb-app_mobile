@@ -33,3 +33,4 @@
 <%@ include file="/themes/common/deposit/deposit.electronic.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>
