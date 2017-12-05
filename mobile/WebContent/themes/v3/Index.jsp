@@ -39,9 +39,6 @@
 </body>
 <%@include file="include/include.js.jsp"%>
 <script src="${resComRoot}/js/mobile/layer.js"></script>
-<script type="text/javascript" src="${resRoot}/js/jquery/jquery.nicescroll.min.js"></script>
-<script src="${resRoot}/js/mui/mui.pullToRefresh.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/Index.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
