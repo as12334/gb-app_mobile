@@ -52,8 +52,8 @@
                                                                  dataApiName="${gbFn:getGameName(g.gameId)}"
                                                                  target="goGame" text="" opType="function" cssClass="">
                                                         <div class="img-wrap">
-                                                            <img data-src="${soulFn:getImagePath(domain, gi.value.cover)}"
-                                                                 src="${soulFn:getImagePath(domain, gi.value.cover)}"/>
+                                                            <img data-src="${soulFn:getThumbPath(domain, gi.value.cover,60,60)}"
+                                                                 src="${soulFn:getThumbPath(domain, gi.value.cover,60,60)}"/>
                                                         </div>
                                                         <p>${gbFn:getGameName(g.gameId)}</p>
                                                     </soul:button>
@@ -101,3 +101,4 @@
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

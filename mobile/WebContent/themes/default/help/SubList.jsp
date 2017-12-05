@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/help/help.sublist.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

@@ -18,7 +18,7 @@
                                      dataGameId="${g.gameId}"
                                      dataGameCode="${g.apiId == 10||g.apiId==2?'':g.code}" dataStatus="${g.status}"
                                      target="goApiGame" text="" opType="function" cssClass="item _api">
-                            <img src="${soulFn:getImagePath(domain, gi.value.cover)}" alt="" class="lottery-img"/>
+                            <img src="${soulFn:getThumbPath(domain, gi.value.cover,60,60)}" alt="" class="lottery-img"/>
                             <div class="mui-media-body">${gbFn:getGameName(g.gameId)}</div>
                         </soul:button>
                     </li>

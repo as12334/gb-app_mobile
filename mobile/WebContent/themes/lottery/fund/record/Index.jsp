@@ -139,5 +139,6 @@
         }
     );
 </script>
+<%@ include file="/include/include.footer.jsp" %>
 
 </html>

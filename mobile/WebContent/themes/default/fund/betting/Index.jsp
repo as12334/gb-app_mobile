@@ -69,3 +69,4 @@
 
 </html>
 <soul:import res="site/fund/betting/Index"/>
+<%@ include file="/include/include.footer.jsp" %>

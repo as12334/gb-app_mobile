@@ -41,9 +41,6 @@
     }
 %>
 <c:set var="os" value="<%=myos%>"/>
-<div style="display: none">
-    <%=ParamTool.mobileTrafficStatistics() %>
-</div>
 <script>
     var os = '${os}';
 </script>

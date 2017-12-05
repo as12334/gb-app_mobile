@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/password/password.updatepassword.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

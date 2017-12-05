@@ -70,3 +70,4 @@
 
     </c:otherwise>
 </c:choose>
+<%@ include file="/include/include.footer.jsp" %>

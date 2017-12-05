@@ -15,3 +15,4 @@
 <%@ include file="/themes/common/deposit/deposit.bitcoin.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

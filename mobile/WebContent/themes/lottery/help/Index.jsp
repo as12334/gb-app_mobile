@@ -10,3 +10,4 @@
 <%@ include file="/themes/common/help/help.index.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

@@ -161,3 +161,4 @@
 <%--<script src="${resRoot}/js/my/message/Notice.js?v=${rcVersion}"></script>--%>
 <soul:import res="site/my/message/Notice"/>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

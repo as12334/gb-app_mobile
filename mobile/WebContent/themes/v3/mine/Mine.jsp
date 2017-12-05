@@ -20,7 +20,7 @@
             <soul:button target="leftMenu" text="" opType="function" cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
             <h1 class="mui-title">我的</h1>
             <%--<a href="" class="mui-icon icon-gift mui-pull-right"></a>--%>
-            <soul:button target="${root}/discounts/index.html?skip=1" text="" opType="href" cssClass="mui-icon icon-gift mui-pull-right"/>
+            <soul:button target="goTab" skip="1" dataHref="/discounts/index.html?skip=1" isLeft="false" text="" opType="function" cssClass="mui-icon icon-gift mui-pull-right"/>
             <soul:button target="${root}/message/gameNotice.html" text="" opType="href" cssClass="mui-icon icon-message mui-pull-right" >
                 <span class="mui-badge mui-badge-danger unReadCount"></span>
             </soul:button>
@@ -196,11 +196,10 @@
         <%@ include file="../common/Footer.jsp" %>
     </div>
 </div>
-<!--语言弹窗-->
-<%@include file="../common/LangMenu.jsp"%>
 </body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/membercentre/MemberCentre.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 </html>
+<%@ include file="/include/include.footer.jsp" %>
