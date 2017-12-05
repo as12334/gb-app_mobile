@@ -25,8 +25,8 @@
                 <ul class="mui-list-unstyled">
                     <%--<li class="active home"><soul:button target="${root}/mainIndex.html" text="首页" opType="href"/></li>--%>
                     <%--<li class="pro"><soul:button target="${root}/discounts/index.html?skip=1" text="优惠活动" opType="href" cssClass=""/></li>--%>
-                    <li class="active home"><soul:button target="goHome" text="首页" opType="function"/></li>
-                    <li class="pro"><soul:button target="goDiscounts" text="优惠活动" opType="function" cssClass=""/></li>
+                    <li class="active home"><soul:button target="goTab" skip="2" text="首页" dataHref="/mainIndex.html" opType="function"/></li>
+                    <li class="pro"><soul:button target="goTab" text="优惠活动" skip="1" dataHref="/discounts/index.html?skip=1" opType="function" cssClass=""/></li>
                     <li class="download"><soul:button target="${root}/downLoad/downLoad.html" text="下载客户端" opType="href"/><%-- <a href="">下载客户端</a>--%></li>
                     <li class="pc"><soul:button target="goPC" opType="function" text="电脑版"/> <%--<a href="">电脑版</a>--%></li>
                     <li class="trans"> <soul:button target="${root}/transfer/index.html" text="转账" opType="href"/></li>
