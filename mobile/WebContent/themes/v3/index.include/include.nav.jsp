@@ -23,8 +23,6 @@
             <a class="mui-control-item item-fish" data-item="fish" data-id="5">
                 捕鱼游戏
             </a>
-            <a class="mui-control-item item-about" data-item="about" data-id="6" >关于我们</a>
-            <a class="mui-control-item item-terms" data-item="terms" data-id="7" hidden>注册条款</a>
         </div>
     </div>
 </section>

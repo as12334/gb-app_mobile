@@ -21,8 +21,8 @@
                 <!--优惠列表-->
                 <section class="promo">
                     <div class="promo-sorts">
-                        <soul:button activityType="" callback="" target="activityType" text="" opType="function"
-                                     cssClass="mui-btn btn-promo-sort active">全部</soul:button>
+                        <soul:button activityType="" target="activityType" text="全部" opType="function"
+                                     cssClass="mui-btn btn-promo-sort active"/>
                     </div>
                     <ul class="promo-list mui-list-unstyled">
                     </ul>
@@ -31,22 +31,10 @@
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->
         <%@ include file="../common/Footer.jsp" %>
-        <!--浮窗广告轮播-->
-        <div class="ads-slider">
-            <a href="javascript:" class="close-ads"></a>
-            <div class="mui-slider">
-                <div class="mui-slider-group">
-                    <div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png"/></a></div>
-                    <div class="mui-slider-item"><a href="#"><img src="${resRoot}/images/ads-banner-01.png"/></a></div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <input value="1" id="pageNumber" hidden>
 <input value="1" id="lastPageNumber" hidden>
-<!--语言弹窗-->
-<%@ include file="../common/LangMenu.jsp"%>
 </body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>

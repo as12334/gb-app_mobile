@@ -21,7 +21,7 @@
                             </c:otherwise>
                         </c:choose>
                         <a href="#lottery-${a.apiId}" data-lottery-id="${a.apiId}"
-                           class="mui-tab-item ${vs.index == 0 ? 'mui-active':''} a ${tempType}">${a.name}</a>
+                           class="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}">${a.name}</a>
                     </li>
                 </c:forEach>
             </ul>
