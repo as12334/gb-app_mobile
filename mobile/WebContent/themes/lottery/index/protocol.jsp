@@ -32,3 +32,4 @@
     mui('.mui-scroll-wrapper').scroll();
 </script>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

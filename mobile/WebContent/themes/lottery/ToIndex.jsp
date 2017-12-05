@@ -45,3 +45,4 @@
             page = new Page();
         });
 </script>
+<%@ include file="/include/include.footer.jsp" %>

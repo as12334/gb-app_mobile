@@ -39,3 +39,4 @@
 <script type="text/javascript" src="${resRoot}/js/download/DownLoad.js"></script>
 </html>
 
+<%@ include file="/include/include.footer.jsp" %>

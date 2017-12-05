@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/errors/error.403.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

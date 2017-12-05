@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/verify/verify.setnewusername.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

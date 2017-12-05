@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/withdraw/withdraw.audit.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

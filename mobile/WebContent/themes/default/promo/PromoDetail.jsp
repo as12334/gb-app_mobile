@@ -75,3 +75,4 @@
 <soul:import res="site/promo/PromoDetail"/>
 <script src="${resRoot}/js/promo/redEnvelope/Envelope.js?v=${rcVersion}"></script>
 </html>
+<%@ include file="/include/include.footer.jsp" %>

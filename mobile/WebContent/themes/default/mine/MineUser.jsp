@@ -14,3 +14,4 @@
 <%@ include file="/themes/common/mine/mine.mineuser.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

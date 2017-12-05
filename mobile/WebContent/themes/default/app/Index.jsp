@@ -12,3 +12,4 @@
 <%@ include file="/themes/common/app/app.index.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>
