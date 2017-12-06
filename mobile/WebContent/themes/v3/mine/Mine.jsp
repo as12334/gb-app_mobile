@@ -39,7 +39,7 @@
                                 <img src="${resRoot}/images/avatar.png" class="avatar">
                                 <p></p>
                                 <%--<a class="btn mui-btn mui-btn-outlined user-logout">退出登录</a>--%>
-                                <soul:button target="loginOut" text="退出登录" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
+                                <soul:button target="logout" text="退出登录" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
                             </div>
                             <p class="money-info">
 			            <span class="span">

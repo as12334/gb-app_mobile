@@ -40,7 +40,7 @@
                     </li>
                 </ul>
                 <div class="login">
-                    <soul:button target="loginOut" text="退出登录" opType="function" cssClass="mui-btn mui-btn-success btn-logout"></soul:button>
+                    <soul:button target="logout" text="退出登录" opType="function" cssClass="mui-btn mui-btn-success btn-logout"></soul:button>
                 </div>
             </div>
         </div>

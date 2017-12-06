@@ -2,6 +2,9 @@
 <%@ include file="/include/include.inc.jsp" %>
 <div class="mui-hide-bar" style="display: none;"></div>
 <input id="isAutoPay" value="${isAutoPay}" hidden>
+<soul:button target="" text="" opType="function" id="login-info" cssClass="mui-hide" tag="button">
+
+</soul:button>
 <div class="login-info" id="login-info" style="display: none">
     <div class="user_name"></div>
     <div class="money"></div>
