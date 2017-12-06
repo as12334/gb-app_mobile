@@ -92,3 +92,4 @@
 <script src="${resRoot}/js/passport/Login.js?v=${rcVersion}"></script>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

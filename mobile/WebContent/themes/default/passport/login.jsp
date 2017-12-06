@@ -11,3 +11,4 @@
 <%@ include file="/themes/common/passport/passport.login.jsp" %>
 
 </html>
+<%@ include file="/include/include.footer.jsp" %>

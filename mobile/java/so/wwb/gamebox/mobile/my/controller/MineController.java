@@ -55,8 +55,8 @@ public class MineController {
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
-    public String index(Model model,Integer skip) {
-        model.addAttribute("skip",skip);
+    public String index(Model model, Integer skip) {
+        model.addAttribute("skip", skip);
         model.addAttribute("channel", "mine");
         //玩家信息
         model.addAttribute("sysUser", SessionManager.getUser());
