@@ -38,18 +38,11 @@
             </div>
         </div>
         <div class="ct">
-            <c:if test="${!isAutoPay}">
-                <p>
-                    <soul:button target="refreshApi" text="${views.include_auto['刷新额度']}" opType="function" cssClass="go btn-refresh" ></soul:button>
-                </p>
-            </c:if>
-            <c:if test="${isAutoPay}">
-                <p>
-                    <soul:button target="recovery" text="${views.include_auto['一键回收']}" opType="function" cssClass="go btn-recovery"></soul:button>
-                </p>
-            </c:if>
             <p>
-                <soul:button target="${root}/wallet/deposit/index.html" text="${views.include_auto['存款']}" opType="href" cssClass="go btn-deposit"></soul:button>
+                <soul:button target="refreshApi" text="${views.include_auto['刷新额度']}" opType="function" cssClass="go btn-refresh"/>
+            </p>
+            <p>
+                <soul:button target="${root}/wallet/deposit/index.html" text="${views.include_auto['存款']}" opType="href" cssClass="go btn-deposit"/>
             </p>
         </div>
     </div>

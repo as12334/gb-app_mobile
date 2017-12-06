@@ -3,7 +3,7 @@
 <!--红包html开始  通过改变hongbao-wrap的class来改变红包样式，一共三种（hb_type_1,hb_type_2,hb_type_3）-->
 <c:if test="${not empty floatList}">
     <div class="ads-slider hongbao-slide-wrap hongbao-wrap" id="hongbao">
-        <div class="icon-close"></div>
+        <soul:button target="closeAds" text="" opType="function" cssClass="icon-close"/>
         <div class="mui-slider hongbao-slider">
             <div class="mui-slider-group">
                 <c:forEach var="item" items="${floatList}">
@@ -16,15 +16,13 @@
                                         <c:otherwise>3</c:otherwise>
                                      </c:choose>">
                                     <div class="img"></div>
-                                    <div class="extra float_idx" objectId="${item.activityId}"></div>
+                                    <soul:button target="floatList" text="" cssClass="extra float_idx" opType="function" objectId="${item.activityId}" tag="div"/>
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <div class="mui-slider-item">
-                                    <img class="float_idx" objectId="${item.activityId}"
-                                         data-src="${soulFn:getImagePath(domain,item.floatItem.normalEffect)}"
-                                         src="${soulFn:getThumbPath(domain,item.floatItem.normalEffect,0,0)}">
-                                </div>
+                                <soul:button target="floatList" text="" opType="function" tag="div" cssClass="mui-slider-item" objectId="${item.activityId}">
+                                    <img data-src="${soulFn:getImagePath(domain,item.floatItem.normalEffect)}" src="${soulFn:getThumbPath(domain,item.floatItem.normalEffect,0,0)}">
+                                </soul:button>
                             </c:otherwise>
                         </c:choose>
                     </c:if>
@@ -39,13 +37,12 @@
     </div>
 </c:if>
 <div id="hongbao_detail" class="hongbao_detail" style="display: none;">
-
-    <input type="hidden" id="lottery_type">
-    <input type="hidden" id="win_id">
-    <input type="hidden" id="record_id">
-    <input type="hidden" id="activity_message_id" value="">
-    <input type="hidden" id="applyId" value="">
-    <input type="hidden" name="gb.token" value="">
+    <input type="hidden" id="lottery_type"/>
+    <input type="hidden" id="win_id"/>
+    <input type="hidden" id="record_id"/>
+    <input type="hidden" id="activity_message_id" value=""/>
+    <input type="hidden" id="applyId" value=""/>
+    <input type="hidden" name="gb.token" value=""/>
 
     <div class="hongbao_inner">
         <soul:button text="" opType="function" target="closePage" cssClass="icon-close"/>

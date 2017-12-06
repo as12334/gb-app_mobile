@@ -3,7 +3,9 @@
 
 <section class="mui-slider banner-slide">
     <div class="gb-banner">
-        <div class="close-slide"><a href="" class="mui-icon mui-icon-closeempty"></a></div>
+        <div class="close-slide">
+            <soul:button target="closeBanner" text="" opType="function" cssClass="mui-icon mui-icon-closeempty"/>
+        </div>
         <div class="ct">
             <div id="slider" class="mui-slider mui-banner">
                 <div class="mui-slider-group">
@@ -12,8 +14,7 @@
                             <c:if test="${not empty carousels && carousels.size() > 1}">
                                 <div class="mui-slider-item mui-slider-item-duplicate">
                                     <a>
-                                        <img class="c_banner"
-                                             src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
+                                        <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
                                     </a>
                                 </div>
                             </c:if>
@@ -27,8 +28,7 @@
                             <c:if test="${not empty carousels && carousels.size() > 1}">
                                 <div class="mui-slider-item mui-slider-item-duplicate">
                                     <a>
-                                        <img class="c_banner"
-                                             src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
+                                        <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
                                     </a>
                                 </div>
                             </c:if>
