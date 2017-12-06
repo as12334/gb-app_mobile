@@ -16,7 +16,7 @@
                                         <c:otherwise>3</c:otherwise>
                                      </c:choose>">
                                     <div class="img"></div>
-                                    <soul:button target="floatList" text="" cssClass="extra float_idx" opType="function" objectId="${item.activityId}" tag="div"/>
+                                    <soul:button target="floatList" text="" cssClass="extra" opType="function" objectId="${item.activityId}" tag="div"/>
                                 </div>
                             </c:when>
                             <c:otherwise>
