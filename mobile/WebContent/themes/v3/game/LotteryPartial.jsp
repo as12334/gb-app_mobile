@@ -1,10 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
 <%-- 彩票游戏 --%>
 <c:if test="${command.paging.firstPage}">
-    <input type="hidden" id="total-page-${apiId}" value="${command.paging.lastPageNumber}"
-           title="${command.paging.firstPage}" pageNumber="1"/>
+    <input type="hidden" id="total-page-${apiId}" value="${command.paging.lastPageNumber}" title="${command.paging.firstPage}" pageNumber="1"/>
 </c:if>
 <c:choose>
     <c:when test="${command.result.size() > 0}">
@@ -27,10 +25,6 @@
         </c:forEach>
     </c:when>
     <c:otherwise>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-            <a href="#" class="item _api" data-api-type-id="4">
-                <div class="mui-no-data">${views.game_auto['此地无银']}</div>
-            </a>
-        </li>
+        <div class="deficiency-nots">没有找到符合的游戏</div>
     </c:otherwise>
 </c:choose>

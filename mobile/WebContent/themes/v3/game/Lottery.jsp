@@ -20,8 +20,7 @@
                                 <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
                             </c:otherwise>
                         </c:choose>
-                        <a href="#lottery-${a.apiId}" data-lottery-id="${a.apiId}"
-                           class="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}">${a.name}</a>
+                        <soul:button target="changeLottery" text="${a.name}" opType="function" apiId="${a.apiId}" cssClass="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}"/>
                     </li>
                 </c:forEach>
             </ul>

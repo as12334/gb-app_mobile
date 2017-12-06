@@ -63,11 +63,7 @@
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
-                                    <div class="mui-col-xs-3">
-                                        <a href="#">
-                                            <p>${views.game_auto['此地无银']}</p>
-                                        </a>
-                                    </div>
+                                    <div class="deficiency-nots">没有找到符合的游戏</div>
                                 </c:otherwise>
                             </c:choose>
                         </div>
