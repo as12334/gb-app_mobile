@@ -38,7 +38,8 @@
 
 <c:set var="root" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getRoot(),request.getServerName()) %>' />
 <c:set var="resComRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
-<c:set var="resRoot" value='${resComRoot}/../mobile-v3'/>
+<c:set var="resRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(),request.getServerName()) %>' />
+<c:set var="resRoot" value='${resRoot}/../mobile-v3'/>
 <c:set var="fileRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getFileRoot(),request.getServerName()) %>' />
 <c:set var="imgRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getImgRoot(),request.getServerName()) %>' />
 <c:set var="mdRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getMdRoot(),request.getServerName()) %>' />
