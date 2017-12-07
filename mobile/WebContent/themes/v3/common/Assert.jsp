@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
-<soul:button target="userAssert" text="" opType="function" id="login-info" cssClass="login-info mui-hide" tag="div">
+<soul:button target="userAssert" text="" opType="function" id="login-info" cssClass="mui-hidden login-info" tag="div">
     <div class="user_name"></div>
     <div class="money"></div>
     <div class="ex">
