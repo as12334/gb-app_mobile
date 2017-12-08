@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -293,6 +294,7 @@ public class ApiController extends BaseApiController {
      */
     @RequestMapping("/detail")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String apiDetail(Integer apiId, Integer apiTypeId, Model model) {
         model.addAttribute("apiList", getApiType());
         model.addAttribute("apiDetail", getApiDetail(apiId, apiTypeId));
@@ -352,8 +354,16 @@ public class ApiController extends BaseApiController {
             Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
             for (ApiI18n apiI18n : apiI18nMap.values()) {
                 if (apiI18n.getApiId().equals(apiId)) {
+                    PlayerApi playerApi = getPlayerApi(apiId);
+                    VUserPlayer player = getPlayer(SessionManager.getUserId());
                     apiDetail.put("apiI18n", apiI18n);
                     apiDetail.put("apiTypeId", apiTypeId);
+                    apiDetail.put("currSign",player.getCurrencySign());
+                    if(playerApi != null) {
+                        apiDetail.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
+                    }else{
+                        apiDetail.put("apiMoney", "0.00");
+                    }
                 }
             }
         }
