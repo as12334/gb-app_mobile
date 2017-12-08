@@ -31,8 +31,15 @@
 <div class="lottery-content"><!--彩票内容切换-->
     <c:forEach var="a" items="${type.value}" varStatus="vs">
         <div id="lottery-${a.apiId}" class="mui-control-content ${vs.index == 0 ? 'mui-active':''}">
-            <%@ include file="../include/include.loading.jsp"%>
-            <%--<%@include file="LotteryPartial.jsp"%>--%>
+            <div class="api-loading">
+                <div class="loader api-loader">
+                    <div class="loader-inner ball-pulse api-div">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </c:forEach>
 </div>

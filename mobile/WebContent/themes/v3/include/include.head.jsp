@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <meta charset="utf-8" />
 <!-- 宽度设置为设备实际宽度，初始化倍数为1，最小倍数为1，最大倍数为1，用户缩放为否 -->
-<meta name="viewport" content="width=device-width,inital-scale=1.0,minimum-scale=1.0,maximum-scake=1.0,user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
 <!-- 删除默认的苹果工具栏和菜单栏 -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <!-- 苹果手机顶部为黑色 -->
@@ -22,5 +22,5 @@
 <link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css" />
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
-<link rel="stylesheet" href="${resRoot}/themes/showload.css"/>
+<link rel="stylesheet" href="${resRoot}/themes/loading.css"/>
 
