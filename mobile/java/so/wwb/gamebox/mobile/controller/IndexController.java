@@ -111,8 +111,8 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/mainIndex")
     @Upgrade(upgrade = true)
-    public String index(Model model, HttpServletRequest request,Integer skip,String path) {
-        model.addAttribute("skip",skip);
+    public String index(Model model, HttpServletRequest request, Integer skip, String path) {
+        model.addAttribute("skip", skip);
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
@@ -130,12 +130,12 @@ public class IndexController extends BaseApiController {
         initFloatPic(model);
 
         //查询游戏类型对应的分类
-        model.addAttribute("SiteApiRelationI18n",getSiteApiRelationI18n());
+        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n());
 
         //关于我们/注册条款
-        model.addAttribute("path",path);
-        if(StringTool.isNotBlank(path)){
-            getAboutAndTerms(path,model,request);
+        model.addAttribute("path", path);
+        if (StringTool.isNotBlank(path)) {
+            getAboutAndTerms(path, model, request);
         }
         return "/Index";
     }
@@ -156,9 +156,9 @@ public class IndexController extends BaseApiController {
             List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
             for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
 
-                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(),api.getApiTypeId().toString())) {
+                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api.getApiTypeId().toString())) {
                     i18ns.add(relationI18n);
-                    siteApiRelation.put(api.getApiTypeId(),i18ns);
+                    siteApiRelation.put(api.getApiTypeId(), i18ns);
                 }
             }
         }
@@ -337,8 +337,8 @@ public class IndexController extends BaseApiController {
 
     /**
      * 关于/条款
-     * */
-    private void getAboutAndTerms(String path,Model model,HttpServletRequest request){
+     */
+    private void getAboutAndTerms(String path, Model model, HttpServletRequest request) {
         if ("about".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
             CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
@@ -425,7 +425,7 @@ public class IndexController extends BaseApiController {
             //其他的都是取默认域名
             VSysSiteDomainListVo vSysSiteDomainListVo = new VSysSiteDomainListVo();
             vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
-            List<VSysSiteDomain> domainList= ServiceTool.vSysSiteDomainService().loadSiteDomain(vSysSiteDomainListVo);
+            List<VSysSiteDomain> domainList = ServiceTool.vSysSiteDomainService().loadSiteDomain(vSysSiteDomainListVo);
 
             for (VSysSiteDomain o : domainList) {
                 if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
@@ -566,6 +566,7 @@ public class IndexController extends BaseApiController {
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
                 map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
             }
+            map.put("isAutoPay", SessionManager.isAutoPay());
         }
         return JsonTool.toJson(map);
     }
