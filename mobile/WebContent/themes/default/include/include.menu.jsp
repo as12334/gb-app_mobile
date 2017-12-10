@@ -32,7 +32,7 @@
                     <li class="mui-table-view-cell" data-skip="/wallet/deposit/index.html" data-target="1" data-os="${os}">
                         <a><span class="icon-canvas ic-deposit"></span>${views.include_auto['账户存款']}</a>
                     </li>
-                    <li class="mui-table-view-cell _app" data-skip="/wallet/withdraw/index.html" data-target="2" data-os="${os}"><a><span
+                    <li class="mui-table-view-cell _app" data-skip="/transfer/index.html" data-target="2" data-os="${os}"><a><span
                             class="icon-canvas ic-change"></span>${views.include_auto['额度转换']}</a>
                     </li>
                     <li class="mui-table-view-cell" data-href="/help/firstType.html">
