@@ -127,7 +127,6 @@ public class IndexController extends BaseApiController {
 
         //查询Banner和公告
         model.addAttribute("carousels", getCarousel(request));
-        model.addAttribute("announcement", getAnnouncement());
 
         initFloatPic(model);
 
