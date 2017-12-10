@@ -14,7 +14,7 @@
                 <!--登陆后-->
                 <div class="login" style="display: none;">
                     <i class="icon-person">
-                        <img width="100%" height="100%" alt="" id="avatarImg">
+                        <img width="100%" height="100%" src="${resRoot}/images/avatar.png" id="avatarImg">
                     </i>
                     <p></p>
                     <soul:button target="goTab" skip="4" dataHref="/mine/index.html?channel=mine&skip=4" isLeft="true" text="个人中心" opType="function" cssClass="mui-btn mui-btn-success btn-person" tag="button"/>
