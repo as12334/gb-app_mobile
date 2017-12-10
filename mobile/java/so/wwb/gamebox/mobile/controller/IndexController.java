@@ -58,6 +58,7 @@ import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -566,7 +567,11 @@ public class IndexController extends BaseApiController {
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
                 map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
             }
-            map.put("isAutoPay", SessionManager.isAutoPay());
+            map.put("isAutoPay", SessionManager.isAutoPay());//是否免转标识
+            //查询总资产
+            PlayerApiListVo playerApiListVo = new PlayerApiListVo();
+            playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
+            map.put("totalAssert",ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
         }
         return JsonTool.toJson(map);
     }
