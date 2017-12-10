@@ -58,7 +58,7 @@
                     </div>
                     <div class="mui-input-row"><label>${views.transfer_auto['金额']}</label>
                         <div class="ct">
-                            <input type="number" class="gb-money" placeholder="${views.transfer_auto['请输入']}" name="result.transferAmount" autocomplete="off">
+                            <input type="number" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" class="gb-money" placeholder="${views.transfer_auto['请输入']}" name="result.transferAmount" autocomplete="off">
                         </div>
                     </div>
                 </div>

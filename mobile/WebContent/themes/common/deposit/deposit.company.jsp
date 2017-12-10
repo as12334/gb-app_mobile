@@ -45,19 +45,24 @@
                                                     <c:when test="${isHide}">
                                                         ${views.deposit_auto['账号代码']}:
                                                         <span class="text-blue">${account.code}&nbsp;&nbsp;</span>
+
                                                         <a open-href="${root}/index/gotoCustomer.html">${hideContent.value}</a>
                                                     </c:when>
                                                     <c:otherwise>
                                                         ${soulFn:formatBankCard(payAccount.account)}
+                                                        <a href="#" class="copy" data-clipboard-text="${payAccount.account}">复制</a>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </p>
                                             <div class="ct">
                                                 <p><span>${views.deposit_auto['银行开户名']}:</span>
                                                         ${payAccount.fullName}
+                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">复制</a>
                                                 </p>
                                                 <p><span>${views.deposit_auto['开户行']}:</span>
                                                         ${payAccount.openAcountName}
+                                                    <a href="#" id="copyAcountName" class="copy" data-clipboard-text="${payAccount.openAcountName}">复制</a>
+                                                    <input type="hidden" value="${payAccount.openAcountName}" data-clipboard-text="${payAccount.openAcountName}" id="hidenAccountName">
                                                 </p>
                                             </div>
                                         </div>
@@ -90,7 +95,7 @@
                                                 <a class="mui-btn mui-btn-link gb-input-link" id="rechargeTypeText" style="margin-right: 0">
                                                         ${rechargeType.text}
                                                 </a>
-                                                <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="${rechargeType.value}"/>
+
                                             </div>
                                         </div>
                                     </div>
@@ -125,6 +130,7 @@
                     </c:otherwise>
                 </c:choose>
 
+
             </div>
         </form>
     </div>
@@ -135,5 +141,7 @@
     curl(['site/deposit/Company'], function (Page) {
         page = new Page();
     });
+
 </script>
 </body>
+

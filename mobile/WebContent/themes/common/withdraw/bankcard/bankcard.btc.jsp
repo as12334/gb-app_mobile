@@ -50,7 +50,7 @@
 </div>
 </body>
 <script>
-    curl(['site/withdraw/bankcard/Btc.js', 'site/passport/password/PopSecurityPassword', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
+    curl(['site/withdraw/bankcard/Btc', 'site/passport/password/PopSecurityPassword', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
         function (Page, Security, Menu, Footer, Dynamic) {
             page = new Page();
             page.security = new Security();
