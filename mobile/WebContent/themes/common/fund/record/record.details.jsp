@@ -256,7 +256,11 @@
                                                 </c:if>
 
                                                 <span class="${isOther?'':'pay-third '}${bankCss}"/>
-                                                <i>${isOther?command.result._describe['customBankName']:''}</i>
+                                                <%--<i>${isOther?command.result._describe['customBankName']:''}</i>--%>
+                                                <c:if test="${command.result._describe['customBankName'] eq '其他方式'}">
+                                                    ${command.result._describe['customBankName']}
+                                                </c:if>
+
                                             </p>
                                         </div>
                                     </c:when>
