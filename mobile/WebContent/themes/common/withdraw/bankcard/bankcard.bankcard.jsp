@@ -53,7 +53,7 @@
                                             </div>
                                             <div class="mui-input-row">
                                                 <label>${views.withdraw_auto['开户银行']}<br>
-                                                    <small>${views.withdraw_auto['选择其他银行时必填']}</small>
+                                                    <small></small>
                                                 </label>
                                                 <div class="ct">
                                                     <input type="text" placeholder="${views.withdraw_auto['例如']}" name="result.bankDeposit"/>
