@@ -23,7 +23,7 @@
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav header-casino-transfer">
             <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
-            <a href="#apiType" class="mui-pull-right mui-icon link-all-game btn-allgame">全部游戏</a>
+            <a href="#apiType" class="mui-pull-right mui-icon link-all-game">${views.game_auto['全部游戏']}</a>
         </header>
         <gb:token></gb:token>
         <input type="hidden" id="apiId" value="${apiI18n.apiId}"/>
@@ -45,10 +45,10 @@
                             <div class="mui-pull-left">
                                 <c:choose>
                                     <c:when test="${centerId == -3 && apiI18n.apiId == 22}">
-                                        <c:set var="api_icon" value="4-22-2" />
+                                        <c:set var="api_icon" value="4-22-2"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <c:set var="api_icon" value="${apiDetail.get('apiTypeId')}-${apiI18n.apiId}" />
+                                        <c:set var="api_icon" value="${apiDetail.get('apiTypeId')}-${apiI18n.apiId}"/>
                                     </c:otherwise>
                                 </c:choose>
                                 <span class="api-item api-icon-${api_icon}"></span>
@@ -58,17 +58,18 @@
                                     <c:set var="flag" value="${apiList.size()}"/>
                                     <c:forEach var="at" items="${apiList}" end="${flag}">
                                         <c:if test="${at.get('apiTypeRelation').apiId == apiI18n.apiId && apiDetail.get('apiTypeId') == at.get('apiTypeRelation').apiTypeId}">
-                                            <c:choose >
+                                            <c:choose>
                                                 <c:when test="${at.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
                                                 <c:otherwise>${at.get("apiTypeRelation").name}</c:otherwise>
                                             </c:choose>
-                                            <c:set var="flag" value="0" />
+                                            <c:set var="flag" value="0"/>
                                         </c:if>
                                     </c:forEach>
                                 </h1>
                                 <div class="g-money">
                                     <div class="login-status">
-                                        <span class="rmb-c">${apiDetail.get('currSign')}</span>${apiDetail.get('apiMoney')}<%--200.25--%> <span class="icon-refresh"></span>
+                                        <span class="rmb-c">${apiDetail.get('currSign')}</span>${apiDetail.get('apiMoney')}<%--200.25--%>
+                                        <span class="icon-refresh"></span>
                                     </div>
                                     <div class="unlogin-status mui-hide">
                                         <a href="login">登陆查看余额</a>
@@ -85,10 +86,6 @@
                                 <div class="txt">${views.game_auto['额度转入']}</div>
                             </soul:button>
                             <div class="mui-col-xs-4">
-                                <%--<a href="electronic-game-page.html">
-                                    <div class="e-btn btn-start-game"></div>
-                                    <div class="txt">${views.game_auto['开始游戏']}</div>
-                                </a>--%>
                                 <soul:button text="" target="startGame" opType="function">
                                     <div class="e-btn btn-start-game"></div>
                                     <div class="txt">${views.game_auto['开始游戏']}</div>
@@ -107,18 +104,19 @@
                 </div> <!--casino-transfer-contetn 闭合标签-->
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
-
     </div>
 </div>
 <div id="apiType" class="mui-popover">
-    <div class="mui-scroll-wrapper popover-scroll">
+    <div class="mui-content mui-scroll-wrapper popover-scroll">
         <div class="mui-scroll">
             <ul class="mui-table-view" id="activityTypeLi">
                 <c:forEach var="apiType" items="${apiList}" varStatus="status">
-                    <c:set var="apiStatus" value="${api.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus}"></c:set>
+                    <c:set var="apiStatus"
+                           value="${api.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus}"></c:set>
                     <li class="mui-table-view-cell">
-                        <a class="_api" data-api-id="${apiType.get("apiTypeRelation").apiId}" data-api-type-id="${apiType.get("apiTypeRelation").apiTypeId}"
-                           data-status="${apiStatus}"><c:choose >
+                        <a class="_api" data-api-id="${apiType.get("apiTypeRelation").apiId}"
+                           data-api-type-id="${apiType.get("apiTypeRelation").apiTypeId}"
+                           data-status="${apiStatus}"><c:choose>
                             <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
                             <c:otherwise>${apiType.get("apiTypeRelation").name}</c:otherwise>
                         </c:choose></a>
