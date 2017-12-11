@@ -12,7 +12,8 @@
         <!-- 主页面容器 -->
         <div class="mui-inner-wrap">
             <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
-                <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
+                <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+                <%--<a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>--%>
                 <h1 class="mui-title">${views.promo_auto['我的优惠记录']}</h1>
                 <soul:button text="" opType="href" target="${root}/discounts/index.html?skip=1" cssClass="mui-icon mui-pull-right icon-gift"/>
             </header>

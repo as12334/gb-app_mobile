@@ -18,7 +18,8 @@
         <c:set var="activity" value="${command.result}" />
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
-            <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+            <%--<a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>--%>
             <%@include file="../common/Assert.jsp"%>
             <h1 class="mui-title">${activity.activityName}</h1>
         </header>
