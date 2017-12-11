@@ -123,7 +123,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!--底部导航-->
                     <div class="mui-row bottom-nav">
                         <ul class="mui-list-inline">
@@ -138,12 +137,17 @@
                                 <li><a data-href="mailto:hlh666.net@gmail.com">hlh666.net@gmail.com</a></li>
                             </c:if>
                         </ul>
+                            <div class="copy-right">
+                                <span class="_user_time"></span>
+                                <span class="site-info">Copyright © &nbsp;${siteName}&nbsp; Reserved</span>
+                            </div>
+                    <div style="height: 20px"></div> <%--作用是让时间和Copyright ©这句话能显示出来--%>
                     </div>
                 </div>
-                <div class="footer-info">
+                <%--<div class="footer-info">
                     <span class="_user_time"></span>
                     <span class="site-info">Copyright © &nbsp;${siteName}&nbsp; Reserved</span>
-                </div>
+                </div>--%>
             </div>
         </div>
 
