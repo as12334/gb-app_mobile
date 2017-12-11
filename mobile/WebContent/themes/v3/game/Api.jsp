@@ -34,10 +34,8 @@
                 <div class="casino-transfer-content">
                     <!-- banner -->
                     <div class="e-banner">
-                        <%--<img src="../../mobile-v3/images/electronic-transfer-banner.png" width="100%" alt="">--%>
-                        <img src="${resRoot}/images/electronic-transfer-banner.png" width="100%" alt="">
-                        <%--<img src="${resRoot}/images/api/banner/${apiI18n.apiId}-${apiI18n.apiId eq 10?'1':apiDetail.get('apiTypeId')}.jpg"
-                                 width="100%" alt="">--%>
+                        <img src="${resRoot}/images/api/banner/${apiI18n.apiId}-${apiI18n.apiId eq 10?'1':apiDetail.get('apiTypeId')}.jpg"
+                                 width="100%" alt="">
                     </div>
                     <!-- 游戏项 -->
                     <div class="game-item api-grid ">
@@ -106,20 +104,23 @@
         </div>  <!--mui-content 闭合标签-->
     </div>
 </div>
-<div id="apiType" class="mui-popover">
-    <div class="mui-content mui-scroll-wrapper popover-scroll">
+<div id="apiType" class="mui-popover allgame-popover">
+    <div class="mui-content mui-scroll-wrapper allgame-scroll popover-scroll">
         <div class="mui-scroll">
             <ul class="mui-table-view" id="activityTypeLi">
                 <c:forEach var="apiType" items="${apiList}" varStatus="status">
                     <c:set var="apiStatus"
                            value="${api.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus}"></c:set>
                     <li class="mui-table-view-cell">
-                        <a class="_api" data-api-id="${apiType.get("apiTypeRelation").apiId}"
-                           data-api-type-id="${apiType.get("apiTypeRelation").apiTypeId}"
-                           data-status="${apiStatus}"><c:choose>
-                            <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
-                            <c:otherwise>${apiType.get("apiTypeRelation").name}</c:otherwise>
-                        </c:choose></a>
+                        <soul:button text=""
+                                     target="${root}/api/detail.html?apiId=${apiType.get('apiTypeRelation').apiId}&apiTypeId=${apiType.get('apiTypeRelation').apiTypeId}"
+                                     opType="href"
+                                     cssClass="_api">
+                            <c:choose>
+                                <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
+                                <c:otherwise>${apiType.get("apiTypeRelation").name}</c:otherwise>
+                            </c:choose>
+                        </soul:button>
                     </li>
                 </c:forEach>
 
