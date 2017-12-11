@@ -85,7 +85,7 @@
 </body>
 <%@ include file="../include/include.js.jsp"%>
 <script src="${resComRoot}/js/mobile/layer.js"></script>
+<script src="${resRoot}/js/discounts/PromoDetail.js"></script>
 <script src="${resRoot}/js/common/Head.js"></script>
 <script src="${resRoot}/js/envelope/Envelope.js"></script>
-<script src="${resRoot}/js/discounts/PromoDetail.js"></script>
 </html>
