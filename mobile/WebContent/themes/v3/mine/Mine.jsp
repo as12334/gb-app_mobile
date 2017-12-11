@@ -5,7 +5,6 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resComRoot}/themes/public-mod.css">
 </head>
 
 <body>
@@ -122,7 +121,7 @@
 							            <img src="${resRoot}/images/my-ico7.png" class="mine-item-img"/>
                                     </span>
                                     <p>银行卡</p>
-                                    <span id="bankImg" class="ext-info with-icon "> </span>
+                                    <%--<span id="bankImg" class="ext-info with-icon "> </span>--%>
                                     <c:set var="len" value="${len+1}"/>
                                 </soul:button>
                             </li>
