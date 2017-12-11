@@ -70,22 +70,29 @@
         </c:choose>
     </c:forEach>
     <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="fish">
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-            <soul:button
+        <c:if test="${AG}">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <soul:button
                     target="${root}/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish"
                     text="" opType="href" cssClass="">
-                <span class="api-item api-icon-2-9"></span> <!--根据class的不同来显示api图标-->
-                <div class="mui-media-body">AG</div>
-            </soul:button>
-        </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-            <soul:button
+                    <span class="api-item api-icon-2-9"></span> <!--根据class的不同来显示api图标-->
+                    <div class="mui-media-body">AG</div>
+                </soul:button>
+            </li>
+        </c:if>
+        <c:if test="${GG}">
+            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <soul:button
                     target="${root}/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2"
                     text="" opType="href" cssClass="">
-                <span class="api-item api-icon-2-28"></span> <!--根据class的不同来显示api图标-->
-                <div class="mui-media-body">GG</div>
-            </soul:button>
-        </li>
+                    <span class="api-item api-icon-2-28"></span> <!--根据class的不同来显示api图标-->
+                    <div class="mui-media-body">GG</div>
+                </soul:button>
+            </li>
+        </c:if>
+        <c:if test="${GG == false && AG == false}">
+            <div class="deficiency-nots">没有找到符合的游戏</div>
+        </c:if>
     </ul>
     <!--关于我们-->
     <div class="mui-table-view mui-grid-view mui-grid-9 ${not empty path && path == 'about' ? 'active':''}" data-list="about">

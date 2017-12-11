@@ -74,6 +74,8 @@ import java.util.*;
 @Controller
 public class IndexController extends BaseApiController {
     private Log LOG = LogFactory.getLog(IndexController.class);
+    private static boolean AG = false;
+    private static boolean GG = false;
 
     @RequestMapping("/game")
     public String game(Integer typeId, Model model, HttpServletRequest request) {
@@ -132,6 +134,8 @@ public class IndexController extends BaseApiController {
 
         //查询游戏类型对应的分类
         model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n());
+        model.addAttribute("AG",AG);
+        model.addAttribute("GG",GG);
 
         //关于我们/注册条款
         model.addAttribute("path", path);
@@ -160,6 +164,13 @@ public class IndexController extends BaseApiController {
                 if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api.getApiTypeId().toString())) {
                     i18ns.add(relationI18n);
                     siteApiRelation.put(api.getApiTypeId(), i18ns);
+                    //判断捕鱼AG GG是否存在
+                    if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 9){
+                        AG = true;
+                    }
+                    if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28){
+                        GG = true;
+                    }
                 }
             }
         }
