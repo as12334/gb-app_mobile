@@ -64,6 +64,7 @@
                                 <span class="_user_time"></span>
                                 <span class="site-info">Copyright © &nbsp;${siteName}&nbsp; Reserved</span>
                             </div>
+                            <div style="height: 100px"></div><%--作用是北京时间和Copyright ©新海天垫上去显示出来--%>
                         </div>
                     </div>
                 </div>
