@@ -19,8 +19,13 @@
     <%@ include file="../common/LeftMenu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
+        <%--<%@include file="../common/Head.jsp" %>--%>
         <!-- 主页面标题 -->
-        <%@include file="../common/Head.jsp" %>
+        <header class="mui-bar mui-bar-nav casino-list-bar">
+            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+            <%@include file="../common/Assert.jsp"%>
+            <h1 class="mui-title">${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</h1>
+        </header>
         <div class="mui-content mui-scroll-wrapper mui-content-casino-list" id="pullfresh">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
