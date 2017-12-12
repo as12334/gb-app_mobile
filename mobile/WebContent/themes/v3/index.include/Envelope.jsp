@@ -48,13 +48,13 @@
         <soul:button text="" opType="function" target="closePage" cssClass="icon-close"/>
         <div class="hongbao"><!--未能拆时加disabled类名-->
             <div id="lotteryPages">
-                <soul:button target="lottery" opType="function" text="" cssClass="icon-open"/>
+                <soul:button target="lottery" opType="function" text="" cssClass="icon-open" tag="div"/>
                 <div class="hongbao-time-txt">下次拆红包开始时间为</div>
                 <div class="hongbao-time">2017-11-11  11:11:11</div>
-                <soul:button opType="function" text="" target="openRule" cssClass="btn-rule"/>
-                <div style="text-align: center;font-size: 18px;color: #fff;" id="tip-msgs">
+                <div style="text-align: center;font-size: 18px;color: #fff;margin-top: 156.91px;" id="tip-msgs">
                     你还有<span style="font-size: 18px;padding: 0 5px;color: gold" id="ramain-count">0</span>次抽奖机会
                 </div>
+                <soul:button opType="function" text="" target="openRule" cssClass="btn-rule"/>
                 <!--红包规则元素-->
                 <div class="hongbao-rule">
                     <div class="txt">
