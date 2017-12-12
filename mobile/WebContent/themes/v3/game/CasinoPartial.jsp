@@ -32,8 +32,8 @@
                 <div class="casino-wrap">
                     <div class="mui-input-row">
                         <div class="electronic-search">
-                            <soul:button target="searchGame" text="搜索" opType="function" cssClass="btn-search"/>
-                            <input type="text" id="game-name" class="mui-input-clear" placeholder="输入游戏名称">
+                            <soul:button target="searchGame" text="${views.themes_auto['搜索']}" opType="function" cssClass="btn-search"/>
+                            <input type="text" id="game-name" class="mui-input-clear" placeholder="${views.themes_auto['输入游戏名称']}">
                         </div>
                     </div>
                     <c:if test="${command.paging.firstPage}">
@@ -68,7 +68,7 @@
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
-                                    <div class="deficiency-nots">没有找到符合的游戏</div>
+                                    <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
                                 </c:otherwise>
                             </c:choose>
                         </div>

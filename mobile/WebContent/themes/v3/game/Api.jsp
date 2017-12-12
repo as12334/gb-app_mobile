@@ -71,7 +71,7 @@
                                         <span class="icon-refresh"></span>
                                     </div>
                                     <div class="unlogin-status mui-hide">
-                                        <a href="login">登陆查看余额</a>
+                                        <a href="login">${views.themes_auto['登陆查看余额']}</a>
                                     </div>
                                 </div>
                             </div>

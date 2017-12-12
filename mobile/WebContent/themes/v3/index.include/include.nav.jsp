@@ -26,7 +26,7 @@
                 </c:choose>
                 <soul:button target="changeApiTypeTab" text="${desc}" opType="function" cssClass="mui-control-item ${empty path && status.index == 0 ? 'mui-active':''} item-${type}" item="${type}" data-id="${apiType.key}"/>
             </c:forEach>
-            <soul:button target="changeApiTypeTab" text="捕鱼游戏" opType="function" cssClass="mui-control-item item-fish" item="fish" data-id="5"/>
+            <soul:button target="changeApiTypeTab" text="${views.themes_auto['捕鱼游戏']}" opType="function" cssClass="mui-control-item item-fish" item="fish" data-id="5"/>
         </div>
     </div>
 </section>
