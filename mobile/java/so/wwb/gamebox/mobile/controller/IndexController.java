@@ -74,8 +74,6 @@ import java.util.*;
 @Controller
 public class IndexController extends BaseApiController {
     private Log LOG = LogFactory.getLog(IndexController.class);
-    private static boolean AG = false;
-    private static boolean GG = false;
 
     @RequestMapping("/game")
     public String game(Integer typeId, Model model, HttpServletRequest request) {
@@ -133,9 +131,7 @@ public class IndexController extends BaseApiController {
         initFloatPic(model);
 
         //查询游戏类型对应的分类
-        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n());
-        model.addAttribute("AG",AG);
-        model.addAttribute("GG",GG);
+        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
         //关于我们/注册条款
         model.addAttribute("path", path);
@@ -152,7 +148,7 @@ public class IndexController extends BaseApiController {
         model.addAttribute("floatList", floatList);
     }
 
-    private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n() {
+    private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Model model) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
 
@@ -166,10 +162,10 @@ public class IndexController extends BaseApiController {
                     siteApiRelation.put(api.getApiTypeId(), i18ns);
                     //判断捕鱼AG GG是否存在
                     if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 9){
-                        AG = true;
+                        model.addAttribute("AGExist",true);
                     }
                     if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28){
-                        GG = true;
+                        model.addAttribute("GGExist",true);
                     }
                 }
             }
