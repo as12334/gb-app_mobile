@@ -21,7 +21,7 @@
                 <!--优惠列表-->
                 <section class="promo">
                     <div class="promo-sorts">
-                        <soul:button activityType="" target="activityType" text="全部" opType="function"
+                        <soul:button activityType="" target="activityType" text="${views.themes_auto['全部']}" opType="function"
                                      cssClass="mui-btn btn-promo-sort active"/>
                     </div>
                     <ul class="promo-list mui-list-unstyled">

@@ -50,18 +50,18 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         ${soulFn:formatBankCard(payAccount.account)}
-                                                        <a href="#" class="copy" data-clipboard-text="${payAccount.account}">复制</a>
+                                                        <a href="#" class="copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </p>
                                             <div class="ct">
                                                 <p><span>${views.deposit_auto['银行开户名']}:</span>
                                                         ${payAccount.fullName}
-                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">复制</a>
+                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
                                                 </p>
                                                 <p><span>${views.deposit_auto['开户行']}:</span>
                                                         ${payAccount.openAcountName}
-                                                    <a href="#" id="copyAcountName" class="copy" data-clipboard-text="${payAccount.openAcountName}">复制</a>
+                                                    <a href="#" id="copyAcountName" class="copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a>
                                                     <input type="hidden" value="${payAccount.openAcountName}" data-clipboard-text="${payAccount.openAcountName}" id="hidenAccountName">
                                                 </p>
                                             </div>

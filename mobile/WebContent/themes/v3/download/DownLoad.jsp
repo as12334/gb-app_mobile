@@ -29,7 +29,7 @@
                 <div class="des">下载APP 再也无需输入网址</div>
                 <div class="btn-wrap">
                     <soul:button target="${root}/downLoad/downLoadIOS.html" text="" opType="href" cssClass="btn-download ios">点击下载iOS版</soul:button>
-                    <soul:button target="${androidUrl}" text="" opType="href" cssClass="btn-download android">点击下载安卓版</soul:button>
+                    <soul:button target="${androidUrl}" text="" opType="href" cssClass="btn-download android">${views.themes_auto['点击下载安卓版']}</soul:button>
                 </div>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->

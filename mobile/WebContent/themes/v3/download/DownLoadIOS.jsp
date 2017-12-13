@@ -26,7 +26,7 @@
                 <!-- 主界面具体展示内容 -->
                 <img src="${resRoot}/images/apple-download-ios-bg.png" class="h-bg"/>
                 <img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="app-logo" />
-                <soul:button target="${iosUrl}" text="" opType="href" cssClass="btn-install">点击安装</soul:button>
+                <soul:button target="${iosUrl}" text="" opType="href" cssClass="btn-install">${views.themes_auto['点击安装']}</soul:button>
                 <img src="${resRoot}/images/apple-down.png" class="down-step"/>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
