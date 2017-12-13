@@ -70,7 +70,7 @@
         </c:choose>
     </c:forEach>
     <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="fish">
-        <c:if test="${AG}">
+        <c:if test="${not empty AGExist && AGExist}">
             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                 <soul:button
                     target="${root}/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish"
@@ -80,7 +80,7 @@
                 </soul:button>
             </li>
         </c:if>
-        <c:if test="${GG}">
+        <c:if test="${not empty GGExist && GGExist}">
             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                 <soul:button
                     target="${root}/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2"
@@ -90,8 +90,8 @@
                 </soul:button>
             </li>
         </c:if>
-        <c:if test="${GG == false && AG == false}">
-            <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
+        <c:if test="${empty AGExist && empty GGExist}">
+            <div class="deficiency-nots">没有找到符合的游戏</div>
         </c:if>
     </ul>
     <!--关于我们-->
