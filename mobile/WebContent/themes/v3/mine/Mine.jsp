@@ -41,14 +41,14 @@
                                 <soul:button target="logout" text="退出登录" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
                             </div>
                             <p class="money-info">
-			            <span class="span">
-			                <span>钱包</span>
-			                <span class="green"></span>
-			            </span>
                                 <span class="span">
-			                <span>总资产</span>
-			                <span class="orange"></span>
-			            </span>
+                                    <span>钱包</span>
+                                    <span class="green"></span>
+                                </span>
+                                <span class="span">
+                                    <span>总资产</span>
+                                    <span class="orange"></span>
+			                    </span>
                             </p>
                         </div>
                     </div>

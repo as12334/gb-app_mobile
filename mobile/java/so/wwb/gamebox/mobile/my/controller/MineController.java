@@ -2,8 +2,12 @@ package so.wwb.gamebox.mobile.my.controller;
 
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleDateTool;
+import org.soul.commons.log.Log;
+import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
@@ -48,6 +52,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/mine")
 public class MineController {
+    private static Log LOG = LogFactory.getLog(MineController.class);
     private static final String MY_INDEX = "/mine/Mine";
     private static final String GAME_PAGE = "/my/GamePage";
     private static final int PROMO_RECORD_DAYS = -7;
@@ -58,8 +63,6 @@ public class MineController {
     public String index(Model model, Integer skip) {
         model.addAttribute("skip", skip);
         model.addAttribute("channel", "mine");
-        //玩家信息
-        model.addAttribute("sysUser", SessionManager.getUser());
         //现金取款方式
         model.addAttribute("isBit", ParamTool.isBit());
         model.addAttribute("isCash", ParamTool.isCash());
@@ -189,7 +192,12 @@ public class MineController {
         //用户个人信息
         userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
         userInfo.put("avatarUrl", sysUser.getAvatarUrl());
-        userInfo.put("loginTime", sysUser.getLoginTime());
+        //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
+        if (sysUser.getLastLoginTime() != null) {
+            userInfo.put("lastLoginTime", LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+        } else if (sysUser.getLoginTime() != null) {
+            userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+        }
         userInfo.put("currency", getCurrencySign());
 
         return JsonTool.toJson(userInfo);
