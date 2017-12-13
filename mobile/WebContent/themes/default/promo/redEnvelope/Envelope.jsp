@@ -15,10 +15,10 @@
         <div class="hongbao"><!--未能拆时加disabled类名-->
             <div id="lotteryPages" style="margin-top: 159px;">
                 <div class="icon-open"><button style="width: 83px; height: 83px; border: none; background: none;" onclick="lottery()"></button></div>
-                <div class="hongbao-time-txt">下次拆红包开始时间为</div>
+                <div class="hongbao-time-txt">${views.themes_auto['下次拆红包开始时间为']}</div>
                 <div class="hongbao-time">2018-11-11  11:11:11</div>
                 <div style="text-align: center;font-size: 18px;color: #fff;" id="tip-msgs">
-                    你还有<span style="font-size: 18px;padding: 0 5px;color: gold" id="ramain-count">-</span>次抽奖机会
+                    ${views.themes_auto['你还有']}<span style="font-size: 18px;padding: 0 5px;color: gold" id="ramain-count">-</span>${views.themes_auto['次抽奖机会']}
                 </div>
                 <button class="btn-rule" id="btn-rule" onclick="openRule()" style="border: none;"></button>
                 <!--红包规则元素-->
@@ -42,12 +42,12 @@
             </div>
             <!--中奖时的提示-->
             <div class="win-hongbao tips">
-                <div class="ttxt-1">恭喜您</div>
+                <div class="ttxt-1">${views.themes_auto['恭喜您']}</div>
                 <div class="ttxt-2">获得-元</div>
             </div>
             <!--未中奖时的提示-->
             <div class="lose-hongbao tips">
-                <div class="ttxt-1">很遗憾</div>
+                <div class="ttxt-1">${views.themes_auto['很遗憾']}</div>
                 <div class="ttxt-2">还差一点就中奖了呦！</div>
             </div>
         </div>
