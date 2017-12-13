@@ -7,7 +7,7 @@
         <table>
             <tbody>
             <tr>
-                <td>总资产</td>
+                <td>${views.themes_auto['总资产']}</td>
                 <td><span class="bar-asset" style="padding-right: 0; color: #ffffff"></span></td>
             </tr>
             </tbody>
@@ -16,7 +16,7 @@
         <table>
             <tbody>
             <tr>
-                <td>钱包</td>
+                <td>${views.themes_auto['钱包']}</td>
                 <td class="bar-wallet"></td>
             </tr>
             </tbody>
