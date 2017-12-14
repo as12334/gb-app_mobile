@@ -95,7 +95,7 @@
                                                 <a class="mui-btn mui-btn-link gb-input-link" id="rechargeTypeText" style="margin-right: 0">
                                                         ${rechargeType.text}
                                                 </a>
-
+                                                <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="${rechargeType.value}"/>
                                             </div>
                                         </div>
                                     </div>
