@@ -13,7 +13,7 @@
     <style>
         #transactionType {position: fixed;top: 16px;right: 6px;}
         #transactionType .mui-popover-arrow {left: auto;right: 6px;}
-        .mui-popover {height: 300px;}
+        .mui-popover {height: 270px;}
     </style>
 </head>
 
