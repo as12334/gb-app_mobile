@@ -51,10 +51,10 @@
                 <soul:button target="lottery" opType="function" text="" cssClass="icon-open" tag="div"/>
                 <div class="hongbao-time-txt">${views.themes_auto['下次拆红包开始时间为']}</div>
                 <div class="hongbao-time">2017-11-11  11:11:11</div>
-                <div style="text-align: center;font-size: 18px;color: #fff;margin-top: 156.91px;" id="tip-msgs">
+                <soul:button opType="function" text="" target="openRule" cssClass="btn-rule"/>
+                <div class="tip-msgs" id="tip-msgs">
                     ${views.themes_auto['你还有']}<span style="font-size: 18px;padding: 0 5px;color: gold" id="ramain-count">0</span>${views.themes_auto['次抽奖机会']}
                 </div>
-                <soul:button opType="function" text="" target="openRule" cssClass="btn-rule"/>
                 <!--红包规则元素-->
                 <div class="hongbao-rule">
                     <div class="txt">

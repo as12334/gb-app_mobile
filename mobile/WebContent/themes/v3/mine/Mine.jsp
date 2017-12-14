@@ -37,18 +37,18 @@
                             <div class="ct">
                                 <img src="${resRoot}/images/avatar.png" class="avatar">
                                 <p></p>
-                                <%--<a class="btn mui-btn mui-btn-outlined user-logout">${views.themes_auto['退出登录']}</a>--%>
+                                <%--<a class="btn mui-btn mui-btn-outlined user-logout">退出登录</a>--%>
                                 <soul:button target="logout" text="${views.themes_auto['退出登录']}" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
                             </div>
                             <p class="money-info">
-			            <span class="span">
-			                <span>${views.themes_auto['钱包']}</span>
-			                <span class="green"></span>
-			            </span>
                                 <span class="span">
-			                <span>${views.themes_auto['总资产']}</span>
-			                <span class="orange"></span>
-			            </span>
+                                    <span>${views.themes_auto['钱包']}</span>
+                                    <span class="green"></span>
+                                </span>
+                                <span class="span">
+                                    <span>${views.themes_auto['总资产']}</span>
+                                    <span class="orange"></span>
+			                    </span>
                             </p>
                         </div>
                     </div>
@@ -183,7 +183,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico8.png" class="mine-item-img"/>
 						        </span>
-                                <p>${views.themes_auto['推荐好友']}</p>
+                                <p>推荐好友</p>
                                 <span class="ext-info recomdAmount"></span>
                             </a>
                         </li>--%>
