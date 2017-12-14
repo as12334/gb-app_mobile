@@ -226,5 +226,30 @@
             $('div#ios8').hide();
             $('div#ios9').show();
         });
+
+        mui("body").on("tap", "a.ios9", function () {
+            $('div#ios8').hide();
+            $('div#ios9').show();
+        });
+
+        mui('body').on('tap', 'a[href]', function () {
+            open($(this).attr("href"));
+        });
+        function open(_href) {
+            mui.openWindow({
+                url: _href,
+                id: _href,
+                extras: {},
+                createNew: false,
+                show: {
+                    autoShow: true
+                },
+                waiting: {
+                    autoShow: true,
+                    title: '${views.app_auto['正在加载']}'
+
+                }
+            })
+        }
     })
 </script>
