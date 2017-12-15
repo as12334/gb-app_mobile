@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
 <c:set var="isDemo" value="<%=SessionManagerCommon.isDemoModel() %>" />
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +18,6 @@
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
             <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
-            <%--<a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>--%>
             <%@include file="../common/Assert.jsp"%>
             <h1 class="mui-title">${activity.activityName}</h1>
         </header>
@@ -86,6 +84,7 @@
 </body>
 <%@ include file="../include/include.js.jsp"%>
 <script src="${resComRoot}/js/mobile/layer.js"></script>
+<script src="${resRoot}/js/common/Common.js"></script>
 <script src="${resRoot}/js/common/Head.js"></script>
 <script src="${resRoot}/js/envelope/Envelope.js"></script>
 <script src="${resRoot}/js/discounts/PromoDetail.js"></script>
