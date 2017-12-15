@@ -23,7 +23,7 @@
                 <div class="mui-input-row">
                     <label>${views.deposit_auto['金额']}</label>
                     <div class="ct">
-                        <input type="number" value="" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
+                        <input type="text" value="" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
                                name="result.rechargeAmount" id="result.rechargeAmount" autocomplete="off"/>
                     </div>
                 </div>
