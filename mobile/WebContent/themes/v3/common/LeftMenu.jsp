@@ -8,11 +8,11 @@
             <div class="person-info">
                 <!--登录前-->
                 <div class="un-login">
-                    <p>欢迎观临，请先登录</p>
+                    <p>${views.themes_auto['欢迎观临']}</p>
                     <soul:button target="login" text="${views.themes_auto['用户登录']}" opType="function" cssClass="mui-btn mui-btn-success btn-login" tag="button"/>
                 </div>
                 <!--登陆后-->
-                <div class="login" style="display: none;">
+                <div class="login" style="display: none;"
                     <i class="icon-person">
                         <img width="100%" height="100%" src="${resRoot}/images/avatar.png" id="avatarImg">
                     </i>
