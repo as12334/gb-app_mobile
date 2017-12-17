@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.iservice.boss.IAppUpdateService;
-import so.wwb.gamebox.iservice.company.sys.IVSysSiteDomainService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -36,16 +34,13 @@ import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
-import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
-import so.wwb.gamebox.model.company.setting.po.ApiType;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
-import so.wwb.gamebox.model.company.sys.vo.VSysSiteDomainListVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
@@ -58,7 +53,6 @@ import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
-import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -161,11 +155,11 @@ public class IndexController extends BaseApiController {
                     i18ns.add(relationI18n);
                     siteApiRelation.put(api.getApiTypeId(), i18ns);
                     //判断捕鱼AG GG是否存在
-                    if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 9){
-                        model.addAttribute("AGExist",true);
+                    if (relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 9) {
+                        model.addAttribute("AGExist", true);
                     }
-                    if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28){
-                        model.addAttribute("GGExist",true);
+                    if (relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28) {
+                        model.addAttribute("GGExist", true);
                     }
                 }
             }
@@ -382,6 +376,8 @@ public class IndexController extends BaseApiController {
         return "/index/" + path;
     }
 
+
+
     private CttDocumentI18nListVo initDocument(String code) {
         CttDocumentI18nListVo listVo = new CttDocumentI18nListVo();
         listVo.getSearch().setStatus(CttDocumentEnum.ON.getCode());
@@ -431,16 +427,11 @@ public class IndexController extends BaseApiController {
             defaultSite = site.getWebSite();
         } else {
             //其他的都是取默认域名
-            VSysSiteDomainListVo vSysSiteDomainListVo = new VSysSiteDomainListVo();
-            vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
-            List<VSysSiteDomain> domainList = ServiceTool.vSysSiteDomainService().loadSiteDomain(vSysSiteDomainListVo);
-
+            List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId());
             for (VSysSiteDomain o : domainList) {
-                if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
-                    if (o.getPageUrl() != null && o.getIsDefault() != null && o.getPageUrl().equals(DomainPageUrlEnum.INDEX.getCode()) && o.getIsDefault()) {
-                        defaultSite = o.getDomain();
-                        break;
-                    }
+                if (o.getPageUrl() != null && o.getPageUrl().equals(DomainPageUrlEnum.INDEX.getCode()) && o.getIsDefault()) {
+                    defaultSite = o.getDomain();
+                    break;
                 }
             }
         }
@@ -494,28 +485,24 @@ public class IndexController extends BaseApiController {
     private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = ServiceTool.appUpdateService();
-
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {
             // 获取IOS信息
-            getIosInfo(model, code, appUpdateService);
+            getIosInfo(model, code);
         } else if (OSTypeEnum.ANDROID.getCode().equals(os)) {
             // 获取android APP信息
-            getAndroidInfo(model, request, code, appUpdateService);
+            getAndroidInfo(model, request, code);
         } else {
-            getIosInfo(model, code, appUpdateService);
-            getAndroidInfo(model, request, code, appUpdateService);
+            getIosInfo(model, code);
+            getAndroidInfo(model, request, code);
         }
     }
 
     /**
      * 获取android APP信息
      */
-    private void getAndroidInfo(Model model, HttpServletRequest request, String code, IAppUpdateService appUpdateService) {
-        AppUpdateVo androidVo = new AppUpdateVo();
-        androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
-        AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
+    private void getAndroidInfo(Model model, HttpServletRequest request, String code) {
+        AppUpdate androidApp = Cache.getAppUpdate(AppTypeEnum.ANDROID.getCode());
         if (androidApp != null) {
             String versionName = androidApp.getVersionName();
             String url = String.format("https://%s%s%s/app_%s_%s.apk", ParamTool.appDmain(request.getServerName()), androidApp.getAppUrl(),
@@ -528,10 +515,8 @@ public class IndexController extends BaseApiController {
     /**
      * 获取IOS信息
      */
-    private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService) {
-        AppUpdateVo iosVo = new AppUpdateVo();
-        iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
-        AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
+    private void getIosInfo(Model model, String code) {
+        AppUpdate iosApp = Cache.getAppUpdate(AppTypeEnum.IOS.getCode());
         if (iosApp != null) {
             String versionName = iosApp.getVersionName();
             String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", iosApp.getAppUrl(),
@@ -578,7 +563,7 @@ public class IndexController extends BaseApiController {
             //查询总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("totalAssert",ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("totalAssert", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
         }
         return JsonTool.toJson(map);
     }
