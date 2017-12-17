@@ -16,7 +16,7 @@
             <c:if test="${os ne 'android'}">
                 <header class="mui-bar mui-bar-nav">
                     <%@ include file="/include/include.toolbar.jsp" %>
-                    <h1 class="mui-title">比特币</h1>
+                    <h1 class="mui-title">${views.themes_auto['比特币']}</h1>
                 </header>
             </c:if>
             <center>

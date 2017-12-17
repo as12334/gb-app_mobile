@@ -23,19 +23,19 @@
     <c:if test="${os!='android'}">
         <%@ include file="/include/include.toolbar.jsp" %>
     </c:if>
-    <h1 class="mui-title">优惠活动</h1>
+    <h1 class="mui-title">${views.themes_auto['优惠活动']}</h1>
 </header>
 <div class="mui-content">
     <div id="slider" class="mui-slider mui-fullscreen lottery-promo-wrap">
         <div class="p-selector-button">
             <a class="mui-control-item no-bg" href="#activityType">
-                <span id="displayType1">全部</span>
+                <span id="displayType1">${views.themes_auto['全部']}</span>
                 <i class="mui-icon mui-icon-arrowdown"></i>
             </a>
         </div>
         <div id="segmentedControl-promo" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted promo-menu-btn">
-            <a class="mui-control-item mui-active" href="#promo1">进行中的活动</a>
-            <a class="mui-control-item" href="#promo2">活动历史</a>
+            <a class="mui-control-item mui-active" href="#promo1">${views.themes_auto['进行中的活动']}</a>
+            <a class="mui-control-item" href="#promo2">${views.themes_auto['活动历史']}</a>
         </div>
         <div class="mui-slider-group">
             <div id="promo1" class="mui-slider-item mui-control-content mui-active">
@@ -64,7 +64,7 @@
         <div class="mui-scroll">
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell" id="activityTypeLi">
-                    <a href="#" value="all" class="">全部</a>
+                    <a href="#" value="all" class="">${views.themes_auto['全部']}</a>
                 </li>
             </ul>
         </div>
