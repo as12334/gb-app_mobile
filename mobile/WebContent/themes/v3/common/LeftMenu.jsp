@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
-<aside class="mui-off-canvas-left mui-transitioning mui-active" style="visibility: visible; z-index: 0;">
-    <div class="mui-scroll-wrapper side-menu-scroll-wrapper">
+<aside id="offCanvasSide" class="mui-off-canvas-left mui-transitioning">
+    <div id="offCanvasSideScroll" class="mui-scroll-wrapper side-menu-scroll-wrapper">
         <div class="mui-scroll">
             <!-- 菜单具体展示内容 -->
             <!--个人信息部分-->
@@ -12,7 +12,7 @@
                     <soul:button target="login" text="${views.themes_auto['用户登录']}" opType="function" cssClass="mui-btn mui-btn-success btn-login" tag="button"/>
                 </div>
                 <!--登陆后-->
-                <div class="login" style="display: none;"
+                <div class="login" style="display: none;">
                     <i class="icon-person">
                         <img width="100%" height="100%" src="${resRoot}/images/avatar.png" id="avatarImg">
                     </i>
