@@ -13,7 +13,7 @@
     <style>
         #transactionType {position: fixed;top: 16px;right: 6px;}
         #transactionType .mui-popover-arrow {left: auto;right: 6px;}
-        .mui-popover {height: 300px;}
+        .mui-popover {height: 270px;}
     </style>
 </head>
 
@@ -44,7 +44,7 @@
         <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
-<div id="selectDate" class="mui-popover scroll-popover" style="height: 220px">
+<div id="selectDate" class="mui-popover scroll-popover" style="height: 180px">
     <style>
         /*跨webview需要手动指定位置*/
         .scroll-popover {
@@ -65,7 +65,7 @@
                 <li class="mui-table-view-cell"><a href="#" value="today">${views.fund_auto['今天']}</a></li>
                 <li class="mui-table-view-cell"><a href="#" value="yesterday">${views.fund_auto['昨天']}</a></li>
                 <li class="mui-table-view-cell"><a href="#" value="thisWeek">${views.fund_auto['本周']}</a></li>
-                <li class="mui-table-view-cell"><a href="#" value="lastWeek">${views.fund_auto['上周']}</a></li>
+                <%--<li class="mui-table-view-cell"><a href="#" value="lastWeek">${views.fund_auto['上周']}</a></li>--%>
                 <li class="mui-table-view-cell"><a href="#" value="7days">${views.fund_auto['最近7天']}</a></li>
             </ul>
         </div>

@@ -43,16 +43,10 @@
                                             <a class="btn mui-btn mui-btn-outlined user-logout">${views.mine_auto['退出登录']}</a>
                                         </c:otherwise>
                                     </c:choose>
-                                    <img src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl,34,34, resRoot.concat('/images/avatar.png'))}"
-                                         data-url="${root}/personalInfo/index.html" class="_sub avatar" data-demo="${isDemo}">
-                                    <p>${soulFn:overlayString(sysUser.username)}</p>
+                                    <img src="${resRoot.concat('/images/avatar.png')}" data-url="${root}/personalInfo/index.html" class="_sub avatar">
+                                    <p id="userName"></p>
                                     <p>
-                                        <c:set var="_now" value="<%=new java.util.Date() %>" />
-                                        <c:set value="${empty sysUser.loginTime? soulFn:formatDateTz(_now, DateFormat.DAY_SECOND, timeZone): views.mine_auto['本次登录时间'].concat(soulFn:formatDateTz(sessionSysUser.loginTime, DateFormat.DAY_SECOND, timeZone))}"
-                                               var="loginTime"/>
-                                        <small>${empty sysUser.lastLoginTime ? (empty loginTime ? lastActiveTime : loginTime):
-                                                views.mine_auto['上次登录时间'].concat(soulFn:formatDateTz(sysUser.lastLoginTime, DateFormat.DAY_SECOND, timeZone))}
-                                        </small>
+                                        <small id="loginTime"></small>
                                     </p>
                                 </div>
                                 <p>
