@@ -22,7 +22,7 @@
         <%--<%@include file="../common/Head.jsp" %>--%>
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav casino-list-bar">
-            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
             <%@include file="../common/Assert.jsp"%>
             <h1 class="mui-title">${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</h1>
         </header>

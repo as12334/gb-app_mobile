@@ -22,7 +22,7 @@
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav header-casino-transfer">
-            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
             <%--<a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>--%>
             <a href="#apiType" class="mui-pull-right mui-icon link-all-game">${views.game_auto['全部游戏']}</a>
         </header>
