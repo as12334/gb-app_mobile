@@ -29,4 +29,7 @@
             </c:forEach>
         </c:forEach>
     </c:when>
+    <c:otherwise>
+        <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
+    </c:otherwise>
 </c:choose>
