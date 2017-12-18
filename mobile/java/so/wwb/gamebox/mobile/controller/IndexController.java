@@ -427,10 +427,12 @@ public class IndexController extends BaseApiController {
         } else {
             //其他的都是取默认域名
             List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
-            for (VSysSiteDomain o : domainList) {
-                if (o.getIsDefault()) {
-                    defaultSite = o.getDomain();
-                    break;
+            if(CollectionTool.isNotEmpty(domainList)) {
+                for (VSysSiteDomain o : domainList) {
+                    if (o.getIsDefault()) {
+                        defaultSite = o.getDomain();
+                        break;
+                    }
                 }
             }
         }

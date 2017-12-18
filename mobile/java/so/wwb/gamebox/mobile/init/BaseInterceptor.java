@@ -30,8 +30,8 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                 if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {
                     modelAndView.setViewName("/themes/lottery" + url);
                 } else {
-                    SysParam upgradParam = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_MOBILE_UPGRADE);
-                    if (upgradParam != null && StringTool.isNotBlank(upgradParam.getParamValue()) && String.valueOf(true).equals(upgradParam.getParamValue()) && handler instanceof HandlerMethod) {
+                    boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
+                    if (isMobileUpgrade && handler instanceof HandlerMethod) {
                         HandlerMethod handlerMethod = (HandlerMethod) handler;
                         Upgrade upgrade = handlerMethod.getMethodAnnotation(Upgrade.class);
                         if (upgrade != null && upgrade.upgrade()) {
