@@ -5,7 +5,7 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left back_icon"><i class="back">${views.app_auto['返回']}</i></a>
     </c:when>
     <c:otherwise>
-        <%--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left "></a>--%>
-        <a class="mui-icon mui-icon-left-nav mui-pull-left" data-href="/mainIndex.html"></a>
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left "></a>
+        <%--<a class="mui-icon mui-icon-left-nav mui-pull-left" data-href="/mainIndex.html"></a>--%>
     </c:otherwise>
 </c:choose>

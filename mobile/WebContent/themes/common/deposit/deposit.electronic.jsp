@@ -222,7 +222,7 @@
                                         <div class="ct">
                                             <c:set value="${siteCurrencySogn}${empty rank.onlinePayMin?'1.00':soulFn:formatCurrency(rank.onlinePayMin)}" var="pmi"></c:set>
                                             <c:set value="${siteCurrencySogn}${empty rank.onlinePayMax?'99,999,999.00':soulFn:formatCurrency(rank.onlinePayMax)}" var="pma"></c:set>
-                                            <input type="number" name="result.rechargeAmount" id="result.rechargeAmount" placeholder="${pmi}-${pma}" autocomplete="off">
+                                            <input type="text" name="result.rechargeAmount" id="result.rechargeAmount" placeholder="${pmi}-${pma}" autocomplete="off">
                                         </div>
                                     </div>
 
