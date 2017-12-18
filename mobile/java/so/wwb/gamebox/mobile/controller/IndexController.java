@@ -377,7 +377,6 @@ public class IndexController extends BaseApiController {
     }
 
 
-
     private CttDocumentI18nListVo initDocument(String code) {
         CttDocumentI18nListVo listVo = new CttDocumentI18nListVo();
         listVo.getSearch().setStatus(CttDocumentEnum.ON.getCode());
@@ -427,9 +426,9 @@ public class IndexController extends BaseApiController {
             defaultSite = site.getWebSite();
         } else {
             //其他的都是取默认域名
-            List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId());
+            List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
             for (VSysSiteDomain o : domainList) {
-                if (o.getPageUrl() != null && o.getPageUrl().equals(DomainPageUrlEnum.INDEX.getCode()) && o.getIsDefault()) {
+                if (o.getIsDefault()) {
                     defaultSite = o.getDomain();
                     break;
                 }
