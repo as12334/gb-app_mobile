@@ -11,7 +11,7 @@
 			</header>
 		</c:if>
 		<div class="mui-content mui-scroll-wrapper" style="${os eq 'android'?'padding-top:0!important;':''}">
-			<div class="">
+			<%--<div class="">--%>
 				<div class="mui-scroll">
 					<ul class="mui-table-view">
 						<c:forEach items="${command}" var="helpMenu">
@@ -19,8 +19,9 @@
 								<a data-href="/help/detail.html?searchId=${VHelpTypeAndDocumentListVo.getSearchId(helpMenu.get('id'))}">${helpMenu.get('name')}</a>
 							</li>
 						</c:forEach>
-					</ul></div>
-			</div>
+					</ul>
+				</div>
+			<%--</div>--%>
 
 		</div>
 	</div>
