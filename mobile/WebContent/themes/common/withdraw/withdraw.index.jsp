@@ -72,7 +72,9 @@
                                         <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
                                     </c:if>
                                 </div>
-                                <a class="mui-btn mui-btn-blue btn-deposit" data-target="1" data-os="${os}" data-skip="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
+                                <%--是否是mobile-v3 v3的存款target为0，v2target为1--%>
+                                <c:set var="isMobileUpgrade" value="<%=ParamTool.isMobileUpgrade()%>"/>
+                                <a class="mui-btn mui-btn-blue btn-deposit" data-target="${isMobileUpgrade?0:1}" data-os="${os}" data-skip="${root}/wallet/deposit/index.html">${views.withdraw_auto['快速存款']}</a>
                             </div>
                         </div>
                     </div>

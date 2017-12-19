@@ -12,6 +12,7 @@ import org.soul.commons.math.NumberTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,7 +85,7 @@ public class MineController {
     @RequestMapping("/userInfo")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public String getFund() {
+    public String getFund(HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
         Map<String, Object> userInfo = new HashMap<>();
@@ -191,7 +192,7 @@ public class MineController {
         userInfo.put("unReadCount", number + advisoryUnReadCount);
         //用户个人信息
         userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
-        userInfo.put("avatarUrl", sysUser.getAvatarUrl());
+        userInfo.put("avatarUrl", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
         //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
         if (sysUser.getLastLoginTime() != null) {
             userInfo.put("lastLoginTime", LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));

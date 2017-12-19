@@ -11,5 +11,5 @@
     <%@include file="Assert.jsp"%>
     <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt="logo" class="logo">
     <!--易记域名-->
-    <section class="yjym">易记域名：${domain}</section>
+    <section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>
 </header>
