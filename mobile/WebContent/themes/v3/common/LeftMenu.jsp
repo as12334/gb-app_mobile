@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
-<aside class="mui-off-canvas-left mui-transitioning mui-active" style="visibility: visible; z-index: 0;">
-    <div class="mui-scroll-wrapper side-menu-scroll-wrapper">
+<aside id="offCanvasSide" class="mui-off-canvas-left mui-transitioning">
+    <div id="offCanvasSideScroll" class="mui-scroll-wrapper side-menu-scroll-wrapper">
         <div class="mui-scroll">
             <!-- 菜单具体展示内容 -->
             <!--个人信息部分-->
             <div class="person-info">
                 <!--登录前-->
                 <div class="un-login">
-                    <p>欢迎观临，请先登录</p>
+                    <p>${views.themes_auto['欢迎观临']}</p>
                     <soul:button target="login" text="${views.themes_auto['用户登录']}" opType="function" cssClass="mui-btn mui-btn-success btn-login" tag="button"/>
                 </div>
                 <!--登陆后-->

@@ -22,7 +22,7 @@
     <li class="diy-table-view-cell mui-col-xs-3">
         <a data-skip="/lottery/mainIndex.html">
             <span class="lottery-ico lottery-ico-more"></span>
-            <span class="lottery-title">更多</span>
+            <span class="lottery-title">${views.themes_auto['更多']}</span>
         </a>
     </li>
 </script>

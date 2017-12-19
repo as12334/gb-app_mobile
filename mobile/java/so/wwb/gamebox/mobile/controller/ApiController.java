@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
+import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.enums.SupportTerminal;
@@ -24,9 +25,6 @@ import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
-import so.wwb.gamebox.model.company.site.po.VSiteApi;
-import so.wwb.gamebox.model.company.site.vo.VSiteApiListVo;
-import so.wwb.gamebox.model.company.site.vo.VSiteApiVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -65,14 +63,14 @@ public class ApiController extends BaseApiController {
 
         if (checkApiStatus(playerApiAccountVo)) {
             DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
-            if(demoModel!=null){
+            if (demoModel != null) {
                 //平台试玩免转不可用
                 //纯彩票试玩免转不可用
                 playerApiAccountVo.setTrial(true);
                 Integer apiId = playerApiAccountVo.getApiId();
-                if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)&&(
-                        apiId==Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                                apiId==Integer.valueOf(ApiProviderEnum.DWT.getCode()))){
+                if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel) && (
+                        apiId == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                                apiId == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
                     //模拟账号免转可用
                     playerApiAccountVo.setTrial(false);
                 }
@@ -149,7 +147,7 @@ public class ApiController extends BaseApiController {
     @ResponseBody
     public Map<String, Object> getSiteAPi(HttpServletRequest request) {
         SysUser user = SessionManager.getUser();
-        if(user != null) {
+        if (user != null) {
             Map<String, Object> map = new HashMap<>();
             if (SessionManagerCommon.isLotteryDemo()) {
                 map.put("username", StringTool.overlayName(user.getUsername()));
@@ -227,17 +225,16 @@ public class ApiController extends BaseApiController {
         listVo = ServiceTool.playerApiService().fundRecord(listVo);
          /* 翻译api */
         List<Map<String, Object>> maps = new ArrayList<>();
-        List<VSiteApi> apis = getSiteAPi();
-        for (VSiteApi siteApi : apis) {
+        List<SiteApi> apis = getSiteApi();
+        for (SiteApi siteApi : apis) {
             for (PlayerApi api : listVo.getResult()) {
                 if (siteApi.getApiId().intValue() == api.getApiId().intValue()) {
                     Map<String, Object> map = new HashMap<>();
-
                     String apiId = api.getApiId().toString();
                     map.put("apiId", apiId);
                     map.put("apiName", CacheBase.getSiteApiName(apiId));
                     map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
-                    map.put("status", siteApi.getApiRealStatus());
+                    map.put("status", siteApi.getStatus());
 
                     maps.add(map);
                 }
@@ -277,16 +274,24 @@ public class ApiController extends BaseApiController {
         return currency == null ? "" : currency.getCurrencySign();
     }
 
-    /**
-     * 站点API
-     */
-    private List<VSiteApi> getSiteAPi() {
-        VSiteApiListVo listVo = new VSiteApiListVo();
-        listVo.getSearch().setStatus(GameStatusEnum.DISABLE.getCode());
-        listVo.getSearch().setSiteId(SessionManager.getSiteId());
-        listVo.getSearch().setLocale(SessionManager.getSiteLocale().toString());
-        listVo = ServiceTool.vSiteApiService().queryAllSiteApi(listVo);
-        return listVo.getResult();
+    private List<SiteApi> getSiteApi() {
+        Map<String, SiteApi> siteApiMap = CacheBase.getSiteApi();
+        List<SiteApi> siteApis = new ArrayList<>();
+        Map<String, Api> apiMap = CacheBase.getApi();
+        String disable = GameStatusEnum.DISABLE.getCode();
+        String maintain = GameStatusEnum.MAINTAIN.getCode();
+        if (MapTool.isNotEmpty(siteApiMap)) {
+            for (SiteApi siteApi : siteApiMap.values()) {
+                Api api = apiMap.get(String.valueOf(siteApi.getApiId()));
+                if (api != null && !disable.equals(api.getSystemStatus()) && !disable.equals(siteApi.getSystemStatus())) {
+                    if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
+                        siteApi.setStatus(maintain);
+                    }
+                    siteApis.add(siteApi);
+                }
+            }
+        }
+        return siteApis;
     }
 
     /**
@@ -311,7 +316,7 @@ public class ApiController extends BaseApiController {
             service.fetchPlayerApiBalance(listVo);
         }
 
-        Map<String, Object> map = new HashMap<>(2,1f);
+        Map<String, Object> map = new HashMap<>(2, 1f);
         Integer apiId = listVo.getSearch().getApiId();
         PlayerApi playerApi = getPlayerApi(apiId);
         if (playerApi != null) {
@@ -340,11 +345,15 @@ public class ApiController extends BaseApiController {
     }
 
     private String getApiStatus(Integer apiId) {
-        VSiteApiVo vSiteApiVo = new VSiteApiVo();
-        vSiteApiVo.getSearch().setSiteId(SessionManager.getSiteId());
-        vSiteApiVo.getSearch().setLocale(SessionManager.getSiteLocale().toString());
-        vSiteApiVo.getSearch().setApiId(apiId);
-        return ServiceTool.vSiteApiService().queryOneApiStatus(vSiteApiVo);
+        Map<String, Api> apiMap = Cache.getApi();
+        Api api = apiMap.get(String.valueOf(apiId));
+        Map<String, SiteApi> siteApiMap = Cache.getSiteApi(SessionManager.getSiteId());
+        SiteApi siteApi = siteApiMap.get(String.valueOf(apiId));
+        String status = GameStatusEnum.MAINTAIN.getCode();
+        if (api != null && GameStatusEnum.NORMAL.getCode().equals(api.getSystemStatus()) && siteApi != null && GameStatusEnum.NORMAL.getCode().equals(siteApi.getSystemStatus())) {
+            status = GameStatusEnum.NORMAL.getCode();
+        }
+        return status;
     }
 
     private Map<String, Object> getApiDetail(Integer apiId, Integer apiTypeId) {
@@ -358,10 +367,10 @@ public class ApiController extends BaseApiController {
                     VUserPlayer player = getPlayer(SessionManager.getUserId());
                     apiDetail.put("apiI18n", apiI18n);
                     apiDetail.put("apiTypeId", apiTypeId);
-                    apiDetail.put("currSign",player.getCurrencySign());
-                    if(playerApi != null) {
+                    apiDetail.put("currSign", player.getCurrencySign());
+                    if (playerApi != null) {
                         apiDetail.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
-                    }else{
+                    } else {
                         apiDetail.put("apiMoney", "0.00");
                     }
                 }

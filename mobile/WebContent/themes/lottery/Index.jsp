@@ -67,7 +67,7 @@
                     <li class="diy-table-view-cell mui-col-xs-3">
                         <a data-href="/promo/promo.html">
                             <span class="home-f-ico ico-service-5"></span>
-                            <span class="lottery-title">优惠活动</span>
+                            <span class="lottery-title">${views.themes_auto['优惠活动']}</span>
                         </a>
                     </li>
                 </ul>
@@ -90,7 +90,7 @@
                     <li class="diy-table-view-cell mui-col-xs-3">
                         <a data-skip="/lottery/mainIndex.html" data-target="2" data-os="${os}">
                             <span class="lottery-ico lottery-ico-more"></span>
-                            <span class="lottery-title">更多</span>
+                            <span class="lottery-title">${views.themes_auto['更多']}</span>
                         </a>
                     </li>
                 </ul>
@@ -105,9 +105,9 @@
                     <!-- 热门开奖 -->
                 </ul>
                 <div class="pcAndMobile">
-                    <a data-href="/mainIndex.html">手机版</a>
+                    <a data-href="/mainIndex.html">${views.themes_auto['手机版']}</a>
                     &nbsp;&nbsp;|&nbsp;&nbsp;
-                    <a data-terminal="pc" name="toPc">电脑版</a>
+                    <a data-terminal="pc" name="toPc">${views.themes_auto['电脑版']}</a>
                 </div>
                 <div class="row copyright">
                     <span>Copyright&nbsp;©&nbsp;2009-2017&nbsp;${siteName} 版权所有</span>
