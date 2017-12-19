@@ -32,6 +32,8 @@
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->
         <%@include file="common/Footer.jsp"%>
+        <!-- off-canvas backdrop -->
+        <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
 <!--浮窗广告轮播-->

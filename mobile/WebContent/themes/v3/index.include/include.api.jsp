@@ -91,7 +91,7 @@
             </li>
         </c:if>
         <c:if test="${empty AGExist && empty GGExist}">
-            <div class="deficiency-nots">没有找到符合的游戏</div>
+            <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
         </c:if>
     </ul>
     <!--关于我们-->
