@@ -36,9 +36,9 @@ import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
-import so.wwb.gamebox.model.company.site.po.SiteApiType;
-import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
-import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.site.po.*;
+import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
@@ -145,6 +145,7 @@ public class IndexController extends BaseApiController {
     private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Model model) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
+        Map<Integer,List<SiteGame>> lotteryGames = MapTool.newHashMap();
 
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
         for (SiteApiType api : siteApiTypes) {
@@ -161,10 +162,46 @@ public class IndexController extends BaseApiController {
                     if (relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28) {
                         model.addAttribute("GGExist", true);
                     }
+                    //彩票类游戏
+                    if(api.getApiTypeId() == 4){
+                        SiteGameListVo siteGameListVo = new SiteGameListVo();
+                        siteGameListVo.getSearch().setApiTypeId(relationI18n.getApiTypeId());
+                        siteGameListVo.getSearch().setApiId(relationI18n.getApiId());
+                        lotteryGames.put(relationI18n.getApiId(),getLotteryGame(siteGameListVo));
+                    }
                 }
             }
         }
+        model.addAttribute("lotteryGame",lotteryGames);
         return siteApiRelation;
+    }
+
+    /**
+     * 获取彩票游戏
+     */
+    private SiteGameListVo getGames(SiteGameListVo listVo) {
+        SiteGameSo so = listVo.getSearch();
+        Criteria gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
+        List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), gamesCriteria);
+        games = getSiteGamesWhichIsNormalStatus(games);
+        games = games == null ? new ArrayList<SiteGame>() : games;
+
+        // 设置游戏状态
+        listVo.setResult(setGameStatus(listVo, games));
+        return listVo;
+    }
+
+    private List<SiteGame> getLotteryGame(SiteGameListVo listVo){
+        listVo = getGames(listVo);
+        Map<String, SiteGameI18n> siteGameI18n = getGameI18nMap(listVo);
+        for (SiteGame siteGame:listVo.getResult()) {
+            for (String gameId:siteGameI18n.keySet()) {
+                if(StringTool.equalsIgnoreCase(siteGame.getGameId().toString(),gameId)){
+                    siteGame.setCover(siteGameI18n.get(gameId).getCover());
+                }
+            }
+        }
+        return listVo.getResult();
     }
 
     /**
