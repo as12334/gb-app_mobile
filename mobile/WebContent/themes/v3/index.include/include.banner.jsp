@@ -11,27 +11,30 @@
                 <div class="mui-slider-group">
                     <c:choose>
                         <c:when test="${not empty carousels && carousels.size() > 0}">
-                            <c:if test="${not empty carousels && carousels.size() > 1}">
+                            <%--<c:if test="${not empty carousels && carousels.size() > 1}">
                                 <div class="mui-slider-item mui-slider-item-duplicate">
                                     <a>
                                         <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
                                     </a>
                                 </div>
-                            </c:if>
+                            </c:if>--%>
                             <c:forEach items="${carousels}" var="carousel" varStatus="vs">
                                 <div class="mui-slider-item">
-                                    <a href="#" ${not empty carousel["link"] ? '_url=\"'.concat(carousel["link"]).concat('\"') : ''}>
+                                    <soul:button text="" opType="href" target="${not empty carousel['link'] ? carousel['link']:''}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
-                                    </a>
+                                    </soul:button>
+                                    <%--<a href="#" ${not empty carousel["link"] ? '_url=\"'.concat(carousel["link"]).concat('\"') : ''}>
+                                        <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                                    </a>--%>
                                 </div>
                             </c:forEach>
-                            <c:if test="${not empty carousels && carousels.size() > 1}">
+                            <%--<c:if test="${not empty carousels && carousels.size() > 1}">
                                 <div class="mui-slider-item mui-slider-item-duplicate">
                                     <a>
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
                                     </a>
                                 </div>
-                            </c:if>
+                            </c:if>--%>
                         </c:when>
                         <c:otherwise>
                             <div class="mui-slider-item">
