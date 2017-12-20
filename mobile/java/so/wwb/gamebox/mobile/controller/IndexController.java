@@ -51,6 +51,7 @@ import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -118,6 +119,9 @@ public class IndexController extends BaseApiController {
             //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+
+        //手机弹窗广告
+        model.addAttribute("phoneDialog",getPhoneDialog());
 
         //查询Banner和公告
         model.addAttribute("carousels", getCarousel(request));
@@ -351,6 +355,22 @@ public class IndexController extends BaseApiController {
                             }
                         }
                     }
+                }
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 查询手机弹窗广告
+     */
+    private List<CttCarousel> getPhoneDialog(){
+        Map<String, CttCarousel> siteCarousel = Cache.getSiteCarousel();
+        List<CttCarousel> resultList = ListTool.newArrayList();
+        if(siteCarousel != null){
+            for (CttCarousel cc: siteCarousel.values()) {
+                if(StringTool.equalsIgnoreCase(cc.getType(), CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()) && cc.getStatus()){
+                    resultList.add(cc);
                 }
             }
         }
