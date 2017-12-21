@@ -121,7 +121,7 @@ public class IndexController extends BaseApiController {
         }
 
         //手机弹窗广告
-        model.addAttribute("phoneDialog",getPhoneDialog());
+        model.addAttribute("phoneDialog", getPhoneDialog(request));
 
         //查询Banner和公告
         model.addAttribute("carousels", getCarousel(request));
@@ -149,7 +149,7 @@ public class IndexController extends BaseApiController {
     private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Model model) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
-        Map<Integer,List<SiteGame>> lotteryGames = MapTool.newHashMap();
+        Map<Integer, List<SiteGame>> lotteryGames = MapTool.newHashMap();
 
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
         for (SiteApiType api : siteApiTypes) {
@@ -167,16 +167,16 @@ public class IndexController extends BaseApiController {
                         model.addAttribute("GGExist", true);
                     }
                     //彩票类游戏
-                    if(api.getApiTypeId() == 4){
+                    if (api.getApiTypeId() == 4) {
                         SiteGameListVo siteGameListVo = new SiteGameListVo();
                         siteGameListVo.getSearch().setApiTypeId(relationI18n.getApiTypeId());
                         siteGameListVo.getSearch().setApiId(relationI18n.getApiId());
-                        lotteryGames.put(relationI18n.getApiId(),getLotteryGame(siteGameListVo));
+                        lotteryGames.put(relationI18n.getApiId(), getLotteryGame(siteGameListVo));
                     }
                 }
             }
         }
-        model.addAttribute("lotteryGame",lotteryGames);
+        model.addAttribute("lotteryGame", lotteryGames);
         return siteApiRelation;
     }
 
@@ -195,12 +195,12 @@ public class IndexController extends BaseApiController {
         return listVo;
     }
 
-    private List<SiteGame> getLotteryGame(SiteGameListVo listVo){
+    private List<SiteGame> getLotteryGame(SiteGameListVo listVo) {
         listVo = getGames(listVo);
         Map<String, SiteGameI18n> siteGameI18n = getGameI18nMap(listVo);
-        for (SiteGame siteGame:listVo.getResult()) {
-            for (String gameId:siteGameI18n.keySet()) {
-                if(StringTool.equalsIgnoreCase(siteGame.getGameId().toString(),gameId)){
+        for (SiteGame siteGame : listVo.getResult()) {
+            for (String gameId : siteGameI18n.keySet()) {
+                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), gameId)) {
                     siteGame.setCover(siteGameI18n.get(gameId).getCover());
                 }
             }
@@ -364,15 +364,21 @@ public class IndexController extends BaseApiController {
     /**
      * 查询手机弹窗广告
      */
-    private List<Map> getPhoneDialog(){
+    private List<Map> getPhoneDialog(HttpServletRequest request) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = ListTool.newArrayList();
-        if(carousels != null){
-            for (Map m: carousels.values()) {
-                if ( (CarouselTypeEnum.CAROUSEL_TYPE_AD_DIALOG.getCode().equals(m.get("type")))
+        String webSite = ServletTool.getDomainFullAddress(request);
+        if (carousels != null) {
+            for (Map m : carousels.values()) {
+                if ((CarouselTypeEnum.CAROUSEL_TYPE_AD_DIALOG.getCode().equals(m.get("type")))
                         && (StringTool.equalsIgnoreCase(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
                         && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
-                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true )) {
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                    String link = String.valueOf(m.get("link"));
+                    if (StringTool.isNotBlank(link) && link.contains("${website}")) {
+                        link = link.replace("${website}", webSite);
+                    }
+                    m.put("link", link);
                     resultList.add(m);
                 }
             }
@@ -487,7 +493,7 @@ public class IndexController extends BaseApiController {
         } else {
             //其他的都是取默认域名
             List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
-            if(CollectionTool.isNotEmpty(domainList)) {
+            if (CollectionTool.isNotEmpty(domainList)) {
                 for (VSysSiteDomain o : domainList) {
                     if (o.getIsDefault()) {
                         defaultSite = o.getDomain();
