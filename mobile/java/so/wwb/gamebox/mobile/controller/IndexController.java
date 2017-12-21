@@ -369,7 +369,7 @@ public class IndexController extends BaseApiController {
         String webSite = ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
-                if ((CarouselTypeEnum.CAROUSEL_TYPE_AD_DIALOG.getCode().equals(m.get("type")))
+                if ((CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode().equals(m.get("type")))
                         && (StringTool.equalsIgnoreCase(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
                         && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
                         && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
