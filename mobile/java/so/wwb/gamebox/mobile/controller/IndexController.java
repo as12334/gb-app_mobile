@@ -364,13 +364,16 @@ public class IndexController extends BaseApiController {
     /**
      * 查询手机弹窗广告
      */
-    private List<CttCarousel> getPhoneDialog(){
-        Map<String, CttCarousel> siteCarousel = Cache.getSiteCarousel();
-        List<CttCarousel> resultList = ListTool.newArrayList();
-        if(siteCarousel != null){
-            for (CttCarousel cc: siteCarousel.values()) {
-                if(StringTool.equalsIgnoreCase(cc.getType(), CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()) && cc.getStatus()){
-                    resultList.add(cc);
+    private List<Map> getPhoneDialog(){
+        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
+        List<Map> resultList = ListTool.newArrayList();
+        if(carousels != null){
+            for (Map m: carousels.values()) {
+                if ( (CarouselTypeEnum.CAROUSEL_TYPE_AD_DIALOG.getCode().equals(m.get("type")))
+                        && (StringTool.equalsIgnoreCase(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
+                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true )) {
+                    resultList.add(m);
                 }
             }
         }
