@@ -51,6 +51,7 @@ import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -114,22 +115,26 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            model.addAttribute("carousels", getCarousel(request));
+            //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
-        if (ParamTool.isMobileUpgrade()) {
-            //查询Banner和公告
-            model.addAttribute("carousels", getCarousel(request));
-            //查询游戏类型对应的分类
-            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
-            //关于我们/注册条款
-            model.addAttribute("path", path);
-            if (StringTool.isNotBlank(path)) {
-                getAboutAndTerms(path, model, request);
-            }
-        }
+        //手机弹窗广告
+        model.addAttribute("phoneDialog", getPhoneDialog(request));
+
+        //查询Banner和公告
+        model.addAttribute("carousels", getCarousel(request));
+
         initFloatPic(model);
+
+        //查询游戏类型对应的分类
+        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
+
+        //关于我们/注册条款
+        model.addAttribute("path", path);
+        if (StringTool.isNotBlank(path)) {
+            getAboutAndTerms(path, model, request);
+        }
         return "/Index";
     }
 
@@ -349,6 +354,31 @@ public class IndexController extends BaseApiController {
                             }
                         }
                     }
+                }
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 查询手机弹窗广告
+     */
+    private List<Map> getPhoneDialog(HttpServletRequest request) {
+        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
+        List<Map> resultList = ListTool.newArrayList();
+        String webSite = ServletTool.getDomainFullAddress(request);
+        if (carousels != null) {
+            for (Map m : carousels.values()) {
+                if ((CarouselTypeEnum.CAROUSEL_TYPE_AD_DIALOG.getCode().equals(m.get("type")))
+                        && (StringTool.equalsIgnoreCase(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
+                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                    String link = String.valueOf(m.get("link"));
+                    if (StringTool.isNotBlank(link) && link.contains("${website}")) {
+                        link = link.replace("${website}", webSite);
+                    }
+                    m.put("link", link);
+                    resultList.add(m);
                 }
             }
         }
