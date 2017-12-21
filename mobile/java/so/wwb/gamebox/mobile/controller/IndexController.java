@@ -111,27 +111,25 @@ public class IndexController extends BaseApiController {
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
-        model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            //model.addAttribute("carousels", getCarousel(request));
+            model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+        if (ParamTool.isMobileUpgrade()) {
+            //查询Banner和公告
+            model.addAttribute("carousels", getCarousel(request));
+            //查询游戏类型对应的分类
+            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
-        //查询Banner和公告
-        model.addAttribute("carousels", getCarousel(request));
-
-        initFloatPic(model);
-
-        //查询游戏类型对应的分类
-        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
-
-        //关于我们/注册条款
-        model.addAttribute("path", path);
-        if (StringTool.isNotBlank(path)) {
-            getAboutAndTerms(path, model, request);
+            //关于我们/注册条款
+            model.addAttribute("path", path);
+            if (StringTool.isNotBlank(path)) {
+                getAboutAndTerms(path, model, request);
+            }
         }
+        initFloatPic(model);
         return "/Index";
     }
 
@@ -145,7 +143,7 @@ public class IndexController extends BaseApiController {
     private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Model model) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
-        Map<Integer,List<SiteGame>> lotteryGames = MapTool.newHashMap();
+        Map<Integer, List<SiteGame>> lotteryGames = MapTool.newHashMap();
 
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
         for (SiteApiType api : siteApiTypes) {
@@ -163,16 +161,16 @@ public class IndexController extends BaseApiController {
                         model.addAttribute("GGExist", true);
                     }
                     //彩票类游戏
-                    if(api.getApiTypeId() == 4){
+                    if (api.getApiTypeId() == 4) {
                         SiteGameListVo siteGameListVo = new SiteGameListVo();
                         siteGameListVo.getSearch().setApiTypeId(relationI18n.getApiTypeId());
                         siteGameListVo.getSearch().setApiId(relationI18n.getApiId());
-                        lotteryGames.put(relationI18n.getApiId(),getLotteryGame(siteGameListVo));
+                        lotteryGames.put(relationI18n.getApiId(), getLotteryGame(siteGameListVo));
                     }
                 }
             }
         }
-        model.addAttribute("lotteryGame",lotteryGames);
+        model.addAttribute("lotteryGame", lotteryGames);
         return siteApiRelation;
     }
 
@@ -191,12 +189,12 @@ public class IndexController extends BaseApiController {
         return listVo;
     }
 
-    private List<SiteGame> getLotteryGame(SiteGameListVo listVo){
+    private List<SiteGame> getLotteryGame(SiteGameListVo listVo) {
         listVo = getGames(listVo);
         Map<String, SiteGameI18n> siteGameI18n = getGameI18nMap(listVo);
-        for (SiteGame siteGame:listVo.getResult()) {
-            for (String gameId:siteGameI18n.keySet()) {
-                if(StringTool.equalsIgnoreCase(siteGame.getGameId().toString(),gameId)){
+        for (SiteGame siteGame : listVo.getResult()) {
+            for (String gameId : siteGameI18n.keySet()) {
+                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), gameId)) {
                     siteGame.setCover(siteGameI18n.get(gameId).getCover());
                 }
             }
@@ -464,7 +462,7 @@ public class IndexController extends BaseApiController {
         } else {
             //其他的都是取默认域名
             List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
-            if(CollectionTool.isNotEmpty(domainList)) {
+            if (CollectionTool.isNotEmpty(domainList)) {
                 for (VSysSiteDomain o : domainList) {
                     if (o.getIsDefault()) {
                         defaultSite = o.getDomain();
