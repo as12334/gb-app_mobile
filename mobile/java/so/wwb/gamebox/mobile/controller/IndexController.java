@@ -337,20 +337,18 @@ public class IndexController extends BaseApiController {
         String webSite = ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
-                if (CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type"))) {
-                    if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString())) {
-                        //验证比对缓存结果中的起止时间是否过期
-                        if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
-                            if (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true) {
-                                String link = String.valueOf(m.get("link"));
-                                if (StringTool.isNotBlank(link) && link.contains("${website}")) {
-                                    link = link.replace("${website}", webSite);
-                                }
-                                m.put("link", link);
-                                resultList.add(m);
-                            }
+                if ((CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type")))
+                        && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
+                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                    String link = String.valueOf(m.get("link"));
+                    if (StringTool.isNotBlank(link)) {
+                        if(link.contains("${website}")){
+                            link = link.replace("${website}", webSite);
                         }
                     }
+                    m.put("link", link);
+                    resultList.add(m);
                 }
             }
         }
