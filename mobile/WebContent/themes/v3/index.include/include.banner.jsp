@@ -8,28 +8,29 @@
         </div>
         <div class="ct">
             <div id="slider" class="mui-slider mui-banner">
-                <div class="mui-slider-group">
+                <div class="mui-slider-group mui-slider-loop">
                     <c:choose>
                         <c:when test="${not empty carousels && carousels.size() > 0}">
                             <c:if test="${not empty carousels && carousels.size() > 1}">
                                 <div class="mui-slider-item mui-slider-item-duplicate">
-                                    <a>
+                                    <soul:button text="" opType="href"
+                                                 target="${not empty carousels.get(carousels.size()-1)['link'] ? carousels.get(carousels.size()-1)['link']:''}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
-                                    </a>
+                                    </soul:button>
                                 </div>
                             </c:if>
                             <c:forEach items="${carousels}" var="carousel" varStatus="vs">
                                 <div class="mui-slider-item">
-                                    <a href="#" ${not empty carousel["link"] ? '_url=\"'.concat(carousel["link"]).concat('\"') : ''}>
+                                    <soul:button text="" opType="href" target="${not empty carousel['link'] ? carousel['link']:''}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
-                                    </a>
+                                    </soul:button>
                                 </div>
                             </c:forEach>
                             <c:if test="${not empty carousels && carousels.size() > 1}">
                                 <div class="mui-slider-item mui-slider-item-duplicate">
-                                    <a>
+                                    <soul:button text="" opType="href" target="${not empty carousels.get(0)['link'] ? carousels.get(0)['link']:''}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
-                                    </a>
+                                    </soul:button>
                                 </div>
                             </c:if>
                         </c:when>
