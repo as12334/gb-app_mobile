@@ -12,34 +12,31 @@
                     <c:choose>
                         <c:when test="${not empty carousels && carousels.size() > 0}">
                             <c:if test="${not empty carousels && carousels.size() > 1}">
+                                <c:set var="link" value="${not empty carousels.get(carousels.size()-1)['link'] ? carousels.get(carousels.size()-1)['link']:''}"/>
+                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                                 <div class="mui-slider-item mui-slider-item-duplicate">
                                     <soul:button text="" opType="href"
-                                                 target="${not empty carousels.get(carousels.size()-1)['link'] ? carousels.get(carousels.size()-1)['link']:''}">
+                                                 target="${link}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
                                     </soul:button>
-                                    <%--<a>
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
-                                    </a>--%>
                                 </div>
                             </c:if>
                             <c:forEach items="${carousels}" var="carousel" varStatus="vs">
+                                <c:set var="link" value="${not empty carousel['link'] ? carousel['link']:''}"/>
+                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                                 <div class="mui-slider-item">
-                                    <soul:button text="" opType="href" target="${not empty carousel['link'] ? carousel['link']:''}">
+                                    <soul:button text="" opType="href" target="${link}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
                                     </soul:button>
-                                    <%--<a href="#" ${not empty carousel["link"] ? '_url=\"'.concat(carousel["link"]).concat('\"') : ''}>
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
-                                    </a>--%>
                                 </div>
                             </c:forEach>
                             <c:if test="${not empty carousels && carousels.size() > 1}">
+                                <c:set var="link" value="${not empty carousels.get(0)['link'] ? carousels.get(0)['link']:''}"/>
+                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                                 <div class="mui-slider-item mui-slider-item-duplicate">
                                     <soul:button text="" opType="href" target="${not empty carousels.get(0)['link'] ? carousels.get(0)['link']:''}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
                                     </soul:button>
-                                    <%--<a>
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
-                                    </a>--%>
                                 </div>
                             </c:if>
                         </c:when>
@@ -67,12 +64,12 @@
 <section class="notice">
     <button type="button" class="mui-btn mui-btn-primary btn-title">${views.game_auto['公告']}</button>
     <div class="notice-list">
-        <marquee behavior="scroll" scrollamount="0" direction="left">
+        <%--<marquee behavior="scroll" scrollamount="0" direction="left">--%>
             <p>
                 <c:forEach items="${announcement}" var="a" varStatus="vs">
                     <soul:button target="showNotice" opType="function" text="" data-idx="${vs.index}">${a.content}</soul:button>
                 </c:forEach>
             </p>
-        </marquee>
+        <%--</marquee>--%>
     </div>
 </section>
