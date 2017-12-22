@@ -49,23 +49,26 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
     }
 
     /**
-     * app 端控制走手机端版本 v2或者v3 默认走v2版本
+     * app 端控制走手机端版本 v2或者v3 默认走v2版本 非app直接按照h5走
      *
      * @param request
      * @return
      */
     private boolean isAppUpdate(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
-        String appVersion = request.getHeader("app_version");
         boolean isApp = false;
-        boolean isVersionUpdate = false;
         if (StringTool.isNotBlank(userAgent) && (userAgent.contains("app_ios") || userAgent.contains("app_android"))) {
             isApp = true;
         }
+        if (!isApp) {
+            return true;
+        }
+        boolean isVersionUpdate = false;
+        String appVersion = request.getHeader("app_version");
         if ("v3.0".equals(appVersion)) {
             isVersionUpdate = true;
         }
-        return isVersionUpdate && isApp;
+        return isVersionUpdate;
     }
     //Method postHandle
 }
