@@ -31,7 +31,7 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                     modelAndView.setViewName("/themes/lottery" + url);
                 } else {
                     boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
-                    if (isMobileUpgrade && handler instanceof HandlerMethod) {
+                    if (isMobileUpgrade && handler instanceof HandlerMethod && isAppUpdate(request)) {
                         HandlerMethod handlerMethod = (HandlerMethod) handler;
                         Upgrade upgrade = handlerMethod.getMethodAnnotation(Upgrade.class);
                         if (upgrade != null && upgrade.upgrade()) {
@@ -39,7 +39,6 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                         } else {
                             modelAndView.setViewName("/themes/default" + url);
                         }
-
                     } else {
                         modelAndView.setViewName("/themes/default" + url);
                     }
@@ -47,5 +46,26 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
             }
         }
         super.postHandle(request, response, handler, modelAndView);
-    }//Method postHandle
+    }
+
+    /**
+     * app 端控制走手机端版本 v2或者v3 默认走v2版本
+     *
+     * @param request
+     * @return
+     */
+    private boolean isAppUpdate(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        String appVersion = request.getHeader("app_version");
+        boolean isApp = false;
+        boolean isVersionUpdate = false;
+        if (StringTool.isNotBlank(userAgent) && (userAgent.contains("app_ios") || userAgent.contains("app_android"))) {
+            isApp = true;
+        }
+        if ("v3.0".equals(appVersion)) {
+            isVersionUpdate = true;
+        }
+        return isVersionUpdate && isApp;
+    }
+    //Method postHandle
 }
