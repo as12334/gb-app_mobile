@@ -64,8 +64,7 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         boolean isVersionUpdate = false;
-        String appVersion = request.getHeader("app_version");
-        if ("v3.0".equals(appVersion)) {
+        if (userAgent.contains("app_version") && userAgent.contains("3.0")) {
             isVersionUpdate = true;
         }
         return isVersionUpdate;
