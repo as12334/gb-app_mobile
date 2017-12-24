@@ -15,7 +15,7 @@
     var siteCurrency = '${siteCurrency}';
     var siteCurrencySign = '${siteCurrencySign}';
 </script>
-<script src="${resRoot}/js/mui/mui.min.js"></script>
+<script src="${resRoot}/js/mui/mui.js"></script>
 <script src="${resRoot}/js/jquery/jquery-2.1.1.js"></script>
 <script src="${resComRoot}/js/jquery/plugins/jquery-eventlock/jquery-eventlock-1.0.0.js"></script>
 <script src="${resRoot}/js/common/Common.js"></script>
