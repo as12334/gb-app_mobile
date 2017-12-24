@@ -640,7 +640,7 @@ public class IndexController extends BaseApiController {
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("asset", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("asset", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }
