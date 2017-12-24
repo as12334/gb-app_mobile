@@ -9,7 +9,7 @@
         <soul:button target="${root}/login/commonLogin.html" text="${views.themes_auto['登录']}" opType="href" cssClass="mui-btn mui-btn-success mui-pull-right btn-login"/>
     </div>
     <%@include file="Assert.jsp"%>
-    <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt="logo" class="logo">
+    <img src="${appLogo}" alt="logo" class="logo">
     <!--易记域名-->
     <section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>
 </header>

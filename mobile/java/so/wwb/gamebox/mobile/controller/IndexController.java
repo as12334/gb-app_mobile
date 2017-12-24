@@ -4,6 +4,7 @@ import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
@@ -89,7 +90,7 @@ public class IndexController extends BaseApiController {
             model.addAttribute("channel", "game");
         model.addAttribute("apiTypeId", typeId);
         model.addAttribute("apiTypes", apiTypes);
-        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
@@ -122,23 +123,21 @@ public class IndexController extends BaseApiController {
             //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+        if (ParamTool.isMobileUpgrade()) {
+            //查询游戏类型对应的分类
+            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
-        //手机弹窗广告
-        model.addAttribute("phoneDialog", getCarousel(request,CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()));
-
-        //查询Banner和公告
-        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
-
-        initFloatPic(model);
-
-        //查询游戏类型对应的分类
-        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
-
-        //关于我们/注册条款
-        model.addAttribute("path", path);
-        if (StringTool.isNotBlank(path)) {
-            getAboutAndTerms(path, model, request);
+            //关于我们/注册条款
+            model.addAttribute("path", path);
+            if (StringTool.isNotBlank(path)) {
+                getAboutAndTerms(path, model, request);
+            }
         }
+        //手机弹窗广告
+        model.addAttribute("phoneDialog", getCarousel(request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()));
+        //查询Banner和公告
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        initFloatPic(model);
         return "/Index";
     }
 
@@ -167,10 +166,10 @@ public class IndexController extends BaseApiController {
 
         for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
             //判断捕鱼AG GG是否存在
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode() && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(),ApiProviderEnum.AG.getCode())) {
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode() && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.AG.getCode())) {
                 model.addAttribute("AGExist", true);
             }
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode() && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(),ApiProviderEnum.GG.getCode())) {
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode() && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.GG.getCode())) {
                 model.addAttribute("GGExist", true);
             }
             //彩票类游戏
@@ -341,19 +340,19 @@ public class IndexController extends BaseApiController {
      *
      * @deprecated since v1057
      */
-    private List<Map> getCarousel(HttpServletRequest request,String type) {
+    private List<Map> getCarousel(HttpServletRequest request, String type) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
         String webSite = ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
-                if ((StringTool.equalsIgnoreCase(type,m.get("type").toString()))
+                if ((StringTool.equalsIgnoreCase(type, m.get("type").toString()))
                         && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
                         && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
                         && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
                     String link = String.valueOf(m.get("link"));
                     if (StringTool.isNotBlank(link)) {
-                        if(link.contains("${website}")){
+                        if (link.contains("${website}")) {
                             link = link.replace("${website}", webSite);
                         }
                     }
@@ -500,7 +499,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getBanner")
     public String getBanner(Model model, HttpServletRequest request) {
-        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         return "/game/include/include.banner";
     }
@@ -609,7 +608,7 @@ public class IndexController extends BaseApiController {
             //查询总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("totalAssert", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("totalAssert", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }
