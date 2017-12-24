@@ -64,12 +64,10 @@
 <section class="notice">
     <button type="button" class="mui-btn mui-btn-primary btn-title">${views.game_auto['公告']}</button>
     <div class="notice-list">
-        <%--<marquee behavior="scroll" scrollamount="0" direction="left">--%>
+        <c:forEach items="${announcement}" var="a" varStatus="vs">
             <p>
-                <c:forEach items="${announcement}" var="a" varStatus="vs">
-                    <soul:button target="showNotice" opType="function" text="" data-idx="${vs.index}">${a.content}</soul:button>
-                </c:forEach>
+                <soul:button cssClass="mui-ellipsis" target="showNotice" opType="function" text="" idx="${vs.index}">${a.content}</soul:button>
             </p>
-        <%--</marquee>--%>
+        </c:forEach>
     </div>
 </section>
