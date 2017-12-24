@@ -62,13 +62,12 @@
                              <c:if test="${not empty floatList}">
                                  <c:forEach items="${floatList}" var="item">
                                      <c:if test="${item.type=='moneyActivity'}">
-                                         <c:set var="description" value="${item.description}"/>
+                                         <c:out value="${item.description}"></c:out>
                                      </c:if>
                                  </c:forEach>
                              </c:if>
                         </div>
                     </div>
-                    <input id="description" value="${description}" hidden/>
                     <soul:button opType="function" target="closeRule" text="" cssClass="icon-close-rule"/>
                 </div>
             </div>

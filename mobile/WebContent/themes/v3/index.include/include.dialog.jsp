@@ -10,7 +10,7 @@
                     <div class="cont-text">
                         <c:choose>
                             <c:when test="${d.content_type == 1}">
-                                <img src="${soulFn:getImagePath(domain, d.cover)}"/>
+                                <img src="${soulFn:getThumbPath(domain, d.cover,128,128)}"/>
                             </c:when>
                             <c:otherwise>
                                 ${d.content}
