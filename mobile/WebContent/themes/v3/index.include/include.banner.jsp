@@ -11,16 +11,6 @@
                 <div class="mui-slider-group mui-slider-loop">
                     <c:choose>
                         <c:when test="${not empty carousels && carousels.size() > 0}">
-                            <c:if test="${not empty carousels && carousels.size() > 1}">
-                                <c:set var="link" value="${not empty carousels.get(carousels.size()-1)['link'] ? carousels.get(carousels.size()-1)['link']:''}"/>
-                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
-                                <div class="mui-slider-item mui-slider-item-duplicate">
-                                    <soul:button text="" opType="href"
-                                                 target="${link}">
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
-                                    </soul:button>
-                                </div>
-                            </c:if>
                             <c:forEach items="${carousels}" var="carousel" varStatus="vs">
                                 <c:set var="link" value="${not empty carousel['link'] ? carousel['link']:''}"/>
                                 <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
@@ -30,15 +20,6 @@
                                     </soul:button>
                                 </div>
                             </c:forEach>
-                            <c:if test="${not empty carousels && carousels.size() > 1}">
-                                <c:set var="link" value="${not empty carousels.get(0)['link'] ? carousels.get(0)['link']:''}"/>
-                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
-                                <div class="mui-slider-item mui-slider-item-duplicate">
-                                    <soul:button text="" opType="href" target="${not empty carousels.get(0)['link'] ? carousels.get(0)['link']:''}">
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
-                                    </soul:button>
-                                </div>
-                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <div class="mui-slider-item">
