@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.iservice.boss.IAppUpdateService;
-import so.wwb.gamebox.iservice.company.sys.IVSysSiteDomainService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -36,16 +34,13 @@ import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
-import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
-import so.wwb.gamebox.model.company.setting.po.ApiType;
-import so.wwb.gamebox.model.company.site.po.SiteApiType;
-import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
-import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.site.po.*;
+import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
-import so.wwb.gamebox.model.company.sys.vo.VSysSiteDomainListVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
@@ -58,7 +53,6 @@ import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
-import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -74,8 +68,6 @@ import java.util.*;
 @Controller
 public class IndexController extends BaseApiController {
     private Log LOG = LogFactory.getLog(IndexController.class);
-    private static boolean AG = false;
-    private static boolean GG = false;
 
     @RequestMapping("/game")
     public String game(Integer typeId, Model model, HttpServletRequest request) {
@@ -103,12 +95,15 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String toIndex(Model model, HttpServletRequest request) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             SessionManager.setRecommendUserCode(c);
         }
-        getAppPath(model, request);
+        if (ParamTool.isLotterySite()) {
+            getAppPath(model, request);
+        }
         return "/ToIndex";
     }
 
@@ -119,29 +114,25 @@ public class IndexController extends BaseApiController {
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
-        model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            //model.addAttribute("carousels", getCarousel(request));
+            model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+        if (ParamTool.isMobileUpgrade()) {
+            //查询Banner和公告
+            model.addAttribute("carousels", getCarousel(request));
+            //查询游戏类型对应的分类
+            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
-        //查询Banner和公告
-        model.addAttribute("carousels", getCarousel(request));
-
-        initFloatPic(model);
-
-        //查询游戏类型对应的分类
-        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n());
-        model.addAttribute("AG",AG);
-        model.addAttribute("GG",GG);
-
-        //关于我们/注册条款
-        model.addAttribute("path", path);
-        if (StringTool.isNotBlank(path)) {
-            getAboutAndTerms(path, model, request);
+            //关于我们/注册条款
+            model.addAttribute("path", path);
+            if (StringTool.isNotBlank(path)) {
+                getAboutAndTerms(path, model, request);
+            }
         }
+        initFloatPic(model);
         return "/Index";
     }
 
@@ -150,123 +141,6 @@ public class IndexController extends BaseApiController {
         showMoneyActivityFloat(floatList);
 
         model.addAttribute("floatList", floatList);
-    }
-
-    private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n() {
-        Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
-        List<SiteApiType> siteApiTypes = getApiTypes();
-
-        Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        for (SiteApiType api : siteApiTypes) {
-            List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
-            for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
-
-                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api.getApiTypeId().toString())) {
-                    i18ns.add(relationI18n);
-                    siteApiRelation.put(api.getApiTypeId(), i18ns);
-                    //判断捕鱼AG GG是否存在
-                    if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 9){
-                        AG = true;
-                    }
-                    if(relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28){
-                        GG = true;
-                    }
-                }
-            }
-        }
-        return siteApiRelation;
-    }
-
-    /**
-     * 显示红包浮动图
-     *
-     * @param floatList
-     */
-    private void showMoneyActivityFloat(List<Map> floatList) {
-        CttFloatPic cttFloatPic = queryMoneyActivityFloat();
-        if (cttFloatPic != null) {
-            PlayerActivityMessage moneyActivity = findMoneyActivity();
-            CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
-            if (moneyActivity != null) {
-                String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
-                Map floatMap = new HashMap();
-                floatMap.put("type", "moneyActivity");
-                floatMap.put("activityId", activityId);
-                floatMap.put("floatItem", cttFloatPicItem);
-                floatMap.put("cttFloatPic", cttFloatPic);
-                floatMap.put("description", moneyActivity.getActivityDescription());
-                floatList.add(floatMap);
-            }
-        }
-    }
-
-    private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic) {
-        CttFloatPicItem item = null;
-        Map<String, CttFloatPicItem> floatPicItemMap = Cache.getFloatPicItem();
-        Iterator<String> iter = floatPicItemMap.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            CttFloatPicItem cttFloatPicItem = floatPicItemMap.get(key);
-            if (cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())) {
-                item = cttFloatPicItem;
-                break;
-            }
-        }
-        return item;
-    }
-
-    /**
-     * 查找红包活动
-     *
-     * @return
-     */
-    private PlayerActivityMessage findMoneyActivity() {
-        Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
-        String lang = SessionManagerBase.getLocale().toString();
-        Iterator<String> iter = activityMessages.keySet().iterator();
-        Date justNow = new Date();
-        PlayerActivityMessage playerActivityMessage = null;
-        while (iter.hasNext()) {
-            String key = iter.next();
-            if (key.endsWith(lang)) {
-                playerActivityMessage = activityMessages.get(key);
-                Date startTime = playerActivityMessage.getStartTime();
-                Date endTime = playerActivityMessage.getEndTime();
-                if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
-                    //不是红包活动继续
-                    continue;
-                }
-                if (playerActivityMessage.getIsDeleted()) {
-                    continue;
-                }
-                if (!playerActivityMessage.getIsDisplay()) {
-                    continue;
-                }
-                if (startTime.before(justNow) && justNow.before(endTime)) {
-                    return playerActivityMessage;
-                }
-
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 查询红包浮动图
-     */
-    private CttFloatPic queryMoneyActivityFloat() {
-        Map<String, CttFloatPic> floatPicMap = Cache.getFloatPic();
-        Iterator<String> iter = floatPicMap.keySet().iterator();
-        CttFloatPic tempFloatPic = null;
-        while (iter.hasNext()) {
-            String key = iter.next();
-            CttFloatPic cttFloatPic = floatPicMap.get(key);
-            if (CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType()) && cttFloatPic.getStatus()) {
-                tempFloatPic = cttFloatPic;
-                break;
-            }
-        }
-        return tempFloatPic;
     }
 
 
@@ -294,58 +168,8 @@ public class IndexController extends BaseApiController {
         return lotteryList;
     }
 
-    private List<SiteApiType> getApiTypes() {
-        Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
-        return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
-    }
 
-    /**
-     * 查询Banner
-     *
-     * @deprecated since v1057
-     */
-    private List<Map> getCarousel(HttpServletRequest request) {
-        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
-        List<Map> resultList = new ArrayList<>();
-        String webSite = ServletTool.getDomainFullAddress(request);
-        if (carousels != null) {
-            for (Map m : carousels.values()) {
-                if (CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type"))) {
-                    if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString())) {
-                        //验证比对缓存结果中的起止时间是否过期
-                        if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
-                            if (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true) {
-                                String link = String.valueOf(m.get("link"));
-                                if (StringTool.isNotBlank(link) && link.contains("${website}")) {
-                                    link = link.replace("${website}", webSite);
-                                }
-                                m.put("link", link);
-                                resultList.add(m);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return resultList;
-    }
 
-    /**
-     * 查询公告
-     */
-    private List<CttAnnouncement> getAnnouncement() {
-        Map<String, CttAnnouncement> announcement = Cache.getSiteAnnouncement();
-        List<CttAnnouncement> resultList = new ArrayList<>();
-        if (announcement != null) {
-            for (CttAnnouncement an : announcement.values()) {
-                if (StringTool.equals(an.getAnnouncementType(), CttAnnouncementTypeEnum.SITE_ANNOUNCEMENT.getCode())
-                        && StringTool.equals(an.getLanguage(), SessionManager.getLocale().toString())) {
-                    resultList.add(an);
-                }
-            }
-        }
-        return resultList;
-    }
 
     /**
      * 关于/条款
@@ -385,6 +209,7 @@ public class IndexController extends BaseApiController {
         }
         return "/index/" + path;
     }
+
 
     private CttDocumentI18nListVo initDocument(String code) {
         CttDocumentI18nListVo listVo = new CttDocumentI18nListVo();
@@ -435,13 +260,10 @@ public class IndexController extends BaseApiController {
             defaultSite = site.getWebSite();
         } else {
             //其他的都是取默认域名
-            VSysSiteDomainListVo vSysSiteDomainListVo = new VSysSiteDomainListVo();
-            vSysSiteDomainListVo.getSearch().setSiteId(CommonContext.get().getSiteId());
-            List<VSysSiteDomain> domainList = ServiceTool.vSysSiteDomainService().loadSiteDomain(vSysSiteDomainListVo);
-
-            for (VSysSiteDomain o : domainList) {
-                if (o.getSiteId().intValue() == CommonContext.get().getSiteId()) {
-                    if (o.getPageUrl() != null && o.getIsDefault() != null && o.getPageUrl().equals(DomainPageUrlEnum.INDEX.getCode()) && o.getIsDefault()) {
+            List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
+            if (CollectionTool.isNotEmpty(domainList)) {
+                for (VSysSiteDomain o : domainList) {
+                    if (o.getIsDefault()) {
                         defaultSite = o.getDomain();
                         break;
                     }
@@ -498,28 +320,24 @@ public class IndexController extends BaseApiController {
     private void getAppPath(Model model, HttpServletRequest request) {
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = ServiceTool.appUpdateService();
-
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {
             // 获取IOS信息
-            getIosInfo(model, code, appUpdateService);
+            getIosInfo(model, code);
         } else if (OSTypeEnum.ANDROID.getCode().equals(os)) {
             // 获取android APP信息
-            getAndroidInfo(model, request, code, appUpdateService);
+            getAndroidInfo(model, request, code);
         } else {
-            getIosInfo(model, code, appUpdateService);
-            getAndroidInfo(model, request, code, appUpdateService);
+            getIosInfo(model, code);
+            getAndroidInfo(model, request, code);
         }
     }
 
     /**
      * 获取android APP信息
      */
-    private void getAndroidInfo(Model model, HttpServletRequest request, String code, IAppUpdateService appUpdateService) {
-        AppUpdateVo androidVo = new AppUpdateVo();
-        androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
-        AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
+    private void getAndroidInfo(Model model, HttpServletRequest request, String code) {
+        AppUpdate androidApp = Cache.getAppUpdate(AppTypeEnum.ANDROID.getCode());
         if (androidApp != null) {
             String versionName = androidApp.getVersionName();
             String url = String.format("https://%s%s%s/app_%s_%s.apk", ParamTool.appDmain(request.getServerName()), androidApp.getAppUrl(),
@@ -532,10 +350,8 @@ public class IndexController extends BaseApiController {
     /**
      * 获取IOS信息
      */
-    private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService) {
-        AppUpdateVo iosVo = new AppUpdateVo();
-        iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
-        AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
+    private void getIosInfo(Model model, String code) {
+        AppUpdate iosApp = Cache.getAppUpdate(AppTypeEnum.IOS.getCode());
         if (iosApp != null) {
             String versionName = iosApp.getVersionName();
             String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", iosApp.getAppUrl(),
@@ -582,7 +398,7 @@ public class IndexController extends BaseApiController {
             //查询总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("totalAssert",ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("totalAssert", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
         }
         return JsonTool.toJson(map);
     }
