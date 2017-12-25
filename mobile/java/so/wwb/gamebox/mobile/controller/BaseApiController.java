@@ -5,7 +5,6 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.enums.SupportTerminal;
-import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -192,10 +191,8 @@ public abstract class BaseApiController extends BaseDemoController {
             } else {
                 for (Game game : allGames) {
                     if (siteGame.getGameId().intValue() == game.getId().intValue()) {
-                        if (game.getMaintainStartTime() != null && game.getMaintainEndTime() != null && game.getMaintainEndTime().compareTo(new Date()) == 1) {
-                            int diff1 = DateTool.truncatedCompareTo(now, game.getMaintainStartTime(), Calendar.SECOND);
-                            int diff2 = DateTool.truncatedCompareTo(now, game.getMaintainEndTime(), Calendar.SECOND);
-                            if (diff1 >= 0 && diff2 <= 0) {
+                        if (game.getMaintainStartTime() != null && game.getMaintainEndTime() != null) {
+                            if (game.getMaintainEndTime().getTime() > now.getTime() && game.getMaintainStartTime().getTime() < now.getTime()) {
                                 siteGame.setStatus(GameStatusEnum.MAINTAIN.getCode());
                             }
                         }
