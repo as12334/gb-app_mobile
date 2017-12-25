@@ -19,16 +19,21 @@
     <%@ include file="../common/LeftMenu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
+        <%--<%@include file="../common/Head.jsp" %>--%>
         <!-- 主页面标题 -->
-        <%@include file="../common/Head.jsp" %>
+        <header class="mui-bar mui-bar-nav casino-list-bar">
+            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+            <%@include file="../common/Assert.jsp"%>
+            <h1 class="mui-title">${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</h1>
+        </header>
         <div class="mui-content mui-scroll-wrapper mui-content-casino-list" id="pullfresh">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <div class="casino-wrap">
                     <div class="mui-input-row">
                         <div class="electronic-search">
-                            <soul:button target="searchGame" text="搜索" opType="function" cssClass="btn-search"/>
-                            <input type="text" id="game-name" class="mui-input-clear" placeholder="输入游戏名称">
+                            <soul:button target="searchGame" text="${views.themes_auto['搜索']}" opType="function" cssClass="btn-search"/>
+                            <input type="text" id="game-name" class="mui-input-clear" placeholder="${views.themes_auto['输入游戏名称']}">
                         </div>
                     </div>
                     <c:if test="${command.paging.firstPage}">
@@ -63,7 +68,7 @@
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
-                                    <div class="deficiency-nots">没有找到符合的游戏</div>
+                                    <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -73,22 +78,10 @@
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->
         <%@include file="../common/Footer.jsp" %>
-        <!--浮窗广告轮播-->
-        <div class="ads-slider">
-            <a href="javascript:" class="close-ads"></a>
-            <div class="mui-slider">
-                <div class="mui-slider-group">
-                    <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/ads-banner-01.png"/></a>
-                    </div>
-                    <div class="mui-slider-item"><a href="#"><img src="../../mobile-v3/images/ads-banner-01.png"/></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- off-canvas backdrop -->
+        <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
-<!--语言弹窗-->
-<%@include file="../common/LangMenu.jsp"%>
 </body>
 <%@include file="../include/include.js.jsp" %>
 <script src="${resComRoot}/js/mobile/layer.js"></script>

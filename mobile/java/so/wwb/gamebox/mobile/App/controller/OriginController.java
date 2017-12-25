@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
+import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class OriginController extends BaseApiController {
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> mapJson = new HashMap<>();
         //查询banner
-        List<Map> bannerList = getCarousel(request);
+        List<Map> bannerList = getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode());
         //查询公告
         List<CttAnnouncement> announcementList = getAnnouncement();
         //获取游戏及种类

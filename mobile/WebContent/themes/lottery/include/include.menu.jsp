@@ -64,7 +64,7 @@
             <button type="button" class="mui-btn mui-btn-danger mui-btn-block user-logout">${views.themes_auto['退出登录']}</button>
         </div>
         <div class="p-1r un-login">
-            <button type="button" class="mui-btn mui-btn-danger mui-btn-block user-login">登录</button>
+            <button type="button" class="mui-btn mui-btn-danger mui-btn-block user-login">${views.themes_auto['登录']}</button>
         </div>
     </div>
 </aside>

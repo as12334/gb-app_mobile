@@ -1,9 +1,7 @@
 package so.wwb.gamebox.mobile.controller;
 
-import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.collections.ListTool;
-import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
@@ -12,14 +10,8 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
-import org.soul.commons.net.ServletTool;
 import org.soul.commons.qrcode.QrcodeDisTool;
-import org.soul.commons.query.Criteria;
-import org.soul.commons.query.enums.Operator;
-import org.soul.commons.query.sort.Order;
-import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
-import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,21 +29,16 @@ import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
 import so.wwb.gamebox.model.company.site.po.*;
-import so.wwb.gamebox.model.company.site.so.SiteGameSo;
-import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
-import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
-import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
-import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
-import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
@@ -87,7 +74,7 @@ public class IndexController extends BaseApiController {
             model.addAttribute("channel", "game");
         model.addAttribute("apiTypeId", typeId);
         model.addAttribute("apiTypes", apiTypes);
-        model.addAttribute("carousels", getCarousel(request));
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
@@ -117,12 +104,10 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            model.addAttribute("carousels", getCarousel(request));
+            //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
         if (ParamTool.isMobileUpgrade()) {
-            //查询Banner和公告
-            model.addAttribute("carousels", getCarousel(request));
             //查询游戏类型对应的分类
             model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
@@ -132,6 +117,10 @@ public class IndexController extends BaseApiController {
                 getAboutAndTerms(path, model, request);
             }
         }
+        //手机弹窗广告
+        model.addAttribute("phoneDialog", getCarousel(request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()));
+        //查询Banner和公告
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         initFloatPic(model);
         return "/Index";
     }
@@ -289,7 +278,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getBanner")
     public String getBanner(Model model, HttpServletRequest request) {
-        model.addAttribute("carousels", getCarousel(request));
+        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         return "/game/include/include.banner";
     }
@@ -398,7 +387,7 @@ public class IndexController extends BaseApiController {
             //查询总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("totalAssert", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("totalAssert", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }
@@ -437,7 +426,7 @@ public class IndexController extends BaseApiController {
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("asset", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("asset", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }

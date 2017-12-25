@@ -41,13 +41,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
- *
  * Created by LeTu on 2017/3/31.
  */
 public abstract class BaseApiController extends BaseDemoController {
     private Log LOG = LogFactory.getLog(BaseApiController.class);
 
-    List<Map<String,Object>> getApiType() {
+    List<Map<String, Object>> getApiType() {
         List<SiteApiTypeRelationI18n> relationI18ns;
         List<SiteApiTypeRelation> relations = new GameController().getSiteApiTypeRelationList(null);
 
@@ -70,7 +69,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         List<Relation> listRelation = CollectionQueryTool.sort(relationList, Order.asc("order"));
 
-        List<Map<String ,Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         for (Relation relation : listRelation) {
             list.add(relation.getMap());
         }
@@ -97,6 +96,7 @@ public abstract class BaseApiController extends BaseDemoController {
         public Integer getOrder() {
             return order;
         }
+
         public void setOrder(Integer order) {
             this.order = order;
         }
@@ -104,6 +104,7 @@ public abstract class BaseApiController extends BaseDemoController {
         public Map<String, Object> getMap() {
             return map;
         }
+
         public void setMap(Map<String, Object> map) {
             this.map = map;
         }
@@ -242,19 +243,19 @@ public abstract class BaseApiController extends BaseDemoController {
      *
      * @deprecated since v1057
      */
-    protected List<Map> getCarousel(HttpServletRequest request) {
+    protected List<Map> getCarousel(HttpServletRequest request,String type) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
         List<Map> resultList = new ArrayList<>();
         String webSite = ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
-                if ((CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type")))
+                if ((StringTool.equalsIgnoreCase(type,m.get("type").toString()))
                         && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
                         && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
                         && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
                     String link = String.valueOf(m.get("link"));
                     if (StringTool.isNotBlank(link)) {
-                        if(link.contains("${website}")){
+                        if (link.contains("${website}")) {
                             link = link.replace("${website}", webSite);
                         }
                     }

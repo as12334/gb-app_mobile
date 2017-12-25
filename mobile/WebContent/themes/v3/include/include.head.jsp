@@ -19,7 +19,21 @@
 <link rel="stylesheet" href="${resRoot}/themes/mui.min.css" />
 <link rel="stylesheet" href="${resRoot}/themes/common.css" />
 <link rel="stylesheet" href="${resRoot}/themes/index.css" />
-<link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
+<c:set var="background_type" value="${backgroundParam.paramValue}"/>
+<c:choose>
+    <c:when test="${background_type eq 'black'}">
+        <link rel="stylesheet" href="${resRoot}/themes/black/style.css" />
+        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+    </c:when>
+    <c:when test="${background_type eq 'blue'}">
+        <link rel="stylesheet" href="${resRoot}/themes/blue/style.css" />
+        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+    </c:when>
+    <c:otherwise>
+        <link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
+        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
+    </c:otherwise>
+</c:choose>
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css" />
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
 <link rel="stylesheet" href="${resRoot}/themes/loading.css"/>

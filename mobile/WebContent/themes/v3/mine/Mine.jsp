@@ -17,7 +17,7 @@
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav mui-bar-blue mui-bar-mine">
             <soul:button target="leftMenu" text="" opType="function" cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
-            <h1 class="mui-title">我的</h1>
+            <h1 class="mui-title">${views.themes_auto['我的']}</h1>
             <%--<a href="" class="mui-icon icon-gift mui-pull-right"></a>--%>
             <soul:button target="goTab" skip="1" dataHref="/discounts/index.html?skip=1" isLeft="false" text="" opType="function" cssClass="mui-icon icon-gift mui-pull-right"/>
             <soul:button target="${root}/message/gameNotice.html" text="" opType="href" cssClass="mui-icon icon-message mui-pull-right" >
@@ -37,18 +37,18 @@
                             <div class="ct">
                                 <img src="${resRoot}/images/avatar.png" class="avatar">
                                 <p></p>
-                                <%--<a class="btn mui-btn mui-btn-outlined user-logout">退出登录</a>--%>
-                                <soul:button target="logout" text="退出登录" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
+                                <%--<a class="btn mui-btn mui-btn-outlined user-logout">${views.themes_auto['退出登录']}</a>--%>
+                                <soul:button target="logout" text="${views.themes_auto['退出登录']}" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
                             </div>
                             <p class="money-info">
-			            <span class="span">
-			                <span>钱包</span>
-			                <span class="green"></span>
-			            </span>
                                 <span class="span">
-			                <span>总资产</span>
-			                <span class="orange"></span>
-			            </span>
+                                    <span>${views.themes_auto['钱包']}</span>
+                                    <span class="green"></span>
+                                </span>
+                                <span class="span">
+                                    <span>${views.themes_auto['总资产']}</span>
+                                    <span class="orange"></span>
+			                    </span>
                             </p>
                         </div>
                     </div>
@@ -57,11 +57,11 @@
                 <div class="mui-row">
                     <ul class="mui-list-unstyled list-mine-item">
                         <li class="mui-col-xs-4">
-                            <soul:button target="${root}/wallet/deposit/index.html" text="" opType="href" cssClass="" >
+                            <soul:button target="goTab" skip="0" dataHref="/wallet/deposit/index.html" text="" opType="function" cssClass="" >
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico1.png" class="mine-item-img"/>
 						        </span>
-                                <p>存款</p>
+                                <p>${views.themes_auto['存款']}</p>
                             </soul:button>
                         </li>
                         <li class="mui-col-xs-4">
@@ -69,7 +69,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico2.png" class="mine-item-img"/>
 						        </span>
-                                <p>取款</p>
+                                <p>${views.themes_auto['取款']}</p>
                                 <span class="ext-info withdrawAmount"></span>
                             </soul:button>
                         </li>
@@ -78,7 +78,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico3.png" class="mine-item-img"/>
 						        </span>
-                                <p>额度转换</p>
+                                <p>${views.themes_auto['额度转换']}</p>
                                 <p>
                                     <small id="transferAmount"></small>
                                 </p>
@@ -91,7 +91,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico4.png" class="mine-item-img"/>
 						        </span>
-                                <p>资金记录</p>
+                                <p>${views.themes_auto['资金记录']}</p>
                             </soul:button>
                         </li>
                         <li class="mui-col-xs-4">
@@ -99,7 +99,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico5.png" class="mine-item-img"/>
 						        </span>
-                                <p>投注记录</p>
+                                <p>${views.themes_auto['投注记录']}</p>
                             </soul:button>
                         </li>
                         <li class="mui-col-xs-4">
@@ -107,7 +107,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico6.png" class="mine-item-img"/>
 						        </span>
-                                <p>优惠记录</p>
+                                <p>${views.themes_auto['优惠记录']}</p>
                                 <span class="ext-info preferentialAmount"></span>
                             </soul:button>
                         </li>
@@ -120,7 +120,7 @@
                                     <span class="item-img-wrap">
 							            <img src="${resRoot}/images/my-ico7.png" class="mine-item-img"/>
                                     </span>
-                                    <p>银行卡</p>
+                                    <p>${views.themes_auto['银行卡']}</p>
                                     <%--<span id="bankImg" class="ext-info with-icon "> </span>--%>
                                     <c:set var="len" value="${len+1}"/>
                                 </soul:button>
@@ -132,7 +132,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico12.png" class="mine-item-img"/>
 						        </span>
-                                    <p>比特币钱包</p>
+                                    <p>${views.themes_auto['比特币钱包']}</p>
                                     <p>
                                         <small id="btcNumber"></small>
                                     </p>
@@ -154,7 +154,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
 						        </span>
-                                    <p>修改安全密码</p>
+                                    <p>${views.themes_auto['修改安全密码']}</p>
                                 </soul:button>
                             </li>
                         </c:if>
@@ -166,7 +166,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
 						        </span>
-                                    <p>修改安全密码</p>
+                                    <p>${views.themes_auto['修改安全密码']}</p>
                                 </soul:button>
                             </li>
                         </c:if>
@@ -175,7 +175,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico10.png" class="mine-item-img"/>
 						        </span>
-                                <p>修改登录密码</p>
+                                <p>${views.themes_auto['修改登录密码']}</p>
                             </soul:button>
                         </li>
                         <%--<li class="mui-col-xs-4">
@@ -183,7 +183,7 @@
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico8.png" class="mine-item-img"/>
 						        </span>
-                                <p>推荐好友</p>
+                                <p>${views.themes_auto['推荐好友']}</p>
                                 <span class="ext-info recomdAmount"></span>
                             </a>
                         </li>--%>
@@ -193,6 +193,8 @@
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->
         <%@ include file="../common/Footer.jsp" %>
+        <!-- off-canvas backdrop -->
+        <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
 </body>

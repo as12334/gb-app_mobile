@@ -50,18 +50,18 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         ${soulFn:formatBankCard(payAccount.account)}
-                                                        <a href="#" class="copy" data-clipboard-text="${payAccount.account}">复制</a>
+                                                        <a href="#" class="copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </p>
                                             <div class="ct">
                                                 <p><span>${views.deposit_auto['银行开户名']}:</span>
                                                         ${payAccount.fullName}
-                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">复制</a>
+                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
                                                 </p>
                                                 <p><span>${views.deposit_auto['开户行']}:</span>
                                                         ${payAccount.openAcountName}
-                                                    <a href="#" id="copyAcountName" class="copy" data-clipboard-text="${payAccount.openAcountName}">复制</a>
+                                                    <a href="#" id="copyAcountName" class="copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a>
                                                     <input type="hidden" value="${payAccount.openAcountName}" data-clipboard-text="${payAccount.openAcountName}" id="hidenAccountName">
                                                 </p>
                                             </div>
@@ -82,7 +82,7 @@
                                     <div class="mui-input-row">
                                         <label>${views.deposit_auto['金额']}</label>
                                         <div class="ct">
-                                            <input type="number" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
+                                            <input type="text" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
                                                    name="result.rechargeAmount" id="result.rechargeAmount" autocomplete="off"/>
                                         </div>
                                     </div>
@@ -95,7 +95,7 @@
                                                 <a class="mui-btn mui-btn-link gb-input-link" id="rechargeTypeText" style="margin-right: 0">
                                                         ${rechargeType.text}
                                                 </a>
-
+                                                <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="${rechargeType.value}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -113,6 +113,17 @@
                                             <input type="text" name="result.payerName" placeholder="${views.deposit_auto['您转账时使用的银行卡姓名']}" onchange="this.value=this.value.trim()">
                                         </div>
                                     </div>
+
+                                    <%--<div class="mui-input-row" id="captcha">
+                                            <div class="form-row">
+                                                <div class="cont">
+                                                    <input type="text" class="mui-input ico6" maxlength="4" placeholder="${views.passport_auto['请输入验证码']}" name="captcha" id="captcha">
+                                                    <div class="gb-vcode">
+                                                        <img class="_captcha_img" src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>--%>
 
                                 </div>
                             </div>
