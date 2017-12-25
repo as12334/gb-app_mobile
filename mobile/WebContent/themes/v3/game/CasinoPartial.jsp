@@ -57,8 +57,8 @@
                                                                  dataApiName="${gbFn:getGameName(g.gameId)}"
                                                                  target="goGame" text="" opType="function" cssClass="">
                                                         <div class="img-wrap">
-                                                            <img data-src="${soulFn:getThumbPath(domain, gi.value.cover,60,60)}"
-                                                                 src="${soulFn:getThumbPath(domain, gi.value.cover,60,60)}"/>
+                                                            <img data-src="${soulFn:getImagePath(domain, gi.value.cover)}"
+                                                                 src="${soulFn:getImagePath(domain, gi.value.cover)}"/>
                                                         </div>
                                                         <p>${gbFn:getGameName(g.gameId)}</p>
                                                     </soul:button>

@@ -346,21 +346,18 @@ public class ApiController extends BaseApiController {
 
     private Map<String, Object> getApiDetail(Integer apiId, Integer apiTypeId) {
         Map<String, Object> apiDetail = new HashMap<>();
-        String apiStatus = getApiStatus(apiId);
-        if (apiStatus != null && getApiStatus(apiId).equals("normal")) {
-            Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
-            for (ApiI18n apiI18n : apiI18nMap.values()) {
-                if (apiI18n.getApiId().equals(apiId)) {
-                    PlayerApi playerApi = getPlayerApi(apiId);
-                    VUserPlayer player = getPlayer(SessionManager.getUserId());
-                    apiDetail.put("apiI18n", apiI18n);
-                    apiDetail.put("apiTypeId", apiTypeId);
-                    apiDetail.put("currSign", player.getCurrencySign());
-                    if (playerApi != null) {
-                        apiDetail.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
-                    } else {
-                        apiDetail.put("apiMoney", "0.00");
-                    }
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        for (ApiI18n apiI18n : apiI18nMap.values()) {
+            if (apiI18n.getApiId().equals(apiId)) {
+                PlayerApi playerApi = getPlayerApi(apiId);
+                VUserPlayer player = getPlayer(SessionManager.getUserId());
+                apiDetail.put("apiI18n", apiI18n);
+                apiDetail.put("apiTypeId", apiTypeId);
+                apiDetail.put("currSign", player.getCurrencySign());
+                if (playerApi != null) {
+                    apiDetail.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
+                } else {
+                    apiDetail.put("apiMoney", "0.00");
                 }
             }
         }
