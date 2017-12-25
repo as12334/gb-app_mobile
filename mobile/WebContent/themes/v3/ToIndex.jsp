@@ -14,7 +14,7 @@
             <c:set var="isOpen" value="${siteId == 176 ? true : false}" />
             <input type="hidden" value="${isOpen}" name="isOpen"/>
             <!--加载层-->
-            <div class="load-bg">
+            <div class="load-bg" style="display: none">
                 <div class="load-bar">
                     <p>${views.app_auto['请耐心等待']}</p>
                     <div id="load-bar-1" class="mui-progressbar mui-progressbar-infinite"><span></span></div>
