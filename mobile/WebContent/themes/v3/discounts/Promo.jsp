@@ -1,3 +1,4 @@
+<%--@elvariable id="messageVo" type="so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <!DOCTYPE html>
@@ -23,8 +24,21 @@
                     <div class="promo-sorts">
                         <soul:button activityType="" target="activityType" text="${views.themes_auto['全部']}" opType="function"
                                      cssClass="mui-btn btn-promo-sort active"/>
+                        <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
+                            <soul:button activityType="${type.key}" target="activityType" text="${type.value}" opType="function"
+                                         cssClass="mui-btn btn-promo-sort"/>
+                        </c:forEach>
                     </div>
                     <ul class="promo-list mui-list-unstyled">
+                        <c:forEach var="map" items="${messageVo.typeMessageMap}" >
+                            <c:forEach var="message" items="${map.value}">
+                                <li class="${message.activityClassifyKey}">
+                                    <soul:button text="" opType="href" target="${root}/promo/promoDetail.html?search.id=${message.id}">
+                                        <img src="${message.activityAffiliated}"/>
+                                    </soul:button>
+                                </li>
+                            </c:forEach>
+                        </c:forEach>
                     </ul>
                 </section>
             </div> <!--mui-scroll 闭合标签-->

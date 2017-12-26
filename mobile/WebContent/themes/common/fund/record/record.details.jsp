@@ -458,6 +458,7 @@
 </div>
 <script>
     $('._userAsset').removeClass('mui-hide');
+    mui('.mui-scroll-wrapper').scroll({indicators: false});
     curl(['common/MobileBasePage', 'site/common/Assets'], function(Page, Assets) {
         page = new Page();
         asset = new Assets();

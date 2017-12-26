@@ -1,9 +1,7 @@
 package so.wwb.gamebox.mobile.controller;
 
-import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.collections.ListTool;
-import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
@@ -12,14 +10,8 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
-import org.soul.commons.net.ServletTool;
 import org.soul.commons.qrcode.QrcodeDisTool;
-import org.soul.commons.query.Criteria;
-import org.soul.commons.query.enums.Operator;
-import org.soul.commons.query.sort.Order;
-import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
-import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,22 +28,17 @@ import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
-import so.wwb.gamebox.model.company.site.po.SiteApiType;
-import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelationI18n;
-import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
-import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
-import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
-import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
-import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
@@ -87,7 +74,7 @@ public class IndexController extends BaseApiController {
             model.addAttribute("channel", "game");
         model.addAttribute("apiTypeId", typeId);
         model.addAttribute("apiTypes", apiTypes);
-        model.addAttribute("carousels", getCarousel(request));
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
@@ -95,12 +82,15 @@ public class IndexController extends BaseApiController {
     }
 
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String toIndex(Model model, HttpServletRequest request) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             SessionManager.setRecommendUserCode(c);
         }
-        getAppPath(model, request);
+        if (ParamTool.isLotterySite()) {
+            getAppPath(model, request);
+        }
         return "/ToIndex";
     }
 
@@ -111,27 +101,27 @@ public class IndexController extends BaseApiController {
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
-        model.addAttribute("sysUser", SessionManager.getUser());
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
             //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
+        if (ParamTool.isMobileUpgrade()) {
+            //查询游戏类型对应的分类
+            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
 
-        //查询Banner和公告
-        model.addAttribute("carousels", getCarousel(request));
-
-        initFloatPic(model);
-
-        //查询游戏类型对应的分类
-        model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
-
-        //关于我们/注册条款
-        model.addAttribute("path", path);
-        if (StringTool.isNotBlank(path)) {
-            getAboutAndTerms(path, model, request);
+            //关于我们/注册条款
+            model.addAttribute("path", path);
+            if (StringTool.isNotBlank(path)) {
+                getAboutAndTerms(path, model, request);
+            }
         }
+        //手机弹窗广告
+        model.addAttribute("phoneDialog", getCarousel(request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()));
+        //查询Banner和公告
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        initFloatPic(model);
         return "/Index";
     }
 
@@ -140,123 +130,6 @@ public class IndexController extends BaseApiController {
         showMoneyActivityFloat(floatList);
 
         model.addAttribute("floatList", floatList);
-    }
-
-    private Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Model model) {
-        Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
-        List<SiteApiType> siteApiTypes = getApiTypes();
-
-        Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        for (SiteApiType api : siteApiTypes) {
-            List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
-            for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
-
-                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api.getApiTypeId().toString())) {
-                    i18ns.add(relationI18n);
-                    siteApiRelation.put(api.getApiTypeId(), i18ns);
-                    //判断捕鱼AG GG是否存在
-                    if (relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 9) {
-                        model.addAttribute("AGExist", true);
-                    }
-                    if (relationI18n.getApiTypeId() == 2 && relationI18n.getApiId() == 28) {
-                        model.addAttribute("GGExist", true);
-                    }
-                }
-            }
-        }
-        return siteApiRelation;
-    }
-
-    /**
-     * 显示红包浮动图
-     *
-     * @param floatList
-     */
-    private void showMoneyActivityFloat(List<Map> floatList) {
-        CttFloatPic cttFloatPic = queryMoneyActivityFloat();
-        if (cttFloatPic != null) {
-            PlayerActivityMessage moneyActivity = findMoneyActivity();
-            CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
-            if (moneyActivity != null) {
-                String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
-                Map floatMap = new HashMap();
-                floatMap.put("type", "moneyActivity");
-                floatMap.put("activityId", activityId);
-                floatMap.put("floatItem", cttFloatPicItem);
-                floatMap.put("cttFloatPic", cttFloatPic);
-                floatMap.put("description", moneyActivity.getActivityDescription());
-                floatList.add(floatMap);
-            }
-        }
-    }
-
-    private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic) {
-        CttFloatPicItem item = null;
-        Map<String, CttFloatPicItem> floatPicItemMap = Cache.getFloatPicItem();
-        Iterator<String> iter = floatPicItemMap.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            CttFloatPicItem cttFloatPicItem = floatPicItemMap.get(key);
-            if (cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())) {
-                item = cttFloatPicItem;
-                break;
-            }
-        }
-        return item;
-    }
-
-    /**
-     * 查找红包活动
-     *
-     * @return
-     */
-    private PlayerActivityMessage findMoneyActivity() {
-        Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
-        String lang = SessionManagerBase.getLocale().toString();
-        Iterator<String> iter = activityMessages.keySet().iterator();
-        Date justNow = new Date();
-        PlayerActivityMessage playerActivityMessage = null;
-        while (iter.hasNext()) {
-            String key = iter.next();
-            if (key.endsWith(lang)) {
-                playerActivityMessage = activityMessages.get(key);
-                Date startTime = playerActivityMessage.getStartTime();
-                Date endTime = playerActivityMessage.getEndTime();
-                if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
-                    //不是红包活动继续
-                    continue;
-                }
-                if (playerActivityMessage.getIsDeleted()) {
-                    continue;
-                }
-                if (!playerActivityMessage.getIsDisplay()) {
-                    continue;
-                }
-                if (startTime.before(justNow) && justNow.before(endTime)) {
-                    return playerActivityMessage;
-                }
-
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 查询红包浮动图
-     */
-    private CttFloatPic queryMoneyActivityFloat() {
-        Map<String, CttFloatPic> floatPicMap = Cache.getFloatPic();
-        Iterator<String> iter = floatPicMap.keySet().iterator();
-        CttFloatPic tempFloatPic = null;
-        while (iter.hasNext()) {
-            String key = iter.next();
-            CttFloatPic cttFloatPic = floatPicMap.get(key);
-            if (CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType()) && cttFloatPic.getStatus()) {
-                tempFloatPic = cttFloatPic;
-                break;
-            }
-        }
-        return tempFloatPic;
     }
 
 
@@ -284,58 +157,8 @@ public class IndexController extends BaseApiController {
         return lotteryList;
     }
 
-    private List<SiteApiType> getApiTypes() {
-        Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
-        return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
-    }
 
-    /**
-     * 查询Banner
-     *
-     * @deprecated since v1057
-     */
-    private List<Map> getCarousel(HttpServletRequest request) {
-        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
-        List<Map> resultList = new ArrayList<>();
-        String webSite = ServletTool.getDomainFullAddress(request);
-        if (carousels != null) {
-            for (Map m : carousels.values()) {
-                if (CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode().equals(m.get("type"))) {
-                    if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString())) {
-                        //验证比对缓存结果中的起止时间是否过期
-                        if (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date())) {
-                            if (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true) {
-                                String link = String.valueOf(m.get("link"));
-                                if (StringTool.isNotBlank(link) && link.contains("${website}")) {
-                                    link = link.replace("${website}", webSite);
-                                }
-                                m.put("link", link);
-                                resultList.add(m);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return resultList;
-    }
 
-    /**
-     * 查询公告
-     */
-    private List<CttAnnouncement> getAnnouncement() {
-        Map<String, CttAnnouncement> announcement = Cache.getSiteAnnouncement();
-        List<CttAnnouncement> resultList = new ArrayList<>();
-        if (announcement != null) {
-            for (CttAnnouncement an : announcement.values()) {
-                if (StringTool.equals(an.getAnnouncementType(), CttAnnouncementTypeEnum.SITE_ANNOUNCEMENT.getCode())
-                        && StringTool.equals(an.getLanguage(), SessionManager.getLocale().toString())) {
-                    resultList.add(an);
-                }
-            }
-        }
-        return resultList;
-    }
 
     /**
      * 关于/条款
@@ -427,7 +250,7 @@ public class IndexController extends BaseApiController {
         } else {
             //其他的都是取默认域名
             List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
-            if(CollectionTool.isNotEmpty(domainList)) {
+            if (CollectionTool.isNotEmpty(domainList)) {
                 for (VSysSiteDomain o : domainList) {
                     if (o.getIsDefault()) {
                         defaultSite = o.getDomain();
@@ -455,7 +278,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getBanner")
     public String getBanner(Model model, HttpServletRequest request) {
-        model.addAttribute("carousels", getCarousel(request));
+        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         return "/game/include/include.banner";
     }
@@ -564,7 +387,7 @@ public class IndexController extends BaseApiController {
             //查询总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("totalAssert", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("totalAssert", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }
@@ -603,7 +426,7 @@ public class IndexController extends BaseApiController {
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("asset", ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo));
+            map.put("asset", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }

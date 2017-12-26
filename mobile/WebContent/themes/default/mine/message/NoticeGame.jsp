@@ -30,8 +30,8 @@
                     <div class="gb-headtabs span3">
                         <div id="segmentedControl1" class="mui-segmented-control">
                             <a data-href="noticeGame" class="mui-control-item ${empty unReadType?'mui-active':''}" id="gameNotice" >${views.mine_auto['游戏公告']}<i></i></a>
-                            <a data-href="noticeSys" class="mui-control-item" id="sysNotice" >${views.mine_auto['系统公告']}<i></i></a>
-                            <a data-href="noticeSite" class="mui-control-item ${not empty unReadType?'mui-active':''}" id="siteNotice">${views.mine_auto['站点消息']}<i></i>
+                            <a data-href="noticeSys" class="mui-control-item ${unReadType eq 'noticeSys' ? 'mui-active':''}" id="sysNotice" >${views.mine_auto['系统公告']}<i></i></a>
+                            <a data-href="noticeSite" class="mui-control-item ${unReadType eq 'sendMessage' ?'mui-active':''}" id="siteNotice">${views.mine_auto['站点消息']}<i></i>
                                 ${sysMessageUnReadCount!=0||advisoryUnReadCount!=0?'<span class="unread-count-icon"></span>':''}</a>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <div id="noticeSys" class="mui-control-content" name="notice" >
+            <div id="noticeSys" class="mui-control-content ${unReadType eq 'noticeSys' ?'mui-active':''}" name="notice" >
                 <div class="mui-scroll-wrapper" style="position: static;height:91%;margin-top: 52px;" id="noticeSysScroll">
                     <div class="mui-scroll">
                         <div class="mui-row">

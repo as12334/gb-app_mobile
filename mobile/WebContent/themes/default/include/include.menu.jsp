@@ -7,12 +7,11 @@
             <div class="c-l-header">
                 <span class="icon-personal">
                     <input type="hidden" value="${resRoot}" id="resRoot">
-                    <img src="${soulFn:getThumbPathWithDefault(domain, sysUser.avatarUrl, 36, 36, resRoot.concat('/images/avatar.png'))}"
-                         width="100%" height="100%" alt="" id="avatarImg">
+                    <img src="${resRoot.concat('/images/avatar.png')}" width="100%" height="100%" alt="" id="avatarImg">
                 </span>
                 <!-- 登录状态 -->
                 <div class="login-status mui-hide _leftLogin">
-                    <p class="h-text _leftUsername">${soulFn:overlayString(sysUser.username)}</p>
+                    <p class="h-text _leftUsername"></p>
                     <a data-skip="/mine/index.html" class="h-btn" data-target="4">${views.include_auto['个人中心']}</a>
                 </div>
                 <!-- 未登录状态 -->

@@ -77,7 +77,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/gameNotice")
-    public String gameNotice(VSystemAnnouncementListVo listVo, VPlayerAdvisoryListVo aListVo,Model model, HttpServletRequest request,boolean isSendMessage) {
+    public String gameNotice(VSystemAnnouncementListVo listVo, VPlayerAdvisoryListVo aListVo,Model model, HttpServletRequest request,boolean isSendMessage,boolean isSysNotice) {
         String returnStr=GAME_NOTICE_URL;
         model.addAttribute("maxDate", SessionManager.getDate().getNow());
         model.addAttribute("minDate", SessionManager.getDate().addDays(TIME_INTERVAL));
@@ -96,6 +96,10 @@ public class MessageController {
             //如果有未读消息，则跳到未读消息页
             if(isSendMessage){
                 model.addAttribute("unReadType","sendMessage");
+                return returnStr;
+            }
+            if (isSysNotice) {
+                model.addAttribute("unReadType","noticeSys");
                 return returnStr;
             }
             if (sysMessageUnReadCount != null && sysMessageUnReadCount != 0) {

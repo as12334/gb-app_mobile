@@ -57,7 +57,7 @@
                 <div class="mui-row">
                     <ul class="mui-list-unstyled list-mine-item">
                         <li class="mui-col-xs-4">
-                            <soul:button target="${root}/wallet/deposit/index.html" text="" opType="href" cssClass="" >
+                            <soul:button target="goTab" skip="0" dataHref="/wallet/deposit/index.html" text="" opType="function" cssClass="" >
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico1.png" class="mine-item-img"/>
 						        </span>

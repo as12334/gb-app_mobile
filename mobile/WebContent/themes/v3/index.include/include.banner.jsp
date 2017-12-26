@@ -8,30 +8,32 @@
         </div>
         <div class="ct">
             <div id="slider" class="mui-slider mui-banner">
-                <div class="mui-slider-group">
+                <div class="mui-slider-group mui-slider-loop">
                     <c:choose>
-                        <c:when test="${not empty carousels && carousels.size() > 0}">
-                            <c:if test="${not empty carousels && carousels.size() > 1}">
-                                <div class="mui-slider-item mui-slider-item-duplicate">
-                                    <a>
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain,carousels.get(carousels.size()-1)["cover"])}"/>
-                                    </a>
-                                </div>
-                            </c:if>
+                        <c:when test="${fn:length(carousels) > 0}">
                             <c:forEach items="${carousels}" var="carousel" varStatus="vs">
+                                <c:set var="link" value="${not empty carousel['link'] ? carousel['link']:''}"/>
+                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
+                                <c:if test="${fn:length(carousels)-1 == vs.index}">
+                                    <div class="mui-slider-item mui-slider-item-duplicate">
+                                        <soul:button text="" opType="href" target="${link}">
+                                            <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                                        </soul:button>
+                                    </div>
+                                </c:if>
                                 <div class="mui-slider-item">
-                                    <a href="#" ${not empty carousel["link"] ? '_url=\"'.concat(carousel["link"]).concat('\"') : ''}>
+                                    <soul:button text="" opType="href" target="${link}">
                                         <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
-                                    </a>
+                                    </soul:button>
                                 </div>
+                                <c:if test="${vs.index==0}">
+                                    <div class="mui-slider-item mui-slider-item-duplicate">
+                                        <soul:button text="" opType="href" target="${link}">
+                                            <img class="c_banner" src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                                        </soul:button>
+                                    </div>
+                                </c:if>
                             </c:forEach>
-                            <c:if test="${not empty carousels && carousels.size() > 1}">
-                                <div class="mui-slider-item mui-slider-item-duplicate">
-                                    <a>
-                                        <img class="c_banner" src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
-                                    </a>
-                                </div>
-                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <div class="mui-slider-item">
@@ -40,14 +42,11 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <c:if test="${not empty carousels && carousels.size() > 1}">
-                    <div class="mui-slider-indicator">
-                        <c:forEach items="${carousels}" var="carousel" begin="0" end="${carousels.size()}"
-                                   varStatus="status">
-                            <div class="mui-indicator ${status.index == 0 ? 'mui-active':''}"></div>
-                        </c:forEach>
-                    </div>
-                </c:if>
+                <div class="mui-slider-indicator">
+                    <c:forEach items="${carousels}" var="carousel" varStatus="status">
+                        <div class="mui-indicator ${status.index == 0 ? 'mui-active':''}"></div>
+                    </c:forEach>
+                </div>
             </div>
         </div>
     </div>
@@ -57,12 +56,10 @@
 <section class="notice">
     <button type="button" class="mui-btn mui-btn-primary btn-title">${views.game_auto['公告']}</button>
     <div class="notice-list">
-        <marquee behavior="scroll" scrollamount="0" direction="left">
+        <c:forEach items="${announcement}" var="a" varStatus="vs">
             <p>
-                <c:forEach items="${announcement}" var="a" varStatus="vs">
-                    <soul:button target="showNotice" opType="function" text="" data-idx="${vs.index}">${a.content}</soul:button>
-                </c:forEach>
+                <soul:button cssClass="mui-ellipsis" target="showNotice" opType="function" text="" idx="${vs.index}">${a.content}</soul:button>
             </p>
-        </marquee>
+        </c:forEach>
     </div>
 </section>

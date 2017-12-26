@@ -5,6 +5,7 @@
     var isLogin = '${isLogin}';
     var isAutoPay = '${isAutoPay}';
     var isDemo = '${isDemo}';
+    var isMobileUpgrade = '${isMobileUpgrade}';
 </script>
 <script src="${resComRoot}/js/jquery/jquery-2.1.1.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/common.js?v=${rcVersion}"></script>
