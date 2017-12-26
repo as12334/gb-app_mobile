@@ -23,18 +23,16 @@
             <!--side-nav-->
             <div class="side-nav">
                 <ul class="mui-list-unstyled">
-                    <%--<li class="active home"><soul:button target="${root}/mainIndex.html" text="${views.themes_auto['首页']}" opType="href"/></li>--%>
-                    <%--<li class="pro"><soul:button target="${root}/discounts/index.html?skip=1" text="${views.themes_auto['优惠活动']}" opType="href" cssClass=""/></li>--%>
                     <li class="home ${empty skip && empty path?'active':''}"><soul:button target="goTab" isLeft="true" skip="2" text="${views.themes_auto['首页']}" dataHref="/mainIndex.html" opType="function"/></li>
                     <li class="pro ${skip == 1?'active':''}"><soul:button target="goTab" text="${views.themes_auto['优惠活动']}" isLeft="true" skip="1" dataHref="/discounts/index.html?skip=1" opType="function" cssClass=""/></li>
-                    <li class="download"><soul:button target="${root}/downLoad/downLoad.html" text="${views.themes_auto['下载客户端']}" opType="href"/><%-- <a href="">${views.themes_auto['下载客户端']}</a>--%></li>
-                    <li class="pc"><soul:button target="goPC" opType="function" text="${views.themes_auto['电脑版']}"/> <%--<a href="">${views.themes_auto['电脑版']}</a>--%></li>
-                    <li class="trans"> <soul:button target="${root}/transfer/index.html" text="${views.themes_auto['转账']}" opType="href"/></li>
+                    <li class="download"><soul:button target="goUrl" dataHref="/downLoad/downLoad.html" isLeft="true" text="${views.themes_auto['下载客户端']}" opType="function"/></li>
+                    <li class="pc"><soul:button target="goPC" isLeft="true" opType="function" text="${views.themes_auto['电脑版']}"/> </li>
+                    <li class="trans"> <soul:button target="goUrl" dataHref="/transfer/index.html" isLeft="true" text="${views.themes_auto['转账']}" opType="function"/></li>
                     <li class="deposit"><soul:button target="goTab" skip="0" isLeft="true" dataHref="/wallet/deposit/index.html" text="${views.themes_auto['账户存款']}" opType="function"/></li>
-                    <li class="about ${path == 'about'?'active':''}"><soul:button target="${root}/mainIndex.html?path=about" text="${views.themes_auto['关于我们']}" opType="href"/><%--<a href="">${views.themes_auto['关于我们']}</a>--%></li>
-                    <li class="question"><soul:button target="${root}/help/firstType.html" text="${views.themes_auto['常见问题']}" opType="href"/><%--<a href="">${views.themes_auto['常见问题']}</a>--%></li>
+                    <li class="about ${path == 'about'?'active':''}"><soul:button target="goUrl" dataHref="/mainIndex.html?path=about" isLeft="true" text="${views.themes_auto['关于我们']}" opType="function"/></li>
+                    <li class="question"><soul:button target="goUrl" dataHref="/help/firstType.html" isLeft="true" text="${views.themes_auto['常见问题']}" opType="function"/></li>
                     <li class="service"><soul:button target="goTab" isLeft="true" text="${views.themes_auto['在线客服']}" skip="3" dataHref="" opType="function"/></li>
-                    <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="${root}/mainIndex.html?path=terms" text="${views.themes_auto['注册条款']}" opType="href"/><%--<a href="">${views.themes_auto['注册条款']}</a>--%></li>
+                    <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="goUrl" dataHref="/mainIndex.html?path=terms" isLeft="true" text="${views.themes_auto['注册条款']}" opType="function"/></li>
                     <li class="lang ${fn:replace(language, '_', '-')}">
                         <%--<soul:button target="lang" text="${views.themes_auto['语言']}" opType="function"/>--%>
                         <a>${views.themes_auto['语言']}</a>
