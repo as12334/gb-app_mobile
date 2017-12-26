@@ -25,6 +25,7 @@ import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
+import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
@@ -32,7 +33,6 @@ import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
 import so.wwb.gamebox.model.master.content.po.CttFloatPic;
 import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
@@ -425,6 +425,46 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
         model.addAttribute("lotteryGame", lotteryGames);
+        return siteApiRelation;
+    }
+
+    protected Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Map lotteryMap,Map casinoMap) {
+        Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
+        List<SiteApiType> siteApiTypes = getApiTypes();
+        Map<Integer, List<SiteGame>> lotteryGames = MapTool.newHashMap();
+
+        Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
+        for (SiteApiType api : siteApiTypes) {
+            List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
+            for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
+
+                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api.getApiTypeId().toString())) {
+                    i18ns.add(relationI18n);
+                    siteApiRelation.put(api.getApiTypeId(), i18ns);
+                }
+            }
+        }
+
+        for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
+            //判断捕鱼AG GG是否存在
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
+                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(),ApiProviderEnum.AG.getCode())) {
+                casinoMap.put("AGExist",true);
+            }
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
+                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(),ApiProviderEnum.GG.getCode())) {
+                casinoMap.put("GGExist",true);
+            }
+            //彩票类游戏
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.LOTTERY.getCode()) {
+                SiteGameListVo siteGameListVo = new SiteGameListVo();
+                siteGameListVo.getSearch().setApiTypeId(relationI18n.getApiTypeId());
+                siteGameListVo.getSearch().setApiId(relationI18n.getApiId());
+                lotteryGames.put(relationI18n.getApiId(), getLotteryGame(siteGameListVo));
+            }
+        }
+
+        lotteryMap.put("lotteryGame",lotteryGames);
         return siteApiRelation;
     }
 
