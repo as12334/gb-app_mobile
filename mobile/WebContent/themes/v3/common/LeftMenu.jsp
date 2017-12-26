@@ -36,7 +36,8 @@
                     <li class="service"><soul:button target="goTab" isLeft="true" text="${views.themes_auto['在线客服']}" skip="3" dataHref="" opType="function"/></li>
                     <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="${root}/mainIndex.html?path=terms" text="${views.themes_auto['注册条款']}" opType="href"/><%--<a href="">${views.themes_auto['注册条款']}</a>--%></li>
                     <li class="lang ${fn:replace(language, '_', '-')}">
-                        <soul:button target="lang" text="${views.themes_auto['语言']}" opType="function"/>
+                        <%--<soul:button target="lang" text="${views.themes_auto['语言']}" opType="function"/>--%>
+                        <a>${views.themes_auto['语言']}</a>
                     </li>
                 </ul>
                 <div class="login">
