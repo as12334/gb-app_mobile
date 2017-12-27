@@ -13,7 +13,11 @@
                         <c:when test="${fn:length(carousels) > 0}">
                             <c:forEach items="${carousels}" var="carousel" varStatus="vs">
                                 <c:set var="link" value="${not empty carousel['link'] ? carousel['link']:''}"/>
-                                <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
+                                <c:choose>
+                                    <c:when test="${not empty link}">
+                                        <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
+                                    </c:when>
+                                </c:choose>
                                 <c:if test="${fn:length(carousels)-1 == vs.index}">
                                     <div class="mui-slider-item mui-slider-item-duplicate">
                                         <soul:button text="" opType="href" target="${link}">
