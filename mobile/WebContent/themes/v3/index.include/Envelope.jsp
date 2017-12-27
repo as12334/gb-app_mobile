@@ -36,6 +36,7 @@
         </div>
     </div>--%>
 </c:if>
+<%--
 <div id="hongbao_detail" class="hongbao_detail" style="display: none;">
     <input type="hidden" id="lottery_type"/>
     <input type="hidden" id="win_id"/>
@@ -90,3 +91,4 @@
         <soul:button opType="function" target="onceAgain" text="" cssClass="btn-ok"/>
     </div>
 </div>
+--%>
