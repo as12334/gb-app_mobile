@@ -2,7 +2,7 @@
 <%@ include file="../include/include.inc.jsp" %>
 <!--红包html开始  通过改变hongbao-wrap的class来改变红包样式，一共三种（hb_type_1,hb_type_2,hb_type_3）-->
 <c:if test="${not empty floatList}">
-    <div class="ads-slider hongbao-slide-wrap hongbao-wrap" id="hongbao">
+<%--    <div class="ads-slider hongbao-slide-wrap hongbao-wrap" id="hongbao">
         <soul:button target="closeAds" text="" opType="function" cssClass="icon-close"/>
         <div class="mui-slider hongbao-slider">
             <div class="mui-slider-group">
@@ -34,7 +34,7 @@
                 </c:forEach>
             </div>
         </div>
-    </div>
+    </div>--%>
 </c:if>
 <div id="hongbao_detail" class="hongbao_detail" style="display: none;">
     <input type="hidden" id="lottery_type"/>

@@ -37,7 +37,7 @@
     </div>
 </div>
 <!--浮窗广告轮播-->
-<%@include file="index.include/Envelope.jsp"%>
+<%--<%@include file="index.include/Envelope.jsp"%>--%>
 <!--消息弹窗-->
 <%@include file="index.include/include.dialog.jsp"%>
 </body>
