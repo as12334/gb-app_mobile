@@ -38,7 +38,7 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                     if (isMobileUpgrade && handler instanceof HandlerMethod && isAppUpdate(request)) {
                         HandlerMethod handlerMethod = (HandlerMethod) handler;
                         Upgrade upgrade = handlerMethod.getMethodAnnotation(Upgrade.class);
-                        if (upgrade != null && upgrade.upgrade()) {
+                        if (false) {
                             modelAndView.setViewName("/themes/v3" + url);
                         } else {
                             modelAndView.setViewName("/themes/default" + url);
