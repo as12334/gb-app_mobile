@@ -103,7 +103,7 @@
                 <li class="mui-table-view-cell"><a href="#" value="today">${views.fund_auto['今天']}</a></li>
                 <li class="mui-table-view-cell"><a href="#" value="yesterday">${views.fund_auto['昨天']}</a></li>
                 <li class="mui-table-view-cell"><a href="#" value="thisWeek">${views.fund_auto['本周']}</a></li>
-                <li class="mui-table-view-cell"><a href="#" value="lastWeek">${views.fund_auto['上周']}</a></li>
+                <%--<li class="mui-table-view-cell"><a href="#" value="lastWeek">${views.fund_auto['上周']}</a></li>--%>
                 <li class="mui-table-view-cell"><a href="#" value="7days">${views.fund_auto['最近7天']}</a></li>
             </ul>
         </div>
