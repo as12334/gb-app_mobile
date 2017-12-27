@@ -56,6 +56,7 @@ import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
+import so.wwb.gamebox.model.master.setting.vo.AppSiteApiTypeRelastionVo;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
@@ -451,21 +452,30 @@ public abstract class BaseApiController extends BaseDemoController {
         return siteApiRelation;
     }
 
-    protected Map<Integer, List<SiteApiTypeRelationI18n>> getSiteApiRelationI18n(Map lotteryMap,Map casinoMap) {
+    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n(Map lotteryMap,Map casinoMap) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
         Map<Integer, List<SiteGame>> lotteryGames = MapTool.newHashMap();
 
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
+        List<Map<Integer, List<SiteApiTypeRelationI18n>>> list = ListTool.newLinkedList();
+        List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
+
         for (SiteApiType api : siteApiTypes) {
             List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
             for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
-
-                if (StringTool.equalsIgnoreCase(relationI18n.getApiTypeId().toString(), api.getApiTypeId().toString())) {
+                if (relationI18n.getApiTypeId().equals(api.getApiTypeId())) {
                     i18ns.add(relationI18n);
                     siteApiRelation.put(api.getApiTypeId(), i18ns);
                 }
             }
+        }
+
+        for (Integer apiType : siteApiRelation.keySet()){
+            AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
+            vo.setApiType(apiType);
+            vo.setSiteApis(siteApiRelation.get(apiType));
+            appList.add(vo);
         }
 
         for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
@@ -488,7 +498,7 @@ public abstract class BaseApiController extends BaseDemoController {
         }
 
         lotteryMap.put("lotteryGame",lotteryGames);
-        return siteApiRelation;
+        return appList;
     }
 
     /**

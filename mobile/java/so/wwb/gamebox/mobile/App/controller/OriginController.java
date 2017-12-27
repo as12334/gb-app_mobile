@@ -89,7 +89,6 @@ public class OriginController extends BaseApiController {
         map.put("siteApiRelation", getSiteApiRelationI18n(lotteryGame,casinoMap));
         map.put("lotteryGame",lotteryGame);
         map.put("casinoMap",casinoMap);
-
         setMapJson(new AppModelVo());
         mapJson.put("data",map);
 
