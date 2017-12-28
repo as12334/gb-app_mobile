@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
@@ -141,6 +143,34 @@ public class OriginController extends BaseApiController {
         return JsonTool.toJson(mapJson);
     }
 
+    @RequestMapping("/getWithDraw")
+    @ResponseBody
+    public String getWithDraw(){
+        if(SessionManager.getUser() == null){
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+
+        if(hasOrder()){
+            AppModelVo order = new AppModelVo();
+        }
+
+        Map<String,Object> map = MapTool.newHashMap();
+
+        withdraw(map);
+
+        setMapJson(new AppModelVo());
+        mapJson.put("data",map);
+
+        return JsonTool.toJson(mapJson);
+    }
+
     //endregion mine
 
     private List<AppMineLinkVo> setLink(){
@@ -226,22 +256,22 @@ public class OriginController extends BaseApiController {
     }
 
     private void setMapJson(AppModelVo app){
-        if(StringTool.isNotBlank(app.getError())){
+        if(app.getError() != 0){
             mapJson.put("error",app.getError());
         }else{
             mapJson.put("error", 0);
         }
 
-        if(StringTool.isNotBlank(app.getCode())){
+        if(app.getCode() != 0){
             mapJson.put("code", app.getCode());
         }else{
-            mapJson.put("code", null);
+            mapJson.put("code", AppErrorCodeEnum.Success.getCode());
         }
 
         if(StringTool.isNotBlank(app.getMsg())){
             mapJson.put("msg", app.getMsg());
         }else{
-            mapJson.put("msg", "请求成功");
+            mapJson.put("msg", AppErrorCodeEnum.Success.getMsg());
         }
 
         if(StringTool.isNotBlank(app.getVersion())){
