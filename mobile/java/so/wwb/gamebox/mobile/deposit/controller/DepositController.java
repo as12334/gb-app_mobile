@@ -321,7 +321,8 @@ public class DepositController extends BaseCommonDepositController {
         cttAnnouncementListVo.getSearch().setLocalLanguage(SessionManager.getLocale().toString());
         cttAnnouncementListVo.getSearch().setPublishTime(new Date());
         cttAnnouncementListVo.getSearch().setDisplay(true);
-        cttAnnouncementListVo.getQuery().addOrder(CttAnnouncement.PROP_PUBLISH_TIME, Direction.DESC);
+        //cttAnnouncementListVo.getQuery().addOrder(CttAnnouncement.PROP_PUBLISH_TIME, Direction.DESC);
+        cttAnnouncementListVo.getQuery().addOrder(CttAnnouncement.PROP_ORDER_NUM, Direction.ASC);
         cttAnnouncementListVo.getPaging().setPageSize(3);
         cttAnnouncementListVo = ServiceTool.cttAnnouncementService().search(cttAnnouncementListVo);
         model.addAttribute("bankNotices", cttAnnouncementListVo);

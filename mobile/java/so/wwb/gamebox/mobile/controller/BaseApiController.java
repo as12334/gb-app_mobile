@@ -213,25 +213,23 @@ public abstract class BaseApiController extends BaseDemoController {
         List<SiteGame> siteGames = new ArrayList<>();
         Integer apiId = listVo.getSearch().getApiId();
         String status = getApiStatus(apiId);
-        Date now = SessionManager.getDate().getNow();
-        Collection<Game> allGames = Cache.getGame().values();
+        String normal = GameStatusEnum.NORMAL.getCode();
+        String disable = GameStatusEnum.DISABLE.getCode();
+        String maintain = GameStatusEnum.MAINTAIN.getCode();
+        Map<String, Game> gameMap = Cache.getGame();
+        String gameStatus;
         for (SiteGame siteGame : games) {
-            if (GameStatusEnum.MAINTAIN.getCode().equals(status)) {
-                siteGame.setStatus(status);
+            Game game = gameMap.get(String.valueOf(siteGame.getGameId()));
+            gameStatus = siteGame.getSystemStatus();
+            if (disable.equals(status) || game == null || disable.equals(gameStatus) || disable.equals(game.getSystemStatus())) {
+                siteGame.setStatus(disable);
+            } else if (maintain.equals(status) || maintain.equals(gameStatus) || maintain.equals(game.getSystemStatus())) {
+                siteGame.setStatus(maintain);
+                siteGames.add(siteGame);
             } else {
-                for (Game game : allGames) {
-                    if (siteGame.getGameId().intValue() == game.getId().intValue()) {
-                        if (game.getMaintainStartTime() != null && game.getMaintainEndTime() != null) {
-                            if (game.getMaintainEndTime().getTime() > now.getTime() && game.getMaintainStartTime().getTime() < now.getTime()) {
-                                siteGame.setStatus(GameStatusEnum.MAINTAIN.getCode());
-                            }
-                        }
-                        siteGame.setCode(game.getCode());
-                        break;
-                    }
-                }
+                siteGame.setStatus(normal);
+                siteGames.add(siteGame);
             }
-            siteGames.add(siteGame);
         }
         return siteGames;
     }
@@ -669,7 +667,7 @@ public abstract class BaseApiController extends BaseDemoController {
     /**
      * 取款
      */
-    protected void withdraw(Map map){
+    protected void withdraw(Map map) {
         Map tempMap = MapTool.newHashMap();
 
         //是否存在取款订单
@@ -690,9 +688,9 @@ public abstract class BaseApiController extends BaseDemoController {
         UserPlayer user = (UserPlayer) tempMap.get("player");
         Double totalBalance = user.getWalletBalance() + apiBalance;
 
-        if(rank.getWithdrawMinNum() > totalBalance ){
-            map.put("balanceLess",true);
-            map.put("balanceMin",rank.getWithdrawMinNum());
+        if (rank.getWithdrawMinNum() > totalBalance) {
+            map.put("balanceLess", true);
+            map.put("balanceMin", rank.getWithdrawMinNum());
         }
     }
 
@@ -736,7 +734,7 @@ public abstract class BaseApiController extends BaseDemoController {
     public boolean hasFreeze(Map map, UserPlayer player) {
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         boolean hasFreeze = player.getBalanceFreezeEndTime() != null
-                            && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
+                && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
         map.put("hasFreeze", hasFreeze);
         LOG.info("取款玩家{0}是否冻结{1}", SessionManagerCommon.getUserName(), hasFreeze);
 
