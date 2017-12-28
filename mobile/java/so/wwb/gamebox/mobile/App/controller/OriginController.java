@@ -1,18 +1,22 @@
 package so.wwb.gamebox.mobile.App.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.net.ServletTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
@@ -114,7 +118,7 @@ public class OriginController extends BaseApiController {
     //endregion mainIndex
 
     //region mine
-    @RequestMapping("/getLink")
+        @RequestMapping("/getLink")
     @ResponseBody
     public String getLink(){
         Map<String,Object> map = MapTool.newHashMap();
@@ -170,6 +174,44 @@ public class OriginController extends BaseApiController {
 
         return JsonTool.toJson(mapJson);
     }
+
+
+    @RequestMapping("/getMyPromo")
+    @ResponseBody
+    public  String getMyPromo(HttpServletRequest request) {
+        if (SessionManager.getUser() == null) {
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+            return JsonTool.toJson(mapJson);
+        }
+        VPreferentialRecodeListVo vPreferentialRecodeListVo = null;
+
+        vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
+        vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
+        if(ServletTool.isAjaxSoulRequest(request)) {
+            vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        }
+        setMapJson(new AppModelVo());
+        mapJson.put("data",vPreferentialRecodeListVo);
+        return JsonTool.toJson(mapJson);
+
+    }
+
+
+    @RequestMapping("/getActivityType")
+    @ResponseBody
+    public String getActivityType(HttpServletRequest request) {
+
+        setMapJson(new AppModelVo());
+        mapJson.put("data", getActivity(request));
+
+        return JsonTool.toJson(mapJson);
+    }
+
+
 
     //endregion mine
 
