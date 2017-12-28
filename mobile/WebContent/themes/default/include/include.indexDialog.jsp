@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/include/include.inc.jsp" %>
-
+<!--消息弹窗-->
 <c:if test="${not empty phoneDialog}">
     <div id="middlePopover" class="mui-popover notice-popover-wrap">
         <div class="mui-popup mui-popup-in">
@@ -21,7 +20,9 @@
                     <c:if test="${not empty link}">
                         <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                     </c:if>
-                    <soul:button text="" target="dialog" dataLink="${link}" opType="function" cssClass="mui-btn mui-btn-block confirm-btn">确定</soul:button>
+                    <c:set var="updateDate" value="${not empty d.update_time ? d.update_time:''}"/>
+                    <div class="home-dialog-checkbox"><input type="checkbox" name="checkbox" value="checkbox" id="home-dialog-checkbox">关闭后，不在显示本弹窗广告</div>
+                    <soul:button text="" target="dialog" dataLink="${link}" dataUpdateTime="${updateDate}" opType="function" cssClass="mui-btn mui-btn-block confirm-btn">确定</soul:button>
                 </c:forEach>
             </div>
         </div>

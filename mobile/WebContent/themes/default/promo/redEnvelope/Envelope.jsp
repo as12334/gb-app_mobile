@@ -20,7 +20,7 @@
                 <div style="text-align: center;font-size: 18px;color: #fff;" id="tip-msgs">
                     ${views.themes_auto['你还有']}<span style="font-size: 18px;padding: 0 5px;color: gold" id="ramain-count">-</span>${views.themes_auto['次抽奖机会']}
                 </div>
-                <button class="btn-rule" id="btn-rule" onclick="openRule()" style="border: none;"></button>
+               <%-- <button class="btn-rule" id="btn-rule" onclick="openRule()" style="border: none;"></button>--%>
                 <!--红包规则元素-->
                 <div class="hongbao-rule">
                     <div class="txt">
