@@ -471,8 +471,11 @@ public abstract class BaseApiController extends BaseDemoController {
                     i18ns.add(relationI18n);
                     siteApiRelation.put(api.getApiTypeId(), i18ns);
                 }
+
             }
         }
+
+
 
         for (Integer apiType : siteApiRelation.keySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
@@ -499,6 +502,18 @@ public abstract class BaseApiController extends BaseDemoController {
                 lotteryGames.put(relationI18n.getApiId(), getLotteryGame(siteGameListVo));
             }
         }
+
+        /*  dwa */
+        List<SiteApiTypeRelationI18n> lotteryList = siteApiRelation.get(4);
+        //SiteApiTypeRelationI18n relationI8nNew=new SiteApiTypeRelationI18n();
+        for (SiteApiTypeRelationI18n relationI8n : lotteryList) {
+            SiteGameListVo siteGameListVo = new SiteGameListVo();
+            siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
+            siteGameListVo.getSearch().setApiTypeId(relationI8n.getApiTypeId());
+            List<SiteGame> list1 = getLotteryGame(siteGameListVo);
+            relationI8n.setGameList(list1);
+        }
+
 
         lotteryMap.put("lotteryGame", lotteryGames);
         return appList;
