@@ -46,7 +46,6 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                     } else {
                         modelAndView.setViewName("/themes/default" + url);
                     }
-                    LOG.info("请求链接跳转viewName:{0}", modelAndView.getViewName());
                 }
             }
         }
