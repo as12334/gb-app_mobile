@@ -489,13 +489,11 @@ public abstract class BaseApiController extends BaseDemoController {
         return siteApiRelation;
     }
 
-    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n(Map lotteryMap, Map casinoMap) {
+    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n() {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
-        Map<Integer, List<SiteGame>> lotteryGames = MapTool.newHashMap();
 
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        List<Map<Integer, List<SiteApiTypeRelationI18n>>> list = ListTool.newLinkedList();
         List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
 
         for (SiteApiType api : siteApiTypes) {
@@ -505,50 +503,71 @@ public abstract class BaseApiController extends BaseDemoController {
                     i18ns.add(relationI18n);
                     siteApiRelation.put(api.getApiTypeId(), i18ns);
                 }
-
             }
         }
-
-
 
         for (Integer apiType : siteApiRelation.keySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
             vo.setApiType(apiType);
+            for (ApiTypeEnum type : ApiTypeEnum.values()){
+                if(type.getCode() == apiType){
+                    vo.setApiTypeName(type.getMsg());
+                }
+            }
             vo.setSiteApis(siteApiRelation.get(apiType));
+            vo.setLocale(SessionManager.getLocale().toString());
+            vo.setCover("");
             appList.add(vo);
         }
 
-        for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
-            //判断捕鱼AG GG是否存在
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
-                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.AG.getCode())) {
-                casinoMap.put("AGExist", true);
-            }
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
-                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.GG.getCode())) {
-                casinoMap.put("GGExist", true);
-            }
-            //彩票类游戏
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.LOTTERY.getCode()) {
-                SiteGameListVo siteGameListVo = new SiteGameListVo();
-                siteGameListVo.getSearch().setApiTypeId(relationI18n.getApiTypeId());
-                siteGameListVo.getSearch().setApiId(relationI18n.getApiId());
-                lotteryGames.put(relationI18n.getApiId(), getLotteryGame(siteGameListVo));
-            }
-        }
+        appList.add(setFishGame(siteApiTypeRelactionI18n.values()));
 
-        List<SiteApiTypeRelationI18n> lotteryList = siteApiRelation.get(4);
+        List<SiteApiTypeRelationI18n> lotteryList = siteApiRelation.get(ApiTypeEnum.LOTTERY.getCode());
         for (SiteApiTypeRelationI18n relationI8n : lotteryList) {
             SiteGameListVo siteGameListVo = new SiteGameListVo();
             siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
             siteGameListVo.getSearch().setApiTypeId(relationI8n.getApiTypeId());
-            List<SiteGame> list1 = getLotteryGame(siteGameListVo);
-            relationI8n.setGameList(list1);
+            List<SiteGame> lotteryGame = getLotteryGame(siteGameListVo);
+            relationI8n.setGameList(lotteryGame);
         }
 
-
-        lotteryMap.put("lotteryGame", lotteryGames);
         return appList;
+    }
+
+    /**
+     * 构造捕鱼游戏
+     * @return
+     */
+    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns){
+        AppSiteApiTypeRelastionVo fishVo = new AppSiteApiTypeRelastionVo();
+        fishVo.setApiType(-1);
+        List<SiteApiTypeRelationI18n> fishSiteApis = ListTool.newArrayList();
+
+        for (SiteApiTypeRelationI18n relationI18n : i18ns) {
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
+                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.AG.getCode())) {
+                SiteApiTypeRelationI18n i18n = new SiteApiTypeRelationI18n();
+                i18n.setName(ApiProviderEnum.AG.getTrans());
+                i18n.setLocal(SessionManager.getSiteLocale().toString());
+                i18n.setSiteId(SessionManager.getSiteId());
+                i18n.setApiId(Integer.getInteger(ApiProviderEnum.AG.getCode()));
+                i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
+                fishSiteApis.add(i18n);
+            }
+            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
+                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.GG.getCode())) {
+                SiteApiTypeRelationI18n i18n = new SiteApiTypeRelationI18n();
+                i18n.setName(ApiProviderEnum.GG.getTrans());
+                i18n.setLocal(SessionManager.getSiteLocale().toString());
+                i18n.setSiteId(SessionManager.getSiteId());
+                i18n.setApiId(Integer.getInteger(ApiProviderEnum.GG.getCode()));
+                i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
+                fishSiteApis.add(i18n);
+            }
+        }
+        fishVo.setSiteApis(fishSiteApis);
+
+        return fishVo;
     }
 
     /**

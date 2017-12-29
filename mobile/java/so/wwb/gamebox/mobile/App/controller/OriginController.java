@@ -38,9 +38,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String mainIndex(HttpServletRequest request) {
         Map<String,Object> map = MapTool.newHashMap();
-        Map<String,Object> lotteryGame = MapTool.newHashMap();
-        Map<String,Object> casinoMap = MapTool.newHashMap();
         List<Map> floatList = ListTool.newArrayList();
+
 
         //浮动图
         showMoneyActivityFloat(floatList);
@@ -48,10 +47,8 @@ public class OriginController extends BaseApiController {
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
 
-        map.put("siteApiRelation", getSiteApiRelationI18n(lotteryGame,casinoMap));
+        map.put("siteApiRelation", getSiteApiRelationI18n());
         map.put("activity", floatList);
-        map.put("lotteryGame",lotteryGame);
-        map.put("casinoMap",casinoMap);
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
@@ -89,12 +86,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String getSiteApi(){
         Map<String,Object> map = MapTool.newHashMap();
-        Map<String,Object> lotteryGame = MapTool.newHashMap();
-        Map<String,Object> casinoMap = MapTool.newHashMap();
         //公告
-        map.put("siteApiRelation", getSiteApiRelationI18n(lotteryGame,casinoMap));
-        map.put("lotteryGame",lotteryGame);
-        map.put("casinoMap",casinoMap);
+        map.put("siteApiRelation", getSiteApiRelationI18n());
         setMapJson(new AppModelVo());
         mapJson.put("data",map);
 
