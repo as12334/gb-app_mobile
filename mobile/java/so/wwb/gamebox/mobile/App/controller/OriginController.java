@@ -141,33 +141,33 @@ public class OriginController extends BaseApiController {
         return JsonTool.toJson(mapJson);
     }
 
-//    @RequestMapping("/getWithDraw")
-//    @ResponseBody
-//    public String getWithDraw(){
-//        if(SessionManager.getUser() == null){
-//            AppModelVo appVo = new AppModelVo();
-//            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-//            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-//            appVo.setError(1);
-//
-//            setMapJson(appVo);
-//
-//            return JsonTool.toJson(mapJson);
-//        }
-//
-//        if(hasOrder()){
-//            AppModelVo order = new AppModelVo();
-//        }
-//
-//        Map<String,Object> map = MapTool.newHashMap();
-//
-//        withdraw(map);
-//
-//        setMapJson(new AppModelVo());
-//        mapJson.put("data",map);
-//
-//        return JsonTool.toJson(mapJson);
-//    }
+    @RequestMapping("/getWithDraw")
+    @ResponseBody
+    public String getWithDraw(){
+        if(SessionManager.getUser() == null){
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+
+        if(hasOrder()){
+            AppModelVo order = new AppModelVo();
+        }
+
+        Map<String,Object> map = MapTool.newHashMap();
+
+        withdraw(map);
+
+        setMapJson(new AppModelVo());
+        mapJson.put("data",map);
+
+        return JsonTool.toJson(mapJson);
+    }
 
     @RequestMapping("/getFundRecord")
     @ResponseBody
