@@ -541,6 +541,9 @@ public abstract class BaseApiController extends BaseDemoController {
     private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns){
         AppSiteApiTypeRelastionVo fishVo = new AppSiteApiTypeRelastionVo();
         fishVo.setApiType(-1);
+        fishVo.setApiTypeName("捕鱼");
+        fishVo.setLocale(SessionManager.getLocale().toString());
+        fishVo.setCover("");
         List<SiteApiTypeRelationI18n> fishSiteApis = ListTool.newArrayList();
 
         for (SiteApiTypeRelationI18n relationI18n : i18ns) {
