@@ -45,7 +45,7 @@ public class OriginController extends BaseApiController {
         //浮动图
         showMoneyActivityFloat(floatList);
 
-        map.put("banner", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
 
         map.put("siteApiRelation", getSiteApiRelationI18n(lotteryGame,casinoMap));
@@ -64,7 +64,7 @@ public class OriginController extends BaseApiController {
     public String getCarouse(HttpServletRequest request){
         Map<String,Object> map = MapTool.newHashMap();
         //轮播图
-        map.put("banner", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
 
         setMapJson(new AppModelVo());
         mapJson.put("data",map);
@@ -186,7 +186,7 @@ public class OriginController extends BaseApiController {
             appVo.setError(1);
             return JsonTool.toJson(mapJson);
         }
-        VPreferentialRecodeListVo vPreferentialRecodeListVo = null;
+        VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());

@@ -67,6 +67,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.*;
 
+import static org.soul.web.tag.ImageTag.getImagePath;
+
 /**
  * Created by LeTu on 2017/3/31.
  */
@@ -292,6 +294,40 @@ public abstract class BaseApiController extends BaseDemoController {
         return resultList;
     }
 
+
+    /**
+     * 查询Banner
+     *
+     * @deprecated since v1057
+     */
+    protected List<Map> getCarouselApp(HttpServletRequest request, String type) {
+        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
+        List<Map> resultList = new ArrayList<>();
+        String webSite = ServletTool.getDomainFullAddress(request);
+        if (carousels != null) {
+            for (Map m : carousels.values()) {
+                if ((StringTool.equalsIgnoreCase(type, m.get("type").toString()))
+                        && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
+                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                    String link = String.valueOf(m.get("link"));
+                    if (StringTool.isNotBlank(link)) {
+                        if (link.contains("${website}")) {
+                            link = link.replace("${website}", webSite);
+                        }
+                    }
+                    m.put("link", link);
+                    String cover = m.get("cover").toString();
+                    cover = getImagePath( SessionManager.getDomain(request),cover);
+                    m.put("cover",cover);
+                    m.put("link", link);
+                    resultList.add(m);
+                }
+            }
+        }
+        return resultList;
+    }
+
     /**
      * 获取彩票游戏
      */
@@ -501,9 +537,7 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
 
-        /*  dwa */
         List<SiteApiTypeRelationI18n> lotteryList = siteApiRelation.get(4);
-        //SiteApiTypeRelationI18n relationI8nNew=new SiteApiTypeRelationI18n();
         for (SiteApiTypeRelationI18n relationI8n : lotteryList) {
             SiteGameListVo siteGameListVo = new SiteGameListVo();
             siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
