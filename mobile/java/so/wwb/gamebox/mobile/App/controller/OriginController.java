@@ -5,20 +5,30 @@ import com.alibaba.fastjson.JSON;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.dubbo.DubboTool;
+import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.net.ServletTool;
+import org.soul.iservice.support.IBaseService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
+import so.wwb.gamebox.iservice.master.report.IVPlayerTransactionService;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
+import so.wwb.gamebox.service.master.fund.PlayerTransferService;
+import so.wwb.gamebox.service.master.fund.VPlayerTransferService;
+import so.wwb.gamebox.service.master.report.VPlayerTransactionService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -175,6 +185,34 @@ public class OriginController extends BaseApiController {
         return JsonTool.toJson(mapJson);
     }
 
+    @RequestMapping("/getFundRecord")
+    @ResponseBody
+    public String getFundRecord() {
+        if (SessionManager.getUser() == null){
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+        VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        initQueryDate(listVo);
+        if (listVo.getSearch().getEndCreateTime() != null)
+            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
+        getFund(mapJson);
+        listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
+        listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
+        listVo = (VPlayerTransactionListVo) DubboTool.getService(VPlayerTransactionService.class).search(listVo);
+        setMapJson(new AppModelVo());
+        mapJson.put("data", listVo);
+        return JsonTool.toJson(mapJson);
+    }
+
 
     @RequestMapping("/getMyPromo")
     @ResponseBody
@@ -191,9 +229,8 @@ public class OriginController extends BaseApiController {
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
-        if(ServletTool.isAjaxSoulRequest(request)) {
-            vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        }
+
+        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         setMapJson(new AppModelVo());
         mapJson.put("data",vPreferentialRecodeListVo);
         return JsonTool.toJson(mapJson);

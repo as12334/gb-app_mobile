@@ -24,6 +24,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -57,6 +58,7 @@ import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppSiteApiTypeRelastionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
@@ -423,6 +425,44 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
         return item;
+    }
+
+    protected void initQueryDate(VPlayerTransactionListVo listVo) {
+        final int DEFAULT_TIME = -6;
+        listVo.setMinDate(SessionManager.getDate().addDays(DEFAULT_TIME));
+        if (listVo.getSearch().getBeginCreateTime() == null) {
+            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(DEFAULT_TIME));
+        } else if (listVo.getSearch().getBeginCreateTime().before(listVo.getMinDate())) {
+            listVo.getSearch().setBeginCreateTime(listVo.getMinDate());
+        }
+        if (listVo.getSearch().getEndCreateTime() == null) {
+            listVo.getSearch().setEndCreateTime(SessionManager.getDate().getNow());
+        }
+    }
+
+
+    private IPlayerTransferService playerTransferService;
+    private IPlayerTransferService playerTransferService() {
+        if (playerTransferService == null)
+            playerTransferService = ServiceTool.playerTransferService();
+        return playerTransferService;
+    }
+    /**
+     * 取款处理中/转账处理中的金额
+     */
+    protected void getFund(Map map) {
+        //正在处理中取款金额
+        PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
+        playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
+
+        map.put("withdrawSum", ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        if (!ParamTool.isLotterySite()) {
+            //正在转账中金额
+            PlayerTransferVo playerTransferVo = new PlayerTransferVo();
+            playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
+//            model.addAttribute("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
+            map.put("transferSum", playerTransferService.queryProcessAmount(playerTransferVo));
+        }
     }
 
     /**
