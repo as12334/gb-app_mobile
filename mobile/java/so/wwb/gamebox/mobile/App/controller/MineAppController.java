@@ -20,10 +20,8 @@ import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
-import so.wwb.gamebox.web.SessionManagerCommon;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,9 +64,35 @@ public class MineAppController extends BaseMineController {
         if (!isLoginUser()) {
             return JsonTool.toJson(mapJson);
         }
-
+        //是否已存在取款订单
         if (hasOrder()) {
             AppModelVo order = new AppModelVo();
+            order.setCode(AppErrorCodeEnum.hasOrder.getCode());
+            order.setMsg(AppErrorCodeEnum.hasOrder.getMsg());
+            order.setError(1);
+            setMapJson(order);
+
+            return JsonTool.toJson(mapJson);
+        }
+        //是否被冻结
+        if (hasFreeze()) {
+            AppModelVo freeze = new AppModelVo();
+            freeze.setCode(AppErrorCodeEnum.hasFreeze.getCode());
+            freeze.setMsg(AppErrorCodeEnum.hasFreeze.getMsg());
+            freeze.setError(1);
+            setMapJson(freeze);
+
+            return JsonTool.toJson(mapJson);
+        }
+        //今日取款是否达到上限
+        if (isFull()) {
+            AppModelVo full = new AppModelVo();
+            full.setCode(AppErrorCodeEnum.IsFull.getCode());
+            full.setMsg(AppErrorCodeEnum.IsFull.getMsg());
+            full.setError(1);
+            setMapJson(full);
+
+            return JsonTool.toJson(mapJson);
         }
 
         Map<String, Object> map = MapTool.newHashMap();
@@ -111,8 +135,10 @@ public class MineAppController extends BaseMineController {
         SysUser user = SessionManager.getUser();
 
         getAppUserInfo(request, user, userApp);
-        mapJson.put("data", userApp);
+
         setMapJson(new AppModelVo());
+        mapJson.put("data", userApp);
+
         return JsonTool.toJson(mapJson);
     }
 

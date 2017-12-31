@@ -293,17 +293,11 @@ public class BaseMineController {
     protected void withdraw(Map map) {
         Map tempMap = MapTool.newHashMap();
 
-        //是否存在取款订单
-        boolean hasOrder = hasOrder();
-
         //取款时同步彩票余额
         double apiBalance = 0;
         if (ParamTool.isLotterySite()) {
             apiBalance = queryLotteryApiBalance();
         }
-
-        //判断玩家是否冻结
-        boolean hasFreeze = hasFreeze(tempMap);
 
         //是否达到取款上限
         boolean isFull = isFull(tempMap);
@@ -352,6 +346,17 @@ public class BaseMineController {
         UserPlayer player = getPlayer();
         map.put("player", player);
         return hasFreeze(map, player);
+    }
+
+    protected boolean hasFreeze(){
+        UserPlayer player = getPlayer();
+        if(player == null){
+            return true;
+        }
+        boolean hasFreeze = player.getBalanceFreezeEndTime() != null
+                && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
+        LOG.info("取款玩家{0}是否冻结{1}", SessionManagerCommon.getUserName(), hasFreeze);
+        return hasFreeze;
     }
 
     public boolean hasFreeze(Map map, UserPlayer player) {
@@ -414,6 +419,20 @@ public class BaseMineController {
             // 还剩取款次数
             map.put("reminder", rank.getWithdrawCount() - count);
             LOG.info("取款玩家{0}取款次数{1},剩余取款次数{2}", SessionManagerCommon.getUserName(), count, rank.getWithdrawCount() - count);
+        }
+        return false;
+    }
+
+    protected boolean isFull(){
+        PlayerRank rank = getRank();
+        if(rank == null){
+            return true;
+        }
+
+        int count = get24HHasCount();
+        if (rank.getIsWithdrawLimit() != null && rank.getIsWithdrawLimit() && rank.getWithdrawCount() != null && count >= rank.getWithdrawCount()) {
+            LOG.info("取款玩家{0}取款次数已达到上限{1},当前玩家取款次数{2}", SessionManagerCommon.getUserName(), rank.getWithdrawCount(), count);
+            return true;
         }
         return false;
     }
