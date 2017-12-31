@@ -5,10 +5,7 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.enums.SupportTerminal;
-import org.soul.commons.init.context.CommonContext;
-import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
@@ -16,22 +13,17 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.commons.security.CryptoTool;
-import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
-import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.Game;
-import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
@@ -39,29 +31,14 @@ import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
-import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
-import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
-import so.wwb.gamebox.model.master.content.po.CttFloatPic;
-import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
-import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
+import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
-import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
-import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
-import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
-import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
-import so.wwb.gamebox.model.master.operation.vo.*;
-import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
-import so.wwb.gamebox.model.master.player.po.*;
-import so.wwb.gamebox.model.master.player.vo.*;
-import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
-import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
-import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
-import so.wwb.gamebox.model.company.site.po.AppSiteApiTypeRelastionVo;
+import so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
@@ -447,6 +424,36 @@ public abstract class BaseApiController extends BaseDemoController {
                 floatList.add(floatMap);
             }
         }
+    }
+
+    /**
+     * 接口获取红包活动
+     * @param request
+     * @return
+     */
+    protected AppFloatPicItem getMoneyActivityFloat(HttpServletRequest request){
+        AppFloatPicItem appFloatPicItem = null;
+        CttFloatPic cttFloatPic = queryMoneyActivityFloat();
+        if(cttFloatPic == null){
+            return appFloatPicItem;
+        }
+
+        PlayerActivityMessage moneyActivity = findMoneyActivity();
+        if(moneyActivity == null){
+            return appFloatPicItem;
+        }
+
+        appFloatPicItem = new AppFloatPicItem();
+        CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
+        appFloatPicItem.setDescription(moneyActivity.getActivityDescription());
+        appFloatPicItem.setActivityId(CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo"));
+        appFloatPicItem.setNormalEffect(getImagePath( SessionManager.getDomain(request),cttFloatPicItem.getNormalEffect()));
+        appFloatPicItem.setLocation(cttFloatPic.getLocation());
+        appFloatPicItem.setLanguage(cttFloatPic.getLanguage());
+        appFloatPicItem.setDistanceSide(cttFloatPic.getDistanceSide());
+        appFloatPicItem.setDistanceTop(cttFloatPic.getDistanceTop());
+
+        return appFloatPicItem;
     }
 
     //获取API类型

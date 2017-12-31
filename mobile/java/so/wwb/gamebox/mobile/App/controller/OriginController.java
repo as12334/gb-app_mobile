@@ -4,7 +4,6 @@ package so.wwb.gamebox.mobile.App.controller;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
-import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
-import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,17 +34,12 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String mainIndex(HttpServletRequest request) {
         Map<String, Object> map = MapTool.newHashMap();
-        List<Map> floatList = ListTool.newArrayList();
-
-
-        //浮动图
-        showMoneyActivityFloat(floatList);
 
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
 
         map.put("siteApiRelation", getSiteApiRelationI18n(request));
-        map.put("activity", floatList);
+        map.put("activity", getMoneyActivityFloat(request));
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
@@ -96,12 +87,10 @@ public class OriginController extends BaseApiController {
 
     @RequestMapping("/getFloat")
     @ResponseBody
-    public String getFloat() {
+    public String getFloat(HttpServletRequest request) {
         Map<String, Object> map = MapTool.newHashMap();
-        List<Map> floatList = ListTool.newArrayList();
-        //浮动图
-        showMoneyActivityFloat(floatList);
-        map.put("activity", floatList);
+
+        map.put("activity", getMoneyActivityFloat(request));
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
