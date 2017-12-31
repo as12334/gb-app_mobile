@@ -244,7 +244,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<String, SiteApi> siteApiMap = Cache.getSiteApi(SessionManager.getSiteId());
         SiteApi siteApi = siteApiMap.get(String.valueOf(apiId));
         String status = GameStatusEnum.MAINTAIN.getCode();
-        if (api != null && GameStatusEnum.NORMAL.getCode().equals(api.getSystemStatus()) && siteApi != null && GameStatusEnum.NORMAL.getCode().equals(siteApi.getSystemStatus())) {
+        if (api != null && (GameStatusEnum.NORMAL.getCode().equals(api.getSystemStatus()) || GameStatusEnum.PRE_MAINTAIN.getCode().equals(api.getSystemStatus())) && siteApi != null && (GameStatusEnum.NORMAL.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.PRE_MAINTAIN.getCode().equals(siteApi.getSystemStatus()))) {
             status = GameStatusEnum.NORMAL.getCode();
         }
         return status;
@@ -320,8 +320,8 @@ public abstract class BaseApiController extends BaseDemoController {
                     }
                     m.put("link", link);
                     String cover = m.get("cover").toString();
-                    cover = getImagePath( SessionManager.getDomain(request),cover);
-                    m.put("cover",cover);
+                    cover = getImagePath(SessionManager.getDomain(request), cover);
+                    m.put("cover", cover);
                     m.put("link", link);
                     resultList.add(m);
                 }
@@ -442,11 +442,13 @@ public abstract class BaseApiController extends BaseDemoController {
 
 
     private IPlayerTransferService playerTransferService;
+
     private IPlayerTransferService playerTransferService() {
         if (playerTransferService == null)
             playerTransferService = ServiceTool.playerTransferService();
         return playerTransferService;
     }
+
     /**
      * 取款处理中/转账处理中的金额
      */
@@ -549,8 +551,8 @@ public abstract class BaseApiController extends BaseDemoController {
         for (Integer apiType : siteApiRelation.keySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
             vo.setApiType(apiType);
-            for (ApiTypeEnum type : ApiTypeEnum.values()){
-                if(type.getCode() == apiType){
+            for (ApiTypeEnum type : ApiTypeEnum.values()) {
+                if (type.getCode() == apiType) {
                     vo.setApiTypeName(type.getMsg());
                 }
             }
@@ -576,9 +578,10 @@ public abstract class BaseApiController extends BaseDemoController {
 
     /**
      * 构造捕鱼游戏
+     *
      * @return
      */
-    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns){
+    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns) {
         AppSiteApiTypeRelastionVo fishVo = new AppSiteApiTypeRelastionVo();
         fishVo.setApiType(-1);
         fishVo.setApiTypeName("捕鱼");
@@ -921,21 +924,21 @@ public abstract class BaseApiController extends BaseDemoController {
         return playerVo.getResult();
     }
 
-    protected MobileActivityMessageVo getActivity(HttpServletRequest request){
+    protected MobileActivityMessageVo getActivity(HttpServletRequest request) {
         Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
 
-        Map<String,List<VActivityMessage>> activityMessage = MapTool.newHashMap();
+        Map<String, List<VActivityMessage>> activityMessage = MapTool.newHashMap();
         List<SiteI18n> siteI18nTemp = ListTool.newArrayList();
 
         for (SiteI18n site : siteI18nMap.values()) {
-            if(StringTool.equalsIgnoreCase(site.getLocale(),SessionManager.getLocale().toString())){
+            if (StringTool.equalsIgnoreCase(site.getLocale(), SessionManager.getLocale().toString())) {
                 VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
                 vActivityMessageListVo.getSearch().setActivityClassifyKey(site.getKey());
-                activityMessage.put(site.getKey(),setDefaultImage(getActivityMessage(vActivityMessageListVo),request));
+                activityMessage.put(site.getKey(), setDefaultImage(getActivityMessage(vActivityMessageListVo), request));
                 siteI18nTemp.add(site);
             }
         }
-        MobileActivityMessageVo messageVo  = new MobileActivityMessageVo();
+        MobileActivityMessageVo messageVo = new MobileActivityMessageVo();
         messageVo.setTypeList(siteI18nTemp);
         messageVo.setTypeMessageMap(activityMessage);
         return messageVo;
@@ -944,7 +947,7 @@ public abstract class BaseApiController extends BaseDemoController {
     /**
      * 获取正在进行中的活动
      */
-    protected VActivityMessageListVo getActivityMessage(VActivityMessageListVo vActivityMessageListVo ){
+    protected VActivityMessageListVo getActivityMessage(VActivityMessageListVo vActivityMessageListVo) {
         vActivityMessageListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageListVo.getSearch().setIsDeleted(Boolean.FALSE);
         vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
@@ -961,10 +964,10 @@ public abstract class BaseApiController extends BaseDemoController {
         return vActivityMessageListVo;
     }
 
-    protected List<VActivityMessage> setDefaultImage(VActivityMessageListVo vActivityMessageListVo, HttpServletRequest request){
-        for(VActivityMessage a : vActivityMessageListVo.getResult()){
+    protected List<VActivityMessage> setDefaultImage(VActivityMessageListVo vActivityMessageListVo, HttpServletRequest request) {
+        for (VActivityMessage a : vActivityMessageListVo.getResult()) {
             String resRootFull = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName());
-            String activityAffiliated = ImageTag.getImagePathWithDefault(request.getServerName(),a.getActivityAffiliated(),resRootFull.concat("'/images/img-sale1.jpg'"));
+            String activityAffiliated = ImageTag.getImagePathWithDefault(request.getServerName(), a.getActivityAffiliated(), resRootFull.concat("'/images/img-sale1.jpg'"));
             a.setActivityAffiliated(activityAffiliated);
         }
         return vActivityMessageListVo.getResult();
