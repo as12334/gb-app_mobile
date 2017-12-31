@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.mobile.controller.BaseApiController;
+import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -32,7 +32,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/mine")
-public class MineController extends BaseApiController{
+public class MineController extends BaseMineController {
     private static Log LOG = LogFactory.getLog(MineController.class);
     private static final String MY_INDEX = "/mine/Mine";
     private static final String GAME_PAGE = "/my/GamePage";
@@ -89,10 +89,5 @@ public class MineController extends BaseApiController{
             return CurrencyTool.formatCurrency(balance);
         }
         return CurrencyTool.formatCurrency(balance);
-    }
-
-    @Override
-    protected String getDemoIndex() {
-        return null;
     }
 }
