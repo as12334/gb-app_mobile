@@ -1,12 +1,11 @@
 package so.wwb.gamebox.mobile.App.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.net.ServletTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,7 +15,9 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
@@ -31,27 +32,24 @@ import java.util.Map;
 @RequestMapping("/origin")
 public class OriginController extends BaseApiController {
     private final String version = "app_01";
-    Map<String,Object> mapJson = MapTool.newHashMap();
+    Map<String, Object> mapJson = MapTool.newHashMap();
 
     //region mainIndex
     @RequestMapping("/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request) {
-        Map<String,Object> map = MapTool.newHashMap();
-        Map<String,Object> lotteryGame = MapTool.newHashMap();
-        Map<String,Object> casinoMap = MapTool.newHashMap();
+        Map<String, Object> map = MapTool.newHashMap();
         List<Map> floatList = ListTool.newArrayList();
+
 
         //浮动图
         showMoneyActivityFloat(floatList);
 
-        map.put("banner", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
 
-        map.put("siteApiRelation", getSiteApiRelationI18n(lotteryGame,casinoMap));
+        map.put("siteApiRelation", getSiteApiRelationI18n());
         map.put("activity", floatList);
-        map.put("lotteryGame",lotteryGame);
-        map.put("casinoMap",casinoMap);
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
@@ -61,88 +59,84 @@ public class OriginController extends BaseApiController {
 
     @RequestMapping("/getCarouse")
     @ResponseBody
-    public String getCarouse(HttpServletRequest request){
-        Map<String,Object> map = MapTool.newHashMap();
+    public String getCarouse(HttpServletRequest request) {
+        Map<String, Object> map = MapTool.newHashMap();
         //轮播图
-        map.put("banner", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
 
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
 
     @RequestMapping("/getAnnouncement")
     @ResponseBody
-    public String getAnnounce(){
-        Map<String,Object> map = MapTool.newHashMap();
+    public String getAnnounce() {
+        Map<String, Object> map = MapTool.newHashMap();
         //公告
         map.put("announcement", getAnnouncement());
 
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
 
     @RequestMapping("/getSiteApiRelation")
     @ResponseBody
-    public String getSiteApi(){
-        Map<String,Object> map = MapTool.newHashMap();
-        Map<String,Object> lotteryGame = MapTool.newHashMap();
-        Map<String,Object> casinoMap = MapTool.newHashMap();
+    public String getSiteApi() {
+        Map<String, Object> map = MapTool.newHashMap();
         //公告
-        map.put("siteApiRelation", getSiteApiRelationI18n(lotteryGame,casinoMap));
-        map.put("lotteryGame",lotteryGame);
-        map.put("casinoMap",casinoMap);
+        map.put("siteApiRelation", getSiteApiRelationI18n());
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
 
     @RequestMapping("/getFloat")
     @ResponseBody
-    public String getFloat(){
-        Map<String,Object> map = MapTool.newHashMap();
+    public String getFloat() {
+        Map<String, Object> map = MapTool.newHashMap();
         List<Map> floatList = ListTool.newArrayList();
         //浮动图
         showMoneyActivityFloat(floatList);
         map.put("activity", floatList);
 
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
     //endregion mainIndex
 
     //region mine
-        @RequestMapping("/getLink")
+    @RequestMapping("/getLink")
     @ResponseBody
-    public String getLink(){
-        Map<String,Object> map = MapTool.newHashMap();
+    public String getLink() {
+        Map<String, Object> map = MapTool.newHashMap();
 
         map.put("isBit", ParamTool.isBit());
         map.put("isCash", ParamTool.isCash());
 
-        map.put("link",setLink());
+        map.put("link", setLink());
 
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
 
     @RequestMapping("/getUser")
     @ResponseBody
-    public String getUser(HttpServletRequest request){
-        Map<String,Object> map = MapTool.newHashMap();
+    public String getUser(HttpServletRequest request) {
+        Map<String, Object> map = MapTool.newHashMap();
 
-        getUserInfo(map,request);
+        getUserInfo(map, request);
 
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
@@ -175,10 +169,38 @@ public class OriginController extends BaseApiController {
         return JsonTool.toJson(mapJson);
     }
 
+    @RequestMapping("/getFundRecord")
+    @ResponseBody
+    public String getFundRecord() {
+        if (SessionManager.getUser() == null) {
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+        VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        initQueryDate(listVo);
+        if (listVo.getSearch().getEndCreateTime() != null)
+            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
+        getFund(mapJson);
+        listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
+        listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
+        listVo = ServiceTool.vPlayerTransactionService().search(listVo);
+        setMapJson(new AppModelVo());
+        mapJson.put("data", listVo);
+        return JsonTool.toJson(mapJson);
+    }
+
 
     @RequestMapping("/getMyPromo")
     @ResponseBody
-    public  String getMyPromo(HttpServletRequest request) {
+    public String getMyPromo(HttpServletRequest request) {
         if (SessionManager.getUser() == null) {
             AppModelVo appVo = new AppModelVo();
             appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
@@ -186,16 +208,15 @@ public class OriginController extends BaseApiController {
             appVo.setError(1);
             return JsonTool.toJson(mapJson);
         }
-        VPreferentialRecodeListVo vPreferentialRecodeListVo = null;
+        VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
-        if(ServletTool.isAjaxSoulRequest(request)) {
-            vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        }
+
+        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         setMapJson(new AppModelVo());
-        mapJson.put("data",vPreferentialRecodeListVo);
+        mapJson.put("data", vPreferentialRecodeListVo);
         return JsonTool.toJson(mapJson);
 
     }
@@ -212,10 +233,9 @@ public class OriginController extends BaseApiController {
     }
 
 
-
     //endregion mine
 
-    private List<AppMineLinkVo> setLink(){
+    private List<AppMineLinkVo> setLink() {
         List<AppMineLinkVo> links = ListTool.newArrayList();
         AppMineLinkVo deposit = new AppMineLinkVo();
         deposit.setCode("deposit");
@@ -297,28 +317,28 @@ public class OriginController extends BaseApiController {
         return links;
     }
 
-    private void setMapJson(AppModelVo app){
-        if(app.getError() != 0){
-            mapJson.put("error",app.getError());
-        }else{
+    private void setMapJson(AppModelVo app) {
+        if (app.getError() != 0) {
+            mapJson.put("error", app.getError());
+        } else {
             mapJson.put("error", 0);
         }
 
-        if(app.getCode() != 0){
+        if (app.getCode() != 0) {
             mapJson.put("code", app.getCode());
-        }else{
+        } else {
             mapJson.put("code", AppErrorCodeEnum.Success.getCode());
         }
 
-        if(StringTool.isNotBlank(app.getMsg())){
+        if (StringTool.isNotBlank(app.getMsg())) {
             mapJson.put("msg", app.getMsg());
-        }else{
+        } else {
             mapJson.put("msg", AppErrorCodeEnum.Success.getMsg());
         }
 
-        if(StringTool.isNotBlank(app.getVersion())){
+        if (StringTool.isNotBlank(app.getVersion())) {
             mapJson.put("version", app.getVersion());
-        }else{
+        } else {
             mapJson.put("version", version);
         }
     }

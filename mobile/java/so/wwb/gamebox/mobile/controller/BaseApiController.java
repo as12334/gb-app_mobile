@@ -24,6 +24,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -57,6 +58,7 @@ import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppSiteApiTypeRelastionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
@@ -66,6 +68,8 @@ import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.*;
+
+import static org.soul.web.tag.ImageTag.getImagePath;
 
 /**
  * Created by LeTu on 2017/3/31.
@@ -213,25 +217,23 @@ public abstract class BaseApiController extends BaseDemoController {
         List<SiteGame> siteGames = new ArrayList<>();
         Integer apiId = listVo.getSearch().getApiId();
         String status = getApiStatus(apiId);
-        Date now = SessionManager.getDate().getNow();
-        Collection<Game> allGames = Cache.getGame().values();
+        String normal = GameStatusEnum.NORMAL.getCode();
+        String disable = GameStatusEnum.DISABLE.getCode();
+        String maintain = GameStatusEnum.MAINTAIN.getCode();
+        Map<String, Game> gameMap = Cache.getGame();
+        String gameStatus;
         for (SiteGame siteGame : games) {
-            if (GameStatusEnum.MAINTAIN.getCode().equals(status)) {
-                siteGame.setStatus(status);
+            Game game = gameMap.get(String.valueOf(siteGame.getGameId()));
+            gameStatus = siteGame.getSystemStatus();
+            if (disable.equals(status) || game == null || disable.equals(gameStatus) || disable.equals(game.getSystemStatus())) {
+                siteGame.setStatus(disable);
+            } else if (maintain.equals(status) || maintain.equals(gameStatus) || maintain.equals(game.getSystemStatus())) {
+                siteGame.setStatus(maintain);
+                siteGames.add(siteGame);
             } else {
-                for (Game game : allGames) {
-                    if (siteGame.getGameId().intValue() == game.getId().intValue()) {
-                        if (game.getMaintainStartTime() != null && game.getMaintainEndTime() != null) {
-                            if (game.getMaintainEndTime().getTime() > now.getTime() && game.getMaintainStartTime().getTime() < now.getTime()) {
-                                siteGame.setStatus(GameStatusEnum.MAINTAIN.getCode());
-                            }
-                        }
-                        siteGame.setCode(game.getCode());
-                        break;
-                    }
-                }
+                siteGame.setStatus(normal);
+                siteGames.add(siteGame);
             }
-            siteGames.add(siteGame);
         }
         return siteGames;
     }
@@ -286,6 +288,40 @@ public abstract class BaseApiController extends BaseDemoController {
                             link = link.replace("${website}", webSite);
                         }
                     }
+                    m.put("link", link);
+                    resultList.add(m);
+                }
+            }
+        }
+        return resultList;
+    }
+
+
+    /**
+     * 查询Banner
+     *
+     * @deprecated since v1057
+     */
+    protected List<Map> getCarouselApp(HttpServletRequest request, String type) {
+        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
+        List<Map> resultList = new ArrayList<>();
+        String webSite = ServletTool.getDomainFullAddress(request);
+        if (carousels != null) {
+            for (Map m : carousels.values()) {
+                if ((StringTool.equalsIgnoreCase(type, m.get("type").toString()))
+                        && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
+                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                    String link = String.valueOf(m.get("link"));
+                    if (StringTool.isNotBlank(link)) {
+                        if (link.contains("${website}")) {
+                            link = link.replace("${website}", webSite);
+                        }
+                    }
+                    m.put("link", link);
+                    String cover = m.get("cover").toString();
+                    cover = getImagePath( SessionManager.getDomain(request),cover);
+                    m.put("cover",cover);
                     m.put("link", link);
                     resultList.add(m);
                 }
@@ -391,6 +427,44 @@ public abstract class BaseApiController extends BaseDemoController {
         return item;
     }
 
+    protected void initQueryDate(VPlayerTransactionListVo listVo) {
+        final int DEFAULT_TIME = -6;
+        listVo.setMinDate(SessionManager.getDate().addDays(DEFAULT_TIME));
+        if (listVo.getSearch().getBeginCreateTime() == null) {
+            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(DEFAULT_TIME));
+        } else if (listVo.getSearch().getBeginCreateTime().before(listVo.getMinDate())) {
+            listVo.getSearch().setBeginCreateTime(listVo.getMinDate());
+        }
+        if (listVo.getSearch().getEndCreateTime() == null) {
+            listVo.getSearch().setEndCreateTime(SessionManager.getDate().getNow());
+        }
+    }
+
+
+    private IPlayerTransferService playerTransferService;
+    private IPlayerTransferService playerTransferService() {
+        if (playerTransferService == null)
+            playerTransferService = ServiceTool.playerTransferService();
+        return playerTransferService;
+    }
+    /**
+     * 取款处理中/转账处理中的金额
+     */
+    protected void getFund(Map map) {
+        //正在处理中取款金额
+        PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
+        playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
+
+        map.put("withdrawSum", ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        if (!ParamTool.isLotterySite()) {
+            //正在转账中金额
+            PlayerTransferVo playerTransferVo = new PlayerTransferVo();
+            playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
+//            model.addAttribute("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
+            map.put("transferSum", playerTransferService.queryProcessAmount(playerTransferVo));
+        }
+    }
+
     /**
      * 显示红包浮动图
      *
@@ -455,13 +529,11 @@ public abstract class BaseApiController extends BaseDemoController {
         return siteApiRelation;
     }
 
-    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n(Map lotteryMap, Map casinoMap) {
+    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n() {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
-        Map<Integer, List<SiteGame>> lotteryGames = MapTool.newHashMap();
 
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        List<Map<Integer, List<SiteApiTypeRelationI18n>>> list = ListTool.newLinkedList();
         List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
 
         for (SiteApiType api : siteApiTypes) {
@@ -477,31 +549,68 @@ public abstract class BaseApiController extends BaseDemoController {
         for (Integer apiType : siteApiRelation.keySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
             vo.setApiType(apiType);
+            for (ApiTypeEnum type : ApiTypeEnum.values()){
+                if(type.getCode() == apiType){
+                    vo.setApiTypeName(type.getMsg());
+                }
+            }
             vo.setSiteApis(siteApiRelation.get(apiType));
+            vo.setLocale(SessionManager.getLocale().toString());
+            vo.setCover("");
             appList.add(vo);
         }
 
-        for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
-            //判断捕鱼AG GG是否存在
+        appList.add(setFishGame(siteApiTypeRelactionI18n.values()));
+
+        List<SiteApiTypeRelationI18n> lotteryList = siteApiRelation.get(ApiTypeEnum.LOTTERY.getCode());
+        for (SiteApiTypeRelationI18n relationI8n : lotteryList) {
+            SiteGameListVo siteGameListVo = new SiteGameListVo();
+            siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
+            siteGameListVo.getSearch().setApiTypeId(relationI8n.getApiTypeId());
+            List<SiteGame> lotteryGame = getLotteryGame(siteGameListVo);
+            relationI8n.setGameList(lotteryGame);
+        }
+
+        return appList;
+    }
+
+    /**
+     * 构造捕鱼游戏
+     * @return
+     */
+    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns){
+        AppSiteApiTypeRelastionVo fishVo = new AppSiteApiTypeRelastionVo();
+        fishVo.setApiType(-1);
+        fishVo.setApiTypeName("捕鱼");
+        fishVo.setLocale(SessionManager.getLocale().toString());
+        fishVo.setCover("");
+        List<SiteApiTypeRelationI18n> fishSiteApis = ListTool.newArrayList();
+
+        for (SiteApiTypeRelationI18n relationI18n : i18ns) {
             if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
                     && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.AG.getCode())) {
-                casinoMap.put("AGExist", true);
+                SiteApiTypeRelationI18n i18n = new SiteApiTypeRelationI18n();
+                i18n.setName(ApiProviderEnum.AG.getTrans());
+                i18n.setLocal(SessionManager.getSiteLocale().toString());
+                i18n.setSiteId(SessionManager.getSiteId());
+                i18n.setApiId(Integer.getInteger(ApiProviderEnum.AG.getCode()));
+                i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
+                fishSiteApis.add(i18n);
             }
             if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
                     && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.GG.getCode())) {
-                casinoMap.put("GGExist", true);
-            }
-            //彩票类游戏
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.LOTTERY.getCode()) {
-                SiteGameListVo siteGameListVo = new SiteGameListVo();
-                siteGameListVo.getSearch().setApiTypeId(relationI18n.getApiTypeId());
-                siteGameListVo.getSearch().setApiId(relationI18n.getApiId());
-                lotteryGames.put(relationI18n.getApiId(), getLotteryGame(siteGameListVo));
+                SiteApiTypeRelationI18n i18n = new SiteApiTypeRelationI18n();
+                i18n.setName(ApiProviderEnum.GG.getTrans());
+                i18n.setLocal(SessionManager.getSiteLocale().toString());
+                i18n.setSiteId(SessionManager.getSiteId());
+                i18n.setApiId(Integer.getInteger(ApiProviderEnum.GG.getCode()));
+                i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
+                fishSiteApis.add(i18n);
             }
         }
+        fishVo.setSiteApis(fishSiteApis);
 
-        lotteryMap.put("lotteryGame", lotteryGames);
-        return appList;
+        return fishVo;
     }
 
     /**
@@ -654,7 +763,7 @@ public abstract class BaseApiController extends BaseDemoController {
     /**
      * 取款
      */
-    protected void withdraw(Map map){
+    protected void withdraw(Map map) {
         Map tempMap = MapTool.newHashMap();
 
         //是否存在取款订单
@@ -675,9 +784,9 @@ public abstract class BaseApiController extends BaseDemoController {
         UserPlayer user = (UserPlayer) tempMap.get("player");
         Double totalBalance = user.getWalletBalance() + apiBalance;
 
-        if(rank.getWithdrawMinNum() > totalBalance ){
-            map.put("balanceLess",true);
-            map.put("balanceMin",rank.getWithdrawMinNum());
+        if (rank.getWithdrawMinNum() > totalBalance) {
+            map.put("balanceLess", true);
+            map.put("balanceMin", rank.getWithdrawMinNum());
         }
     }
 
@@ -721,7 +830,7 @@ public abstract class BaseApiController extends BaseDemoController {
     public boolean hasFreeze(Map map, UserPlayer player) {
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         boolean hasFreeze = player.getBalanceFreezeEndTime() != null
-                            && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
+                && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
         map.put("hasFreeze", hasFreeze);
         LOG.info("取款玩家{0}是否冻结{1}", SessionManagerCommon.getUserName(), hasFreeze);
 
