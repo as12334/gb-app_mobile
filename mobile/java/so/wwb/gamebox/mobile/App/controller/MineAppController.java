@@ -34,26 +34,21 @@ public class MineAppController extends BaseMineController{
 
     @RequestMapping("/getLink")
     @ResponseBody
-    public String getLink() {
+    public String getLink(HttpServletRequest request) {
         Map<String, Object> map = MapTool.newHashMap();
+
+        if(!isLoginUser()){
+            return JsonTool.toJson(mapJson);
+        }
 
         map.put("isBit", ParamTool.isBit());
         map.put("isCash", ParamTool.isCash());
 
         map.put("link", setLink());
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
-    }
-
-    @RequestMapping("/getUser")
-    @ResponseBody
-    public String getUser(HttpServletRequest request) {
-        Map<String, Object> map = MapTool.newHashMap();
-
-        getMineLinkInfo(map, request);
+        Map<String,Object> userInfoMap = MapTool.newHashMap();
+        getMineLinkInfo(userInfoMap,request);
+        map.put("user", userInfoMap);
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
@@ -64,14 +59,7 @@ public class MineAppController extends BaseMineController{
     @RequestMapping("/getWithDraw")
     @ResponseBody
     public String getWithDraw(){
-        if(SessionManager.getUser() == null){
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-
-            setMapJson(appVo);
-
+        if(!isLoginUser()){
             return JsonTool.toJson(mapJson);
         }
 
@@ -109,21 +97,16 @@ public class MineAppController extends BaseMineController{
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord() {
-        if (SessionManager.getUser() == null) {
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-
-            setMapJson(appVo);
-
+        if(!isLoginUser()){
             return JsonTool.toJson(mapJson);
         }
+
         VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
-        if (listVo.getSearch().getEndCreateTime() != null)
+        if (listVo.getSearch().getEndCreateTime() != null){
             listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
+        }
         getFund(mapJson);
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
@@ -201,17 +184,6 @@ public class MineAppController extends BaseMineController{
         loginPassword.setLink("/my/password/editPassword.html");
         links.add(loginPassword);
 
-        ///wallet/deposit/index.html 存款
-        ///wallet/withdraw/index.html 取款
-        ///transfer/index.html 额度转换
-        ///fund/record/index.html 资金记录
-        ///fund/betting/index.html 投注记录
-        ///promo/myPromo.html 优惠记录
-        ///bankCard/page/addCard.html 银行卡
-        ///bankCard/page/addBtc.html 比特币钱包
-        ///message/gameNotice.html?isSendMessage=true 申请优惠
-        ///passport/securityPassword/edit.html 修改安全密码
-        ///my/password/editPassword.html 修改登录密码
         return links;
     }
     private void setMapJson(AppModelVo app) {
@@ -243,7 +215,7 @@ public class MineAppController extends BaseMineController{
     /**
      * 是否有登陆账号
      */
-    public String isLoginUser() {
+    public boolean isLoginUser() {
         if (SessionManager.getUser() == null) {
             AppModelVo appVo = new AppModelVo();
             appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
@@ -252,8 +224,8 @@ public class MineAppController extends BaseMineController{
 
             setMapJson(appVo);
 
-            return JsonTool.toJson(mapJson);
+            return false;
         }
-        return null;
+        return true;
     }
 }
