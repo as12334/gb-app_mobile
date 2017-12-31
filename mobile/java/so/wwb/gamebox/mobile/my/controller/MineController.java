@@ -66,7 +66,7 @@ public class MineController extends BaseMineController {
     public String getFund(HttpServletRequest request) {
 
         Map<String, Object> userInfo = new HashMap<>();
-        getUserInfo(userInfo,request);
+        getMineLinkInfo(userInfo,request);
 
         return JsonTool.toJson(userInfo);
     }

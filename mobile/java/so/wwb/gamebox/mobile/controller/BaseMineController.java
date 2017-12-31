@@ -52,7 +52,7 @@ public class BaseMineController {
     /**
      * 获取我的个人数据
      */
-    protected void getUserInfo(Map<String, Object> userInfo, HttpServletRequest request) {
+    protected void getMineLinkInfo(Map<String, Object> userInfo, HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
         try {

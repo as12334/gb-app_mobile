@@ -53,7 +53,7 @@ public class MineAppController extends BaseMineController{
     public String getUser(HttpServletRequest request) {
         Map<String, Object> map = MapTool.newHashMap();
 
-        //getUserInfo(map, request);
+        getMineLinkInfo(map, request);
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
