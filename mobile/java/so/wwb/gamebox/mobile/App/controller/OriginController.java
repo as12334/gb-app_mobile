@@ -111,24 +111,6 @@ public class OriginController extends BaseApiController {
 
     //region mine
 
-    @RequestMapping("/getMyPromo")
-    @ResponseBody
-    public String getMyPromo(HttpServletRequest request) {
-        isLoginUser();
-        VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
-
-        vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
-        vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
-
-        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        setMapJson(new AppModelVo());
-        mapJson.put("data", vPreferentialRecodeListVo);
-        return JsonTool.toJson(mapJson);
-
-    }
-
-
 
     /**
      * 是否有登陆账号
