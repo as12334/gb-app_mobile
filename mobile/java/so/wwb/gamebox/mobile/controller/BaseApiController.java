@@ -1,9 +1,11 @@
 package so.wwb.gamebox.mobile.controller;
 
+import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.dict.DictTool;
 import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -26,6 +28,7 @@ import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
@@ -46,6 +49,8 @@ import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
+import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
@@ -57,6 +62,7 @@ import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
+import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.company.site.po.AppSiteApiTypeRelastionVo;
@@ -66,6 +72,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -462,8 +469,27 @@ public abstract class BaseApiController extends BaseDemoController {
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
 //            model.addAttribute("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
-            map.put("transferSum", playerTransferService.queryProcessAmount(playerTransferVo));
+            map.put("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
         }
+    }
+
+    protected VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
+        Map<String, Serializable> transactionMap = DictTool.get(DictEnum.COMMON_TRANSACTION_TYPE);
+        if (transactionMap != null) {   // 过滤转账类型
+            transactionMap.remove(TransactionTypeEnum.TRANSFERS.getCode());
+        }
+        playerTransactionListVo.setDictCommonTransactionType(transactionMap);
+        Map<String, Serializable> dictCommonStatus = DictTool.get(DictEnum.COMMON_STATUS);
+        /*删掉稽核失败待处理状态*/
+        dictCommonStatus.remove(CommonStatusEnum.DEAL_AUDIT_FAIL.getCode());
+        playerTransactionListVo.setDictCommonStatus(dictCommonStatus);
+        /*将 返水 推荐 的成功状态 修改为已发放*/
+        Criteria criteriaType = Criteria.add(VPlayerTransaction.PROP_TRANSACTION_TYPE, Operator.IN, ListTool.newArrayList(TransactionTypeEnum.BACKWATER.getCode(), TransactionTypeEnum.RECOMMEND.getCode()));
+        Criteria criteria = Criteria.add(VPlayerTransaction.PROP_STATUS, Operator.EQ, CommonStatusEnum.LSSUING.getCode());
+        if (!playerTransactionListVo.getResult().isEmpty()) {
+            CollectionTool.batchUpdate(playerTransactionListVo.getResult(), Criteria.and(criteria, criteriaType), MapTool.newHashMap(new Pair<String, Object>(VPlayerTransaction.PROP_STATUS, CommonStatusEnum.SUCCESS.getCode())));
+        }
+        return playerTransactionListVo;
     }
 
     /**

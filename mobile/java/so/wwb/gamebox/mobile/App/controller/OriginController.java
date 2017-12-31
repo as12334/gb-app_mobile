@@ -18,6 +18,7 @@ import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
@@ -144,16 +145,7 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/getWithDraw")
     @ResponseBody
     public String getWithDraw(){
-        if(SessionManager.getUser() == null){
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-
-            setMapJson(appVo);
-
-            return JsonTool.toJson(mapJson);
-        }
+        isLoginUser();
 
         if(hasOrder()){
             AppModelVo order = new AppModelVo();
@@ -172,17 +164,7 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord() {
-        if (SessionManager.getUser() == null) {
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-
-
-            setMapJson(appVo);
-
-            return JsonTool.toJson(mapJson);
-        }
+        isLoginUser();
         VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
@@ -192,22 +174,31 @@ public class OriginController extends BaseApiController {
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceTool.vPlayerTransactionService().search(listVo);
+        listVo = preList(listVo);
         setMapJson(new AppModelVo());
         mapJson.put("data", listVo);
         return JsonTool.toJson(mapJson);
+    }
+
+    @RequestMapping("/getBettingDetails")
+    @ResponseBody
+    public String getBettingDetails(String searchId) {
+        isLoginUser();
+        VPlayerTransactionVo vo = new VPlayerTransactionVo();
+        vo.getSearch().setId(Integer.valueOf(searchId));
+        if (vo.getSearch().getId() == null) {
+            mapJson.put("data", vo);
+            return JsonTool.toJson(mapJson);
+        }
+//        vo = super.doView(vo, model);
+        return "";
     }
 
 
     @RequestMapping("/getMyPromo")
     @ResponseBody
     public String getMyPromo(HttpServletRequest request) {
-        if (SessionManager.getUser() == null) {
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-            return JsonTool.toJson(mapJson);
-        }
+        isLoginUser();
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
@@ -232,6 +223,22 @@ public class OriginController extends BaseApiController {
         return JsonTool.toJson(mapJson);
     }
 
+    /**
+     * 是否有登陆账号
+     */
+    public String isLoginUser() {
+        if (SessionManager.getUser() == null) {
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+        return null;
+    }
 
     //endregion mine
 
