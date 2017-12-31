@@ -224,7 +224,7 @@ public abstract class BaseApiController extends BaseDemoController {
         String gameStatus;
         for (SiteGame siteGame : games) {
             Game game = gameMap.get(String.valueOf(siteGame.getGameId()));
-            gameStatus = siteGame.getSystemStatus();
+            gameStatus = siteGame.getStatus();
             if (disable.equals(status) || game == null || disable.equals(gameStatus) || disable.equals(game.getSystemStatus())) {
                 siteGame.setStatus(disable);
             } else if (maintain.equals(status) || maintain.equals(gameStatus) || maintain.equals(game.getSystemStatus())) {
