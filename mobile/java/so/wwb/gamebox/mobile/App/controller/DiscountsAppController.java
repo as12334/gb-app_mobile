@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/discountsOrigin")
-public class DiscountsController extends BaseDiscountsController{
+public class DiscountsAppController extends BaseDiscountsController{
     private final String version = "app_01";
     Map<String, Object> mapJson = MapTool.newHashMap();
 
