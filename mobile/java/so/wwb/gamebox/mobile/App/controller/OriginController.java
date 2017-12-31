@@ -17,7 +17,6 @@ import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
-import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -130,15 +129,6 @@ public class OriginController extends BaseApiController {
     }
 
 
-    @RequestMapping("/getActivityType")
-    @ResponseBody
-    public String getActivityType(HttpServletRequest request) {
-
-        setMapJson(new AppModelVo());
-        mapJson.put("data", getActivity(request));
-
-        return JsonTool.toJson(mapJson);
-    }
 
     /**
      * 是否有登陆账号
