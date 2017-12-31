@@ -1,12 +1,14 @@
 package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -14,9 +16,15 @@ import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
+import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.company.enums.GameStatusEnum;
+import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
+import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
@@ -33,14 +41,12 @@ import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -166,6 +172,98 @@ public class BaseMineController {
             userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
         }
         userInfo.put("currency", getCurrencySign());
+    }
+
+    protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
+        PlayerApiListVo listVo = new PlayerApiListVo();
+        listVo.getSearch().setPlayerId(userId);
+        listVo.setApis(Cache.getApi());
+        listVo.setSiteApis(Cache.getSiteApi());
+        return listVo;
+    }
+
+    protected void getAppUserInfo(HttpServletRequest request, SysUser user,UserInfoApp userInfoApp) {
+        PlayerApiListVo listVo = initPlayerApiListVo(user.getId());
+        VUserPlayer player = getVPlayer(user.getId());
+        // API 余额
+        userInfoApp.setApis(getSiteApis(listVo, request, false));
+        if (player != null) {
+            userInfoApp.setCurrSign(player.getCurrencySign());
+            userInfoApp.setUsername(StringTool.overlayName(player.getUsername()));
+            // 钱包余额
+            Double balance = player.getWalletBalance();
+            userInfoApp.setBalance(CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
+        }
+        // 总资产
+        userInfoApp.setAssets(queryPlayerAssets(listVo, user.getId()));
+    }
+
+    /**
+     * 查询玩家总资产
+     */
+    private String queryPlayerAssets(PlayerApiListVo listVo, Integer userId) {
+        listVo.getSearch().setPlayerId(userId);
+        listVo.setApis(Cache.getApi());
+        listVo.setSiteApis(Cache.getSiteApi());
+        double assets = ServiceTool.playerApiService().queryPlayerAssets(listVo);
+        return CurrencyTool.formatCurrency(assets);
+    }
+
+    private List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
+        //同步余额
+        if (isFetch) {
+            IApiBalanceService service = (IApiBalanceService) SpringTool.getBean("apiBalanceService");
+            service.fetchPlayerAllApiBalance();
+            listVo.getSearch().setApiId(null);
+        }
+        listVo.setType(ApiQueryTypeEnum.ALL_API.getCode());
+        listVo = ServiceTool.playerApiService().fundRecord(listVo);
+         /* 翻译api */
+        List<Map<String, Object>> maps = new ArrayList<>();
+        List<SiteApi> apis = getSiteApi();
+        for (SiteApi siteApi : apis) {
+            for (PlayerApi api : listVo.getResult()) {
+                if (siteApi.getApiId().intValue() == api.getApiId().intValue()) {
+                    Map<String, Object> map = new HashMap<>();
+                    String apiId = api.getApiId().toString();
+                    map.put("apiId", apiId);
+                    map.put("apiName", CacheBase.getSiteApiName(apiId));
+                    map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
+                    map.put("status", siteApi.getStatus());
+
+                    maps.add(map);
+                }
+            }
+        }
+
+        //根据API余额降序 Add by Bruce.QQ
+        Collections.sort(maps, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                return ((Double) o2.get("balance")).compareTo((Double) o1.get("balance"));
+            }
+        });
+        return maps;
+    }
+
+    private List<SiteApi> getSiteApi() {
+        Map<String, SiteApi> siteApiMap = CacheBase.getSiteApi();
+        List<SiteApi> siteApis = new ArrayList<>();
+        Map<String, Api> apiMap = CacheBase.getApi();
+        String disable = GameStatusEnum.DISABLE.getCode();
+        String maintain = GameStatusEnum.MAINTAIN.getCode();
+        if (MapTool.isNotEmpty(siteApiMap)) {
+            for (SiteApi siteApi : siteApiMap.values()) {
+                Api api = apiMap.get(String.valueOf(siteApi.getApiId()));
+                if (api != null && !disable.equals(api.getSystemStatus()) && !disable.equals(siteApi.getSystemStatus())) {
+                    if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
+                        siteApi.setStatus(maintain);
+                    }
+                    siteApis.add(siteApi);
+                }
+            }
+        }
+        return siteApis;
     }
 
     protected Double getWalletBalance(Integer userId) {
@@ -348,6 +446,16 @@ public class BaseMineController {
         playerVo.setResult(new UserPlayer());
         playerVo = ServiceTool.userPlayerService().get(playerVo);
         return playerVo.getResult();
+    }
+
+    protected VUserPlayer getVPlayer(Integer userId) {
+        VUserPlayerVo vo = new VUserPlayerVo();
+        vo.getSearch().setId(userId);
+        VUserPlayer player = ServiceTool.vUserPlayerService().queryPlayer4App(vo);
+        if (player != null) {
+            player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
+        }
+        return player;
     }
 
 

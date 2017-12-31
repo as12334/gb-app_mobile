@@ -5,10 +5,12 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -18,8 +20,10 @@ import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +32,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/mineOrigin")
-public class MineAppController extends BaseMineController{
+public class MineAppController extends BaseMineController {
     private final String version = "app_01";
     Map<String, Object> mapJson = MapTool.newHashMap();
 
@@ -37,7 +41,7 @@ public class MineAppController extends BaseMineController{
     public String getLink(HttpServletRequest request) {
         Map<String, Object> map = MapTool.newHashMap();
 
-        if(!isLoginUser()){
+        if (!isLoginUser()) {
             return JsonTool.toJson(mapJson);
         }
 
@@ -46,8 +50,8 @@ public class MineAppController extends BaseMineController{
 
         map.put("link", setLink());
 
-        Map<String,Object> userInfoMap = MapTool.newHashMap();
-        getMineLinkInfo(userInfoMap,request);
+        Map<String, Object> userInfoMap = MapTool.newHashMap();
+        getMineLinkInfo(userInfoMap, request);
         map.put("user", userInfoMap);
 
         setMapJson(new AppModelVo());
@@ -58,21 +62,21 @@ public class MineAppController extends BaseMineController{
 
     @RequestMapping("/getWithDraw")
     @ResponseBody
-    public String getWithDraw(){
-        if(!isLoginUser()){
+    public String getWithDraw() {
+        if (!isLoginUser()) {
             return JsonTool.toJson(mapJson);
         }
 
-        if(hasOrder()){
+        if (hasOrder()) {
             AppModelVo order = new AppModelVo();
         }
 
-        Map<String,Object> map = MapTool.newHashMap();
+        Map<String, Object> map = MapTool.newHashMap();
 
         withdraw(map);
 
         setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        mapJson.put("data", map);
 
         return JsonTool.toJson(mapJson);
     }
@@ -80,7 +84,9 @@ public class MineAppController extends BaseMineController{
     @RequestMapping("/getMyPromo")
     @ResponseBody
     public String getMyPromo(HttpServletRequest request) {
-        isLoginUser();
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
@@ -94,17 +100,33 @@ public class MineAppController extends BaseMineController{
 
     }
 
+    @RequestMapping("/getUserInfo")
+    @ResponseBody
+    public String getUserInfo(HttpServletRequest request) {
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
+
+        UserInfoApp userApp = new UserInfoApp();
+        SysUser user = SessionManager.getUser();
+
+        getAppUserInfo(request, user, userApp);
+        mapJson.put("data", userApp);
+        setMapJson(new AppModelVo());
+        return JsonTool.toJson(mapJson);
+    }
+
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord() {
-        if(!isLoginUser()){
+        if (!isLoginUser()) {
             return JsonTool.toJson(mapJson);
         }
 
         VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
-        if (listVo.getSearch().getEndCreateTime() != null){
+        if (listVo.getSearch().getEndCreateTime() != null) {
             listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         }
         getFund(mapJson);
@@ -186,6 +208,7 @@ public class MineAppController extends BaseMineController{
 
         return links;
     }
+
     private void setMapJson(AppModelVo app) {
         if (app.getError() != 0) {
             mapJson.put("error", app.getError());
@@ -210,6 +233,11 @@ public class MineAppController extends BaseMineController{
         } else {
             mapJson.put("version", version);
         }
+        if (app.getData() != null) {
+            mapJson.put("version", app.getData());
+        } else {
+            mapJson.put("data", null);
+        }
     }
 
     /**
@@ -221,7 +249,7 @@ public class MineAppController extends BaseMineController{
             appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
             appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             appVo.setError(1);
-
+            appVo.setData(null);
             setMapJson(appVo);
 
             return false;
