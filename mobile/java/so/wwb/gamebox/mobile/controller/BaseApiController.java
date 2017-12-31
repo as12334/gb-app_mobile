@@ -644,45 +644,9 @@ public abstract class BaseApiController extends BaseDemoController {
         return CollectionTool.toEntityMap(getGameI18n(listVo), SiteGameI18n.PROP_GAME_ID, String.class);
     }
 
-    protected MobileActivityMessageVo getActivity(HttpServletRequest request){
-        Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
 
-        Map<String,List<VActivityMessage>> activityMessage = MapTool.newHashMap();
-        List<SiteI18n> siteI18nTemp = ListTool.newArrayList();
 
-        for (SiteI18n site : siteI18nMap.values()) {
-            if(StringTool.equalsIgnoreCase(site.getLocale(),SessionManager.getLocale().toString())){
-                VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
-                vActivityMessageListVo.getSearch().setActivityClassifyKey(site.getKey());
-                activityMessage.put(site.getKey(),setDefaultImage(getActivityMessage(vActivityMessageListVo),request));
-                siteI18nTemp.add(site);
-            }
-        }
-        MobileActivityMessageVo messageVo  = new MobileActivityMessageVo();
-        messageVo.setTypeList(siteI18nTemp);
-        messageVo.setTypeMessageMap(activityMessage);
-        return messageVo;
-    }
 
-    /**
-     * 获取正在进行中的活动
-     */
-    protected VActivityMessageListVo getActivityMessage(VActivityMessageListVo vActivityMessageListVo ){
-        vActivityMessageListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageListVo.getSearch().setIsDeleted(Boolean.FALSE);
-        vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
-        vActivityMessageListVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        //vActivityMessageListVo.getPaging().setPageSize(pageSize);
-        vActivityMessageListVo.getSearch().setActivityClassifyKey(vActivityMessageListVo.getSearch().getActivityClassifyKey());
-        //通过玩家层级判断是否显示活动
-        if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
-            SysUserVo sysUserVo = new SysUserVo();
-            sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
-        }
-        vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
-        return vActivityMessageListVo;
-    }
 
     protected List<VActivityMessage> setDefaultImage(VActivityMessageListVo vActivityMessageListVo, HttpServletRequest request){
         for(VActivityMessage a : vActivityMessageListVo.getResult()){

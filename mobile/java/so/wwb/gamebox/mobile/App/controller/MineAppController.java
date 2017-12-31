@@ -14,6 +14,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
+import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
@@ -86,6 +87,23 @@ public class MineAppController extends BaseMineController{
         mapJson.put("data",map);
 
         return JsonTool.toJson(mapJson);
+    }
+
+    @RequestMapping("/getMyPromo")
+    @ResponseBody
+    public String getMyPromo(HttpServletRequest request) {
+        isLoginUser();
+        VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
+
+        vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
+        vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
+
+        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        setMapJson(new AppModelVo());
+        mapJson.put("data", vPreferentialRecodeListVo);
+        return JsonTool.toJson(mapJson);
+
     }
 
     @RequestMapping("/getFundRecord")
@@ -220,5 +238,22 @@ public class MineAppController extends BaseMineController{
         } else {
             mapJson.put("version", version);
         }
+    }
+
+    /**
+     * 是否有登陆账号
+     */
+    public String isLoginUser() {
+        if (SessionManager.getUser() == null) {
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+        return null;
     }
 }
