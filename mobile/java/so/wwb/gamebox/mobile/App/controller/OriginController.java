@@ -48,7 +48,7 @@ public class OriginController extends BaseApiController {
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
 
-        map.put("siteApiRelation", getSiteApiRelationI18n());
+        map.put("siteApiRelation", getSiteApiRelationI18n(request));
         map.put("activity", floatList);
 
         setMapJson(new AppModelVo());
@@ -85,10 +85,10 @@ public class OriginController extends BaseApiController {
 
     @RequestMapping("/getSiteApiRelation")
     @ResponseBody
-    public String getSiteApi() {
+    public String getSiteApi(HttpServletRequest request) {
         Map<String, Object> map = MapTool.newHashMap();
         //公告
-        map.put("siteApiRelation", getSiteApiRelationI18n());
+        map.put("siteApiRelation", getSiteApiRelationI18n(request));
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
 
