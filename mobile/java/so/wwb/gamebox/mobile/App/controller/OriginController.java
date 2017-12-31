@@ -115,13 +115,7 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/getMyPromo")
     @ResponseBody
     public String getMyPromo(HttpServletRequest request) {
-        if (SessionManager.getUser() == null) {
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-            return JsonTool.toJson(mapJson);
-        }
+        isLoginUser();
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
@@ -145,6 +139,24 @@ public class OriginController extends BaseApiController {
 
         return JsonTool.toJson(mapJson);
     }
+
+    /**
+     * 是否有登陆账号
+     */
+    public String isLoginUser() {
+        if (SessionManager.getUser() == null) {
+            AppModelVo appVo = new AppModelVo();
+            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            appVo.setError(1);
+
+            setMapJson(appVo);
+
+            return JsonTool.toJson(mapJson);
+        }
+        return null;
+    }
+
     //endregion mine
 
     private void setMapJson(AppModelVo app) {
