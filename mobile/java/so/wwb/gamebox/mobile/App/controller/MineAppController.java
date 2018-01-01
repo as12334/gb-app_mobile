@@ -18,6 +18,8 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.po.VUserPlayer;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
@@ -145,6 +147,31 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(mapJson);
     }
 
+
+    @RequestMapping("/refresh")
+    @ResponseBody
+    public String refresh(HttpServletRequest request) {
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
+        Integer userId = SessionManager.getUserId();
+        PlayerApiListVo listVo = initPlayerApiListVo(userId);
+        VUserPlayer player = getVPlayer(userId);
+
+        UserInfoApp infoApp = new UserInfoApp();
+        infoApp.setApis(getSiteApis(listVo, request, true));
+        infoApp.setCurrSign(player.getCurrencySign());
+        infoApp.setAssets(queryPlayerAssets(listVo, userId));
+        infoApp.setUsername(player.getUsername());
+
+        setMapJson(new AppModelVo());
+        mapJson.put("data", infoApp);
+        return JsonTool.toJson(mapJson);
+    }
+
+
+
+
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord() {
@@ -166,6 +193,8 @@ public class MineAppController extends BaseMineController {
         mapJson.put("data", listVo);
         return JsonTool.toJson(mapJson);
     }
+
+
 
     @RequestMapping("/getFundRecordDetails")
     @ResponseBody
@@ -204,7 +233,6 @@ public class MineAppController extends BaseMineController {
 
         return JsonTool.toJson(mapJson);
     }
-
 
 
 
