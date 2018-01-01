@@ -29,7 +29,7 @@
             <li class="mui-table-view-cell"><a href="#" value="thisWeek">${views.include_auto['本周']}</a></li>
             <li class="mui-table-view-cell"><a href="#" value="lastWeek">${views.include_auto['上周']}</a></li>
             <li class="mui-table-view-cell"><a href="#" value="thisMonth">${views.include_auto['本月']}</a></li>
-            <li class="mui-table-view-cell"><a href="#" value="lastMonth">${views.include_auto['上月']}</a></li>
+            <%--<li class="mui-table-view-cell"><a href="#" value="lastMonth">${views.include_auto['上月']}</a></li>--%>
             <li class="mui-table-view-cell"><a href="#" value="7days">${views.include_auto['最近7天']}</a></li>
             <li class="mui-table-view-cell"><a href="#" value="30days">${views.include_auto['最近30天']}</a></li>
         </ul>
