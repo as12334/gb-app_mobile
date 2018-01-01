@@ -39,7 +39,7 @@
 <!--浮窗广告轮播-->
 <%--<%@include file="index.include/Envelope.jsp"%>--%>
 <!--消息弹窗-->
-<%--<%@include file="index.include/include.dialog.jsp"%>--%>
+<%@include file="index.include/include.dialog.jsp"%>
 </body>
 <%@include file="include/include.js.jsp"%>
 <script src="${resComRoot}/js/mobile/layer.js"></script>
