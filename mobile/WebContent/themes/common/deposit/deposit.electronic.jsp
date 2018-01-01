@@ -134,7 +134,7 @@
                                     </div>
                                     <c:if test="${not empty payAccount.remark}">
                                         <div class="front-end">
-                                            <pre>${payAccount.remark}</pre>
+                                            <pre stype="white-space: normal;">${payAccount.remark}</pre>
                                         </div>
                                     </c:if>
                                 </div>
