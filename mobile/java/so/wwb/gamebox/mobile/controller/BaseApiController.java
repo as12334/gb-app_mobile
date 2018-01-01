@@ -8,25 +8,20 @@ import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.math.NumberTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
+import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.commons.security.CryptoTool;
-import org.soul.model.security.privilege.vo.SysUserVo;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
-import org.soul.web.tag.ImageTag;
 import org.springframework.ui.Model;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.Game;
-import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
@@ -35,27 +30,12 @@ import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.*;
-import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
-import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
-import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
-import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
-import so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
-import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
-import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
-import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.model.master.player.po.UserPlayer;
-import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
-import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
-import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
-import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
@@ -320,7 +300,7 @@ public abstract class BaseApiController extends BaseDemoController {
     /**
      * 获取彩票游戏
      */
-    private SiteGameListVo getGames(SiteGameListVo listVo) {
+    private SiteGameListVo getLotteryGames(SiteGameListVo listVo) {
         SiteGameSo so = listVo.getSearch();
         Criteria gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
         List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), gamesCriteria);
@@ -333,7 +313,7 @@ public abstract class BaseApiController extends BaseDemoController {
     }
 
     private List<SiteGame> getLotteryGame(SiteGameListVo listVo) {
-        listVo = getGames(listVo);
+        listVo = getLotteryGames(listVo);
         Map<String, SiteGameI18n> siteGameI18n = getGameI18nMap(listVo);
         for (SiteGame siteGame : listVo.getResult()) {
             for (String gameId : siteGameI18n.keySet()) {
@@ -344,6 +324,77 @@ public abstract class BaseApiController extends BaseDemoController {
         }
         return listVo.getResult();
     }
+
+    /**
+     *
+     * @param listVo
+     * @return
+     */
+    protected List<AppSiteGame> getCasinoGameByApiId(SiteGameListVo listVo,HttpServletRequest request,Map pageMap) {
+        Integer apiId = listVo.getSearch().getApiId();
+        List<AppSiteGame> siteGames = ListTool.newArrayList();
+
+        if (!NumberTool.isNumber(String.valueOf(apiId)) && apiId <= 0) {
+            return siteGames;
+        }
+
+        listVo = getCasinoGames(listVo);
+        Map<String,SiteGameI18n> map = getGameI18nMap(listVo);
+        for (SiteGame siteGame: listVo.getResult()){
+            for (String api : map.keySet()){
+                if(StringTool.equalsIgnoreCase(siteGame.getGameId().toString(),api)){
+                    AppSiteGame casinoGame = new AppSiteGame();
+                    casinoGame.setGameId(siteGame.getGameId());
+                    casinoGame.setSiteId(siteGame.getSiteId());
+                    casinoGame.setApiId(siteGame.getApiId());
+                    casinoGame.setGameType(siteGame.getGameType());
+                    casinoGame.setOrderNum(siteGame.getOrderNum());
+                    casinoGame.setStatus(siteGame.getStatus());
+                    casinoGame.setApiTypeId(siteGame.getApiTypeId());
+                    casinoGame.setCode(siteGame.getCode());
+                    casinoGame.setName(getSiteGameName(siteGame.getGameId().toString()));
+                    casinoGame.setCover(getImagePath(SessionManager.getDomain(request),map.get(api).getCover()));
+                    casinoGame.setSystemStatus(siteGame.getSystemStatus());
+                    if(SessionManager.getUser() != null){
+                        if(SessionManager.isAutoPay()){
+                            casinoGame.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                        }else{
+                            casinoGame.setGameLink("/api/login.html");
+                        }
+                    }
+
+                    siteGames.add(casinoGame);
+                }
+            }
+        }
+        pageMap.put("page",listVo.getPaging());
+
+        return siteGames;
+    }
+
+    /**
+     * 获取电子游戏
+     */
+    private SiteGameListVo getCasinoGames(SiteGameListVo listVo) {
+        SiteGameSo so = listVo.getSearch();
+        Paging paging = listVo.getPaging();
+        Criteria gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
+        List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), gamesCriteria);
+        games = getSiteGamesWhichIsNormalStatus(games);
+        games = games == null ? new ArrayList<SiteGame>() : games;
+        paging.setTotalCount(games.size());
+        paging.cal();
+
+        Integer pageNumber = paging.getPageNumber();
+        Integer toIndex = ((pageNumber - 1) * paging.getPageSize() + paging.getPageSize());
+        Integer formIndex = (pageNumber - 1) * paging.getPageSize();
+        games = games.subList(formIndex, toIndex > paging.getTotalCount() ? (int) paging.getTotalCount() : toIndex);
+
+        // 设置游戏状态
+        listVo.setResult(setGameStatus(listVo, games));
+        return listVo;
+    }
+
 
     /**
      * 查询红包浮动图
@@ -576,6 +627,14 @@ public abstract class BaseApiController extends BaseDemoController {
             app.setName(getSiteGameName(siteGame.getGameId().toString()));
             app.setCover(getImagePath(SessionManager.getDomain(request), siteGame.getCover()));
             app.setSystemStatus(siteGame.getSystemStatus());
+
+            if(SessionManager.getUser() != null) {
+                if (SessionManager.isAutoPay()) {
+                    app.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                } else {
+                    app.setGameLink("/api/login.html");
+                }
+            }
             games.add(app);
         }
         i18n.setGameList(games);
@@ -598,6 +657,15 @@ public abstract class BaseApiController extends BaseDemoController {
             appI18n.setName(i18n.getName());
             appI18n.setSiteId(i18n.getSiteId());
             appI18n.setCover("images/icon-" + i18n.getApiTypeId() + "-" + i18n.getApiId() + "" + ".png");
+            if(SessionManager.getUser()!=null && i18n.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()){
+                if(i18n.getApiId().equals(ApiProviderEnum.BSG.getCode())){
+                    appI18n.setGameLink("/game/apiGames.html?apiId="+i18n.getApiId()+"&apiTypeId="+i18n.getApiTypeId());
+                }else if(SessionManager.isAutoPay() && i18n.getApiTypeId() != ApiTypeEnum.CASINO.getCode()){
+                    appI18n.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                }else{
+                    appI18n.setGameLink("/game/getGameByApiId.html?search.apiId="+i18n.getApiId()+"&search.apiTypeId="+i18n.getApiTypeId());
+                }
+            }
 
             if(i18n.getApiTypeId() == ApiTypeEnum.LOTTERY.getCode()){
                 setAppSiteGame(i18n,appI18n,request);
@@ -630,6 +698,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.getInteger(ApiProviderEnum.AG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
+                i18n.setGameLink("/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
                 fishSiteApis.add(i18n);
             }
             if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
@@ -640,6 +709,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.getInteger(ApiProviderEnum.GG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
+                i18n.setGameLink("/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2");
                 fishSiteApis.add(i18n);
             }
         }

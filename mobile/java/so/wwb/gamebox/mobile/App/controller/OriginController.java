@@ -1,23 +1,20 @@
 package so.wwb.gamebox.mobile.App.controller;
 
 
-import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
-import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -94,6 +91,20 @@ public class OriginController extends BaseApiController {
 
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
+
+        return JsonTool.toJson(mapJson);
+    }
+
+    @RequestMapping("/getCasinoGame")
+    @ResponseBody
+    public String getCasinoGame(SiteGameListVo listVo,HttpServletRequest request){
+        Map<String,Object> map = MapTool.newHashMap();
+        Map<String,Object> page = MapTool.newHashMap();
+
+        map.put("casinoGames",getCasinoGameByApiId(listVo,request,page));
+        map.put("page",page);
+        setMapJson(new AppModelVo());
+        mapJson.put("data",map);
 
         return JsonTool.toJson(mapJson);
     }
