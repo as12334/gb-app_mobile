@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.App.model.RecordDetailApp;
 import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -17,7 +18,11 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.po.VUserPlayer;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
+import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
@@ -142,6 +147,31 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(mapJson);
     }
 
+
+    @RequestMapping("/refresh")
+    @ResponseBody
+    public String refresh(HttpServletRequest request) {
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
+        Integer userId = SessionManager.getUserId();
+        PlayerApiListVo listVo = initPlayerApiListVo(userId);
+        VUserPlayer player = getVPlayer(userId);
+
+        UserInfoApp infoApp = new UserInfoApp();
+        infoApp.setApis(getSiteApis(listVo, request, true));
+        infoApp.setCurrSign(player.getCurrencySign());
+        infoApp.setAssets(queryPlayerAssets(listVo, userId));
+        infoApp.setUsername(player.getUsername());
+
+        setMapJson(new AppModelVo());
+        mapJson.put("data", infoApp);
+        return JsonTool.toJson(mapJson);
+    }
+
+
+
+
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord() {
@@ -163,6 +193,48 @@ public class MineAppController extends BaseMineController {
         mapJson.put("data", listVo);
         return JsonTool.toJson(mapJson);
     }
+
+
+
+    @RequestMapping("/getFundRecordDetails")
+    @ResponseBody
+    public String getFundRecordDetails(String searchId) {
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
+        searchId = String.valueOf(5002473);
+        if (StringTool.isNotBlank(searchId)) {
+            VPlayerTransactionVo vo = new VPlayerTransactionVo();
+            vo.getSearch().setId(Integer.valueOf(searchId));
+            vo = ServiceTool.vPlayerTransactionService().get(vo);
+            setMapJson(new AppModelVo());
+
+            VPlayerTransaction po = vo.getResult();
+
+            RecordDetailApp recordDetailApp = new RecordDetailApp();
+            recordDetailApp.setId(po.getId());
+            recordDetailApp.setTransactionNo(po.getTransactionNo());
+            recordDetailApp.setCreateTime(po.getCreateTime());
+            recordDetailApp.setTransactionType(po.getTransactionType());
+            recordDetailApp.setTransactionMoney(po.getTransactionMoney());
+            recordDetailApp.setStatus(po.getStatus());
+            recordDetailApp.setFailureReason(po.getFailureReason());
+            recordDetailApp.setAdministrativeFee(po.getAdministrativeFee());
+            recordDetailApp.setDeductFavorable(po.getDeductFavorable());
+            recordDetailApp.setFundType(po.getFundType());
+            recordDetailApp.setTransactionWay(po.getTransactionWay());
+            recordDetailApp.setUsername(po.getUsername());
+            recordDetailApp.setPayerBankcard(po.getPayerBankcard());
+            recordDetailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
+            recordDetailApp.setRechargeAmount(po.getRechargeAmount());
+            recordDetailApp.setRechargeAddress(po.getRechargeAddress());
+            mapJson.put("data", recordDetailApp);
+        }
+
+        return JsonTool.toJson(mapJson);
+    }
+
+
 
     private List<AppMineLinkVo> setLink() {
         List<AppMineLinkVo> links = ListTool.newArrayList();

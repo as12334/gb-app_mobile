@@ -201,7 +201,7 @@ public class BaseMineController {
     /**
      * 查询玩家总资产
      */
-    private String queryPlayerAssets(PlayerApiListVo listVo, Integer userId) {
+    protected String queryPlayerAssets(PlayerApiListVo listVo, Integer userId) {
         listVo.getSearch().setPlayerId(userId);
         listVo.setApis(Cache.getApi());
         listVo.setSiteApis(Cache.getSiteApi());
@@ -209,7 +209,7 @@ public class BaseMineController {
         return CurrencyTool.formatCurrency(assets);
     }
 
-    private List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
+    protected List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
         //同步余额
         if (isFetch) {
             IApiBalanceService service = (IApiBalanceService) SpringTool.getBean("apiBalanceService");
