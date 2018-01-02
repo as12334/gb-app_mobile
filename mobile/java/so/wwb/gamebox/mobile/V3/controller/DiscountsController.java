@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.controller.BaseDiscountsController;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/discounts")
-public class DiscountsController {
+public class DiscountsController{
 
     private static final Log LOG = LogFactory.getLog(DiscountsController.class);
     private static final Integer pageSize = 8;
@@ -44,6 +45,7 @@ public class DiscountsController {
         return "/discounts/Promo";
     }
 
+
     private MobileActivityMessageVo getActivity(HttpServletRequest request){
         Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
 
@@ -51,7 +53,7 @@ public class DiscountsController {
         List<SiteI18n> siteI18nTemp = ListTool.newArrayList();
 
         for (SiteI18n site : siteI18nMap.values()) {
-            if(StringTool.equalsIgnoreCase(site.getLocale(),SessionManager.getLocale().toString())){
+            if(StringTool.equalsIgnoreCase(site.getLocale(), SessionManager.getLocale().toString())){
                 VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
                 vActivityMessageListVo.getSearch().setActivityClassifyKey(site.getKey());
                 activityMessage.put(site.getKey(),setDefaultImage(getActivityMessage(vActivityMessageListVo),request));
@@ -64,6 +66,7 @@ public class DiscountsController {
         return messageVo;
     }
 
+
     private List<VActivityMessage> setDefaultImage(VActivityMessageListVo vActivityMessageListVo, HttpServletRequest request){
         for(VActivityMessage a : vActivityMessageListVo.getResult()){
             String resRootFull = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName());
@@ -72,6 +75,8 @@ public class DiscountsController {
         }
         return vActivityMessageListVo.getResult();
     }
+
+
 
     /**
      * 获取正在进行中的活动
@@ -92,5 +97,6 @@ public class DiscountsController {
         vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         return vActivityMessageListVo;
     }
+
 
 }

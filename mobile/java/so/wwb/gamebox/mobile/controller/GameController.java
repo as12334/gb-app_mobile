@@ -210,6 +210,7 @@ public class GameController extends BaseApiController {
         List<Integer> gameIds = Arrays.asList(fishId, 31000, 31009, 31050, 90071, 100303, 100222, 100302, 31077, 31002, 31011, 150135, 150141);//游戏ID
         //查询指定游戏
         Criteria criteria = Criteria.add(SiteGame.PROP_GAME_ID, Operator.IN, gameIds);
+        criteria.addAnd(SiteGame.PROP_STATUS, Operator.NE, GameStatusEnum.DISABLE.getCode());
         List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), criteria);
         List<SiteGame> newGames = new ArrayList<>();
         SiteGame fish = new SiteGame();
@@ -218,10 +219,12 @@ public class GameController extends BaseApiController {
             listVo.getSearch().setApiId(siteGame.getApiId());
             List<SiteGame> siteGameList = new ArrayList<>();
             siteGameList.add(siteGame);
-            if (siteGame.getGameId().equals(fishId))
+            if (siteGame.getGameId().equals(fishId)) {
                 fish = setGameStatus(listVo, siteGameList).get(0);
-            else
+            }
+            else {
                 newGames.add(setGameStatus(listVo, siteGameList).get(0));
+            }
         }
         listVo.setResult(newGames);
         //获取推荐api状态

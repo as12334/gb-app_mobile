@@ -89,6 +89,9 @@
 				/discounts/index.html = anon
 				/discounts/activityType.html = anon
 				/discounts/promo.html = anon
+				/origin/*.html = anon
+				/mineOrigin/*.html = anon
+				/discountsOrigin/*.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>
