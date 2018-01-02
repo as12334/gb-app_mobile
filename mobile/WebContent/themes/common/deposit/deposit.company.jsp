@@ -79,7 +79,7 @@
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form m-t-sm">
 
-                                    <div class="mui-input-row">
+                                    <%--<div class="mui-input-row">
                                         <label>${views.deposit_auto['金额']}</label>
                                         <div class="ct">
                                             <input type="text" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
@@ -87,7 +87,9 @@
                                         </div>
                                     </div>
 
-                                    <%@include file="./ChooseAmount.jsp"%>
+                                    <%@include file="./ChooseAmount.jsp"%>--%>
+                                    <%--存款金额--%>
+                                    <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
 
                                     <div class="mui-input-row"><label>${views.deposit_auto['存款类型']}</label>
                                         <div class="ct" id="rechargeType">
@@ -128,8 +130,8 @@
                                 </div>
                             </div>
                             <div class="mui-row">
-                                <div class="gb-form-foot">
-                                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['提交']}</button>
+                                <div class="gb-form-foot bank-pay-btn">
+                                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount">${views.deposit_auto['提交']}</button>
                                 </div>
                             </div>
                         </div>
@@ -140,8 +142,6 @@
                         </div>
                     </c:otherwise>
                 </c:choose>
-
-
             </div>
         </form>
     </div>

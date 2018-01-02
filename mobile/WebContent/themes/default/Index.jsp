@@ -155,7 +155,7 @@
         <div class="mui-off-canvas-backdrop"></div>
     </div>
 </div>
-<%--<%@ include file="./include/include.indexDialog.jsp"%>--%>
+<%@ include file="./include/include.indexDialog.jsp"%>
 </body>
 <div id="activityType" class="mui-popover">
     <div class="mui-scroll-wrapper popover-scroll">
