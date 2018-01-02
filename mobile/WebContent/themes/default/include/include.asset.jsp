@@ -5,7 +5,7 @@
         <a>
             <p id="bar-username"></p>
             <p>
-                <%--<img src="${resRoot}/images/ico-wallet.png" height="10px" style="float: left;">--%>
+               <img src="${resRoot}/images/ico-wallet.png" height="10px" style="float: left;">
                 <span class="bar-asset mui-pull-right" style="padding-right: 0; color: #ffffff"></span>
             </p>
         </a>

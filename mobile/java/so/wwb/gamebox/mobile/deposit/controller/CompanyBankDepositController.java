@@ -10,9 +10,12 @@ import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2Form;
+import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
@@ -29,6 +32,8 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,10 +57,23 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
             RechargeTypeEnum.ATM_RECHARGE.getCode()
     };
 
+
+
+    /**
+     *存款金额
+     */
+    @RequestMapping("/depositCash")
+    @Token(generate = true)
+    public String depositCash(PayAccountVo payAccountVo, Model model){
+        model.addAttribute("rank", getRank());
+        model.addAttribute("currency",getCurrencySign());
+        model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
+        return "/deposit/DepositCash";
+    }
+
     @RequestMapping("/index")
     @Token(generate = true)
     public String company(PayAccountVo payAccountVo, Model model) {
-
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
 
@@ -68,7 +86,9 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
             model.addAttribute("validateRule", JsRuleCreator.create(CompanyBankDeposit2Form.class));
             getRechargeType(model, payAccount);
         }
-
+        if(payAccountVo.getDepositCash() != null){
+            model.addAttribute("rechargeAmount",payAccountVo.getDepositCash());
+        }
         model.addAttribute("payAccount", payAccount);
         return "/deposit/Company";
     }
