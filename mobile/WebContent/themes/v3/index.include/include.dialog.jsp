@@ -1,12 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
 <c:if test="${not empty phoneDialog}">
     <div id="middlePopover" class="mui-popover notice-popover-wrap">
         <div class="mui-popup mui-popup-in">
             <div class="mui-popup-inner">
                 <c:forEach var="d" items="${phoneDialog}" varStatus="vs">
-                    <div class="mui-popup-title">${d.name}</div>
+                    <div class="mui-popup-title">
+                        <span class="pop-title">${d.name}</span>
+                        <soul:button text="" target="initDialog" opType="function" cssClass="mui-btn mui-btn-link mui-pull-right pop-close">
+                            <span class="mui-icon mui-icon-closeempty"></span>
+                        </soul:button>
+                        <a href="#bottomPopover" class="mui-btn mui-btn-link mui-pull-right pop-close"><span class="mui-icon mui-icon-closeempty"></span></a>
+                    </div>
                     <div class="cont-text">
                         <c:choose>
                             <c:when test="${d.content_type == 1}">

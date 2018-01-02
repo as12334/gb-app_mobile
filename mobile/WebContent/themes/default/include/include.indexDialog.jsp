@@ -5,7 +5,10 @@
         <div class="mui-popup mui-popup-in">
             <div class="mui-popup-inner">
                 <c:forEach var="d" items="${phoneDialog}" varStatus="vs">
-                    <div class="mui-popup-title">${d.name}</div>
+                    <div class="mui-popup-title">
+                        <span class="pop-title">${d.name}</span>
+                        <a href="#bottomPopover" class="mui-btn mui-btn-link mui-pull-right pop-close"><span class="mui-icon mui-icon-closeempty"></span></a>
+                    </div>
                     <div class="cont-text">
                         <c:choose>
                             <c:when test="${d.content_type == 1}">
@@ -21,7 +24,6 @@
                         <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                     </c:if>
                     <c:set var="updateDate" value="${not empty d.update_time ? d.update_time:''}"/>
-                    <div class="home-dialog-checkbox"><input type="checkbox" name="checkbox" value="checkbox" id="home-dialog-checkbox">关闭后，不在显示本弹窗广告</div>
                     <soul:button text="" target="dialog" dataLink="${link}" dataUpdateTime="${updateDate}" opType="function" cssClass="mui-btn mui-btn-block confirm-btn">确定</soul:button>
                 </c:forEach>
             </div>
