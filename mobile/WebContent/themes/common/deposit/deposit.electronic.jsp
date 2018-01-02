@@ -76,8 +76,7 @@
                                             </div>
                                             <c:if test="${not empty payAccount.remark}">
                                                 <div class="front-end">
-                                                    <pre>${payAccount.remark}</pre>
-                                                </div>
+                                                    <pre stype="white-space: normal;">${payAccount.remark}</pre>                                                </div>
                                             </c:if>
                                         </div>
                                     </div>
