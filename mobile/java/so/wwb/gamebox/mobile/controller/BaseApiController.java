@@ -5,7 +5,9 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.enums.SupportTerminal;
+import org.soul.commons.lang.SystemTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
@@ -15,16 +17,23 @@ import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.commons.security.CryptoTool;
+import org.soul.model.gameapi.result.GameApiResult;
+import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.Game;
+import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
@@ -32,6 +41,8 @@ import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
@@ -46,6 +57,7 @@ import static so.wwb.gamebox.model.CacheBase.getSiteGameName;
  */
 public abstract class BaseApiController extends BaseDemoController {
     private Log LOG = LogFactory.getLog(BaseApiController.class);
+    private String TRANSFERS_URL = "/transfer/index.html";
 
     List<Map<String, Object>> getApiType() {
         List<SiteApiTypeRelationI18n> relationI18ns;
@@ -666,8 +678,10 @@ public abstract class BaseApiController extends BaseDemoController {
                 }else if(SessionManager.isAutoPay() && i18n.getApiTypeId() != ApiTypeEnum.CASINO.getCode()){
                     appI18n.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
                 }else{
+                    appI18n.setGameMsg(setMsg(MessageI18nConst.NOT_ALLOW_AUTO_PAY, Module.Passport.getCode()));
                     appI18n.setGameLink("/game/getGameByApiId.html?search.apiId="+i18n.getApiId()+"&search.apiTypeId="+i18n.getApiTypeId());
                 }
+                appI18n.setAutoPay(SessionManager.isAutoPay());
             }
 
             if(i18n.getApiTypeId() == ApiTypeEnum.LOTTERY.getCode()){
@@ -726,5 +740,208 @@ public abstract class BaseApiController extends BaseDemoController {
      */
     protected Map<String, SiteGameI18n> getGameI18nMap(SiteGameListVo listVo) {
         return CollectionTool.toEntityMap(getGameI18n(listVo), SiteGameI18n.PROP_GAME_ID, String.class);
+    }
+
+    private AppSiteApiTypeRelationI18n goGameUrl(HttpServletRequest request,PlayerApiAccountVo playerApiAccountVo,AppSiteApiTypeRelationI18n appI18n){
+        playerApiAccountVo.setApiId(10);
+        playerApiAccountVo.setApiTypeId("4");
+        playerApiAccountVo.getGameCode();
+
+        playerApiAccountVo = getPlayerApiAccount(request,playerApiAccountVo);
+
+        String msg = isAllowLogin(playerApiAccountVo);
+        if(StringTool.isNotBlank(msg)){
+            appI18n.setGameMsg(msg);
+            appI18n.setGameLink("");
+            return appI18n;
+        }
+
+        DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
+        if(demoModel!=null){
+            //平台试玩免转不可用
+            //纯彩票试玩免转不可用
+            playerApiAccountVo.setTrial(true);
+            Integer apiId = playerApiAccountVo.getApiId();
+            if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)&&(
+                    apiId==Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                            apiId==Integer.valueOf(ApiProviderEnum.DWT.getCode()))){
+                //模拟账号免转可用
+                playerApiAccountVo.setTrial(false);
+            }
+        }
+
+        playerApiAccountVo = ServiceTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
+        if (playerApiAccountVo == null || playerApiAccountVo.getGameApiResult() == null || ResultStatus.SUCCESS != playerApiAccountVo.getGameApiResult().getStatus()) {
+            appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
+            appI18n.setGameLink("");
+            return appI18n;
+        }
+
+        GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
+        return appI18n;
+    }
+
+    /**
+     * 玩家信息
+     * @param request
+     * @param playerApiVo
+     * @return
+     */
+    private PlayerApiAccountVo getPlayerApiAccount(HttpServletRequest request,PlayerApiAccountVo playerApiVo){
+        String domain = request.getServerName();
+        if (SystemTool.isDebug()) {
+            domain = domain + "/mobile";
+        }
+        playerApiVo.setLobbyUrl(domain);
+        playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
+        playerApiVo.setSysUser(SessionManager.getUser());
+        playerApiVo.setPlatformType(SupportTerminal.PHONE.getCode());
+        return playerApiVo;
+    }
+
+    private String isAllowLogin(PlayerApiAccountVo playerApiAccountVo){
+        String msg = "";
+        playerApiAccountVo.setDemoModel(SessionManagerCommon.getDemoModelEnum());
+        boolean mockAccount = checkMockAccount(playerApiAccountVo);
+
+        if(!mockAccount){
+            LOG.info("判断是否可以登录游戏：{1}_{2},mockAccount:{0}",mockAccount,SessionManagerBase.getSiteId(),playerApiAccountVo.getGameCode());
+           msg = setMsg(MessageI18nConst.MOCKMODEL_NOT_ALLOW_LOGIN, Module.Passport.getCode());
+        }
+
+        //api是否允许登陆
+        boolean isAllowApi = checkApiStatus(playerApiAccountVo.getApiId());
+        if (!isAllowApi) {
+            LOG.info("判断是否可以登录游戏：{1}_{2},isAllowApi:{0}",isAllowApi,SessionManagerBase.getSiteId(),playerApiAccountVo.getGameCode());
+            msg = setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode());
+        }
+
+        //游戏是否允许登陆
+        boolean isAllowGame = isAllowGame(playerApiAccountVo);
+        if (!isAllowGame) {
+            LOG.info("判断是否可以登录游戏：{1}_{2},isAllowGame:{0}",isAllowGame,SessionManagerBase.getSiteId(),playerApiAccountVo.getGameCode());
+            msg = setMsg(MessageI18nConst.NOT_GAME_LOGIN, Module.Passport.getCode());
+        }
+
+        boolean demeModelIsAllowLogin = isAllowDemoModelLogin(playerApiAccountVo);
+        if (!demeModelIsAllowLogin) {
+            LOG.info("判断是否可以登录游戏：{1}_{2},isAllowDemoModelLogin:{0}",demeModelIsAllowLogin,SessionManagerBase.getSiteId(),playerApiAccountVo.getGameCode());
+            msg = setMsg(MessageI18nConst.DEMOMODEL_NOT_ALLOW_LOGIN, Module.Passport.getCode());
+        }
+        return msg;
+    }
+
+    /**
+     * 试玩模式是否可以登录
+     * @param playerApiAccountVo
+     * @return
+     */
+    protected boolean isAllowDemoModelLogin(PlayerApiAccountVo playerApiAccountVo){
+        DemoModelEnum demoModel = playerApiAccountVo.getDemoModel();
+        if(demoModel == null ){
+            return true;
+        }
+        //checkMockAccount已经验证
+        if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)){
+            if(playerApiAccountVo.getApiId()==Integer.valueOf(ApiProviderEnum.PL.getCode())
+                    || playerApiAccountVo.getApiId()==Integer.valueOf(ApiProviderEnum.DWT.getCode())){
+                return true;
+            }
+        }
+        //彩票试玩，如果是龙头彩票，就可以玩
+        if(DemoModelEnum.MODEL_4_LOTTERY.equals(demoModel)){
+            if(playerApiAccountVo.getApiId()==Integer.valueOf(ApiProviderEnum.PL.getCode())){
+                return true;
+            }
+        }
+        GameVo gameVo = fetchLoginGame(playerApiAccountVo);
+        if(gameVo.getResult()!=null){
+            Boolean canTry = gameVo.getResult().getCanTry();
+            LOG.info("判断是否可以登录游戏：{1}_{2},canTry:{0}",canTry,SessionManagerBase.getSiteId(),playerApiAccountVo.getGameCode());
+            if(canTry==null||!canTry){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 是否允许登陆的游戏
+     *
+     * @param playerApiAccountVo
+     * @return
+     */
+    private boolean isAllowGame(PlayerApiAccountVo playerApiAccountVo) {
+        //若无指定游戏code，跳转游戏大厅
+        if (StringTool.isBlank(playerApiAccountVo.getGameCode())) {
+            return true;
+        }
+        GameVo gameVo = fetchLoginGame(playerApiAccountVo);
+        if (gameVo.getResult() == null || GameStatusEnum.DISABLE.getCode().equals(gameVo.getResult().getSystemStatus())) { //尚未接入该游戏或已停用
+            return false;
+        }
+        playerApiAccountVo.setGameId(gameVo.getResult().getId());
+        Map<String, SiteGame> siteGameMap = Cache.getSiteGame();
+        SiteGame siteGame = siteGameMap.get(String.valueOf(gameVo.getResult().getId()));
+        if (siteGame == null || GameStatusEnum.DISABLE.getCode().equals(siteGame.getStatus())) {//站点未接入该游戏或者已停用
+            return false;
+        }
+        playerApiAccountVo.setGameId(gameVo.getResult().getId());
+        return true;
+    }
+
+    private GameVo fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
+        GameVo gameVo = new GameVo();
+        gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
+        gameVo.getSearch().setSupportTerminal(playerApiAccountVo.getPlatformType());
+        gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
+        gameVo = ServiceTool.gameService().search(gameVo);
+        return gameVo;
+    }
+
+    /**
+     * 判断api状态，判断是否允许登陆
+     *
+     * @param apiId
+     * @return
+     */
+    private boolean checkApiStatus(Integer apiId) {
+        if (apiId == null){
+            return false;
+        }
+        Map<String, Api> apiMap = Cache.getApi();
+        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
+        Api api = apiMap.get(apiId.toString());
+        SiteApi siteApi = siteApiMap.get(apiId.toString());
+        if (api == null || siteApi == null) {
+            return false;
+        }
+        if (GameStatusEnum.DISABLE.getCode().equals(api.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(api.getSystemStatus()))
+            return false;
+        return !(GameStatusEnum.DISABLE.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(siteApi.getSystemStatus()));
+    }
+
+    private boolean checkMockAccount(PlayerApiAccountVo playerApiAccountVo){
+        DemoModelEnum demoModelEnum = playerApiAccountVo.getDemoModel();
+        if(demoModelEnum !=null){
+            //模拟账号只能登录自主彩票及自主体育
+            if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModelEnum)){
+                if(playerApiAccountVo.getApiId()!=Integer.valueOf(ApiProviderEnum.PL.getCode())
+                        && playerApiAccountVo.getApiId()!=Integer.valueOf(ApiProviderEnum.DWT.getCode())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 获取国际化信息
+     * @param msgConst
+     * @param code
+     * @return
+     */
+    private String setMsg(String msgConst, String code){
+       return LocaleTool.tranMessage(code, msgConst);
     }
 }
