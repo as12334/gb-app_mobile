@@ -18,6 +18,7 @@ import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.commons.security.CryptoTool;
 import org.soul.model.gameapi.result.GameApiResult;
+import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
@@ -645,10 +646,13 @@ public abstract class BaseApiController extends BaseDemoController {
 
             if(SessionManager.getUser() != null) {
                 if (SessionManager.isAutoPay()) {
-                    app.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                    AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request,siteGame.getApiId(),siteGame.getApiTypeId().toString(),siteGame.getCode());
+                    app.setGameLink(gameUrl.getGameLink());
+                    app.setGameMsg(gameUrl.getGameMsg());
                 } else {
                     app.setGameLink("/api/login.html");
                 }
+                app.setAutoPay(SessionManager.isAutoPay());
             }
             games.add(app);
         }
@@ -676,10 +680,15 @@ public abstract class BaseApiController extends BaseDemoController {
                 if(i18n.getApiId().equals(ApiProviderEnum.BSG.getCode())){
                     appI18n.setGameLink("/game/apiGames.html?apiId="+i18n.getApiId()+"&apiTypeId="+i18n.getApiTypeId());
                 }else if(SessionManager.isAutoPay() && i18n.getApiTypeId() != ApiTypeEnum.CASINO.getCode()){
-                    appI18n.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                    //appI18n.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                    AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request,appI18n.getApiId(),appI18n.getApiTypeId().toString(),null);
+                    appI18n.setGameLink(gameUrl.getGameLink());
+                    appI18n.setGameMsg(gameUrl.getGameMsg());
+                }else if (i18n.getApiTypeId().equals(ApiTypeEnum.CASINO.getCode())){
+                    appI18n.setGameLink("/origin/getCasinoGame.html?search.apiId="+i18n.getApiId()+"&search.apiTypeId="+i18n.getApiTypeId());
                 }else{
-                    appI18n.setGameMsg(setMsg(MessageI18nConst.NOT_ALLOW_AUTO_PAY, Module.Passport.getCode()));
-                    appI18n.setGameLink("/game/getGameByApiId.html?search.apiId="+i18n.getApiId()+"&search.apiTypeId="+i18n.getApiTypeId());
+                    //appI18n.setGameMsg(setMsg(MessageI18nConst.NOT_ALLOW_AUTO_PAY, Module.Passport.getCode()));
+                    appI18n.setGameLink("/api/detail.html?apiId="+i18n.getApiId()+"&apiTypeId="+i18n.getApiTypeId());
                 }
                 appI18n.setAutoPay(SessionManager.isAutoPay());
             }
@@ -715,7 +724,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.getInteger(ApiProviderEnum.AG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
+                i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
                 fishSiteApis.add(i18n);
             }
             if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
@@ -726,7 +735,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.getInteger(ApiProviderEnum.GG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2");
+                i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
                 fishSiteApis.add(i18n);
             }
         }
@@ -742,10 +751,14 @@ public abstract class BaseApiController extends BaseDemoController {
         return CollectionTool.toEntityMap(getGameI18n(listVo), SiteGameI18n.PROP_GAME_ID, String.class);
     }
 
-    private AppSiteApiTypeRelationI18n goGameUrl(HttpServletRequest request,PlayerApiAccountVo playerApiAccountVo,AppSiteApiTypeRelationI18n appI18n){
-        playerApiAccountVo.setApiId(10);
-        playerApiAccountVo.setApiTypeId("4");
-        playerApiAccountVo.getGameCode();
+    private AppSiteApiTypeRelationI18n goGameUrl(HttpServletRequest request,Integer apiId,String apiTypeId,String gameCode){
+        AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
+        PlayerApiAccountVo playerApiAccountVo = new PlayerApiAccountVo();
+        playerApiAccountVo.setApiId(apiId);
+        playerApiAccountVo.setApiTypeId(apiTypeId);
+        if(StringTool.isNotBlank(gameCode)){
+            playerApiAccountVo.setGameCode(gameCode);
+        }
 
         playerApiAccountVo = getPlayerApiAccount(request,playerApiAccountVo);
 
@@ -758,14 +771,11 @@ public abstract class BaseApiController extends BaseDemoController {
 
         DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
         if(demoModel!=null){
-            //平台试玩免转不可用
-            //纯彩票试玩免转不可用
+            //平台试玩免转不可用 //纯彩票试玩免转不可用 //模拟账号免转可用
             playerApiAccountVo.setTrial(true);
-            Integer apiId = playerApiAccountVo.getApiId();
             if(DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)&&(
-                    apiId==Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                            apiId==Integer.valueOf(ApiProviderEnum.DWT.getCode()))){
-                //模拟账号免转可用
+                    apiId == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                    apiId == Integer.valueOf(ApiProviderEnum.DWT.getCode()))){
                 playerApiAccountVo.setTrial(false);
             }
         }
@@ -777,7 +787,8 @@ public abstract class BaseApiController extends BaseDemoController {
             return appI18n;
         }
 
-        GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
+        RegisterResult registerResult = (RegisterResult)playerApiAccountVo.getGameApiResult();
+        appI18n.setGameLink(registerResult.getDefaultLink());
         return appI18n;
     }
 
