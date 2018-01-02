@@ -505,12 +505,12 @@ public class BaseMineController {
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
 //            model.addAttribute("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
-            map.put("transferSum", playerTransferService.queryProcessAmount(playerTransferVo));
+            map.put("transferSum", getPlayerTransferService().queryProcessAmount(playerTransferVo));
         }
     }
 
     private IPlayerTransferService playerTransferService;
-    private IPlayerTransferService playerTransferService() {
+    private IPlayerTransferService getPlayerTransferService() {
         if (playerTransferService == null)
             playerTransferService = ServiceTool.playerTransferService();
         return playerTransferService;
