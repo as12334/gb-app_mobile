@@ -334,6 +334,9 @@ public abstract class BaseApiController extends BaseDemoController {
         Integer apiId = listVo.getSearch().getApiId();
         List<AppSiteGame> siteGames = ListTool.newArrayList();
 
+        if(apiId == null){
+            return siteGames;
+        }
         if (!NumberTool.isNumber(String.valueOf(apiId)) && apiId <= 0) {
             return siteGames;
         }
