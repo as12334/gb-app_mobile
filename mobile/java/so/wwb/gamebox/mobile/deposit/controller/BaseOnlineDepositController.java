@@ -155,11 +155,11 @@ public class BaseOnlineDepositController extends BaseDepositController {
             if (randomAmount) {
                 Double rechargeAmount = playerRecharge.getRechargeAmount();
                 if (rechargeAmount.intValue() == rechargeAmount) {
-                    double random = Double.parseDouble(RandomStringTool.random(2, 11, 99, false, true)) * 0.01;
+                    /*double random = Double.parseDouble(RandomStringTool.random(2, 11, 99, false, true)) * 0.01;
                     if (random<0.11){
                         random+=0.11;
-                    }
-                    rechargeAmount += random;
+                    }*/
+                    rechargeAmount += playerRechargeVo.getResult().getRandomCash()/100;
                     playerRecharge.setRechargeAmount(rechargeAmount);
                 }
             }

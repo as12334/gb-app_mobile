@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
+import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -52,6 +53,19 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     /*一码付*/
     private static final String ONECODEPAY = "onecodepay";
 
+
+    /**
+     *存款金额
+     */
+    @RequestMapping("/depositCash")
+    @Token(generate = true)
+    public String depositCash(PayAccountVo payAccountVo, Model model){
+        model.addAttribute("rank", getRank());
+        model.addAttribute("currency",getCurrencySign());
+        model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
+        return "/deposit/DepositCash";
+    }
+
     @RequestMapping("/index")
     @Token(generate = true)
     public String index(PayAccountVo payAccountVo,Model model, HttpServletRequest request) {
@@ -68,6 +82,9 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
             model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositForm.class));
             //上一次填写的账号/昵称
             model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType,SessionManager.getUserId()));
+        }
+        if(payAccountVo.getDepositCash() != null){
+            model.addAttribute("rechargeAmount",payAccountVo.getDepositCash());
         }
         model.addAttribute("payAccount", payAccount);
         return "/deposit/Electronic";

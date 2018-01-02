@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
-<body class="gb-theme mine-page">
+<body class="gb-theme mine-page ex-wechat">
 <div id="offCanvasWrapper" class="mui-draggable">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
@@ -44,64 +43,9 @@
                             <input type="hidden" name="onlinePayMax" value="${rank.onlinePayMax}"/>
                             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
                             <div class="mui-row">
-                                <div class="gb-panel" style="border-bottom-color: #fff;">
-                                    <div class="gb-headtabs">
-                                        <div id="segmentedControl" class="mui-segmented-control">
-                                            <c:choose>
-                                                <c:when test="${payAccount.bankCode eq 'onecodepay'}">
-                                                    <a href="#wechat2" class="mui-control-item mui-active">
-                                                            ${views.deposit_auto['一码付二维码']}
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a href="#wechat1" class="mui-control-item mui-active">${views.deposit_auto['账号信息']}</a>
-                                                    <a href="#wechat2" class="mui-control-item">
-                                                        <c:if test="${payAccount.bankCode eq 'wechatpay'}">
-                                                            ${views.deposit_auto['微信二维码']}
-                                                        </c:if>
-                                                        <c:if test="${payAccount.bankCode eq 'alipay'}">
-                                                            ${views.deposit_auto['支付宝二维码']}
-                                                        </c:if>
-                                                        <c:if test="${payAccount.bankCode eq 'qqwallet'}">
-                                                            ${views.deposit_auto['QQ钱包二维码']}
-                                                        </c:if>
-                                                        <c:if test="${payAccount.bankCode eq 'jdwallet'}">
-                                                            ${views.deposit_auto['京东钱包二维码']}
-                                                        </c:if>
-                                                        <c:if test="${payAccount.bankCode eq 'bdwallet'}">
-                                                            ${views.deposit_auto['百度钱包二维码']}
-                                                        </c:if>
-                                                        <c:if test="${payAccount.bankCode eq 'other'}">
-                                                            ${views.themes_auto['二维码']}
-                                                        </c:if>
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    <c:choose>
-                        <c:when test="${payAccount.bankCode eq 'onecodepay'}">
-                            <div id="wechat2" class="mui-control-content mui-active">
-                                <div class="mui-row">
-                                    <div class="gb-panel" style="border-top-color: #fff;">
-                                        <div class="pays-wxcode" style="padding: 0">
-                                            <div class="ct" style="padding: 0">
-                                                <p class="m-b-0"><img id="qrCodeUrl" src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" style="width: 135px;height: 135px;"></p>
-                                                <p>
-                                                    <button type="button" id="saveImage" url="${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}" class="btn mui-btn mui-btn-primary">${views.deposit_auto['保存到手机']}</button>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <div id="wechat1" class="mui-control-content mui-active">
-                                <div class="mui-row">
-                                    <div class="gb-panel" style="border-top-color: #fff;">
+                                <div class="gb-panel" style="border-top-color: #fff;">
+                                    <p  class="tit">${views.deposit_auto['账号信息']}</p>
+                                    <div class="mui-control-content mui-active">
                                         <div class="gb-bankcard">
                                             <div class="hd">
                                                 <c:set var="flag" value="${empty payAccount.customBankName || dicts.common.bankname[payAccount.bankCode]==payAccount.customBankName}"/>
@@ -113,16 +57,16 @@
                                             </div>
                                             <div class="ct">
                                                 <p>
-                                            <span class="text-green">
-                                                <c:choose>
-                                                    <c:when test="${isHide}">
-                                                        ${views.deposit_auto['账号代码']}：${payAccount.code},${views.deposit_auto['请联系客服']}
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        ${payAccount.account}
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </span>
+                                                    <span class="text-green">
+                                                        <c:choose>
+                                                            <c:when test="${isHide}">
+                                                                ${views.deposit_auto['账号代码']}：${payAccount.code},${views.deposit_auto['请联系客服']}
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                ${payAccount.account}
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </span>
                                                 </p>
                                                 <div class="ct">
                                                     <p><span>${views.deposit_auto['姓名']}:</span>
@@ -130,32 +74,37 @@
                                                     </p>
                                                 </div>
                                             </div>
+                                            <c:if test="${not empty payAccount.remark}">
+                                                <div class="front-end">
+                                                    <pre>${payAccount.remark}</pre>
+                                                </div>
+                                            </c:if>
                                         </div>
                                     </div>
-                                    <c:if test="${not empty payAccount.remark}">
-                                        <div class="front-end">
-                                            <pre>${payAccount.remark}</pre>
+                                        <%--<div class="wechat-code">
+                                            <p class="m-b-0"><img id="qrCodeUrl" src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" style="width: 135px;height: 135px;"></p>
+                                            <p>
+                                                <button type="button" id="saveImage" url="${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}" class="btn mui-btn mui-btn-primary">${views.deposit_auto['保存到手机']}</button>
+                                            </p>
+                                        </div>--%>
+                                    <c:if test="${not empty payAccount.qrCodeUrl}">
+                                        <div class="wechat-code">
+                                            <div class="mui-row">
+                                                <div class="gb-panel" style="border-top-color: #fff;">
+                                                    <div class="pays-wxcode" style="padding: 0">
+                                                        <div class="ct" style="padding: 0">
+                                                            <p class="m-b-0"><img id="qrCodeUrl" src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" style="width: 135px;height: 135px;"></p>
+                                                            <p>
+                                                                <button type="button" id="saveImage" url="${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}" class="btn mui-btn mui-btn-primary">${views.deposit_auto['保存到手机']}</button>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </c:if>
                                 </div>
                             </div>
-
-                            <div id="wechat2" class="mui-control-content">
-                                <div class="mui-row">
-                                    <div class="gb-panel" style="border-top-color: #fff;">
-                                        <div class="pays-wxcode" style="padding: 0">
-                                            <div class="ct" style="padding: 0">
-                                                <p class="m-b-0"><img id="qrCodeUrl" src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" style="width: 135px;height: 135px;"></p>
-                                                <p>
-                                                    <button type="button" id="saveImage" url="${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}" class="btn mui-btn mui-btn-primary">${views.deposit_auto['保存到手机']}</button>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
 
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form m-t-sm">
@@ -182,10 +131,10 @@
                                             <c:set value="${views.deposit_auto['您的百度钱包账号']}" var="n"></c:set>
                                             <c:set value="${views.deposit_auto['请输入百度钱包账号']}" var="m"></c:set>
                                         </c:if>
-                                        <%--<c:if test="${payAccount.bankCode eq 'onecodepay'}">
-                                            <c:set value="${views.deposit_auto['您的一码付账号']}" var="n"></c:set>
-                                            <c:set value="${views.deposit_auto['请输入一码付账号']}" var="m"></c:set>
-                                        </c:if>--%>
+                                            <%--<c:if test="${payAccount.bankCode eq 'onecodepay'}">
+                                                <c:set value="${views.deposit_auto['您的一码付账号']}" var="n"></c:set>
+                                                <c:set value="${views.deposit_auto['请输入一码付账号']}" var="m"></c:set>
+                                            </c:if>--%>
                                         <c:if test="${payAccount.bankCode eq 'other'}">
                                             <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
                                             <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
@@ -196,51 +145,55 @@
                                             <c:when test="${payAccount.bankCode eq 'alipay'}">
                                                 <label>${n}</label>
                                                 <div class="ct">
-                                                    <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" autocomplete="off">
+                                                    <input type="text" id="payerBankcard1" name="result.payerBankcard" value="${lastTimeAccount}" autocomplete="off">
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
                                                 <label>${n}</label>
                                                 <div class="ct">
-                                                    <input type="text" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
+                                                    <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
                                                 </div>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
+                                        <%--存款金额--%>
+                                    <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
                                     <c:if test="${payAccount.bankCode eq 'alipay'}">
                                         <div class="mui-row m-l-sm">
                                             <div class="gb-form-notice">
                                                 <p><img src="${resRoot}/images/ico-notice.png" height="12px;" alt="">
-                                                “支付宝”转账到“支付宝”，请填写昵称；
-                                                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;“支付宝”转账到“银行卡”，请填写真实姓名；
+                                                    “支付宝”转账到“支付宝”，请填写昵称；
+                                                    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;“支付宝”转账到“银行卡”，请填写真实姓名；
                                                 </p>
                                             </div>
                                         </div>
                                     </c:if>
                                     <div class="mui-input-row">
-                                        <label>${views.deposit_auto['金额']}</label>
-                                        <div class="ct">
-                                            <c:set value="${siteCurrencySogn}${empty rank.onlinePayMin?'1.00':soulFn:formatCurrency(rank.onlinePayMin)}" var="pmi"></c:set>
-                                            <c:set value="${siteCurrencySogn}${empty rank.onlinePayMax?'99,999,999.00':soulFn:formatCurrency(rank.onlinePayMax)}" var="pma"></c:set>
-                                            <input type="text" name="result.rechargeAmount" id="result.rechargeAmount" placeholder="${pmi}-${pma}" autocomplete="off">
-                                        </div>
-                                    </div>
-
-                                    <%@include file="./ChooseAmount.jsp"%>
-
-                                    <div class="mui-input-row">
                                         <label>${views.deposit_auto['订单号后5位']}
-                                            <span class="small">${views.deposit_auto['非商户订单号']}</span>
+                                            <span class="small">${views.deposit_auto['非必填']}</span>
                                         </label>
                                         <div class="ct">
-                                            <input type="text" name="result.bankOrder" placeholder="${views.deposit_auto['非必填']}">
+                                            <input type="text" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
                                         </div>
                                     </div>
+                                    <c:if test="${empty payAccount.remark}">
+                                        <ul class="info">
+                                            <li>* 请先搜索微信号或扫描二维码添加好友。</li>
+                                            <li>* 为了系统快速完成转账，请输入订单号后5位，以加快系统入款速度。</li>
+                                            <li>* 支付成功后，请等待几秒钟，提示[支付成功] 按确认</li>
+                                        </ul>
+                                    </c:if>
+                                    <c:if test="${not empty payAccount.remark}">
+                                        <div class="gb-form-notice">
+                                            <p>
+                                                    ${payAccount.remark}
+                                            </p>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
-
                             <div class="mui-row">
-                                <div class="gb-form-foot" style="padding-bottom:10px;">
+                                <div class="gb-form-foot bank-pay-btn" style="padding-bottom:10px;">
                                     <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['提交']}</button>
                                 </div>
                             </div>
@@ -267,3 +220,4 @@
     });
 </script>
 </body>
+
