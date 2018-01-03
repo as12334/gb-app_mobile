@@ -18,6 +18,7 @@ import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
 import org.soul.commons.security.CryptoTool;
 import org.soul.model.gameapi.result.GameApiResult;
+import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.session.SessionManagerBase;
@@ -797,26 +798,12 @@ public abstract class BaseApiController extends BaseDemoController {
             return appI18n;
         }
 
-        RegisterResult registerResult = (RegisterResult)playerApiAccountVo.getGameApiResult();
-        appI18n.setGameLink(registerResult.getDefaultLink());
-        return appI18n;
-    }
+        GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
+        String url = (gameApiResult instanceof RegisterResult)?
+                ((RegisterResult) gameApiResult).getDefaultLink():((LoginResult) gameApiResult).getDefaultLink();
+        appI18n.setGameLink(url);
 
-    protected PlayerApiAccountVo setDemoModel(PlayerApiAccountVo playerApiAccountVo){
-        DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
-        if (demoModel != null) {
-            //平台试玩免转不可用
-            //纯彩票试玩免转不可用
-            playerApiAccountVo.setTrial(true);
-            //Integer apiId = playerApiAccountVo.getApiId();
-            if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel) && (
-                    playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                    playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
-                //模拟账号免转可用
-                playerApiAccountVo.setTrial(false);
-            }
-        }
-        return playerApiAccountVo;
+        return appI18n;
     }
 
     /**
@@ -848,8 +835,10 @@ public abstract class BaseApiController extends BaseDemoController {
             appI18n.setGameLink("");
         }
 
-        RegisterResult registerResult = (RegisterResult)playerApiAccountVo.getGameApiResult();
-        appI18n.setGameLink(registerResult.getDefaultLink());
+        GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
+        String url = (gameApiResult instanceof RegisterResult)?
+                ((RegisterResult) gameApiResult).getDefaultLink():((LoginResult) gameApiResult).getDefaultLink();
+        appI18n.setGameLink(url);
         return appI18n;
     }
 
