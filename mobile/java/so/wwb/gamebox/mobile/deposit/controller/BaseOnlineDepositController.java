@@ -1,11 +1,9 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.lang.string.RandomStringTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -31,11 +29,10 @@ import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
-import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
-import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
@@ -46,7 +43,10 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bruce on 16-12-13.
@@ -136,30 +136,21 @@ public class BaseOnlineDepositController extends BaseDepositController {
             messageMap.put("msg", LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
             return messageMap;
         }
-
+        PayAccount payAccount = null;
+        if (StringTool.isNotBlank(playerRechargeVo.getAccount())) {
+            payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
+        }
+        if (payAccount == null) {
+            return getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
+        }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
-        PayAccount payAccount = null;
-        if (RechargeTypeEnum.ONLINE_DEPOSIT.getCode().equals(playerRecharge.getRechargeType())) {//线上支付
-            payAccount = getOnlinePayAccount(rank, playerRecharge.getPayerBank());
-        } else {//扫码支付
-            payAccount = getScanCodePayAccount(rank, playerRecharge.getRechargeType());
-        }
-
-        if (payAccount == null) {
-            return getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(),
-                    MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
-        }
-        if (payAccount.getRandomAmount()!=null) {
+        if (payAccount.getRandomAmount() != null) {
             boolean randomAmount = payAccount.getRandomAmount();
             if (randomAmount) {
                 Double rechargeAmount = playerRecharge.getRechargeAmount();
                 if (rechargeAmount.intValue() == rechargeAmount) {
-                    /*double random = Double.parseDouble(RandomStringTool.random(2, 11, 99, false, true)) * 0.01;
-                    if (random<0.11){
-                        random+=0.11;
-                    }*/
-                    rechargeAmount += playerRechargeVo.getResult().getRandomCash()/100;
+                    rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
                     playerRecharge.setRechargeAmount(rechargeAmount);
                 }
             }
@@ -175,6 +166,13 @@ public class BaseOnlineDepositController extends BaseDepositController {
         } else {
             return getResultMsg(false, playerRechargeVo.getErrMsg(), null);
         }
+    }
+
+    private PayAccount getPayAccountBySearchId(String searchId) {
+        PayAccountVo payAccountVo = new PayAccountVo();
+        payAccountVo.setSearchId(searchId);
+        payAccountVo = ServiceTool.payAccountService().get(payAccountVo);
+        return payAccountVo.getResult();
     }
 
     private Map<String, Object> getResultMsg(boolean isSuccess, String msg, String transactionNo) {
@@ -263,70 +261,64 @@ public class BaseOnlineDepositController extends BaseDepositController {
         boolean pop = true;
 
         //验证存款金额的合法性
-        String tips = "";
         if (rechargeAmount <= 0) {
-            tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountCorrect");
-            model.addAttribute("tips", tips);
-        } else {
-            PlayerRank rank = getRank();
-            PayAccount payAccount = null;
-            if (RechargeTypeEnum.ONLINE_DEPOSIT.getCode().equals(playerRecharge.getRechargeType())) {//线上支付
-                payAccount = getOnlinePayAccount(rank, playerRecharge.getPayerBank());
-            } else {//扫码支付
-                payAccount = getScanCodePayAccount(rank, playerRecharge.getRechargeType());
-            }
-            if (payAccount != null) {
-                Integer max = payAccount.getSingleDepositMax();
-                if (max == null) {
-//                    max = rank.getOnlinePayMax();
-                    max = 99999999;//修改金额限制为空时,使用默认值
-                }
-                Integer min = payAccount.getSingleDepositMin();
-                if (min == null) {
-//                    min = rank.getOnlinePayMin();
-                    min = 0;
-                }
-                if ((max != null && max < rechargeAmount) || (min != null && min > rechargeAmount)) {
-                    tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountOver", min, max);
-                    model.addAttribute("tips", tips);
-                } else {
-                    double fee = calculateFee(rank, rechargeAmount);
-                    if (rechargeAmount + fee <= 0) {
-                        model.addAttribute("tips", "存款金额加手续费必须大于0");
-                    } else {
-                        unCheckSuccess = true;
-                        //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
-                        //手续费标志
-                        boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
-                        //返手续费标志
-                        boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
-                        List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRecharge.getRechargeType());
-                        if (!isFee && !isReturnFee && activityMessages.size() <= 0) {
-                            pop = false;
-                        } else {
-                            String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
-                            model.addAttribute("counterFee", counterFee);
-                            model.addAttribute("fee", fee);
-                            model.addAttribute("sales", activityMessages);
-                            String msg = "";
-                            if (fee > 0) {
-                                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.returnFee", counterFee);
-                            } else if (fee < 0) {
-                                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.needFee", counterFee);
-                            } else if (fee == 0) {
-                                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee", counterFee);
-                            }
-                            model.addAttribute("msg", msg);
-                        }
-                    }
-                }
-            } else {
-                model.addAttribute("tips", "当前没有收款账号");
-            }
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountCorrect"));
         }
+        PlayerRank rank = getRank();
+        PayAccount payAccount = null;
+        if (StringTool.isNotBlank(playerRechargeVo.getAccount())) {
+            payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
+        }
+        if (payAccount == null) {
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
+        }
+        Integer max = payAccount.getSingleDepositMax();
+        Integer min = payAccount.getSingleDepositMin();
+        if (min == null) {
+            min = Const.MIN_MONEY;
+        }
+        if (max == null) {
+            max = Const.MAX_MONEY;
+        }
+        if (max < rechargeAmount || min > rechargeAmount) {
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, "rechargeAmountOver", min, max));
+        }
+        double fee = calculateFee(rank, rechargeAmount);
+        if (rechargeAmount + fee <= 0) {
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
+        }
+        unCheckSuccess = true;
+        //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
+        //手续费标志
+        boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
+        //返手续费标志
+        boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
+        List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRecharge.getRechargeType());
+        if (!isFee && !isReturnFee && CollectionTool.isEmpty(activityMessages)) {
+            pop = false;
+        } else {
+            String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
+            model.addAttribute("counterFee", counterFee);
+            model.addAttribute("fee", fee);
+            model.addAttribute("sales", activityMessages);
+            String msg = "";
+            if (fee > 0) {
+                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.returnFee", counterFee);
+            } else if (fee < 0) {
+                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.needFee", counterFee);
+            } else if (fee == 0) {
+                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee", counterFee);
+            }
+            model.addAttribute("msg", msg);
+        }
+        return submitReturn(model, unCheckSuccess, pop, rechargeAmount, null);
+    }
+
+    private String submitReturn(Model model, boolean unCheckSuccess, boolean pop, Double rechargeAmount, String tips) {
         model.addAttribute("unCheckSuccess", unCheckSuccess);
         model.addAttribute("pop", pop);
         model.addAttribute("rechargeAmount", rechargeAmount);
+        model.addAttribute("tips", tips);
         return "/deposit/Sale2";
     }
 
@@ -345,96 +337,13 @@ public class BaseOnlineDepositController extends BaseDepositController {
         return ServiceTool.payAccountService().searchPayAccountByRank(listVo);
     }
 
-    /**
-     * 获取扫描支付收款账号
-     */
-    private PayAccount getScanCodePayAccount(PlayerRank rank, String rechargeType) {
-        PayAccount payAccount = null;
-        if (RechargeTypeEnum.ALIPAY_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), rechargeType);
-        } else if (RechargeTypeEnum.WECHATPAY_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), rechargeType);
-        } else if (RechargeTypeEnum.QQWALLET_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), rechargeType);
-        } else if (RechargeTypeEnum.JDPAY_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), rechargeType);
-        }else if (RechargeTypeEnum.BDWALLET_SAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), rechargeType);
-        }else if (RechargeTypeEnum.UNION_PAY_SCAN.getCode().equals(rechargeType)) {
-            payAccount = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), rechargeType);
-        }
-        return payAccount;
-    }
-
     PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
         List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), accountType);
-        return getRotationOnlinePayAccount(rank, payAccounts, rechargeType);
+        PayAccountListVo payAccountListVo = new PayAccountListVo();
+        payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
+        payAccountListVo.setResult(payAccounts);
+        payAccountListVo.setPlayerRank(rank);
+        payAccountListVo.setRechargeType(rechargeType);
+        return ServiceTool.payAccountService().getOnlineScanAccount(payAccountListVo);
     }
-
-    /**
-     * 获取线上支付收款账号
-     */
-    private PayAccount getOnlinePayAccount(PlayerRank rank, String bankCode) {
-        List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), PayAccountAccountType.THIRTY.getCode());
-        if (CollectionTool.isEmpty(payAccounts)) {
-            return null;
-        }
-
-        //获取可用渠道货币
-        Map<String, Set<String>> channelBankCode = ServiceTool.onlinePayService().getSupportDirectBank(new OnlinePayVo());
-        if (channelBankCode == null) {
-            return null;
-        }
-
-        Map<String, Set<String>> channelCurrency = ServiceTool.onlinePayService().getSupportCurrency(new OnlinePayVo());
-        if (channelCurrency == null) {
-            return null;
-        }
-        Set<String> currencyChannels = channelCurrency.get(SessionManager.getUser().getDefaultCurrency());
-        if (CollectionTool.isEmpty(currencyChannels)) {
-            return null;
-        }
-
-        Set<String> bankChannels = channelBankCode.get(bankCode);
-        if (CollectionTool.isEmpty(bankChannels)) {
-            return null;
-        }
-        List<String> channels = (List<String>) CollectionTool.intersection(currencyChannels, bankChannels);
-
-        List<PayAccount> pAccounts = CollectionQueryTool.inQuery(payAccounts, PayAccount.PROP_BANK_CODE, channels);
-        return getRotationOnlinePayAccount(rank, pAccounts, RechargeTypeEnum.ONLINE_DEPOSIT.getCode());
-    }
-
-    /**
-     * 获取收款账号（根据轮流入款获取指定收款账号）
-     * 金流顺序
-     */
-    PayAccount getRotationOnlinePayAccount(PlayerRank rank, List<PayAccount> payAccounts, String rechargeType) {
-        if (CollectionTool.isEmpty(payAccounts)) {
-            return null;
-        }
-        //轮流打开，根据最后一条线上支付存款记录确认收款账号
-        if (rank.getIsTakeTurns() == null || rank.getIsTakeTurns()) {
-            PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
-            playerRechargeVo.getSearch().setRechargeType(rechargeType);
-            playerRechargeVo.getSearch().setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
-            playerRechargeVo.setRankId(rank.getId());
-            Integer payAccountId = ServiceTool.playerRechargeService().searchLastPayAccountId(playerRechargeVo);
-            if (payAccountId == null) {
-                return payAccounts.get(0);
-            } else {
-                int i = 0;
-                for (PayAccount payAccount : payAccounts) {
-                    i++;
-                    if (payAccountId.intValue() == payAccount.getId().intValue()) {
-                        break;
-                    }
-                }
-                return i == payAccounts.size() ? payAccounts.get(0) : payAccounts.get(i);
-            }
-        } else { //轮流关闭，取第一个收款账号
-            return payAccounts.get(0);
-        }
-    }
-
 }

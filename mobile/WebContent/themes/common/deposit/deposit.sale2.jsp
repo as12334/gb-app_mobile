@@ -26,15 +26,12 @@
                                     </li>
 
                                     <c:forEach items="${sales}" varStatus="vs" var="i">
-                                        <%--<c:if test="${i.preferential}">--%>
                                         <li>
                                             <div class="text-warp">
                                                 <span>${i.activityName}</span>
                                                 <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}"/>
                                             </div>
                                         </li>
-                                        <%--</c:if>--%>
-
                                     </c:forEach>
                                 </ul>
                             </div>
@@ -55,15 +52,8 @@
                     </div>
                 </div>
             </c:when>
-            <c:otherwise>
-                <%--放置提交标识--%>
-                <%--<span style="display: none" id="pop" pop="${pop}"></span>--%>
-            </c:otherwise>
         </c:choose>
     </c:when>
-    <c:otherwise>
-        <%--<span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>--%>
-    </c:otherwise>
 </c:choose>
 <span style="display: none" id="pop" pop="${pop}"></span>
 <span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>
