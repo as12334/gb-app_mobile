@@ -373,10 +373,20 @@ public abstract class BaseApiController extends BaseDemoController {
                     casinoGame.setSystemStatus(siteGame.getSystemStatus());
                     if(SessionManager.getUser() != null){
                         if(SessionManager.isAutoPay()){
-                            casinoGame.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
+                            AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request,siteGame.getApiId(),siteGame.getApiTypeId().toString(),siteGame.getCode());
+                            casinoGame.setGameLink(gameUrl.getGameLink());
+                            casinoGame.setGameMsg(gameUrl.getGameMsg());
                         }else{
-                            casinoGame.setGameLink("/api/login.html");
+                            PlayerApiAccountVo player = new PlayerApiAccountVo();
+                            player.setApiId(siteGame.getApiId());
+                            player.setApiTypeId(siteGame.getApiTypeId().toString());
+                            player.setGameId(siteGame.getGameId());
+                            player.setGameCode(siteGame.getCode());
+                            AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player,request);
+                            casinoGame.setGameLink(gameUrl.getGameLink());
+                            casinoGame.setGameMsg(gameUrl.getGameMsg());
                         }
+                        casinoGame.setAutoPay(SessionManager.isAutoPay());
                     }
 
                     siteGames.add(casinoGame);
@@ -790,6 +800,111 @@ public abstract class BaseApiController extends BaseDemoController {
         RegisterResult registerResult = (RegisterResult)playerApiAccountVo.getGameApiResult();
         appI18n.setGameLink(registerResult.getDefaultLink());
         return appI18n;
+    }
+
+    protected PlayerApiAccountVo setDemoModel(PlayerApiAccountVo playerApiAccountVo){
+        DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
+        if (demoModel != null) {
+            //平台试玩免转不可用
+            //纯彩票试玩免转不可用
+            playerApiAccountVo.setTrial(true);
+            //Integer apiId = playerApiAccountVo.getApiId();
+            if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel) && (
+                    playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                    playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+                //模拟账号免转可用
+                playerApiAccountVo.setTrial(false);
+            }
+        }
+        return playerApiAccountVo;
+    }
+
+    /**
+     * 电子游戏地址
+     * @param playerApiAccountVo
+     * @param request
+     */
+    private AppSiteApiTypeRelationI18n getCasinoGameUrl(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request){
+        AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
+        setAccount(playerApiAccountVo, request);
+
+        if (checkApiStatus(playerApiAccountVo)) {
+            DemoModelEnum demoModel = SessionManagerCommon.getDemoModelEnum();
+            if (demoModel != null) {
+                //平台试玩免转不可用
+                //纯彩票试玩免转不可用
+                playerApiAccountVo.setTrial(true);
+                //Integer apiId = playerApiAccountVo.getApiId();
+                if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel) && (
+                        playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                        playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+                    //模拟账号免转可用
+                    playerApiAccountVo.setTrial(false);
+                }
+            }
+            playerApiAccountVo = ServiceTool.playerApiAccountService().loginApi(playerApiAccountVo);
+        } else {
+            appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
+            appI18n.setGameLink("");
+        }
+
+        RegisterResult registerResult = (RegisterResult)playerApiAccountVo.getGameApiResult();
+        appI18n.setGameLink(registerResult.getDefaultLink());
+        return appI18n;
+    }
+
+    protected void setAccount(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request) {
+        Integer apiId = playerApiAccountVo.getApiId();
+
+        StringBuilder domain = new StringBuilder();
+        domain.append(request.getServerName());
+        if (!domain.toString().contains("http")) {
+            domain.insert(0, "http://");
+        }
+
+        String transferUrl = domain + "/transfer/index.html"
+                + "?apiId=" + apiId
+                + "&apiTypeId=" + playerApiAccountVo.getApiTypeId();
+        playerApiAccountVo.setTransfersUrl(transferUrl);
+
+        playerApiAccountVo.setLobbyUrl(domain.toString());
+        if (request.getHeader("User-Agent").contains("app_android")) {
+            playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
+        }
+
+        playerApiAccountVo.setSysUser(SessionManager.getUser());
+        if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
+            GameVo gameVo = new GameVo();
+            gameVo.getSearch().setApiId(apiId);
+            gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
+            gameVo.getSearch().setSupportTerminal(GameSupportTerminalEnum.PHONE.getCode());
+            gameVo = ServiceTool.gameService().search(gameVo);
+            if (gameVo.getResult() != null) {
+                playerApiAccountVo.setGameId(gameVo.getResult().getId());
+                playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
+            }
+        }
+        playerApiAccountVo.setPlatformType(SupportTerminal.PHONE.getCode());
+    }
+
+    protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
+        Integer apiId = playerApiAccountVo.getApiId();
+        if (apiId == null)
+            return false;
+        Map<String, Api> apiMap = Cache.getApi();
+        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
+        Api api = apiMap.get(apiId.toString());
+        SiteApi siteApi = siteApiMap.get(apiId.toString());
+        if (api == null || siteApi == null) {
+            return false;
+        }
+        return isAllowToLogin(api, siteApi);
+    }
+
+    protected boolean isAllowToLogin(Api api, SiteApi siteApi) {
+        if (GameStatusEnum.DISABLE.getCode().equals(api.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(api.getSystemStatus()))
+            return false;
+        return !(GameStatusEnum.DISABLE.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(siteApi.getSystemStatus()));
     }
 
     /**
