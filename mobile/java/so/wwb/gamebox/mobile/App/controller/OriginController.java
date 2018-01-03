@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
-import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
@@ -109,28 +108,6 @@ public class OriginController extends BaseApiController {
         return JsonTool.toJson(mapJson);
     }
     //endregion mainIndex
-
-    //region mine
-
-
-    /**
-     * 是否有登陆账号
-     */
-    public String isLoginUser() {
-        if (SessionManager.getUser() == null) {
-            AppModelVo appVo = new AppModelVo();
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-
-            setMapJson(appVo);
-
-            return JsonTool.toJson(mapJson);
-        }
-        return null;
-    }
-
-    //endregion mine
 
     private void setMapJson(AppModelVo app) {
         if (app.getError() != 0) {
