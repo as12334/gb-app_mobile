@@ -1,14 +1,8 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
-import com.sun.deploy.net.HttpResponse;
-import com.sun.deploy.net.HttpUtils;
-import org.apache.http.HttpClientConnection;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.http.HttpClient;
-import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
-import org.soul.commons.net.http.HttpClientTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
 import org.soul.model.sys.po.SysParam;
@@ -36,8 +30,6 @@ import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
