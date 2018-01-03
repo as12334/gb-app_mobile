@@ -650,7 +650,7 @@ public abstract class BaseApiController extends BaseDemoController {
                     app.setGameLink(gameUrl.getGameLink());
                     app.setGameMsg(gameUrl.getGameMsg());
                 } else {
-                    app.setGameLink("/api/login.html");
+                    app.setGameLink("/api/detail.html?apiId="+siteGame.getApiId()+"&apiTypeId="+siteGame.getApiTypeId());
                 }
                 app.setAutoPay(SessionManager.isAutoPay());
             }
