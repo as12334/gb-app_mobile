@@ -179,25 +179,25 @@ public class DepositController extends BaseCommonDepositController {
         }
     }
 
-    private List<PayAccount> setAliasName(List<PayAccount> payAccounts){
-        Map<String,Integer> countMap = new HashMap<>();
-        Map<String,String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(),DictEnum.BANKNAME);
-        Map<String,List<PayAccount>> accountMap = CollectionTool.groupByProperty(payAccounts,PayAccount.PROP_BANK_CODE,String.class);
-        for(PayAccount payAccount:payAccounts){
-            if(StringTool.isBlank(payAccount.getAliasName())){
+    private List<PayAccount> setAliasName(List<PayAccount> payAccounts) {
+        Map<String, Integer> countMap = new HashMap<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
+        Map<String, List<PayAccount>> accountMap = CollectionTool.groupByProperty(payAccounts, PayAccount.PROP_BANK_CODE, String.class);
+        for (PayAccount payAccount : payAccounts) {
+            if (StringTool.isBlank(payAccount.getAliasName())) {
                 String bankCode = payAccount.getBankCode();
-                if(countMap.get(bankCode) == null){
-                    countMap.put(bankCode,1);
-                }else{
-                    countMap.put(bankCode,countMap.get(bankCode) +  1);
+                if (countMap.get(bankCode) == null) {
+                    countMap.put(bankCode, 1);
+                } else {
+                    countMap.put(bankCode, countMap.get(bankCode) + 1);
                 }
 
                 if (BankCodeEnum.OTHER.getCode().equals(payAccount.getBankCode()) || BankCodeEnum.OTHER_BANK.getCode().equals(payAccount.getBankCode())) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
-                }else{
-                    if(accountMap.get(bankCode).size() > 1){
+                } else {
+                    if (accountMap.get(bankCode).size() > 1) {
                         payAccount.setAliasName(i18n.get(bankCode) + countMap.get(bankCode));
-                    }else{
+                    } else {
                         payAccount.setAliasName(i18n.get(bankCode));
                     }
                 }
@@ -235,17 +235,17 @@ public class DepositController extends BaseCommonDepositController {
         String bankCode = payAccount.getBankCode();
         if (WECHATPAY.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.WECHATPAY_FAST.getCode());
-        }else  if (ALIPAY.equals(bankCode)) {
+        } else if (ALIPAY.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.ALIPAY_FAST.getCode());
-        }else  if (QQWALLET.equals(bankCode)) {
+        } else if (QQWALLET.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.QQWALLET_FAST.getCode());
-        }else  if (JDWALLET.equals(bankCode)) {
+        } else if (JDWALLET.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.JDWALLET_FAST.getCode());
         } else if (BDWALLET.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.BDWALLET_FAST.getCode());
-        }else if (ONECODEPAY.equals(bankCode)) {
+        } else if (ONECODEPAY.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.ONECODEPAY_FAST.getCode());
-        }else  if (OTHERFAST.equals(bankCode)) {
+        } else if (OTHERFAST.equals(bankCode)) {
             payAccount.setRechargeType(RechargeTypeEnum.OTHER_FAST.getCode());
         }
     }
@@ -285,8 +285,7 @@ public class DepositController extends BaseCommonDepositController {
         return bankList;
     }
 
-    private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap,
-                         String rechargeType, String scanType) {
+    private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap, String rechargeType, String scanType) {
         if (payAccounts.size() > 0) {
             payAccountMap.put(rechargeType, scanType);
         }

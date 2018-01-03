@@ -1,3 +1,4 @@
+<%--@elvariable id="command" type="so.wwb.gamebox.model.master.content.vo.PayAccountListVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
 
@@ -14,6 +15,7 @@
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
             <input type="hidden" name="activityId" id="activityId"/>
+            <input type="hidden" name="account" value="${command.getSearchId(account.id)}"/>
             <gb:token/>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
