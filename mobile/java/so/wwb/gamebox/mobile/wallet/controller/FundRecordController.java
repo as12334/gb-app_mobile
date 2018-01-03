@@ -177,9 +177,9 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
 
     private VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
         Map<String, Serializable> transactionMap = DictTool.get(DictEnum.COMMON_TRANSACTION_TYPE);
-        if (transactionMap != null) {   // 过滤转账类型
+        /*if (transactionMap != null) {   // 过滤转账类型
             transactionMap.remove(TransactionTypeEnum.TRANSFERS.getCode());
-        }
+        }*/
         playerTransactionListVo.setDictCommonTransactionType(transactionMap);
         Map<String, Serializable> dictCommonStatus = DictTool.get(DictEnum.COMMON_STATUS);
         /*删掉稽核失败待处理状态*/
