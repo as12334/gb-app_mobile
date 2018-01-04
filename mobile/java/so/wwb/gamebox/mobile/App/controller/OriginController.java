@@ -21,6 +21,7 @@ import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
+import so.wwb.gamebox.model.master.setting.vo.AppRequestModelVo;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,13 +41,13 @@ public class OriginController extends BaseApiController {
     //region mainIndex
     @RequestMapping("/mainIndex")
     @ResponseBody
-    public String mainIndex(HttpServletRequest request) {
+    public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = MapTool.newHashMap();
 
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
 
-        map.put("siteApiRelation", getSiteApiRelationI18n(request));
+        map.put("siteApiRelation", getSiteApiRelationI18n(request,model));
         map.put("activity", getMoneyActivityFloat(request));
 
         setMapJson(new AppModelVo());
@@ -83,10 +84,10 @@ public class OriginController extends BaseApiController {
 
     @RequestMapping("/getSiteApiRelation")
     @ResponseBody
-    public String getSiteApi(HttpServletRequest request) {
+    public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = MapTool.newHashMap();
         //公告
-        map.put("siteApiRelation", getSiteApiRelationI18n(request));
+        map.put("siteApiRelation", getSiteApiRelationI18n(request,model));
         setMapJson(new AppModelVo());
         mapJson.put("data", map);
 
