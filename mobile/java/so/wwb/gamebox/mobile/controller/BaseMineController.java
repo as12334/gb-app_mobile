@@ -1,7 +1,9 @@
 package so.wwb.gamebox.mobile.controller;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -47,6 +49,8 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+
+import static org.soul.commons.currency.CurrencyTool.formatCurrency;
 
 /**
  * Created by ed on 17-12-31.
@@ -192,7 +196,7 @@ public class BaseMineController {
             userInfoApp.setUsername(StringTool.overlayName(player.getUsername()));
             // 钱包余额
             Double balance = player.getWalletBalance();
-            userInfoApp.setBalance(CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
+            userInfoApp.setBalance(formatCurrency(balance == null ? 0.0d : balance));
         }
         // 总资产
         userInfoApp.setAssets(queryPlayerAssets(listVo, user.getId()));
@@ -206,7 +210,7 @@ public class BaseMineController {
         listVo.setApis(Cache.getApi());
         listVo.setSiteApis(Cache.getSiteApi());
         double assets = ServiceTool.playerApiService().queryPlayerAssets(listVo);
-        return CurrencyTool.formatCurrency(assets);
+        return formatCurrency(assets);
     }
 
     protected List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
@@ -386,6 +390,29 @@ public class BaseMineController {
     private boolean isFull(Map map) {
         PlayerRank rank = getRank();
         return isFull(map, rank);
+    }
+
+    /**
+     * 余额是否充足
+     * @return
+     */
+    protected boolean isBalanceAdequate(Map map){
+        PlayerRank rank = getRank();
+        UserPlayer player = getPlayer();
+        if(rank == null || player == null){
+            return true;
+        }
+        //取款时同步彩票余额
+        double totalBalance = 0;
+        if (ParamTool.isLotterySite()) {
+            double apiBalance = queryLotteryApiBalance();
+            totalBalance = apiBalance + totalBalance;
+        }
+        if(rank.getWithdrawMinNum() > player.getWalletBalance() + totalBalance){
+            map.put("withdrawMinNum",formatCurrency(rank.getWithdrawMinNum()));
+            return true;
+        }
+        return false;
     }
 
     /**

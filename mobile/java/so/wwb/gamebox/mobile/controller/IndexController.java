@@ -1,6 +1,7 @@
 package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
@@ -10,8 +11,11 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.qrcode.QrcodeDisTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,12 +37,16 @@ import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
+import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
+import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.*;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
+import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
@@ -157,8 +165,144 @@ public class IndexController extends BaseApiController {
         return lotteryList;
     }
 
+    /**
+     * 查询公告
+     */
+    protected List<CttAnnouncement> getAnnouncement() {
+        Map<String, CttAnnouncement> announcement = Cache.getSiteAnnouncement();
+        List<CttAnnouncement> resultList = new ArrayList<>();
+        if (announcement != null) {
+            for (CttAnnouncement an : announcement.values()) {
+                if (StringTool.equals(an.getAnnouncementType(), CttAnnouncementTypeEnum.SITE_ANNOUNCEMENT.getCode())
+                        && StringTool.equals(an.getLanguage(), SessionManager.getLocale().toString())) {
+                    resultList.add(an);
+                }
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 查询Banner
+     *
+     * @deprecated since v1057
+     */
+    protected List<Map> getCarousel(HttpServletRequest request, String type) {
+        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
+        List<Map> resultList = new ArrayList<>();
+        String webSite = ServletTool.getDomainFullAddress(request);
+        if (carousels != null) {
+            for (Map m : carousels.values()) {
+                if ((StringTool.equalsIgnoreCase(type, m.get("type").toString()))
+                        && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
+                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
+                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                    String link = String.valueOf(m.get("link"));
+                    if (StringTool.isNotBlank(link)) {
+                        if (link.contains("${website}")) {
+                            link = link.replace("${website}", webSite);
+                        }
+                    }
+                    m.put("link", link);
+                    resultList.add(m);
+                }
+            }
+        }
+        return resultList;
+    }
 
 
+    /**
+     * 查询红包浮动图
+     */
+    private CttFloatPic queryMoneyActivityFloat() {
+        Map<String, CttFloatPic> floatPicMap = Cache.getFloatPic();
+        Iterator<String> iter = floatPicMap.keySet().iterator();
+        CttFloatPic tempFloatPic = null;
+        while (iter.hasNext()) {
+            String key = iter.next();
+            CttFloatPic cttFloatPic = floatPicMap.get(key);
+            if (CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType()) && cttFloatPic.getStatus()) {
+                tempFloatPic = cttFloatPic;
+                break;
+            }
+        }
+        return tempFloatPic;
+    }
+
+    /**
+     * 查找红包活动
+     *
+     * @return
+     */
+    private PlayerActivityMessage findMoneyActivity() {
+        Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
+        String lang = SessionManagerBase.getLocale().toString();
+        Iterator<String> iter = activityMessages.keySet().iterator();
+        Date justNow = new Date();
+        PlayerActivityMessage playerActivityMessage = null;
+        while (iter.hasNext()) {
+            String key = iter.next();
+            if (key.endsWith(lang)) {
+                playerActivityMessage = activityMessages.get(key);
+                Date startTime = playerActivityMessage.getStartTime();
+                Date endTime = playerActivityMessage.getEndTime();
+                if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
+                    //不是红包活动继续
+                    continue;
+                }
+                if (playerActivityMessage.getIsDeleted()) {
+                    continue;
+                }
+                if (!playerActivityMessage.getIsDisplay()) {
+                    continue;
+                }
+                if (startTime.before(justNow) && justNow.before(endTime)) {
+                    return playerActivityMessage;
+                }
+
+            }
+        }
+        return null;
+    }
+
+    private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic) {
+        CttFloatPicItem item = null;
+        Map<String, CttFloatPicItem> floatPicItemMap = Cache.getFloatPicItem();
+        Iterator<String> iter = floatPicItemMap.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            CttFloatPicItem cttFloatPicItem = floatPicItemMap.get(key);
+            if (cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())) {
+                item = cttFloatPicItem;
+                break;
+            }
+        }
+        return item;
+    }
+
+    /**
+     * 显示红包浮动图
+     *
+     * @param floatList
+     */
+    protected void showMoneyActivityFloat(List<Map> floatList) {
+        CttFloatPic cttFloatPic = queryMoneyActivityFloat();
+        if (cttFloatPic != null) {
+            PlayerActivityMessage moneyActivity = findMoneyActivity();
+            CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
+            if (moneyActivity != null) {
+                String activityId = CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo");
+                Map floatMap = new HashMap();
+                floatMap.put("type", "moneyActivity");
+                floatMap.put("activityId", activityId);
+                floatMap.put("floatItem", cttFloatPicItem);
+                floatMap.put("cttFloatPic", cttFloatPic);
+                floatMap.put("description", moneyActivity.getActivityDescription());
+                floatList.add(floatMap);
+            }
+        }
+    }
 
     /**
      * 关于/条款

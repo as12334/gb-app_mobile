@@ -99,8 +99,18 @@ public class MineAppController extends BaseMineController {
 
             return JsonTool.toJson(mapJson);
         }
-
+        //余额是否充足
         Map<String, Object> map = MapTool.newHashMap();
+        if(isBalanceAdequate(map)){
+            AppModelVo balance = new AppModelVo();
+            balance.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
+            balance.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace("x",map.get("withdrawMinNum").toString()));
+            balance.setError(1);
+
+            return JsonTool.toJson(mapJson);
+        }
+
+
 
         withdraw(map);
 
