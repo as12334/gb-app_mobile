@@ -19,6 +19,7 @@ import org.soul.model.gameapi.result.GameApiResult;
 import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
@@ -38,12 +39,17 @@ import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
+import so.wwb.gamebox.model.master.enums.AppResolutionEnum;
+import so.wwb.gamebox.model.master.enums.AppThemeEnum;
+import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.model.master.setting.vo.AppRequestModelVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
@@ -379,7 +385,7 @@ public abstract class BaseApiController extends BaseDemoController {
         return siteApiRelation;
     }
 
-    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n(HttpServletRequest request) {
+    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
 
@@ -411,12 +417,12 @@ public abstract class BaseApiController extends BaseDemoController {
             } else {
                 vo.setLevel(false);
             }
-            vo.setSiteApis(setAppApiRelationI18n(siteApiRelation.get(apiType),request));
+            vo.setSiteApis(setAppApiRelationI18n(siteApiRelation.get(apiType),request,model));
             vo.setLocale(SessionManager.getLocale().toString());
             appList.add(vo);
         }
 
-        appList.add(setFishGame(siteApiTypeRelactionI18n.values()));
+        appList.add(setFishGame(siteApiTypeRelactionI18n.values(),request,model));
 
         return appList;
     }
@@ -465,12 +471,41 @@ public abstract class BaseApiController extends BaseDemoController {
     }
 
     /**
+     * 设置api图片路径
+     * @param model
+     * @return
+     */
+    private String setApiLogoUrl(AppRequestModelVo model,HttpServletRequest request){
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(),request.getServerName())+"/../app");
+        if(StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())){
+            sb.append("/android/themes");
+        }
+        if(StringTool.equalsIgnoreCase(model.getTheme(),AppTypeEnum.APP_IOS.getCode())){
+            sb.append("/ios/themes");
+        }
+
+        for (AppThemeEnum code : AppThemeEnum.values()){
+            if(StringTool.equalsIgnoreCase(model.getTheme(),code.getCode())){
+                sb.append("/").append(code.getCode()).append("/images");
+            }
+        }
+        for (AppResolutionEnum code : AppResolutionEnum.values()){
+            if(StringTool.equalsIgnoreCase(model.getResolution(),code.getCode())){
+                sb.append("/").append(code.getCode()).append("/api");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
      * 转换游戏类
      *
      * @param siteApis
      * @return
      */
-    private List<AppSiteApiTypeRelationI18n> setAppApiRelationI18n(List<SiteApiTypeRelationI18n> siteApis,HttpServletRequest request) {
+    private List<AppSiteApiTypeRelationI18n> setAppApiRelationI18n(List<SiteApiTypeRelationI18n> siteApis,HttpServletRequest request,AppRequestModelVo model) {
         List<AppSiteApiTypeRelationI18n> appSites = ListTool.newArrayList();
         for (SiteApiTypeRelationI18n i18n : siteApis) {
             AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
@@ -479,19 +514,18 @@ public abstract class BaseApiController extends BaseDemoController {
             appI18n.setLocal(i18n.getLocal());
             appI18n.setName(i18n.getName());
             appI18n.setSiteId(i18n.getSiteId());
-            appI18n.setCover("images/icon-" + i18n.getApiTypeId() + "-" + i18n.getApiId() + "" + ".png");
+            appI18n.setCover(setApiLogoUrl(model,request) + "/api_logo_"+i18n.getApiId()+".png");
+            //appI18n.setCover("images/icon-" + i18n.getApiTypeId() + "-" + i18n.getApiId() + "" + ".png");
             if(SessionManager.getUser()!=null && i18n.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()){
                 if(i18n.getApiId().equals(ApiProviderEnum.BSG.getCode())){
                     appI18n.setGameLink("/game/apiGames.html?apiId="+i18n.getApiId()+"&apiTypeId="+i18n.getApiTypeId());
                 }else if(SessionManager.isAutoPay() && i18n.getApiTypeId() != ApiTypeEnum.CASINO.getCode()){
-                    //appI18n.setGameLink("/transfer/auto/loginAndAutoTransfer.html");
                     AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request,appI18n.getApiId(),appI18n.getApiTypeId().toString(),null);
                     appI18n.setGameLink(gameUrl.getGameLink());
                     appI18n.setGameMsg(gameUrl.getGameMsg());
                 }else if (i18n.getApiTypeId().equals(ApiTypeEnum.CASINO.getCode())){
                     appI18n.setGameLink("/origin/getCasinoGame.html?search.apiId="+i18n.getApiId()+"&search.apiTypeId="+i18n.getApiTypeId());
                 }else{
-                    //appI18n.setGameMsg(setMsg(MessageI18nConst.NOT_ALLOW_AUTO_PAY, Module.Passport.getCode()));
                     appI18n.setGameLink("/api/detail.html?apiId="+i18n.getApiId()+"&apiTypeId="+i18n.getApiTypeId());
                 }
                 appI18n.setAutoPay(SessionManager.isAutoPay());
@@ -511,7 +545,7 @@ public abstract class BaseApiController extends BaseDemoController {
      *
      * @return
      */
-    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns) {
+    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns,HttpServletRequest request, AppRequestModelVo model) {
         AppSiteApiTypeRelastionVo fishVo = new AppSiteApiTypeRelastionVo();
         fishVo.setApiType(-1);
         String gameType = LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode());
@@ -527,9 +561,10 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setName(ApiProviderEnum.AG.getTrans());
                 i18n.setLocal(SessionManager.getSiteLocale().toString());
                 i18n.setSiteId(SessionManager.getSiteId());
-                i18n.setApiId(Integer.getInteger(ApiProviderEnum.AG.getCode()));
+                i18n.setApiId(Integer.parseInt(ApiProviderEnum.AG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
                 i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
+                i18n.setCover(setApiLogoUrl(model,request) + "/api_logo_"+i18n.getApiId()+".png");
                 fishSiteApis.add(i18n);
             }
             if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
@@ -538,9 +573,10 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setName(ApiProviderEnum.GG.getTrans());
                 i18n.setLocal(SessionManager.getSiteLocale().toString());
                 i18n.setSiteId(SessionManager.getSiteId());
-                i18n.setApiId(Integer.getInteger(ApiProviderEnum.GG.getCode()));
+                i18n.setApiId(Integer.parseInt(ApiProviderEnum.GG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
                 i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
+                i18n.setCover(setApiLogoUrl(model,request) + "/api_logo_"+i18n.getApiId()+".png");
                 fishSiteApis.add(i18n);
             }
         }
