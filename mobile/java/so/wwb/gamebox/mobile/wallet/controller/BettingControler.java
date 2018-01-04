@@ -127,7 +127,7 @@ public class BettingControler {
     private void initQueryDate(PlayerGameOrderListVo playerGameOrderListVo) {
         playerGameOrderListVo.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
         if (playerGameOrderListVo.getSearch().getBeginBetTime() == null) {
-            playerGameOrderListVo.getSearch().setBeginBetTime(SessionManager.getDate().addDays(DEFAULT_TIME));
+            playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME)); //拿到明天在-1相当于拿到今天时间00:00:00
         }
         if (playerGameOrderListVo.getSearch().getEndBetTime() == null||playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
             playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(),-1));
