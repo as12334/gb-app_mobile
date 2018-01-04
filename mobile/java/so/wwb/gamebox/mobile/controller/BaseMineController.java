@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -14,8 +15,12 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
+import so.wwb.gamebox.mobile.App.model.BettingDetailsApp;
+import so.wwb.gamebox.mobile.App.model.BettingInfoApp;
 import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
@@ -320,6 +325,26 @@ public class BaseMineController {
         return apiBalance;
     }
 
+    protected BettingDetailsApp buildBettingDetail(PlayerGameOrderVo playerGameOrderVo) {
+        PlayerGameOrder gameOrder = playerGameOrderVo.getResult();
+        BettingDetailsApp detailsApp = new BettingDetailsApp();
+        detailsApp.setUserName(gameOrder.getUsername());
+        detailsApp.setTerminal(gameOrder.getTerminal());
+        detailsApp.setBetId(gameOrder.getBetId());
+        detailsApp.setApiId(gameOrder.getApiId());
+        detailsApp.setApiTypeId(gameOrder.getApiTypeId());
+        detailsApp.setBetTime(gameOrder.getBetTime());
+        detailsApp.setSingleAmount(gameOrder.getSingleAmount());
+        detailsApp.setOrderState(gameOrder.getOrderState());
+        detailsApp.setEffectiveTradeAmount(gameOrder.getEffectiveTradeAmount());
+        detailsApp.setPayoutTime(gameOrder.getPayoutTime());
+        detailsApp.setProfitAmount(gameOrder.getProfitAmount());
+        detailsApp.setContributionAmount(gameOrder.getContributionAmount());
+        detailsApp.setBetDetail(gameOrder.getBetDetail());
+        detailsApp.setResultArray(playerGameOrderVo.getResultArray());
+        return detailsApp;
+    }
+
     /**
      * 查询是否已存在取款订单
      */
@@ -475,6 +500,48 @@ public class BaseMineController {
             player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
         }
         return player;
+    }
+
+
+    protected void initQueryDateForgetBetting(PlayerGameOrderListVo playerGameOrderListVo, int TIME_INTERVAL, int DEFAULT_TIME) {
+        playerGameOrderListVo.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
+        if (playerGameOrderListVo.getSearch().getBeginBetTime() == null) {
+            playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME));//拿到明天在-1相当于拿到今天时间00:00:00
+        }
+        if (playerGameOrderListVo.getSearch().getEndBetTime() == null||playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
+            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(),-1));
+        }
+    }
+
+    /**
+     * 统计当前页数据
+     * @param listVo
+     */
+    protected Map<String,Object> statisticsData(PlayerGameOrderListVo listVo, int TIME_INTERVAL, int DEFAULT_TIME) {
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
+        // 统计数据
+        listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
+        Map map = ServiceTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
+        map.put("currency", getCurrencySign());
+        return map;
+    }
+
+    protected List<BettingInfoApp> buildBetting(List<PlayerGameOrder> list) {
+        List<BettingInfoApp> bettingInfoAppList = new ArrayList<>();
+        for (PlayerGameOrder order : list) {
+            BettingInfoApp infoApp = new BettingInfoApp();
+            infoApp.setId(order.getId());
+            infoApp.setApiId(order.getApiId());
+            infoApp.setGameId(order.getGameId());
+            infoApp.setTerminal(order.getTerminal());
+            infoApp.setBetTime(order.getBetTime());
+            infoApp.setSingleAmount(order.getSingleAmount());
+            infoApp.setOrderState(order.getOrderState());
+            infoApp.setActionIdJson(order.getActionIdJson());
+            bettingInfoAppList.add(infoApp);
+        }
+        return bettingInfoAppList;
     }
 
 

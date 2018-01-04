@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.App.model.BettingDataApp;
+import so.wwb.gamebox.mobile.App.model.BettingInfoApp;
 import so.wwb.gamebox.mobile.App.model.RecordDetailApp;
 import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
@@ -18,8 +20,11 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
+import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderListVo;
+import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderVo;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
@@ -27,6 +32,7 @@ import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -230,6 +236,61 @@ public class MineAppController extends BaseMineController {
             recordDetailApp.setRechargeAddress(po.getRechargeAddress());
             mapJson.put("data", recordDetailApp);
         }
+
+        return JsonTool.toJson(mapJson);
+    }
+
+
+    @RequestMapping("/getBettingList")
+    @ResponseBody
+    public String getBettingList(Date beginBetTime, Date endBetTime) {
+
+        final int TIME_INTERVAL = -30;
+        final int DEFAULT_TIME = 1;
+        if (!isLoginUser()) {
+            JsonTool.toJson(mapJson);
+        }
+        PlayerGameOrderListVo listVo = new PlayerGameOrderListVo();
+        BettingDataApp bettingDataApp = new BettingDataApp();
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.getSearch().setBeginBetTime(beginBetTime);
+        listVo.getSearch().setEndBetTime(endBetTime);
+        if (listVo.getSearch().getEndBetTime() != null) {
+            listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
+        }
+
+
+        initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
+        listVo = ServiceTool.playerGameOrderService().search(listVo);
+
+        List<PlayerGameOrder> gameOrderList = listVo.getResult();
+
+        bettingDataApp.setStatisticsData(statisticsData(listVo, TIME_INTERVAL, DEFAULT_TIME));
+        bettingDataApp.setList(buildBetting(gameOrderList));
+
+        //设置默认时间
+        bettingDataApp.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
+        bettingDataApp.setMaxDate(SessionManager.getDate().getNow());
+
+        setMapJson(new AppModelVo());
+        mapJson.put("data", bettingDataApp);
+        return JsonTool.toJson(mapJson);
+    }
+
+    @RequestMapping("/getBettingDetails")
+    @ResponseBody
+    public String getBettingDetails(Integer id) {
+        PlayerGameOrderVo vo = new PlayerGameOrderVo();
+        id = 10111337;//暂时写死，为了验证json
+        vo.getSearch().setId(id);
+        vo = ServiceTool.playerGameOrderService().getGameOrderDetail(vo);
+//        如果不是这个玩家投注的订单，则无视该笔订单
+        if (vo.getResult() == null || vo.getResult().getPlayerId() != SessionManager.getUserId().intValue()) {
+            vo.setResult(null);
+            vo.setResultArray(null);
+        }
+        setMapJson(new AppModelVo());
+        mapJson.put("data", buildBettingDetail(vo));
 
         return JsonTool.toJson(mapJson);
     }
