@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
@@ -39,7 +40,7 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     /*京东*/
     private static final String JDWALLET = "jdwallet";
     /*百度*/
-    private static final String BDWALLET ="bdwallet";
+    private static final String BDWALLET = "bdwallet";
     /*银联*/
     private static final String UNIONPAY = "unionpay";
 
@@ -51,68 +52,50 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     public String scanCode(Model model, @PathVariable String type) {
         PlayerRank rank = getRank();
         PayAccount payAccountForScan = null;
-        if (ALIPAY.equals(type)) {
-            //支付宝收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
-            model.addAttribute("scanPay", RechargeTypeEnum.ALIPAY_SCAN.getCode());
+        String scanPay = null;
+        switch (type) {
+            case ALIPAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
+                break;
+            case WECHATPAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
+                break;
+            case QQWALLET:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.QQWALLET_SCAN.getCode();
+                break;
+            case JDWALLET:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.JDPAY_SCAN.getCode();
+                break;
+            case BDWALLET:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.BDWALLET_SAN.getCode();
+                break;
+            case UNIONPAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
+                break;
+            default:
+                break;
         }
-        if (WECHATPAY.equals(type)) {
-            //微信支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), RechargeTypeEnum.WECHATPAY_SCAN.getCode());
-            model.addAttribute("scanPay", RechargeTypeEnum.WECHATPAY_SCAN.getCode());
-        }
-        if (QQWALLET.equals(type)) {
-            //微信支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_SCAN.getCode());
-            model.addAttribute("scanPay", RechargeTypeEnum.QQWALLET_SCAN.getCode());
-        }
-        if(JDWALLET.equals(type)){
-            //京东支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), RechargeTypeEnum.JDPAY_SCAN.getCode());
-            model.addAttribute("scanPay", RechargeTypeEnum.JDPAY_SCAN.getCode());
-        }
-        if(BDWALLET.equals(type)){
-            //百度支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), RechargeTypeEnum.BDWALLET_SAN.getCode());
-            model.addAttribute("scanPay", RechargeTypeEnum.BDWALLET_SAN.getCode());
-        }
-        if(UNIONPAY.equals(type)){
-            //银联支付收款账号
-            payAccountForScan = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), RechargeTypeEnum.UNION_PAY_SCAN.getCode());
-            model.addAttribute("scanPay", RechargeTypeEnum.UNION_PAY_SCAN.getCode());
-        }
+        model.addAttribute("scanPay", scanPay);
         model.addAttribute("payAccountForScan", payAccountForScan);
         model.addAttribute("currency", getCurrencySign());
         model.addAttribute("username", SessionManager.getUserName());
-
         //验证规则
         model.addAttribute("validateRule", JsRuleCreator.create(OnlineScanDepositForm.class));
         model.addAttribute("rank", rank);
+        model.addAttribute("command", new PayAccountVo());
         return "/deposit/ScanCode";
     }
 
     @RequestMapping("/scanCodeSubmit")
     @ResponseBody
     @Token(valid = true)
-    public Map<String, Object> ScanCodeSubmit(PlayerRechargeVo playerRechargeVo,
-                                              @FormModel @Valid OnlineScanDepositForm form, BindingResult result) {
+    public Map<String, Object> ScanCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result) {
         return commonDeposit(playerRechargeVo, result);
     }
-
-    /**
-     * 设置线上支付（含微信、支付宝）的session最后一次存款时间及次数
-     */
-    /*public void setRechargeCount() {
-        Date date = SessionManager.getRechargeLastTime();
-        Date nowDate = SessionManager.getDate().getNow();
-        if (date == null) {
-            SessionManager.setRechargeCount(1);
-        } else if (DateTool.minutesBetween(date, nowDate) > RECHARGE_TIME) {
-            SessionManager.setRechargeCount(1);
-        } else {
-            SessionManager.setRechargeCount(SessionManager.getRechargeCount() + 1);
-        }
-        SessionManager.setRechargeLastTime(nowDate);
-    }*/
-
 }

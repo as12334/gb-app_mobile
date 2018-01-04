@@ -13,6 +13,7 @@
             <input type="hidden" class="onlinePayMax" value="${onlinePayMax}" name="onlinePayMax"/>
             <input type="hidden" class="onlinePayMin" value="${onlinePayMin}" name="onlinePayMin"/>
             <input type="hidden" name="activityId" id="activityId"/>
+            <input type="hidden" name="account" value="${command.getSearchId(payAccountForScan.id)}"/>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
                     <label>${views.deposit_auto['金额']}</label>

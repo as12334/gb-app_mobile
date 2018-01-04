@@ -10,7 +10,6 @@
                         <soul:button text="" target="initDialog" opType="function" cssClass="mui-btn mui-btn-link mui-pull-right pop-close">
                             <span class="mui-icon mui-icon-closeempty"></span>
                         </soul:button>
-                        <a href="#bottomPopover" class="mui-btn mui-btn-link mui-pull-right pop-close"><span class="mui-icon mui-icon-closeempty"></span></a>
                     </div>
                     <div class="cont-text">
                         <c:choose>

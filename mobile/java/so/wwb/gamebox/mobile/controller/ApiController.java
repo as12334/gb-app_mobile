@@ -89,60 +89,6 @@ public class ApiController extends BaseApiController {
         return JsonTool.toJson(resultMap);
     }
 
-    private void setAccount(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request) {
-        Integer apiId = playerApiAccountVo.getApiId();
-
-        StringBuilder domain = new StringBuilder();
-        domain.append(request.getServerName());
-        if (!domain.toString().contains("http")) {
-            domain.insert(0, "http://");
-        }
-
-        String transferUrl = domain + "/transfer/index.html"
-                + "?apiId=" + apiId
-                + "&apiTypeId=" + playerApiAccountVo.getApiTypeId();
-        playerApiAccountVo.setTransfersUrl(transferUrl);
-
-        playerApiAccountVo.setLobbyUrl(domain.toString());
-        if (request.getHeader("User-Agent").contains("app_android")) {
-            playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
-        }
-
-        playerApiAccountVo.setSysUser(SessionManager.getUser());
-        if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
-            GameVo gameVo = new GameVo();
-            gameVo.getSearch().setApiId(apiId);
-            gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(GameSupportTerminalEnum.PHONE.getCode());
-            gameVo = ServiceTool.gameService().search(gameVo);
-            if (gameVo.getResult() != null) {
-                playerApiAccountVo.setGameId(gameVo.getResult().getId());
-                playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
-            }
-        }
-        playerApiAccountVo.setPlatformType(SupportTerminal.PHONE.getCode());
-    }
-
-    private boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
-        Integer apiId = playerApiAccountVo.getApiId();
-        if (apiId == null)
-            return false;
-        Map<String, Api> apiMap = Cache.getApi();
-        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
-        Api api = apiMap.get(apiId.toString());
-        SiteApi siteApi = siteApiMap.get(apiId.toString());
-        if (api == null || siteApi == null) {
-            return false;
-        }
-        return isAllowToLogin(api, siteApi);
-    }
-
-    private boolean isAllowToLogin(Api api, SiteApi siteApi) {
-        if (GameStatusEnum.DISABLE.getCode().equals(api.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(api.getSystemStatus()))
-            return false;
-        return !(GameStatusEnum.DISABLE.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(siteApi.getSystemStatus()));
-    }
-
     @RequestMapping("/getSiteApi")
     @ResponseBody
     public Map<String, Object> getSiteAPi(HttpServletRequest request) {
