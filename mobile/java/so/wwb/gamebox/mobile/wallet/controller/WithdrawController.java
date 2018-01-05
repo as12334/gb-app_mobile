@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -81,7 +82,7 @@ public class WithdrawController extends BaseWithdrawController {
     private String getPlayerStatus() {
         VUserPlayerVo playerVo = new VUserPlayerVo();
         playerVo.getSearch().setId(SessionManager.getUserId());
-        playerVo = ServiceTool.vUserPlayerService().get(playerVo);
+        playerVo = ServiceSiteTool.vUserPlayerService().get(playerVo);
         VUserPlayer player = playerVo.getResult();
         return player.getPlayerStatus();
     }
@@ -185,7 +186,7 @@ public class WithdrawController extends BaseWithdrawController {
         UserPlayerVo playerVo = new UserPlayerVo();
         playerVo.setResult(new UserPlayer());
         playerVo.getSearch().setId(SessionManager.getUserId());
-        playerVo = ServiceTool.userPlayerService().get(playerVo);
+        playerVo = ServiceSiteTool.userPlayerService().get(playerVo);
         return playerVo.getResult();
     }
 
@@ -252,7 +253,7 @@ public class WithdrawController extends BaseWithdrawController {
     private List<PlayerTransaction> getAuditLogList(PlayerTransactionListVo listVo) {
         listVo.getSearch().setPlayerId(SessionManager.getUser().getId());
         listVo.getSearch().setCreateTime(new Date());
-        return ServiceTool.getPlayerTransactionService().searchAuditLog(listVo);
+        return ServiceSiteTool.getPlayerTransactionService().searchAuditLog(listVo);
     }
 
     private void initAuditData(Integer playerId, List<PlayerTransaction> playerTransactions) {
@@ -265,7 +266,7 @@ public class WithdrawController extends BaseWithdrawController {
         }
         PlayerRankVo playerRankVo = new PlayerRankVo();
         playerRankVo.getSearch().setId(player.getRankId());
-        playerRankVo = ServiceTool.playerRankService().get(playerRankVo);
+        playerRankVo = ServiceSiteTool.playerRankService().get(playerRankVo);
         if (playerRankVo.getResult() == null || playerRankVo.getResult().getWithdrawNormalAudit() == null) {
             return;
         }

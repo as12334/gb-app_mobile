@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
@@ -29,7 +29,7 @@ public abstract class WalletBaseController {
         if (userId != null) {
             VUserPlayerVo vo = new VUserPlayerVo();
             vo.getSearch().setId(userId);
-            VUserPlayer player = ServiceTool.vUserPlayerService().queryPlayer4App(vo);
+            VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
             if (player != null) {
                 player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
             }

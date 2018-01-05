@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.passport.form.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -394,7 +395,7 @@ public class SignUpController extends BaseDemoController {
         UserPlayer userPlayer = new UserPlayer();
         userPlayer.setCreateChannel(CreateChannelEnum.MOBILE.getCode());
         userRegisterVo.setUserPlayer(userPlayer);
-        return ServiceTool.userPlayerService().register(userRegisterVo);
+        return ServiceSiteTool.userPlayerService().register(userRegisterVo);
     }
 
     @RequestMapping("/checkedCaptcha")

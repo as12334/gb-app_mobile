@@ -1,7 +1,7 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.model.security.privilege.vo.SysUserVo;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
@@ -16,6 +16,6 @@ public abstract class BaseCommonDepositController {
     public PlayerRank getRank() {
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setId(SessionManager.getUserId());
-        return ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo);
+        return ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
     }
 }

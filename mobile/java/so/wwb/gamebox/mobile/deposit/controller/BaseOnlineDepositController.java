@@ -18,6 +18,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -68,7 +69,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             return;
         }
         try {
-            playerRechargeVo = ServiceTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
+            playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
             PlayerRecharge playerRecharge = playerRechargeVo.getResult();
             PayAccount payAccount = getPayAccountById(playerRecharge.getPayAccountId());
             List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
@@ -91,7 +92,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 //添加支付网址
                 playerRecharge.setPayUrl(domain);
                 playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
-                ServiceTool.playerRechargeService().updateOnly(playerRechargeVo);
+                ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
                 response.sendRedirect(url);
             }
         } catch (Exception e) {
@@ -171,7 +172,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     private PayAccount getPayAccountBySearchId(String searchId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.setSearchId(searchId);
-        payAccountVo = ServiceTool.payAccountService().get(payAccountVo);
+        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
         return payAccountVo.getResult();
     }
 
@@ -202,7 +203,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         message.setMsgBody(SiteParamEnum.WARMING_TONE_ONLINEPAY.getType());
         SysResourceListVo sysResourceListVo = new SysResourceListVo();
         sysResourceListVo.getSearch().setUrl(MCENTER_ONLINE_RECHARGE_URL);
-        List<Integer> userIdByUrl = ServiceTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
+        List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
         userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
         message.addUserIds(userIdByUrl);
         ServiceTool.messageService().sendToMcenterMsg(message);
@@ -243,7 +244,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
 
         //保存订单
-        return ServiceTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
+        return ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
     }
 
     /**
@@ -334,7 +335,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         map.put("terminal", TerminalEnum.MOBILE.getCode());
         PayAccountListVo listVo = new PayAccountListVo();
         listVo.setConditions(map);
-        return ServiceTool.payAccountService().searchPayAccountByRank(listVo);
+        return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
     }
 
     PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
@@ -344,6 +345,6 @@ public class BaseOnlineDepositController extends BaseDepositController {
         payAccountListVo.setResult(payAccounts);
         payAccountListVo.setPlayerRank(rank);
         payAccountListVo.setRechargeType(rechargeType);
-        return ServiceTool.payAccountService().getOnlineScanAccount(payAccountListVo);
+        return ServiceSiteTool.payAccountService().getOnlineScanAccount(payAccountListVo);
     }
 }

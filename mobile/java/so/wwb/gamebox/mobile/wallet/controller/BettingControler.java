@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
@@ -57,7 +57,7 @@ public class BettingControler {
         }
 //        model.addAttribute("statisticalData",statisticsData(listVo));
         initQueryDate(listVo);
-        listVo= ServiceTool.playerGameOrderService().search(listVo);
+        listVo= ServiceSiteTool.playerGameOrderService().search(listVo);
         model.addAttribute("command",listVo);
 
         //设置默认时间
@@ -75,7 +75,7 @@ public class BettingControler {
     @RequestMapping("/detail")
     public String queryVPlayerGameOrder(PlayerGameOrderVo playerGameOrderVo, Model model){
         playerGameOrderVo.getSearch().setPlayerId(SessionManager.getUserId());
-        playerGameOrderVo=ServiceTool.playerGameOrderService().get(playerGameOrderVo);
+        playerGameOrderVo=ServiceSiteTool.playerGameOrderService().get(playerGameOrderVo);
         model.addAttribute("command",playerGameOrderVo);
         model.addAttribute("username",SessionManager.getUserName());
         model.addAttribute("isLotterySite", ParamTool.isLotterySite());
@@ -84,7 +84,7 @@ public class BettingControler {
 
     @RequestMapping("/gameRecordDetail")
     public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo, Model model) {
-        playerGameOrderVo = ServiceTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);
+        playerGameOrderVo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);
         PlayerGameOrder playerGameOrder = playerGameOrderVo.getResult();
 //        如果不是这个玩家的投注订单，则视无该笔订单
         if (playerGameOrder == null || playerGameOrder.getPlayerId() != SessionManager.getUserId().intValue()) {
@@ -109,7 +109,7 @@ public class BettingControler {
 //        if (listVo.getPaging().getTotalCount() != 0) {
             //判断日期查询
             listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
-            Map map = ServiceTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
+            Map map = ServiceSiteTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
             map.put("currency", getCurrencySign());
             return JsonTool.toJson(map);
 //        }

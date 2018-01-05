@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.App.controller;
 
-import com.alibaba.fastjson.JSON;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
@@ -10,16 +9,13 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.App.model.BettingDataApp;
-import so.wwb.gamebox.mobile.App.model.BettingInfoApp;
 import so.wwb.gamebox.mobile.App.model.RecordDetailApp;
 import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.company.po.Bank;
-import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
@@ -38,7 +34,9 @@ import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 import so.wwb.gamebox.web.bank.BankHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ed on 17-12-31.
@@ -142,7 +140,7 @@ public class MineAppController extends BaseMineController {
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
 
-        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         setMapJson(new AppModelVo());
         mapJson.put("data", vPreferentialRecodeListVo);
         return JsonTool.toJson(mapJson);
@@ -258,7 +256,7 @@ public class MineAppController extends BaseMineController {
         getFund(mapJson);
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
-        listVo = ServiceTool.vPlayerTransactionService().search(listVo);
+        listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
         setMapJson(new AppModelVo());
         mapJson.put("data", listVo);
         return JsonTool.toJson(mapJson);
@@ -276,7 +274,7 @@ public class MineAppController extends BaseMineController {
         if (StringTool.isNotBlank(searchId)) {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
-            vo = ServiceTool.vPlayerTransactionService().get(vo);
+            vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
             setMapJson(new AppModelVo());
 
             VPlayerTransaction po = vo.getResult();
@@ -325,7 +323,7 @@ public class MineAppController extends BaseMineController {
 
 
         initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
-        listVo = ServiceTool.playerGameOrderService().search(listVo);
+        listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
 
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
 
@@ -347,7 +345,7 @@ public class MineAppController extends BaseMineController {
         PlayerGameOrderVo vo = new PlayerGameOrderVo();
         id = 10111337;//暂时写死，为了验证json
         vo.getSearch().setId(id);
-        vo = ServiceTool.playerGameOrderService().getGameOrderDetail(vo);
+        vo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(vo);
 //        如果不是这个玩家投注的订单，则无视该笔订单
         if (vo.getResult() == null || vo.getResult().getPlayerId() != SessionManager.getUserId().intValue()) {
             vo.setResult(null);

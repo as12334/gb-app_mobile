@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
@@ -54,7 +54,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         payAccountListVo.setPlayerRank(pr);
         payAccountListVo.setBanks(searchBank(BankEnum.TYPE_BANK.getCode()));
-        Map<String, PayAccount> payAccountMap = ServiceTool.payAccountService().getOnlineAccount(payAccountListVo);
+        Map<String, PayAccount> payAccountMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
         model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
         //收款账号
         getOnlineAccounts(model, payAccountMap);

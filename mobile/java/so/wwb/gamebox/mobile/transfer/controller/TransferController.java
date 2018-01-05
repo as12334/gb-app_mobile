@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.transfer.form.PlayerTransferForm;
@@ -87,7 +87,7 @@ public class TransferController extends WalletBaseController {
             //正在处理中转账金额(额度转换)
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
-            model.addAttribute("transferPendingAmount", ServiceTool.playerTransferService().queryProcessAmount(playerTransferVo));
+            model.addAttribute("transferPendingAmount", ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo));
             return TRANSFER_INDEX_URL;
 
         }
@@ -129,7 +129,7 @@ public class TransferController extends WalletBaseController {
         PlayerApiVo playerApiVo = new PlayerApiVo();
         playerApiVo.getSearch().setApiId(apiId);
         playerApiVo.getSearch().setPlayerId(SessionManager.getUserId());
-        playerApiVo = ServiceTool.playerApiService().search(playerApiVo);
+        playerApiVo = ServiceSiteTool.playerApiService().search(playerApiVo);
         return playerApiVo.getResult();
     }
 
@@ -172,7 +172,7 @@ public class TransferController extends WalletBaseController {
 
 
     private IPlayerTransferService playerTransferService() {
-        return ServiceTool.playerTransferService();
+        return ServiceSiteTool.playerTransferService();
     }
 
     /**
@@ -202,11 +202,11 @@ public class TransferController extends WalletBaseController {
 
         try {
             PlayerApiAccountVo playerApiAccountVo = createVoByTransfer(playerTransferVo);
-            PlayerApiAccount playerApiAccount = ServiceTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
+            PlayerApiAccount playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
             if (playerApiAccount == null) {
                 return getErrorMessage(TransferResultStatusEnum.API_ACCOUNT_NOT_FOUND.getCode(), playerTransferVo.getResult().getApiId());
             }
-            playerApiAccount = ServiceTool.playerApiAccountService().queryPlayerApiAccount(playerApiAccountVo);
+            playerApiAccount = ServiceSiteTool.playerApiAccountService().queryPlayerApiAccount(playerApiAccountVo);
             playerTransferVo.setPlayerApiAccount(playerApiAccount);
         } catch (Exception e) {
             LOG.error(e, "【玩家[{0}]转账】:API账号注册超时。", playerTransferVo.getResult().getUserName());
@@ -364,7 +364,7 @@ public class TransferController extends WalletBaseController {
         playerApiAccount.setLastLoginTime(SessionManager.getDate().getNow());
         playerApiAccountVo.setProperties(PlayerApiAccount.PROP_LAST_LOGIN_TIME, PlayerApiAccount.PROP_LAST_LOGIN_IP);
         playerApiAccountVo.setResult(playerApiAccount);
-        ServiceTool.playerApiAccountService().updateOnly(playerApiAccountVo);
+        ServiceSiteTool.playerApiAccountService().updateOnly(playerApiAccountVo);
     }
 
     /**
@@ -465,7 +465,7 @@ public class TransferController extends WalletBaseController {
         }
         try {
             playerTransferVo.setResult(playerTransferService().queryTransfer(playerTransferVo));
-            playerTransferVo = ServiceTool.playerTransferService().checkTransferByPlayerTransfer(playerTransferVo);
+            playerTransferVo = ServiceSiteTool.playerTransferService().checkTransferByPlayerTransfer(playerTransferVo);
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -537,7 +537,7 @@ public class TransferController extends WalletBaseController {
         playerApiListVo.setType(ApiQueryTypeEnum.ALL_API.getCode());
 
         //api余额
-        playerApiListVo = ServiceTool.playerApiService().fundRecord(playerApiListVo);
+        playerApiListVo = ServiceSiteTool.playerApiService().fundRecord(playerApiListVo);
         return playerApiListVo;
     }
 

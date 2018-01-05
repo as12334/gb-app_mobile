@@ -1,9 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
-import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.currency.CurrencyTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -17,10 +14,7 @@ import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
-import org.soul.web.validation.form.js.JsRuleCreator;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.App.model.BettingDetailsApp;
@@ -56,8 +50,6 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
-import so.wwb.gamebox.web.fund.form.AddBankcardForm;
-import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -83,7 +75,7 @@ public class BaseMineController {
             playerApiListVo.getSearch().setPlayerId(userId);
             playerApiListVo.setApis(Cache.getApi());
             playerApiListVo.setSiteApis(Cache.getSiteApi());
-            double totalAssets = ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo);
+            double totalAssets = ServiceSiteTool.playerApiService().queryPlayerAssets(playerApiListVo);
             userInfo.put("totalAssets", totalAssets);
         } catch (Exception e) {
             LOG.error(e.getMessage());
@@ -94,12 +86,12 @@ public class BaseMineController {
         //正在处理中取款金额
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(userId);
-        userInfo.put("withdrawAmount", ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        userInfo.put("withdrawAmount", ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
 
         //正在处理中转账金额(额度转换)
         PlayerTransferVo playerTransferVo = new PlayerTransferVo();
         playerTransferVo.getSearch().setUserId(userId);
-        userInfo.put("transferAmount", ServiceTool.playerTransferService().queryProcessAmount(playerTransferVo));
+        userInfo.put("transferAmount", ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo));
 
         //计算近7日收益（优惠金额）
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
@@ -109,7 +101,7 @@ public class BaseMineController {
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
-        userInfo.put("preferentialAmount", ServiceTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
+        userInfo.put("preferentialAmount", ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
 
         //银行卡信息
         List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
@@ -130,7 +122,7 @@ public class BaseMineController {
         playerRecommendAwardListVo.getSearch().setUserId(userId);
         playerRecommendAwardListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), RECOMMEND_DAYS));
         playerRecommendAwardListVo.getSearch().setEndTime(SessionManager.getDate().getToday());
-        userInfo.put("recomdAmount", ServiceTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
+        userInfo.put("recomdAmount", ServiceSiteTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
 
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
@@ -141,7 +133,7 @@ public class BaseMineController {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
-        listVo = ServiceTool.vPlayerAdvisoryService().search(listVo);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
         Integer advisoryUnReadCount = 0;
         String tag = "";
         //所有咨询数据
@@ -149,13 +141,13 @@ public class BaseMineController {
             //查询回复表每一条在已读表是否存在
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
             parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
                 readVo.setResult(new PlayerAdvisoryRead());
                 readVo.getSearch().setUserId(SessionManager.getUserId());
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceTool.playerAdvisoryReadService().search(readVo);
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
                 //不存在未读+1，标记已读咨询Id
                 if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
                     advisoryUnReadCount++;
@@ -170,7 +162,7 @@ public class BaseMineController {
                 if (tags[i] != "") {
                     VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
                     pa.getSearch().setId(Integer.valueOf(tags[i]));
-                    VPlayerAdvisoryVo vpaVo = ServiceTool.vPlayerAdvisoryService().get(pa);
+                    VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
                     if (vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())) {
                         vo.setIsRead(false);
                     }
@@ -221,7 +213,7 @@ public class BaseMineController {
         listVo.getSearch().setPlayerId(userId);
         listVo.setApis(Cache.getApi());
         listVo.setSiteApis(Cache.getSiteApi());
-        double assets = ServiceTool.playerApiService().queryPlayerAssets(listVo);
+        double assets = ServiceSiteTool.playerApiService().queryPlayerAssets(listVo);
         return formatCurrency(assets);
     }
 
@@ -233,7 +225,7 @@ public class BaseMineController {
             listVo.getSearch().setApiId(null);
         }
         listVo.setType(ApiQueryTypeEnum.ALL_API.getCode());
-        listVo = ServiceTool.playerApiService().fundRecord(listVo);
+        listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
          /* 翻译api */
         List<Map<String, Object>> maps = new ArrayList<>();
         List<SiteApi> apis = getSiteApi();
@@ -285,7 +277,7 @@ public class BaseMineController {
     protected Double getWalletBalance(Integer userId) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(userId);
-        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         UserPlayer player = userPlayerVo.getResult();
         if (player == null) {
             return 0.0d;
@@ -376,7 +368,7 @@ public class BaseMineController {
         PlayerApiVo apiVo = new PlayerApiVo();
         apiVo.getSearch().setApiId(Integer.valueOf(ApiProviderEnum.PL.getCode()));
         apiVo.getSearch().setPlayerId(SessionManagerBase.getUserId());
-        double apiBalance = ServiceTool.playerApiService().queryApiBalance(apiVo);
+        double apiBalance = ServiceSiteTool.playerApiService().queryApiBalance(apiVo);
 
         return apiBalance;
     }
@@ -411,7 +403,7 @@ public class BaseMineController {
         PlayerWithdrawVo vo = new PlayerWithdrawVo();
         vo.setResult(new PlayerWithdraw());
         vo.getSearch().setPlayerId(SessionManagerCommon.getUserId());
-        Long result = ServiceTool.playerWithdrawService().existPlayerWithdrawCount(vo);
+        Long result = ServiceSiteTool.playerWithdrawService().existPlayerWithdrawCount(vo);
         boolean hasOrder = result > 0;
         LOG.info("玩家{0}取款订单是否已存在{1}", SessionManagerCommon.getUserName(), hasOrder);
         return hasOrder;
@@ -519,7 +511,7 @@ public class BaseMineController {
     private PlayerRank getRank() {
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setId(SessionManagerCommon.getUserId());
-        return ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo);
+        return ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
     }
 
     /**
@@ -569,7 +561,7 @@ public class BaseMineController {
         PlayerWithdrawVo playVo = new PlayerWithdrawVo();
         playVo.getSearch().setCreateTime(nowTime);
         playVo.getSearch().setPlayerId(SessionManagerCommon.getUserId());
-        Long count = ServiceTool.playerWithdrawService().searchPlayerWithdrawNum(playVo);
+        Long count = ServiceSiteTool.playerWithdrawService().searchPlayerWithdrawNum(playVo);
         count = (count == null) ? 0L : count;
         return count.intValue();
     }
@@ -586,14 +578,14 @@ public class BaseMineController {
         UserPlayerVo playerVo = new UserPlayerVo();
         playerVo.getSearch().setId(SessionManagerCommon.getUserId());
         playerVo.setResult(new UserPlayer());
-        playerVo = ServiceTool.userPlayerService().get(playerVo);
+        playerVo = ServiceSiteTool.userPlayerService().get(playerVo);
         return playerVo.getResult();
     }
 
     protected VUserPlayer getVPlayer(Integer userId) {
         VUserPlayerVo vo = new VUserPlayerVo();
         vo.getSearch().setId(userId);
-        VUserPlayer player = ServiceTool.vUserPlayerService().queryPlayer4App(vo);
+        VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
         if (player != null) {
             player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
         }
@@ -620,7 +612,7 @@ public class BaseMineController {
         initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
         // 统计数据
         listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
-        Map map = ServiceTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
+        Map map = ServiceSiteTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
         map.put("currency", getCurrencySign());
         return map;
     }
@@ -664,7 +656,7 @@ public class BaseMineController {
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
 
-        map.put("withdrawSum", ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        map.put("withdrawSum", ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
         if (!ParamTool.isLotterySite()) {
             //正在转账中金额
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
@@ -677,7 +669,7 @@ public class BaseMineController {
     private IPlayerTransferService playerTransferService;
     private IPlayerTransferService getPlayerTransferService() {
         if (playerTransferService == null)
-            playerTransferService = ServiceTool.playerTransferService();
+            playerTransferService = ServiceSiteTool.playerTransferService();
         return playerTransferService;
     }
 
