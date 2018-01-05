@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.App.controller;
 
+import com.alibaba.fastjson.JSON;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
@@ -17,10 +18,14 @@ import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.company.po.Bank;
+import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
+import so.wwb.gamebox.model.master.player.po.UserBankcard;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderListVo;
@@ -30,11 +35,10 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.setting.vo.AppMineLinkVo;
 import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
+import so.wwb.gamebox.web.bank.BankHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -145,6 +149,9 @@ public class MineAppController extends BaseMineController {
 
     }
 
+
+
+
     @RequestMapping("/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
@@ -182,6 +189,53 @@ public class MineAppController extends BaseMineController {
 
         setMapJson(new AppModelVo());
         mapJson.put("data", infoApp);
+        return JsonTool.toJson(mapJson);
+    }
+
+    @RequestMapping("/addCard")
+    @ResponseBody
+    public String addCard() {
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
+
+
+        UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
+        AppModelVo appModelVo = new AppModelVo();
+        if (userBankcard == null) {
+            //获取银行列表
+            mapJson.put("data", bankList());
+            appModelVo.setCode(200);
+            appModelVo.setMsg("用户添加银行卡");
+        }else {
+            appModelVo.setCode(201);
+            appModelVo.setMsg("展示银行卡信息");
+            appModelVo.setData(userBankcard);
+        }
+        setMapJson(appModelVo);
+        return JsonTool.toJson(mapJson);
+    }
+
+    @RequestMapping("/addBtc")
+    @ResponseBody
+    public String addBtc() {
+        if (!isLoginUser()) {
+            return JsonTool.toJson(mapJson);
+        }
+
+        UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
+        AppModelVo appModelVo = new AppModelVo();
+
+        if (userBankcard == null) {
+            appModelVo.setCode(202);
+            appModelVo.setMsg("用户添加比特币");
+        }else {
+            appModelVo.setCode(203);
+            appModelVo.setMsg("展示比特币信息");
+            appModelVo.setData(userBankcard);
+        }
+        setMapJson(appModelVo);
+
         return JsonTool.toJson(mapJson);
     }
 
@@ -403,7 +457,7 @@ public class MineAppController extends BaseMineController {
             mapJson.put("version", version);
         }
         if (app.getData() != null) {
-            mapJson.put("version", app.getData());
+            mapJson.put("data", app.getData());
         } else {
             mapJson.put("data", null);
         }
