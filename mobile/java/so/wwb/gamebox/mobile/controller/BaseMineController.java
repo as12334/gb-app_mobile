@@ -27,9 +27,11 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
+import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
@@ -438,6 +440,25 @@ public class BaseMineController {
         }
         return false;
     }
+
+    /**
+     * 获取银行列表
+     * @return
+     */
+    public List<Map> bankList() {
+        BankListVo bankListVo = BankHelper.getBankListVo();
+        List<Map> maps = new ArrayList<>();
+        Map map;
+        for (Bank bank : bankListVo.getResult()) {
+            map = new HashMap();
+            map.put("value", bank.getBankName());
+            map.put("text", bank.getBankShortName());
+            maps.add(map);
+        }
+        return maps;
+    }
+
+
 
     /**
      * 获取玩家层级
