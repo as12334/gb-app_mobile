@@ -481,7 +481,7 @@ public abstract class BaseApiController extends BaseDemoController {
         if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append("/android/themes");
         }
-        if (StringTool.equalsIgnoreCase(model.getTheme(), AppTypeEnum.APP_IOS.getCode())) {
+        if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
             sb.append("/ios/themes");
         }
 
@@ -641,13 +641,13 @@ public abstract class BaseApiController extends BaseDemoController {
         if (StringTool.isBlank(url)) {
             return url;
         }
-        if (StringTool.equalsIgnoreCase(model.getResolution(), AppTypeEnum.APP_IOS.getCode())) {
+        if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
             if (apiId.equals(ApiProviderEnum.PL.getCode())) {
                 url = url + "?ad=" + apiId;
             }
         }
 
-        if(StringTool.equalsIgnoreCase(model.getResolution(),AppTypeEnum.APP_ANDROID.getCode())){
+        if(StringTool.equalsIgnoreCase(model.getTerminal(),AppTypeEnum.APP_ANDROID.getCode())){
             if( apiId.equals(ApiProviderEnum.PL.getCode())
                     && url.indexOf("/mainIndex") == -1
                     && url.indexOf("/lottery/") == -1){
