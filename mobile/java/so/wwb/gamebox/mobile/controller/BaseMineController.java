@@ -14,8 +14,11 @@ import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
+import org.soul.web.validation.form.js.JsRuleCreator;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
@@ -26,6 +29,7 @@ import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -52,6 +56,8 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.fund.form.AddBankcardForm;
+import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -319,6 +325,51 @@ public class BaseMineController {
             map.put("balanceLess", true);
             map.put("balanceMin", rank.getWithdrawMinNum());
         }
+    }
+
+    /**
+     * 判断是否含有用户取款卡号
+     *
+     * @param map
+     * @return
+     */
+    public boolean hasBank(Map map) {
+        // 是否设置收款账号
+        Map<String, UserBankcard> bankcardMap = BankHelper.getUserBankcards();
+        SysParam cashParam = ParamTool.getSysParam(SiteParamEnum.SETTING_WITHDRAW_TYPE_IS_CASH);
+        SysParam bitParam = ParamTool.getSysParam(SiteParamEnum.SETTING_WITHDRAW_TYPE_IS_BITCOIN);
+        boolean isCash = cashParam != null && "true".equals(cashParam.getParamValue());
+        boolean isBit = bitParam != null && "true".equals(bitParam.getParamValue());
+        map.put("isBit", isBit);
+        map.put("isCash", isCash);
+        map.put("bankcardMap", bankcardMap);
+        boolean hasBank = true;
+        if (MapTool.isEmpty(bankcardMap)) {
+            hasBank = false;
+        } else if (isCash && isBit && MapTool.isNotEmpty(bankcardMap)) {
+            hasBank = true;
+        } else if (isCash && bankcardMap.get(UserBankcardTypeEnum.TYPE_BANK) == null) {
+            hasBank = false;
+        } else if (isBit && bankcardMap.get(UserBankcardTypeEnum.TYPE_BTC) == null) {
+            hasBank = false;
+        }
+        if (isCash) {
+            bankcard(map);
+        } else {
+            btc(map);
+        }
+        map.put("hasBank", hasBank);
+        return hasBank;
+    }
+
+    public void bankcard(Map map) {
+        //model.addAttribute("validate", JsRuleCreator.create(AddBankcardForm.class));
+        map.put("user", SessionManagerCommon.getUser());
+        map.put("bankListVo", BankHelper.getBankListVo());
+    }
+
+    public void btc(Map map) {
+        //map.put("validate", JsRuleCreator.create(BtcBankcardForm.class));
     }
 
     private double queryLotteryApiBalance() {
