@@ -6,7 +6,7 @@
     <groupId>so.wwb.gamebox</groupId>
     <artifactId>app_mobile</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0.7-SNAPSHOT</version>
+    <version>0.0.0.0-SNAPSHOT</version>
     <modules>
         <module>../base/model</module>
         <module>../base/iservice</module>
