@@ -162,7 +162,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         List<SiteGameI18n> gameI18ns = CollectionQueryTool.query(Cache.getSiteGameI18n().values(), Criteria.and(cGameIds, local, cName));
 
-        if (listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
+        if (listVo.getSearch().getApiId() != null && listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
             List<SiteGameI18n> plGames = new ArrayList<>();
             for (SiteGameI18n game : gameI18ns) {
                 if (StringTool.isNotBlank(game.getCover())) {
