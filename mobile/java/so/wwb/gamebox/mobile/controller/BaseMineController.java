@@ -1,9 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
-import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.currency.CurrencyTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -17,10 +14,6 @@ import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
-import org.soul.web.validation.form.js.JsRuleCreator;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.App.model.BettingDetailsApp;
@@ -56,8 +49,6 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
-import so.wwb.gamebox.web.fund.form.AddBankcardForm;
-import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
