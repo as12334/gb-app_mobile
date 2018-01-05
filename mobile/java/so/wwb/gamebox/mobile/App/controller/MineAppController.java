@@ -5,6 +5,8 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.support._Module;
 import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +26,11 @@ import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderVo;
+import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -192,7 +196,7 @@ public class MineAppController extends BaseMineController {
         }
 
 
-        UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
+        UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);
         AppModelVo appModelVo = new AppModelVo();
         if (userBankcard == null) {
             //获取银行列表
@@ -222,7 +226,6 @@ public class MineAppController extends BaseMineController {
             appModelVo.setCode(202);
             appModelVo.setMsg("用户添加比特币");
         }else {
-            appModelVo.setCode(203);
             appModelVo.setMsg("展示比特币信息");
             appModelVo.setData(userBankcard);
         }
@@ -231,6 +234,34 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(mapJson);
     }
 
+    @RequestMapping("/submitBtc")
+    @ResponseBody
+    public String submitBtc(String bankcardNumber) {
+        /*比特币*/
+        final String BITCOIN = "bitcoin";
+        UserBankcardVo bankcardVo = new UserBankcardVo();
+        bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
+        bankcardVo.getResult().setBankcardNumber("abcdefghiklmnopqrstuvwxyz");
+
+        String userName = SessionManagerCommon.getUserName();
+        AppModelVo appModelVo = new AppModelVo();
+        if (checkCardIsExistsByUserId(bankcardVo)) {
+            appModelVo.setCode(204);
+            appModelVo.setMsg("用户绑定比特币已存在");
+        } else {
+            UserBankcard bankcard = bankcardVo.getResult();
+            bankcard.setUserId(getAgentId());
+            bankcard.setType(UserBankcardTypeEnum.BITCOIN.getCode());
+            bankcard.setBankName(BITCOIN);
+            bankcardVo = ServiceTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
+            appModelVo.setCode(205);
+            appModelVo.setMsg("用户绑定比特币成功");
+        }
+        setMapJson(appModelVo);
+
+
+        return JsonTool.toJson(mapJson);
+    }
 
 
 

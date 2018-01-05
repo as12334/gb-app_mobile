@@ -30,6 +30,7 @@ import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
+import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
@@ -316,6 +317,36 @@ public class BaseMineController {
             map.put("balanceLess", true);
             map.put("balanceMin", rank.getWithdrawMinNum());
         }
+    }
+
+    /**
+     * 判断银行卡是否存在
+     * @param vo
+     * @return
+     */
+    protected boolean checkCardIsExistsByUserId(UserBankcardVo vo) {
+        String bankcardNumber = vo.getResult().getBankcardNumber();
+        if(StringTool.isBlank(vo.getUserType())){
+            //用户类型为空，不能判断银行卡是否存在，所以判断为不能添加
+            LOG.info("保存银行卡{0}时，用户类型为空，不能判断银行卡是否存在，所以判断为不能添加",bankcardNumber);
+            return true;
+        }
+        vo.getSearch().setBankcardNumber(bankcardNumber);
+        vo.getSearch().setUserType(vo.getUserType());
+        UserBankcard isExists = ServiceTool.userBankcardService().cardIsExists(vo);
+        if (isExists != null && isExists.getIsDefault() && !isExists.getUserId().equals(Integer.valueOf(SessionManagerBase.getUserId()))) {
+            return true;
+        }
+        return false;
+    }
+
+
+    protected Integer getAgentId() {
+        Integer agentId = SessionManagerBase.getUserId();
+        if (UserTypeEnum.AGENT_SUB.getCode().equals(SessionManagerBase.getUser().getUserType())) {
+            agentId = SessionManagerBase.getUser().getOwnerId();
+        }
+        return agentId;
     }
 
     /**
