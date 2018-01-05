@@ -180,6 +180,14 @@
                 page.footer = new Footer();
                 page.dynamic = new Dynamic();
             });
+    Index
 </script>
+<c:if test="${isLogin}">
+    <script type="text/javascript">
+        curl(['site/index/Comet'], function (Comet) {
+            comet = new Comet();
+        });
+    </script>
+</c:if>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
