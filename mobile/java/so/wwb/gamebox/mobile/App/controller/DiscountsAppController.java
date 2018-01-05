@@ -6,9 +6,9 @@ import org.soul.commons.lang.string.StringTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.App.model.AppModelVo;
 import so.wwb.gamebox.mobile.controller.BaseDiscountsController;
-import so.wwb.gamebox.model.master.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.model.master.setting.vo.AppModelVo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -21,8 +21,6 @@ import java.util.Map;
 public class DiscountsAppController extends BaseDiscountsController{
     private final String version = "app_01";
     Map<String, Object> mapJson = MapTool.newHashMap();
-
-
 
     /**
      * 获取优惠活用
@@ -37,10 +35,6 @@ public class DiscountsAppController extends BaseDiscountsController{
 
         return JsonTool.toJson(mapJson);
     }
-
-
-
-
 
     private void setMapJson(AppModelVo app) {
         if (app.getError() != 0) {
