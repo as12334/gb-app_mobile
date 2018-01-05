@@ -109,11 +109,11 @@ public class OriginController extends BaseApiController {
 
     @RequestMapping("/getCasinoGame")
     @ResponseBody
-    public String getCasinoGame(SiteGameListVo listVo,HttpServletRequest request){
+    public String getCasinoGame(SiteGameListVo listVo,HttpServletRequest request,AppRequestModelVo modelVo){
         Map<String,Object> map = MapTool.newHashMap();
         Map<String,Object> page = MapTool.newHashMap();
 
-        map.put("casinoGames",getCasinoGameByApiId(listVo,request,page));
+        map.put("casinoGames",getCasinoGameByApiId(listVo,request,page,modelVo));
         map.put("page",page);
         setMapJson(new AppModelVo());
         mapJson.put("data",map);

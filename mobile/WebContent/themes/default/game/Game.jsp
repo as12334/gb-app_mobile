@@ -1,7 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
-<c:set var="tid" value="${apiTypeId}"/>
-<input type="hidden" id="tid" value="${apiTypeId}">
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +7,9 @@
     <title>${siteName}</title>
     <%@ include file="/include/include.js.jsp" %>
 </head>
-
 <body class="gb-theme index">
+<c:set var="tid" value="${apiTypeId}"/>
+<input type="hidden" id="tid" value="${apiTypeId}">
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
