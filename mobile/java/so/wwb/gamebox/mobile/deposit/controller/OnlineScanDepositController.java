@@ -59,24 +59,24 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
                 scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
                 break;
             case WECHATPAY:
-                payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
-                scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.WECHAT.getCode(), RechargeTypeEnum.WECHATPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.WECHATPAY_SCAN.getCode();
                 break;
             case QQWALLET:
-                payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_FAST.getCode());
                 scanPay = RechargeTypeEnum.QQWALLET_SCAN.getCode();
                 break;
             case JDWALLET:
-                payAccountForScan = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.JD_PAY.getCode(), RechargeTypeEnum.JDPAY_SCAN.getCode());
                 scanPay = RechargeTypeEnum.JDPAY_SCAN.getCode();
                 break;
             case BDWALLET:
-                payAccountForScan = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.BAIFU_PAY.getCode(), RechargeTypeEnum.BDWALLET_SAN.getCode());
                 scanPay = RechargeTypeEnum.BDWALLET_SAN.getCode();
                 break;
             case UNIONPAY:
-                payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
-                scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), RechargeTypeEnum.UNION_PAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.UNION_PAY_SCAN.getCode();
                 break;
             default:
                 break;
