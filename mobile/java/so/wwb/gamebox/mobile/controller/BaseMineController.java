@@ -334,7 +334,7 @@ public class BaseMineController {
         }
         vo.getSearch().setBankcardNumber(bankcardNumber);
         vo.getSearch().setUserType(vo.getUserType());
-        UserBankcard isExists = ServiceTool.userBankcardService().cardIsExists(vo);
+        UserBankcard isExists = ServiceSiteTool.userBankcardService().cardIsExists(vo);
         if (isExists != null && isExists.getIsDefault() && !isExists.getUserId().equals(Integer.valueOf(SessionManagerBase.getUserId()))) {
             return true;
         }

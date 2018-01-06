@@ -10,10 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.App.model.BettingDataApp;
-import so.wwb.gamebox.mobile.App.model.RecordDetailApp;
-import so.wwb.gamebox.mobile.App.model.UserInfoApp;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
@@ -255,7 +251,7 @@ public class MineAppController extends BaseMineController {
             bankcard.setUserId(getAgentId());
             bankcard.setType(UserBankcardTypeEnum.BITCOIN.getCode());
             bankcard.setBankName(BITCOIN);
-            bankcardVo = ServiceTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
+            bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
             appModelVo.setCode(205);
             appModelVo.setMsg("用户绑定比特币成功");
         }

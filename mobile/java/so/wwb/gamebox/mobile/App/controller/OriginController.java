@@ -16,7 +16,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.App.model.AppFloatPicItem;
 import so.wwb.gamebox.mobile.App.model.AppModelVo;
@@ -26,7 +26,10 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
-import so.wwb.gamebox.model.master.content.po.*;
+import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
+import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
+import so.wwb.gamebox.model.master.content.po.CttFloatPic;
+import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.po.ActivityOpenPeriod;
@@ -191,7 +194,7 @@ public class OriginController extends BaseApiController {
                 map.put("isEnd","false");
             }else{
 
-                ActivityOpenPeriod period = ServiceTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
+                ActivityOpenPeriod period = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
                 if(period!=null) {//开奖时间到
                     int count = countAll(moneyActivity,playerId);
                     map.put("drawTimes",count);
@@ -204,7 +207,7 @@ public class OriginController extends BaseApiController {
             }
             //如果还有次数，看下是否还有奖品。如果没有次数，直接显示没有次数
             if(MapTool.getInteger(map,"drawTimes")>0){
-                boolean hasLotteryAwards = ServiceTool.activityMoneyAwardsRulesService().hasLotteryAwards(awardsRulesVo);
+                boolean hasLotteryAwards = ServiceSiteTool.activityMoneyAwardsRulesService().hasLotteryAwards(awardsRulesVo);
                 if(!hasLotteryAwards){
                     map.put("drawTimes",-5);
                     map.put("isEnd","true");
@@ -249,7 +252,7 @@ public class OriginController extends BaseApiController {
     private Integer getPlayerRankId(Integer userId) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(userId);
-        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult().getRankId();
     }
 
@@ -274,7 +277,7 @@ public class OriginController extends BaseApiController {
         Date today = new Date();
         String realDate = DateTool.formatDate(today, CommonContext.get().getTimeZone(), DateTool.yyyy_MM_dd_HH_mm_ss);
         today = DateTool.parseDate(realDate,DateTool.yyyy_MM_dd_HH_mm_ss);
-        ActivityOpenPeriod nextOpenPeriod = ServiceTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriodByActivityId(awardsRulesVo);
+        ActivityOpenPeriod nextOpenPeriod = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriodByActivityId(awardsRulesVo);
         LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段为:{1}",awardsRulesVo.getPlayerId().toString(),nextOpenPeriod==null?"空":nextOpenPeriod.getStartTime(today));
         Date nextStartTime = null;
         if(nextOpenPeriod!=null){
@@ -308,7 +311,7 @@ public class OriginController extends BaseApiController {
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
         awardsRulesVo.getSearch().setActivityMessageId(activityMessageId);
-        boolean allDayLottery = ServiceTool.activityMoneyAwardsRulesService().isAllDayLottery(awardsRulesVo);
+        boolean allDayLottery = ServiceSiteTool.activityMoneyAwardsRulesService().isAllDayLottery(awardsRulesVo);
         return allDayLottery;
     }
 
@@ -347,7 +350,7 @@ public class OriginController extends BaseApiController {
         ActivityMoneyDefaultWinPlayerListVo playerListVo = new ActivityMoneyDefaultWinPlayerListVo();
         playerListVo.getSearch().setActivityMessageId(moneyActivity.getId());
         playerListVo.getSearch().setPlayerId(playerId);
-        List<Map> maps = ServiceTool.activityMoneyDefaultWinPlayerService().queryMoneyCountByPlayerId(playerListVo);
+        List<Map> maps = ServiceSiteTool.activityMoneyDefaultWinPlayerService().queryMoneyCountByPlayerId(playerListVo);
         return maps;
     }
 
@@ -367,7 +370,7 @@ public class OriginController extends BaseApiController {
         awardsRulesVo.getSearch().setStartTime(DateQuickPicker.getInstance().getToday());
         awardsRulesVo.getSearch().setEndTime(DateQuickPicker.getInstance().getTomorrow());
         awardsRulesVo.setActivityMessage(moneyActivity);
-        Integer integer = ServiceTool.activityMoneyAwardsRulesService().queryPlayerBetCount(awardsRulesVo);
+        Integer integer = ServiceSiteTool.activityMoneyAwardsRulesService().queryPlayerBetCount(awardsRulesVo);
         return integer;
     }
     /**
