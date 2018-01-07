@@ -42,33 +42,31 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
 
-/**
- * Created by  on 17-4-3.
- */
 @Controller
 @RequestMapping("/origin")
 public class OriginController extends BaseApiController {
     private Log LOG = LogFactory.getLog(OriginController.class);
-    private final String version = "app_01";
-    Map<String, Object> mapJson = MapTool.newHashMap();
+    private Map<String, Object> mapJson = MapTool.newHashMap();
 
     //region mainIndex
     @RequestMapping("/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
-        Map<String, Object> map = MapTool.newHashMap();
+        AppModelVo vo = new AppModelVo();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setMsg(appVersion);
 
+        Map<String, Object> map = MapTool.newHashMap();
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
-
         map.put("siteApiRelation", getSiteApiRelationI18n(request,model));
         map.put("activity", getMoneyActivityFloat(request));
+        vo.setData(map);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getCarouse")
@@ -241,7 +239,7 @@ public class OriginController extends BaseApiController {
         if (StringTool.isNotBlank(app.getVersion())) {
             mapJson.put("version", app.getVersion());
         } else {
-            mapJson.put("version", version);
+            mapJson.put("version", appVersion);
         }
     }
 

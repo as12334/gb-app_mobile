@@ -1,8 +1,5 @@
 package so.wwb.gamebox.mobile.App.model;
 
-/**
- * Created by ed on 17-12-26.
- */
 public class AppModelVo {
     private int error;
     private int code;
