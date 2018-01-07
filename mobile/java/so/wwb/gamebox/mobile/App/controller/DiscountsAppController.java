@@ -6,6 +6,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.App.common.CommonApp;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.App.model.AppModelVo;
 import so.wwb.gamebox.mobile.controller.BaseDiscountsController;
@@ -29,36 +30,9 @@ public class DiscountsAppController extends BaseDiscountsController{
     @ResponseBody
     public String getActivityType(HttpServletRequest request) {
 
+        AppModelVo vo = CommonApp.buildAppModelVo(getActivity(request));
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", getActivity(request));
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
-    private void setMapJson(AppModelVo app) {
-        if (app.getError() != 0) {
-            mapJson.put("error", app.getError());
-        } else {
-            mapJson.put("error", 0);
-        }
-
-        if (app.getCode() != 0) {
-            mapJson.put("code", app.getCode());
-        } else {
-            mapJson.put("code", AppErrorCodeEnum.Success.getCode());
-        }
-
-        if (StringTool.isNotBlank(app.getMsg())) {
-            mapJson.put("msg", app.getMsg());
-        } else {
-            mapJson.put("msg", AppErrorCodeEnum.Success.getMsg());
-        }
-
-        if (StringTool.isNotBlank(app.getVersion())) {
-            mapJson.put("version", app.getVersion());
-        } else {
-            mapJson.put("version", version);
-        }
-    }
 }
