@@ -384,6 +384,7 @@ public class MineAppController extends BaseMineController {
             vo.setCode(linkEnum.getCode());
             vo.setName(linkEnum.getName());
             vo.setLink(linkEnum.getLink());
+            links.add(vo);
         }
 
         return links;
