@@ -4,4 +4,6 @@ public interface AppConstant {
     String appVersion = "app_01";
 
     String SplitRegex = ",";
+
+    String targetRegex = "x";
 }

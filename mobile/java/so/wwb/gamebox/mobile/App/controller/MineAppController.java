@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.targetRegex;
 
 /**
  * Created by ed on 17-12-31.
@@ -111,12 +112,14 @@ public class MineAppController extends BaseMineController {
         Map<String, Object> map = MapTool.newHashMap();
         if(isBalanceAdequate(map)){
             vo.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
-            vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace("x",map.get("withdrawMinNum").toString()));
+            vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace(targetRegex,map.get("withdrawMinNum").toString()));
             vo.setError(1);
             return JsonTool.toJson(vo);
         }
 
         withdraw(map);
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
 
         return JsonTool.toJson(vo);

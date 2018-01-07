@@ -742,8 +742,9 @@ public abstract class BaseApiController extends BaseDemoController {
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
         Integer apiId = playerApiAccountVo.getApiId();
-        if (apiId == null)
+        if (apiId == null){
             return false;
+        }
         Map<String, Api> apiMap = Cache.getApi();
         Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
         Api api = apiMap.get(apiId.toString());
