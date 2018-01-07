@@ -6,4 +6,6 @@ public interface AppConstant {
     String SplitRegex = ",";
 
     String targetRegex = "x";
+
+    int appErrorTimes = 5;
 }

@@ -5,6 +5,7 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleDateTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,14 +32,14 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
+import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.targetRegex;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -376,6 +377,62 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(mapJson);
     }
 
+    @RequestMapping("/updateSafePassword")
+    @ResponseBody
+    public String updateSafePassword(){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+
+        if (!isLoginUser()) {
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setError(1);
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        SysUser user = SessionManager.getUser();
+        Map<String,Object> map = MapTool.newHashMap();
+        map.put("hasRealName",StringTool.isNotBlank(user.getRealName()));
+        if(StringTool.isBlank(user.getPermissionPwd())){
+            map.put("hasPermissionPwd",false);
+            vo.setData(map);
+        }else{
+            map.put("hasPermissionPwd",true);
+            if (isLock(user)) {//如果冻结
+                map.put("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
+                map.put("lockTime", formatLockTime(user.getSecpwdFreezeStartTime()));
+                vo.setData(map);
+                return JsonTool.toJson(vo);
+            }else{//判断是否出现验证码,大于2显示验证码
+                Integer errorTimes = user.getSecpwdErrorTimes();
+                errorTimes = errorTimes == null ? 0 : errorTimes;
+                map.put("isOpenCaptcha", errorTimes > 1);
+                map.put("remindTimes", appErrorTimes - errorTimes);
+                vo.setData(map);
+            }
+        }
+
+        return JsonTool.toJson(vo);
+    }
+
+    private String formatLockTime(Date date) {
+        return LocaleDateTool.formatDate(date, DateTool.yyyy_MM_dd_HH_mm_ss, SessionManager.getTimeZone());
+    }
+    /**
+     * 是否锁定
+     */
+    private boolean isLock(SysUser user) {
+        Date now = SessionManager.getDate().getNow();
+        if (user != null) {
+            if (user.getSecpwdFreezeEndTime() == null) {
+                return false;
+            }
+            if (now.before(user.getSecpwdFreezeEndTime())) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * 设置我的链接地址
      * @return
