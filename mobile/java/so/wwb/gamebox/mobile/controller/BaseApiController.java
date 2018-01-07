@@ -319,7 +319,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 }
             }
         }
-        pageMap.put("page", listVo.getPaging());
+        pageMap.put("pageTotal", listVo.getPaging().getTotalCount());
 
         return siteGames;
     }

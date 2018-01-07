@@ -1,6 +1,7 @@
 package so.wwb.gamebox.mobile.App.controller;
 
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
@@ -12,6 +13,7 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
 import org.soul.commons.security.CryptoTool;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,16 +44,17 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.SplitRegex;
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
 
 @Controller
 @RequestMapping("/origin")
 public class OriginController extends BaseApiController {
     private Log LOG = LogFactory.getLog(OriginController.class);
-    private Map<String, Object> mapJson = MapTool.newHashMap();
 
     //region mainIndex
     @RequestMapping("/mainIndex")
@@ -65,7 +68,7 @@ public class OriginController extends BaseApiController {
         Map<String, Object> map = MapTool.newHashMap();
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getSiteApiRelationI18n(request,model));
+        map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
         map.put("activity", getMoneyActivityFloat(request));
         vo.setData(map);
 
@@ -75,66 +78,83 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/getCarouse")
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
-        Map<String, Object> map = MapTool.newHashMap();
+        AppModelVo vo = new AppModelVo();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(appVersion);
+
         //轮播图
+        Map<String, Object> map = MapTool.newHashMap();
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        vo.setData(map);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getAnnouncement")
     @ResponseBody
     public String getAnnounce() {
-        Map<String, Object> map = MapTool.newHashMap();
+        AppModelVo vo = new AppModelVo();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(appVersion);
+
         //公告
+        Map<String, Object> map = MapTool.newHashMap();
         map.put("announcement", getAnnouncement());
+        vo.setData(map);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getSiteApiRelation")
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
-        Map<String, Object> map = MapTool.newHashMap();
-        //公告
-        map.put("siteApiRelation", getSiteApiRelationI18n(request,model));
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
+        AppModelVo vo = new AppModelVo();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(appVersion);
 
-        return JsonTool.toJson(mapJson);
+        //游戏
+        Map<String, Object> map = MapTool.newHashMap();
+        map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
+        vo.setData(map);
+
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getFloat")
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
+        AppModelVo vo = new AppModelVo();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(appVersion);
+
+        //浮动图
         Map<String, Object> map = MapTool.newHashMap();
-
         map.put("activity", getMoneyActivityFloat(request));
+        vo.setData(map);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getCasinoGame")
     @ResponseBody
-    public String getCasinoGame(SiteGameListVo listVo,HttpServletRequest request,AppRequestModelVo modelVo){
-        Map<String,Object> map = MapTool.newHashMap();
-        Map<String,Object> page = MapTool.newHashMap();
+    public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, AppRequestModelVo modelVo) {
+        AppModelVo vo = new AppModelVo();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(appVersion);
 
-        map.put("casinoGames",getCasinoGameByApiId(listVo,request,page,modelVo));
-        map.put("page",page);
-        setMapJson(new AppModelVo());
-        mapJson.put("data",map);
+        //电子游戏
+        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> pageTotal = MapTool.newHashMap();
+        map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, modelVo));
+        map.put("page", pageTotal);
+        vo.setData(map);
 
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     /**
@@ -142,110 +162,93 @@ public class OriginController extends BaseApiController {
      */
     @RequestMapping("/countDrawTimes")
     @ResponseBody
-    public Map<String, java.io.Serializable> countDrawTimes(String activityMessageId){
-        Map<String, java.io.Serializable> map = new HashMap<>(4,1f);
-        if(SessionManagerCommon.getUser() == null){
-            map.put("error",1);
-            map.put("code", AppErrorCodeEnum.UN_LOGIN.getCode());
-            map.put("msg",AppErrorCodeEnum.UN_LOGIN.getMsg());
-            map.put("data",null);
-            return map;
+    public String countDrawTimes(String activityMessageId) {
+        AppModelVo vo = new AppModelVo();
+        if (SessionManagerCommon.getUser() == null) {
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            vo.setVersion(appVersion);
+            return JsonTool.toJson(vo);
         }
 
-        if(activityMessageId==null){
-            map.put("isEnd","true");
-            map.put("drawTimes",-1);
-            return map;
+        if (StringTool.isBlank(activityMessageId)) {
+            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
+            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setVersion(appVersion);
+            return JsonTool.toJson(vo);
         }
+
+        Map<String, java.io.Serializable> map = new HashMap<>(4, 1f);
         Integer playerId = SessionManagerBase.getUserId();
         PlayerActivityMessage moneyActivity = findMoneyActivity();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
 
-        if(playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)){
-            LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖",playerId.toString());
-            map.put("isEnd","true");
-            map.put("drawTimes",-1);
-        }else{
-            Date now = new Date();
-            if(now.after(moneyActivity.getEndTime())){
-                LOG.info("[玩家-{0}计算红包次数]红包活动已经结束",playerId.toString());
-                map.put("isEnd","true");
-                map.put("drawTimes",-1);
-                return map;
-            }
-            Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
-            boolean containUserRank = isContainUserRank(moneyActivity, rankId);
-            if(!containUserRank){
-                map.put("isEnd","true");
-                map.put("drawTimes",-1);
-                return map;
-            }
-            ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
-            awardsRulesVo.setPlayerId(playerId);
-            awardsRulesVo.getSearch().setActivityMessageId(moneyActivity.getId());
-            awardsRulesVo.setActivityMessage(moneyActivity);
-
-            boolean allDayLottery = isAllDayLottery(playerId, moneyActivity.getId());
-            if(allDayLottery) {//全天开奖
-                int count = countAll(moneyActivity,playerId);
-                map.put("drawTimes",count);
-                map.put("isEnd","false");
-            }else{
-
-                ActivityOpenPeriod period = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
-                if(period!=null) {//开奖时间到
-                    int count = countAll(moneyActivity,playerId);
-                    map.put("drawTimes",count);
-                    map.put("isEnd","false");
-                }else{
-                    map.put("drawTimes",0);
-                    map.put("isEnd","true");
-                }
-                awardsRulesVo.setMoneyOpenPeriod(period);
-            }
-            //如果还有次数，看下是否还有奖品。如果没有次数，直接显示没有次数
-            if(MapTool.getInteger(map,"drawTimes")>0){
-                boolean hasLotteryAwards = ServiceSiteTool.activityMoneyAwardsRulesService().hasLotteryAwards(awardsRulesVo);
-                if(!hasLotteryAwards){
-                    map.put("drawTimes",-5);
-                    map.put("isEnd","true");
-                }
-            }
-            String startTime = fetchNextStartTime(awardsRulesVo);
-            map.put("nextLotteryTime", startTime);
-
+        if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
+            LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId.toString());
+            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
+            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setVersion(appVersion);
+            return JsonTool.toJson(vo);
         }
-        map.put(TokenHandler.TOKEN_VALUE,TokenHandler.generateGUID());
-        return map;
+
+        Date now = new Date();
+        if (now.after(moneyActivity.getEndTime())) {
+            LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
+            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
+            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setVersion(appVersion);
+            return JsonTool.toJson(vo);
+        }
+        Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
+        boolean containUserRank = isContainUserRank(moneyActivity, rankId);
+        if (!containUserRank) {
+            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
+            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setVersion(appVersion);
+            return JsonTool.toJson(vo);
+        }
+        ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
+        awardsRulesVo.setPlayerId(playerId);
+        awardsRulesVo.getSearch().setActivityMessageId(moneyActivity.getId());
+        awardsRulesVo.setActivityMessage(moneyActivity);
+
+        boolean allDayLottery = isAllDayLottery(playerId, moneyActivity.getId());
+        if (allDayLottery) {//全天开奖
+            int count = countAll(moneyActivity, playerId);
+            map.put("isEnd", "false");
+            map.put("drawTimes", count);
+        } else {
+            ActivityOpenPeriod period = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
+            if (period != null) {//开奖时间到
+                int count = countAll(moneyActivity, playerId);
+                map.put("isEnd", "false");
+                map.put("drawTimes", count);
+            } else {
+                map.put("drawTimes", 0);
+                map.put("isEnd", "true");
+            }
+            awardsRulesVo.setMoneyOpenPeriod(period);
+        }
+        //如果还有次数，看下是否还有奖品。如果没有次数，直接显示没有次数
+        if (MapTool.getInteger(map, "drawTimes") > 0) {
+            boolean hasLotteryAwards = ServiceSiteTool.activityMoneyAwardsRulesService().hasLotteryAwards(awardsRulesVo);
+            if (!hasLotteryAwards) {
+                map.put("isEnd", "true");
+                map.put("drawTimes", -5);
+            }
+        }
+        String startTime = fetchNextStartTime(awardsRulesVo);
+        map.put("nextLotteryTime", startTime);
+
+        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(appVersion);
+        vo.setData(map);
+
+        return JsonTool.toJson(vo);
     }
     //endregion mainIndex
-
-    private void setMapJson(AppModelVo app) {
-        if (app.getError() != 0) {
-            mapJson.put("error", app.getError());
-        } else {
-            mapJson.put("error", 0);
-        }
-
-        if (app.getCode() != 0) {
-            mapJson.put("code", app.getCode());
-        } else {
-            mapJson.put("code", AppErrorCodeEnum.Success.getCode());
-        }
-
-        if (StringTool.isNotBlank(app.getMsg())) {
-            mapJson.put("msg", app.getMsg());
-        } else {
-            mapJson.put("msg", AppErrorCodeEnum.Success.getMsg());
-        }
-
-        if (StringTool.isNotBlank(app.getVersion())) {
-            mapJson.put("version", app.getVersion());
-        } else {
-            mapJson.put("version", appVersion);
-        }
-    }
-
 
     private Integer getPlayerRankId(Integer userId) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
@@ -259,7 +262,7 @@ public class OriginController extends BaseApiController {
         if (m.getAllRank() != null && m.getAllRank()) {
             return true;
         } else if (m.getRankid() != null) {
-            rankIds = m.getRankid().split(",");
+            rankIds = m.getRankid().split(SplitRegex);
             return ArrayTool.contains(rankIds, rankId.toString());
         }
         return false;
@@ -267,6 +270,7 @@ public class OriginController extends BaseApiController {
 
     /**
      * 下次开奖时间
+     *
      * @param awardsRulesVo
      * @return
      */
@@ -274,38 +278,39 @@ public class OriginController extends BaseApiController {
         String startTime = "";
         Date today = new Date();
         String realDate = DateTool.formatDate(today, CommonContext.get().getTimeZone(), DateTool.yyyy_MM_dd_HH_mm_ss);
-        today = DateTool.parseDate(realDate,DateTool.yyyy_MM_dd_HH_mm_ss);
+        today = DateTool.parseDate(realDate, DateTool.yyyy_MM_dd_HH_mm_ss);
         ActivityOpenPeriod nextOpenPeriod = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriodByActivityId(awardsRulesVo);
-        LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段为:{1}",awardsRulesVo.getPlayerId().toString(),nextOpenPeriod==null?"空":nextOpenPeriod.getStartTime(today));
+        LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段为:{1}", awardsRulesVo.getPlayerId().toString(), nextOpenPeriod == null ? "空" : nextOpenPeriod.getStartTime(today));
         Date nextStartTime = null;
-        if(nextOpenPeriod!=null){
+        if (nextOpenPeriod != null) {
             nextStartTime = nextOpenPeriod.getStartTime(today);
-            LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段是否为今天:{1}",awardsRulesVo.getPlayerId().toString(),nextOpenPeriod.isCurrentDay());
-            if(!nextOpenPeriod.isCurrentDay()){
+            LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段是否为今天:{1}", awardsRulesVo.getPlayerId().toString(), nextOpenPeriod.isCurrentDay());
+            if (!nextOpenPeriod.isCurrentDay()) {
                 Date tomorrow = DateQuickPicker.getInstance().getTomorrow();
-                String tomorrowFormat = DateTool.formatDate(tomorrow,CommonContext.get().getTimeZone(),DateTool.yyyyMMddHHmmss);
-                tomorrow = DateTool.parseDate(tomorrowFormat,DateTool.yyyyMMddHHmmss);
+                String tomorrowFormat = DateTool.formatDate(tomorrow, CommonContext.get().getTimeZone(), DateTool.yyyyMMddHHmmss);
+                tomorrow = DateTool.parseDate(tomorrowFormat, DateTool.yyyyMMddHHmmss);
                 nextStartTime = nextOpenPeriod.getStartTime(tomorrow);
-                //nextStartTime = DateTool.addDays(nextStartTime,+1);
             }
-        }else{
+        } else {
             nextStartTime = DateQuickPicker.getInstance().getTomorrow();
         }
-        if(nextStartTime.before(awardsRulesVo.getActivityMessage().getEndTime())){
+        if (nextStartTime.before(awardsRulesVo.getActivityMessage().getEndTime())) {
             startTime = DateTool.formatDate(nextStartTime, CommonContext.get().getLocale(),
                     CommonContext.get().getTimeZone(), CommonContext.getDateFormat().getDAY_SECOND());
-        }else{
+        } else {
             return "";
         }
         return startTime;
     }
+
     /**
      * 是否全天开奖
+     *
      * @param playerId
      * @param activityMessageId
      * @return
      */
-    private boolean isAllDayLottery(Integer playerId,Integer activityMessageId){
+    private boolean isAllDayLottery(Integer playerId, Integer activityMessageId) {
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
         awardsRulesVo.getSearch().setActivityMessageId(activityMessageId);
@@ -315,34 +320,36 @@ public class OriginController extends BaseApiController {
 
     /**
      * 计算所有次数
+     *
      * @param moneyActivity
      * @param playerId
      * @return
      */
-    private Integer countAll(PlayerActivityMessage moneyActivity,Integer playerId ){
-        LOG.info("[玩家-{0}计算红包次数]准备计算可抽奖次数",playerId.toString());
-        List<Map> moneyCounts = findCountByPlayerId(moneyActivity,playerId);
+    private Integer countAll(PlayerActivityMessage moneyActivity, Integer playerId) {
+        LOG.info("[玩家-{0}计算红包次数]准备计算可抽奖次数", playerId.toString());
+        List<Map> moneyCounts = findCountByPlayerId(moneyActivity, playerId);
         int count = 0;
-        if(CollectionTool.isNotEmpty(moneyCounts)){
-            for(Map mc : moneyCounts){
-                count += MapTool.getInteger(mc,"remain_win_count");
+        if (CollectionTool.isNotEmpty(moneyCounts)) {
+            for (Map mc : moneyCounts) {
+                count += MapTool.getInteger(mc, "remain_win_count");
             }
         }
-        LOG.info("[玩家-{0}计算红包次数]查询到玩家内定红包可抽取次数为：{1}",playerId.toString(),count);
+        LOG.info("[玩家-{0}计算红包次数]查询到玩家内定红包可抽取次数为：{1}", playerId.toString(), count);
         Integer integer = queryPlayerBetCountByRules(moneyActivity);
-        LOG.info("[玩家-{0}计算红包次数]按条件计算玩家的可抽取次数为：{1}",playerId.toString(),integer);
+        LOG.info("[玩家-{0}计算红包次数]按条件计算玩家的可抽取次数为：{1}", playerId.toString(), integer);
         count += integer;
-        LOG.info("[玩家-{0}计算红包次数]玩家总的可抽奖次数为：{1}",playerId.toString(),count);
+        LOG.info("[玩家-{0}计算红包次数]玩家总的可抽奖次数为：{1}", playerId.toString(), count);
         return count;
     }
 
     /**
      * 根据玩家ID查询内定红包开奖次数
+     *
      * @param playerId
      * @return
      */
-    private List<Map> findCountByPlayerId(PlayerActivityMessage moneyActivity,Integer playerId){
-        if(moneyActivity==null||playerId==null){
+    private List<Map> findCountByPlayerId(PlayerActivityMessage moneyActivity, Integer playerId) {
+        if (moneyActivity == null || playerId == null) {
             return new ArrayList<>();
         }
         ActivityMoneyDefaultWinPlayerListVo playerListVo = new ActivityMoneyDefaultWinPlayerListVo();
@@ -354,14 +361,15 @@ public class OriginController extends BaseApiController {
 
     /**
      * 根据规则计算次数
+     *
      * @param moneyActivity
      * @return
      */
     private Integer queryPlayerBetCountByRules(PlayerActivityMessage moneyActivity) {
-        if(moneyActivity==null){
+        if (moneyActivity == null) {
             return 0;
         }
-        LOG.info("[玩家-{0}计算红包次数]设置查询条件",SessionManagerBase.getUserId().toString());
+        LOG.info("[玩家-{0}计算红包次数]设置查询条件", SessionManagerBase.getUserId().toString());
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.getSearch().setActivityMessageId(moneyActivity.getId());
         awardsRulesVo.setPlayerId(SessionManagerBase.getUserId());
@@ -371,13 +379,13 @@ public class OriginController extends BaseApiController {
         Integer integer = ServiceSiteTool.activityMoneyAwardsRulesService().queryPlayerBetCount(awardsRulesVo);
         return integer;
     }
+
     /**
      * 查询Banner
-     *
      */
     protected List<Map> getCarouselApp(HttpServletRequest request, String type) {
         Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
-        List<Map> resultList = new ArrayList<>();
+        List<Map> resultList = ListTool.newArrayList();
         String webSite = ServletTool.getDomainFullAddress(request);
         if (carousels != null) {
             for (Map m : carousels.values()) {
@@ -400,6 +408,14 @@ public class OriginController extends BaseApiController {
                 }
             }
         }
+        //没数据默认banner图
+        if(resultList.size() <=0){
+            Map defaultMap = MapTool.newHashMap();
+            String coverUrl = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/images/ban-01.jpg";
+            defaultMap.put("cover",coverUrl);
+            resultList.add(defaultMap);
+        }
+
         return resultList;
     }
 
@@ -423,26 +439,26 @@ public class OriginController extends BaseApiController {
 
     /**
      * 接口获取红包活动
+     *
      * @param request
      * @return
      */
-    protected AppFloatPicItem getMoneyActivityFloat(HttpServletRequest request){
-        AppFloatPicItem appFloatPicItem = null;
+    protected AppFloatPicItem getMoneyActivityFloat(HttpServletRequest request) {
         CttFloatPic cttFloatPic = queryMoneyActivityFloat();
-        if(cttFloatPic == null){
-            return appFloatPicItem;
+        if (cttFloatPic == null) {
+            return null;
         }
 
         PlayerActivityMessage moneyActivity = findMoneyActivity();
-        if(moneyActivity == null){
-            return appFloatPicItem;
+        if (moneyActivity == null) {
+            return null;
         }
 
-        appFloatPicItem = new AppFloatPicItem();
+        AppFloatPicItem appFloatPicItem= new AppFloatPicItem();
         CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
         appFloatPicItem.setDescription(moneyActivity.getActivityDescription());
         appFloatPicItem.setActivityId(CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo"));
-        appFloatPicItem.setNormalEffect(getImagePath( SessionManager.getDomain(request),cttFloatPicItem.getNormalEffect()));
+        appFloatPicItem.setNormalEffect(getImagePath(SessionManager.getDomain(request), cttFloatPicItem.getNormalEffect()));
         appFloatPicItem.setLocation(cttFloatPic.getLocation());
         appFloatPicItem.setLanguage(cttFloatPic.getLanguage());
         appFloatPicItem.setDistanceSide(cttFloatPic.getDistanceSide());
