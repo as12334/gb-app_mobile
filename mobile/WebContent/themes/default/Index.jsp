@@ -180,7 +180,6 @@
                 page.footer = new Footer();
                 page.dynamic = new Dynamic();
             });
-    Index
 </script>
 <c:if test="${isLogin}">
     <script type="text/javascript">
