@@ -325,10 +325,11 @@ public class MineAppController extends BaseMineController {
 
     @RequestMapping("/getBettingList")
     @ResponseBody
-    public String getBettingList(Date beginBetTime, Date endBetTime) {
+    public String getBettingList(Date beginBetTime, Date endBetTime,Integer pageSize,Integer currentIndex) {
 
         final int TIME_INTERVAL = -30;
         final int DEFAULT_TIME = 1;
+
         if (!isLoginUser()) {
             JsonTool.toJson(mapJson);
         }
@@ -340,6 +341,9 @@ public class MineAppController extends BaseMineController {
         if (listVo.getSearch().getEndBetTime() != null) {
             listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
         }
+
+        listVo.getPaging().setPageSize(pageSize);
+        listVo.getPaging().setPageNumber((pageSize - currentIndex % pageSize + currentIndex) / pageSize);//计算出页码
 
 
         initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
