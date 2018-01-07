@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.BitcoinDepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -67,7 +67,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
     public String getSales() {
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
-        listVo = ServiceTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
         return JsonTool.toJson(listVo.getResult());
     }
 
@@ -120,7 +120,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
         playerRecharge.setRechargeType(rechargeType);
         playerRecharge.setPlayerId(userId);
         playerRechargeVo.setResult(playerRecharge);
-        return ServiceTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
+        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
     }
 
     /**
@@ -135,7 +135,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
         PlayerRechargeListVo listVo = new PlayerRechargeListVo();
         listVo.getSearch().setBankOrder(txId);
         listVo.getSearch().setRechargeStatus(RechargeStatusEnum.FAIL.getCode());
-        return ServiceTool.playerRechargeService().isExistsTxId(listVo);
+        return ServiceSiteTool.playerRechargeService().isExistsTxId(listVo);
     }
 
 }

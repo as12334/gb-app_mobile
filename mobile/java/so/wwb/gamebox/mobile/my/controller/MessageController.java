@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.my.form.PlayerAdvisoryForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -231,7 +232,7 @@ public class MessageController {
         playerAdvisoryVo.getResult().setPlayerId(SessionManager.getUserId());
         playerAdvisoryVo.getResult().setReplyCount(0);
         playerAdvisoryVo.getResult().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
-        playerAdvisoryVo = ServiceTool.playerAdvisoryService().insert(playerAdvisoryVo);
+        playerAdvisoryVo = ServiceSiteTool.playerAdvisoryService().insert(playerAdvisoryVo);
         HashMap map = new HashMap(4,1f);
         map.put("isOpenCaptcha",false);
         if(SessionManager.getSendMessageCount() !=null && SessionManager.getSendMessageCount() >=3){
@@ -257,7 +258,7 @@ public class MessageController {
             //生成任务提醒
             UserTaskReminderVo userTaskReminderVo = new UserTaskReminderVo();
             userTaskReminderVo.setTaskEnum(UserTaskEnum.PLAYERCONSULTATION);
-            ServiceTool.userTaskReminderService().addTaskReminder(userTaskReminderVo);
+            ServiceSiteTool.userTaskReminderService().addTaskReminder(userTaskReminderVo);
         } else {
             playerAdvisoryVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
         }
@@ -283,21 +284,21 @@ public class MessageController {
         for (String messageId : id) {
             PlayerAdvisoryListVo listVo = new PlayerAdvisoryListVo();
             listVo.getSearch().setContinueQuizId(Integer.valueOf(messageId));
-            listVo = ServiceTool.playerAdvisoryService().search(listVo);
+            listVo = ServiceSiteTool.playerAdvisoryService().search(listVo);
             for(PlayerAdvisory obj:listVo.getResult()){
                 vo.setSuccess(false);
                 vo.setResult(new PlayerAdvisory());
                 vo.getResult().setId(obj.getId());
                 vo.getResult().setPlayerDelete(true);
                 vo.setProperties(PlayerAdvisory.PROP_PLAYER_DELETE);
-                vo = ServiceTool.playerAdvisoryService().updateOnly(vo);
+                vo = ServiceSiteTool.playerAdvisoryService().updateOnly(vo);
             }
             vo.setSuccess(false);
             vo.setResult(new PlayerAdvisory());
             vo.getResult().setId(Integer.valueOf(messageId));
             vo.getResult().setPlayerDelete(true);
             vo.setProperties(PlayerAdvisory.PROP_PLAYER_DELETE);
-            vo = ServiceTool.playerAdvisoryService().updateOnly(vo);
+            vo = ServiceSiteTool.playerAdvisoryService().updateOnly(vo);
         }
         if (vo.isSuccess()) {
             vo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_SUCCESS));
@@ -381,7 +382,7 @@ public class MessageController {
             //当前回复表Id
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
             parListVo.getSearch().setPlayerAdvisoryId(Integer.valueOf(messageId));
-            parListVo = ServiceTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
 
             //判断是否已读
             PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
@@ -389,7 +390,7 @@ public class MessageController {
             readVo.getSearch().setPlayerAdvisoryId(Integer.valueOf(messageId));
             readVo.getQuery().setCriterions(new Criterion[]{new Criterion(PlayerAdvisoryRead.PROP_USER_ID, Operator.EQ, readVo.getSearch().getUserId())
                     , new Criterion(PlayerAdvisoryRead.PROP_PLAYER_ADVISORY_ID, Operator.EQ, readVo.getSearch().getPlayerAdvisoryId())});
-            ServiceTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
+            ServiceSiteTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
 
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo parVo = new PlayerAdvisoryReadVo();
@@ -397,7 +398,7 @@ public class MessageController {
                 parVo.getResult().setUserId(SessionManager.getUserId());
                 parVo.getResult().setPlayerAdvisoryReplyId(replay.getId());
                 parVo.getResult().setPlayerAdvisoryId(Integer.valueOf(messageId));
-                ServiceTool.playerAdvisoryReadService().insert(parVo);
+                ServiceSiteTool.playerAdvisoryReadService().insert(parVo);
             }
         }
         HashMap map = new HashMap(1,1f);
@@ -465,7 +466,7 @@ public class MessageController {
         } else {
             vPlayerAdvisoryListVo.getSearch().setId(id);
         }
-        List<VPlayerAdvisory> vPlayerAdvisoryList = ServiceTool.vPlayerAdvisoryService().searchVPlayerAdvisoryReply(vPlayerAdvisoryListVo);
+        List<VPlayerAdvisory> vPlayerAdvisoryList = ServiceSiteTool.vPlayerAdvisoryService().searchVPlayerAdvisoryReply(vPlayerAdvisoryListVo);
         Map map = new TreeMap(new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {
@@ -475,21 +476,21 @@ public class MessageController {
         for (VPlayerAdvisory obj : vPlayerAdvisoryList) {
             //回复标题和内容
             listVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            listVo = ServiceTool.vPlayerAdvisoryReplyService().search(listVo);
+            listVo = ServiceSiteTool.vPlayerAdvisoryReplyService().search(listVo);
             map.put(obj.getId(), listVo);
 
             //判断是否已读
             //当前回复表Id
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
             parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
 
             PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
             readVo.getSearch().setUserId(SessionManager.getUserId());
             readVo.getSearch().setPlayerAdvisoryId(obj.getId());
             readVo.getQuery().setCriterions(new Criterion[]{new Criterion(PlayerAdvisoryRead.PROP_USER_ID, Operator.EQ, readVo.getSearch().getUserId())
                     , new Criterion(PlayerAdvisoryRead.PROP_PLAYER_ADVISORY_ID, Operator.EQ, readVo.getSearch().getPlayerAdvisoryId())});
-            ServiceTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
+            ServiceSiteTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
 
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo parVo = new PlayerAdvisoryReadVo();
@@ -497,7 +498,7 @@ public class MessageController {
                 parVo.getResult().setUserId(SessionManager.getUserId());
                 parVo.getResult().setPlayerAdvisoryReplyId(replay.getId());
                 parVo.getResult().setPlayerAdvisoryId(obj.getId());
-                ServiceTool.playerAdvisoryReadService().insert(parVo);
+                ServiceSiteTool.playerAdvisoryReadService().insert(parVo);
             }
         }
 
@@ -549,7 +550,7 @@ public class MessageController {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
-        listVo = ServiceTool.vPlayerAdvisoryService().search(listVo);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
         Integer advisoryUnReadCount = 0;
         String tag  = "";
         //所有咨询数据
@@ -557,13 +558,13 @@ public class MessageController {
             //查询回复表每一条在已读表是否存在
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
             parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
                 readVo.setResult(new PlayerAdvisoryRead());
                 readVo.getSearch().setUserId(SessionManager.getUserId());
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceTool.playerAdvisoryReadService().search(readVo);
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
                 //不存在未读+1，标记已读咨询Id
                 if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
                     advisoryUnReadCount++;
@@ -578,7 +579,7 @@ public class MessageController {
                 if(tags[i]!=""){
                     VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
                     pa.getSearch().setId(Integer.valueOf(tags[i]));
-                    VPlayerAdvisoryVo vpaVo = ServiceTool.vPlayerAdvisoryService().get(pa);
+                    VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
                     if(vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())){
                         vo.setIsRead(false);
                     }
@@ -603,7 +604,7 @@ public class MessageController {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
-        listVo = ServiceTool.vPlayerAdvisoryService().search(listVo);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
         Integer advisoryUnReadCount = 0;
         String tag  = "";
         //所有咨询数据
@@ -611,13 +612,13 @@ public class MessageController {
             //查询回复表每一条在已读表是否存在
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
             parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
                 readVo.setResult(new PlayerAdvisoryRead());
                 readVo.getSearch().setUserId(SessionManager.getUserId());
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceTool.playerAdvisoryReadService().search(readVo);
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
                 //不存在未读+1，标记已读咨询Id
                 if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
                     advisoryUnReadCount++;

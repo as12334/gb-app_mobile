@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.my.form.PersonInfoMobileForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -104,7 +105,7 @@ public class PersonalInfoController {
                 userPlayerVo.setResult(userPlayer);
                 userPlayerVo.setPhone(userPlayerVo.getPhone());
         }
-        sysUserVo = ServiceTool.userPlayerService().mobileUpdatePersonInfo(sysUserVo, userPlayerVo);
+        sysUserVo = ServiceSiteTool.userPlayerService().mobileUpdatePersonInfo(sysUserVo, userPlayerVo);
         map.put("status", sysUserVo.isSuccess());
         if (sysUserVo.isSuccess()) {
             SessionManager.refreshUser();

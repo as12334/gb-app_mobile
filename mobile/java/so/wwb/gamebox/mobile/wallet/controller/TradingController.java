@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
@@ -40,7 +40,7 @@ public class TradingController extends WalletBaseController {
 
         // 初始化ListVo
         initListVo(listVo, TransactionTypeEnum.DEPOSIT.getCode());
-        model.addAttribute("command", ServiceTool.vPlayerTransactionService().search(listVo));
+        model.addAttribute("command", ServiceSiteTool.vPlayerTransactionService().search(listVo));
 
         return gotoPage(request, "Deposit");
     }
@@ -52,7 +52,7 @@ public class TradingController extends WalletBaseController {
 
         // 初始化ListVo
         initListVo(listVo, TransactionTypeEnum.WITHDRAWALS.getCode());
-        model.addAttribute("command", ServiceTool.vPlayerTransactionService().search(listVo));
+        model.addAttribute("command", ServiceSiteTool.vPlayerTransactionService().search(listVo));
 
         return gotoPage(request, "Withdraw");
     }

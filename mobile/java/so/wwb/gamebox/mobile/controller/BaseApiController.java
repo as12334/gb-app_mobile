@@ -22,6 +22,7 @@ import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.App.model.AppRequestModelVo;
 import so.wwb.gamebox.mobile.App.model.AppSiteApiTypeRelastionVo;
@@ -624,7 +625,7 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
 
-        playerApiAccountVo = ServiceTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
+        playerApiAccountVo = ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
         if (playerApiAccountVo == null || playerApiAccountVo.getGameApiResult() == null || ResultStatus.SUCCESS != playerApiAccountVo.getGameApiResult().getStatus()) {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
             appI18n.setGameLink("");
@@ -691,7 +692,7 @@ public abstract class BaseApiController extends BaseDemoController {
                     playerApiAccountVo.setTrial(false);
                 }
             }
-            playerApiAccountVo = ServiceTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
         } else {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             appI18n.setGameLink("");

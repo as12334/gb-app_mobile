@@ -9,7 +9,7 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
@@ -136,7 +136,7 @@ public class MineAppController extends BaseMineController {
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
 
-        vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         setMapJson(new AppModelVo());
         mapJson.put("data", vPreferentialRecodeListVo);
         return JsonTool.toJson(mapJson);
@@ -251,7 +251,7 @@ public class MineAppController extends BaseMineController {
             bankcard.setUserId(getAgentId());
             bankcard.setType(UserBankcardTypeEnum.BITCOIN.getCode());
             bankcard.setBankName(BITCOIN);
-            bankcardVo = ServiceTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
+            bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
             appModelVo.setCode(205);
             appModelVo.setMsg("用户绑定比特币成功");
         }
@@ -279,7 +279,7 @@ public class MineAppController extends BaseMineController {
         getFund(mapJson);
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
-        listVo = ServiceTool.vPlayerTransactionService().search(listVo);
+        listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
         setMapJson(new AppModelVo());
         mapJson.put("data", listVo);
         return JsonTool.toJson(mapJson);
@@ -295,7 +295,7 @@ public class MineAppController extends BaseMineController {
         if (StringTool.isNotBlank(searchId)) {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
-            vo = ServiceTool.vPlayerTransactionService().get(vo);
+            vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
             setMapJson(new AppModelVo());
 
             VPlayerTransaction po = vo.getResult();
@@ -344,7 +344,7 @@ public class MineAppController extends BaseMineController {
 
 
         initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
-        listVo = ServiceTool.playerGameOrderService().search(listVo);
+        listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
 
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
 
@@ -366,7 +366,7 @@ public class MineAppController extends BaseMineController {
         PlayerGameOrderVo vo = new PlayerGameOrderVo();
         id = 10111337;//暂时写死，为了验证json
         vo.getSearch().setId(id);
-        vo = ServiceTool.playerGameOrderService().getGameOrderDetail(vo);
+        vo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(vo);
 //        如果不是这个玩家投注的订单，则无视该笔订单
         if (vo.getResult() == null || vo.getResult().getPlayerId() != SessionManager.getUserId().intValue()) {
             vo.setResult(null);

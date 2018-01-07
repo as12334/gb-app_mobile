@@ -9,6 +9,7 @@ import org.soul.model.sys.po.SysParam;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -43,11 +44,11 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
     private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
         SysUserDataRightVo sysUserDataRightVo = new SysUserDataRightVo();
         sysUserDataRightVo.getSearch().setModuleType(DataRightModuleType.COMPANYDEPOSIT.getCode());
-        Map<Integer,List<SysUserDataRight>> udrMap = ServiceTool.sysUserDataRightService().searchDataRightsByModuleType(sysUserDataRightVo);
+        Map<Integer,List<SysUserDataRight>> udrMap = ServiceSiteTool.sysUserDataRightService().searchDataRightsByModuleType(sysUserDataRightVo);
 
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
-        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         Integer rankId = userPlayerVo.getResult().getRankId();
         for (Iterator<Integer> iterator = userIdByUrl.iterator(); iterator.hasNext(); ) {
             Integer userId =  iterator.next();
@@ -117,7 +118,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         message.setMasterId(SessionManager.getSiteUserId());
         SysResourceListVo sysResourceListVo = new SysResourceListVo();
         sysResourceListVo.getSearch().setUrl(MCENTER_COMPANY_RECHARGE_URL);
-        List<Integer> userIdByUrl = ServiceTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
+        List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
         userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
 
         //判断账号是否可以查看该层级的记录 add by Bruce.QQ
@@ -209,7 +210,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         }
         playerRechargeVo = saveRecharge(playerRechargeVo,payAccount);
         //保存订单
-        playerRechargeVo = ServiceTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
+        playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
         if (playerRechargeVo.isSuccess()) {
             tellerReminder(playerRechargeVo);
         }

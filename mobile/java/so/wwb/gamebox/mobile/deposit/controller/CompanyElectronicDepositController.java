@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -163,6 +163,6 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
         playerRecharge.setRechargeType(rechargeType);
         playerRecharge.setPlayerId(userId);
         playerRechargeVo.setResult(playerRecharge);
-        return ServiceTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
+        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
     }
 }
