@@ -4,6 +4,7 @@ public enum AppErrorCodeEnum{
     Success(0,"请求成功"),
     UN_LOGIN(1,"您还没有登录"),
     IsFull(24,"今日提现次数已达上限"),
+    ActivityEnd(31,"该活动不存在或已结束"),
     hasOrder(100,"取款订单已存在"),
     hasFreeze(101,"全款玩家已被冻结"),
     IsBalanceAdequate(102,"取款金额最少为x元");
