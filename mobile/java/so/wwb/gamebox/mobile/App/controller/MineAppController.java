@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -36,6 +37,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
+
 /**
  * Created by ed on 17-12-31.
  */
@@ -48,80 +51,75 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getLink")
     @ResponseBody
     public String getLink(HttpServletRequest request) {
-        Map<String, Object> map = MapTool.newHashMap();
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
 
         if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            vo.setError(1);
+            return JsonTool.toJson(vo);
         }
 
+        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> userInfoMap = MapTool.newHashMap();
         map.put("isBit", ParamTool.isBit());
         map.put("isCash", ParamTool.isCash());
-
         map.put("link", setLink());
-
-        Map<String, Object> userInfoMap = MapTool.newHashMap();
         getMineLinkInfo(userInfoMap, request);
         map.put("user", userInfoMap);
+        vo.setData(map);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getWithDraw")
     @ResponseBody
     public String getWithDraw() {
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+
         if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setError(1);
+            return JsonTool.toJson(vo);
         }
+
         //是否已存在取款订单
         if (hasOrder()) {
-            AppModelVo order = new AppModelVo();
-            order.setCode(AppErrorCodeEnum.hasOrder.getCode());
-            order.setMsg(AppErrorCodeEnum.hasOrder.getMsg());
-            order.setError(1);
-            setMapJson(order);
-
-            return JsonTool.toJson(mapJson);
+            vo.setCode(AppErrorCodeEnum.hasOrder.getCode());
+            vo.setMsg(AppErrorCodeEnum.hasOrder.getMsg());
+            vo.setError(1);
+            return JsonTool.toJson(vo);
         }
         //是否被冻结
         if (hasFreeze()) {
-            AppModelVo freeze = new AppModelVo();
-            freeze.setCode(AppErrorCodeEnum.hasFreeze.getCode());
-            freeze.setMsg(AppErrorCodeEnum.hasFreeze.getMsg());
-            freeze.setError(1);
-            setMapJson(freeze);
-
-            return JsonTool.toJson(mapJson);
+            vo.setCode(AppErrorCodeEnum.hasFreeze.getCode());
+            vo.setMsg(AppErrorCodeEnum.hasFreeze.getMsg());
+            vo.setError(1);
+            return JsonTool.toJson(vo);
         }
         //今日取款是否达到上限
         if (isFull()) {
-            AppModelVo full = new AppModelVo();
-            full.setCode(AppErrorCodeEnum.IsFull.getCode());
-            full.setMsg(AppErrorCodeEnum.IsFull.getMsg());
-            full.setError(1);
-            setMapJson(full);
-
-            return JsonTool.toJson(mapJson);
+            vo.setCode(AppErrorCodeEnum.IsFull.getCode());
+            vo.setMsg(AppErrorCodeEnum.IsFull.getMsg());
+            vo.setError(1);
+            return JsonTool.toJson(vo);
         }
         //余额是否充足
         Map<String, Object> map = MapTool.newHashMap();
         if(isBalanceAdequate(map)){
-            AppModelVo balance = new AppModelVo();
-            balance.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
-            balance.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace("x",map.get("withdrawMinNum").toString()));
-            balance.setError(1);
-
-            return JsonTool.toJson(mapJson);
+            vo.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
+            vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace("x",map.get("withdrawMinNum").toString()));
+            vo.setError(1);
+            return JsonTool.toJson(vo);
         }
 
         withdraw(map);
+        vo.setData(map);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", map);
-
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getMyPromo")
@@ -142,9 +140,6 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(mapJson);
 
     }
-
-
-
 
     @RequestMapping("/getUserInfo")
     @ResponseBody
@@ -378,75 +373,18 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(mapJson);
     }
 
-
-
+    /**
+     * 设置我的链接地址
+     * @return
+     */
     private List<AppMineLinkVo> setLink() {
         List<AppMineLinkVo> links = ListTool.newArrayList();
-        AppMineLinkVo deposit = new AppMineLinkVo();
-        deposit.setCode("deposit");
-        deposit.setName("存款");
-        deposit.setLink("/wallet/deposit/index.html");
-        links.add(deposit);
-
-        AppMineLinkVo withdraw = new AppMineLinkVo();
-        withdraw.setCode("withdraw");
-        withdraw.setName("取款");
-        withdraw.setLink("/wallet/withdraw/index.html");
-        links.add(withdraw);
-
-        AppMineLinkVo transfer = new AppMineLinkVo();
-        transfer.setCode("transfer");
-        transfer.setName("额度转换");
-        transfer.setLink("/transfer/index.html");
-        links.add(transfer);
-
-        AppMineLinkVo record = new AppMineLinkVo();
-        record.setCode("record");
-        record.setName("资金记录");
-        record.setLink("/fund/record/index.html");
-        links.add(record);
-
-        AppMineLinkVo betting = new AppMineLinkVo();
-        betting.setCode("betting");
-        betting.setName("投注记录");
-        betting.setLink("/fund/betting/index.html");
-        links.add(betting);
-
-        AppMineLinkVo myPromo = new AppMineLinkVo();
-        myPromo.setCode("myPromo");
-        myPromo.setName("优惠记录");
-        myPromo.setLink("/promo/myPromo.html");
-        links.add(myPromo);
-
-        AppMineLinkVo bankCard = new AppMineLinkVo();
-        bankCard.setCode("bankCard");
-        bankCard.setName("银行卡");
-        bankCard.setLink("/bankCard/page/addCard.html");
-        links.add(bankCard);
-
-        AppMineLinkVo btc = new AppMineLinkVo();
-        btc.setCode("btc");
-        btc.setName("比特币钱包");
-        btc.setLink("/bankCard/page/addBtc.html");
-        links.add(btc);
-
-        AppMineLinkVo gameNotice = new AppMineLinkVo();
-        gameNotice.setCode("gameNotice");
-        gameNotice.setName("申请优惠");
-        gameNotice.setLink("/message/gameNotice.html?isSendMessage=true");
-        links.add(gameNotice);
-
-        AppMineLinkVo securityPassword = new AppMineLinkVo();
-        securityPassword.setCode("securityPassword");
-        securityPassword.setName("修改安全密码");
-        securityPassword.setLink("/passport/securityPassword/edit.html");
-        links.add(securityPassword);
-
-        AppMineLinkVo loginPassword = new AppMineLinkVo();
-        loginPassword.setCode("loginPassword");
-        loginPassword.setName("修改登录密码");
-        loginPassword.setLink("/my/password/editPassword.html");
-        links.add(loginPassword);
+        for(AppMineLinkEnum linkEnum : AppMineLinkEnum.values()){
+            AppMineLinkVo vo = new AppMineLinkVo();
+            vo.setCode(linkEnum.getCode());
+            vo.setName(linkEnum.getName());
+            vo.setLink(linkEnum.getLink());
+        }
 
         return links;
     }
