@@ -8,7 +8,7 @@ import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
@@ -304,7 +304,7 @@ public class DepositController extends BaseCommonDepositController {
         map.put("currency", SessionManager.getUser().getDefaultCurrency());
         map.put("terminal", TerminalEnum.MOBILE.getCode());
         listVo.setConditions(map);
-        return ServiceTool.payAccountService().searchPayAccountByRank(listVo);
+        return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
     }
 
     /**
@@ -323,7 +323,7 @@ public class DepositController extends BaseCommonDepositController {
         //cttAnnouncementListVo.getQuery().addOrder(CttAnnouncement.PROP_PUBLISH_TIME, Direction.DESC);
         cttAnnouncementListVo.getQuery().addOrder(CttAnnouncement.PROP_ORDER_NUM, Direction.ASC);
         cttAnnouncementListVo.getPaging().setPageSize(3);
-        cttAnnouncementListVo = ServiceTool.cttAnnouncementService().search(cttAnnouncementListVo);
+        cttAnnouncementListVo = ServiceSiteTool.cttAnnouncementService().search(cttAnnouncementListVo);
         model.addAttribute("bankNotices", cttAnnouncementListVo);
         return BANK_NOTICE_URI;
     }

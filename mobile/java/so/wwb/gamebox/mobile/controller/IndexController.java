@@ -22,7 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -32,7 +32,8 @@ import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
-import so.wwb.gamebox.model.company.site.po.*;
+import so.wwb.gamebox.model.company.site.po.SiteApiType;
+import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
@@ -310,7 +311,7 @@ public class IndexController extends BaseApiController {
     private void getAboutAndTerms(String path, Model model, HttpServletRequest request) {
         if ("about".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
-            CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
+            CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
             if (cttDocumentI18n != null) {
                 cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
             }
@@ -328,10 +329,10 @@ public class IndexController extends BaseApiController {
     public String staticPage(@PathVariable("path") String path, Model model, HttpServletRequest request) {
         if ("agent".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("agent&cooperation");
-            model.addAttribute("agents", ServiceTool.cttDocumentI18nService().queryAgentDocument(listVo));
+            model.addAttribute("agents", ServiceSiteTool.cttDocumentI18nService().queryAgentDocument(listVo));
         } else if ("about".equals(path)) {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
-            CttDocumentI18n cttDocumentI18n = ServiceTool.cttDocumentI18nService().queryAboutDocument(listVo);
+            CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
             if (cttDocumentI18n != null) {
                 cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
             }
@@ -531,7 +532,7 @@ public class IndexController extends BaseApiController {
             //查询总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("totalAssert", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
+            map.put("totalAssert", CurrencyTool.formatCurrency(ServiceSiteTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }
@@ -570,7 +571,7 @@ public class IndexController extends BaseApiController {
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
-            map.put("asset", CurrencyTool.formatCurrency(ServiceTool.playerApiService().queryPlayerAssets(playerApiListVo)));
+            map.put("asset", CurrencyTool.formatCurrency(ServiceSiteTool.playerApiService().queryPlayerAssets(playerApiListVo)));
         }
         return JsonTool.toJson(map);
     }

@@ -22,7 +22,12 @@ import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.App.model.AppRequestModelVo;
+import so.wwb.gamebox.mobile.App.model.AppSiteApiTypeRelastionVo;
+import so.wwb.gamebox.mobile.App.model.AppSiteApiTypeRelationI18n;
+import so.wwb.gamebox.mobile.App.model.AppSiteGame;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
@@ -39,11 +44,10 @@ import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
-import so.wwb.gamebox.model.master.enums.AppResolutionEnum;
-import so.wwb.gamebox.model.master.enums.AppThemeEnum;
+import so.wwb.gamebox.mobile.App.enums.AppResolutionEnum;
+import so.wwb.gamebox.mobile.App.enums.AppThemeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
-import so.wwb.gamebox.model.master.setting.vo.AppRequestModelVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
@@ -315,7 +319,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 }
             }
         }
-        pageMap.put("page", listVo.getPaging());
+        pageMap.put("pageTotal", listVo.getPaging().getTotalCount());
 
         return siteGames;
     }
@@ -621,7 +625,7 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
 
-        playerApiAccountVo = ServiceTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
+        playerApiAccountVo = ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
         if (playerApiAccountVo == null || playerApiAccountVo.getGameApiResult() == null || ResultStatus.SUCCESS != playerApiAccountVo.getGameApiResult().getStatus()) {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
             appI18n.setGameLink("");
@@ -688,7 +692,7 @@ public abstract class BaseApiController extends BaseDemoController {
                     playerApiAccountVo.setTrial(false);
                 }
             }
-            playerApiAccountVo = ServiceTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
         } else {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             appI18n.setGameLink("");

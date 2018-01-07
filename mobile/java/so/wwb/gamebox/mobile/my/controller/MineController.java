@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -81,7 +81,7 @@ public class MineController extends BaseMineController {
             PlayerApiVo playerApiVo = new PlayerApiVo();
             playerApiVo.getSearch().setPlayerId(userId);
             playerApiVo.getSearch().setApiId(NumberTool.toInt(ApiProviderEnum.PL.getCode()));
-            playerApiVo = ServiceTool.playerApiService().search(playerApiVo);
+            playerApiVo = ServiceSiteTool.playerApiService().search(playerApiVo);
             PlayerApi playerApi = playerApiVo.getResult();
             if (playerApi != null && playerApi.getMoney() != null) {
                 balance = balance + playerApi.getMoney();
