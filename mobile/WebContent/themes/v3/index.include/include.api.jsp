@@ -8,17 +8,12 @@
             <c:when test="${type.key == 1}">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="live">
                     <c:forEach var="i18n" items="${type.value}">
-                        <c:set var="apiStatus"
-                               value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
+                        <c:set var="apiStatus" value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                            <soul:button dataApiId="${i18n.apiId}"
-                                         dataApiTypeId="${i18n.apiTypeId}"
-                                         dataApiName="${i18n.name}"
-                                         dataStatus="${apiStatus}"
-                                         target="goApiGame" text="" opType="function" cssClass="_api">
+                            <a data-rel='{"dataApiId":"${i18n.apiId}","dataApiTypeId":"${i18n.apiTypeId}","dataApiName":"${i18n.name}","dataStatus":"${apiStatus}","target":"goApiGame","opType":"function"}' class="_api">
                                 <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span>  <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
-                            </soul:button>
+                            </a>
                         </li>
                     </c:forEach>
                 </ul>
@@ -29,12 +24,10 @@
                 <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="casino">
                     <c:forEach var="i18n" items="${type.value}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                            <soul:button
-                                    target="${root}/game/getGameByApiId.html?search.apiId=${i18n.apiId}&search.apiTypeId=${i18n.apiTypeId}"
-                                    text="" opType="href" cssClass="">
+                            <a data-rel='{"target":"${root}/game/getGameByApiId.html?search.apiId=${i18n.apiId}&search.apiTypeId=${i18n.apiTypeId}","opType":"href"}'>
                                 <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span> <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
-                            </soul:button>
+                            </a>
                         </li>
                     </c:forEach>
                 </ul>
@@ -47,14 +40,10 @@
                         <c:set var="apiStatus"
                                value="${api.get(i18n.apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(i18n.apiId.toString()).systemStatus}"></c:set>
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                            <soul:button dataApiId="${i18n.apiId}"
-                                         dataApiType-id="${i18n.apiTypeId}"
-                                         dataApiName="${i18n.name}"
-                                         dataStatus="${apiStatus}"
-                                         target="goApiGame" text="" opType="function" cssClass="_api">
+                            <a data-rel='{"dataApiId":"${i18n.apiId}","dataApiTypeId":"${i18n.apiTypeId}","dataApiName":"${i18n.name}","dataStatus":"${apiStatus}","target":"goApiGame","opType":"function"}' class="_api">
                                 <span class="api-item api-icon-${i18n.apiTypeId}-${i18n.apiId}"></span>  <!--根据class的不同来显示api图标-->
                                 <div class="mui-media-body">${i18n.name}</div>
-                            </soul:button>
+                            </a>
                         </li>
                     </c:forEach>
                 </ul>
@@ -72,22 +61,18 @@
     <ul class="mui-table-view mui-grid-view mui-grid-9" data-list="fish">
         <c:if test="${not empty AGExist && AGExist}">
             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <soul:button
-                    target="${root}/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish"
-                    text="" opType="href" cssClass="">
+                <a data-rel='{"target":"${root}/game/getGameByApiId.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish","opType":"href"}'>
                     <span class="api-item api-icon-2-9"></span> <!--根据class的不同来显示api图标-->
                     <div class="mui-media-body">AG</div>
-                </soul:button>
+                </a>
             </li>
         </c:if>
         <c:if test="${not empty GGExist && GGExist}">
             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <soul:button
-                    target="${root}/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2"
-                    text="" opType="href" cssClass="">
+                <a data-rel='{"target":"${root}/game/getGameByApiId.html?search.apiId=28&search.apiTypeId=2&search.gameType=Fish","opType":"href"}'>
                     <span class="api-item api-icon-2-28"></span> <!--根据class的不同来显示api图标-->
                     <div class="mui-media-body">GG</div>
-                </soul:button>
+                </a>
             </li>
         </c:if>
         <c:if test="${empty AGExist && empty GGExist}">

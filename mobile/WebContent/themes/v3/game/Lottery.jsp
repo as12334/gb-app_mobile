@@ -20,8 +20,7 @@
                                 <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
                             </c:otherwise>
                         </c:choose>
-                        <soul:button target="changeLottery" text="${a.name}" opType="function" apiId="${a.apiId}"
-                                     cssClass="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}"/>
+                        <a data-rel='{"target":"changeLottery","opType":"function","apiId":"${a.apiId}"}' class="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}">${a.name}</a>
                     </li>
                 </c:forEach>
             </ul>
@@ -38,17 +37,13 @@
                         <c:when test="${fn:length(i.value)>0}">
                             <c:forEach var="g" items="${i.value}">
                                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                                    <soul:button dataApiTypeId="4"
-                                                 dataApiId="${g.apiId}"
-                                                 dataApiName="${gbFn:getGameName(g.gameId)}"
-                                                 dataGameId="${g.gameId}"
-                                                 dataGameCode="${g.apiId == 10||g.apiId==2?'':g.code}"
-                                                 dataStatus="${g.status}"
-                                                 target="goApiGame" text="" opType="function" cssClass="item _api">
+                                    <a data-rel='{"dataApiTypeId":"4","dataApiId":"${g.apiId}","dataApiName":"${gbFn:getGameName(g.gameId)}",
+                                            "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
+                                            "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="item _api">
                                         <img src="${soulFn:getImagePath(domain, g.cover)}" alt=""
                                              class="lottery-img"/>
                                         <div class="mui-media-body">${gbFn:getGameName(g.gameId)}</div>
-                                    </soul:button>
+                                    </a>
                                 </li>
                             </c:forEach>
                         </c:when>
