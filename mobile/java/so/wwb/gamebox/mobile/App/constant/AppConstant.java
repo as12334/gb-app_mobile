@@ -14,5 +14,16 @@ public interface AppConstant {
     int DEFAULT_TIME = 1; //默认时间
 
     int PROMO_RECORD_DAYS = -7; //设置一周前
+
     int RECOMMEND_DAYS = -1;
+
+    String keyCaptcha = "captcha";//需要安全密码验证码
+
+    String keyTimes = "times";//安全密码错误剩余次数
+
+    String keyState = "state"; //安全密码状态
+
+    String keyForceStart = "force"; //安全密码生效开始时间
+
+    String customerService = "customer";//客服
 }
