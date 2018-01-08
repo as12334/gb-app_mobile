@@ -248,11 +248,13 @@ public class MineAppController extends BaseMineController {
 
     @RequestMapping("/getFundRecord")
     @ResponseBody
-    public String getFundRecord() {
+    public String getFundRecord(VPlayerTransactionListVo listVo) {
         AppModelVo vo = new AppModelVo();
         if (LoginReady(vo)) return JsonTool.toJson(vo);
 
-        VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
+//        VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
+//        listVo.getSearch().setBeginCreateTime();
+
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
         if (listVo.getSearch().getEndCreateTime() != null) {
@@ -263,7 +265,12 @@ public class MineAppController extends BaseMineController {
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
-        vo = CommonApp.buildAppModelVo(listVo);
+
+        Map<String,Object> dataMap = MapTool.newHashMap();
+        dataMap.put("list",listVo);
+        dataMap.put("maxDate",SessionManager.getDate().getNow());
+        dataMap.put("minDate",SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
+        vo = CommonApp.buildAppModelVo(dataMap);
         return JsonTool.toJson(vo);
     }
 
@@ -331,6 +338,8 @@ public class MineAppController extends BaseMineController {
         //设置默认时间
         bettingDataApp.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
         bettingDataApp.setMaxDate(SessionManager.getDate().getNow());
+
+
 
         vo = CommonApp.buildAppModelVo(bettingDataApp);
         return JsonTool.toJson(vo);

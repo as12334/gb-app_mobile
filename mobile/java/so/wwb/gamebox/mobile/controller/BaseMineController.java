@@ -691,6 +691,12 @@ public class BaseMineController {
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
+
+            String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
+            infoApp.setApiName(apiName);
+
+            String gameName = CacheBase.getSiteGameName(String.valueOf(order.getGameId()));
+            infoApp.setGameName(gameName);
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;

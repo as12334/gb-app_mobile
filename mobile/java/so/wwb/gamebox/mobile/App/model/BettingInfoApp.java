@@ -13,6 +13,8 @@ public class BettingInfoApp {
     private Integer apiId;
     private Integer gameId;
     private String terminal;
+    private String apiName;
+    private String gameName;
     /**
      * 盈亏结果金额（派彩）
      */
@@ -107,5 +109,21 @@ public class BettingInfoApp {
 
     public void setProfitAmount(Double profitAmount) {
         this.profitAmount = profitAmount;
+    }
+
+    public String getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(String apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 }
