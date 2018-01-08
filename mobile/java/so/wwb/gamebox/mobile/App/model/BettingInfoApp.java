@@ -13,6 +13,10 @@ public class BettingInfoApp {
     private Integer apiId;
     private Integer gameId;
     private String terminal;
+    /**
+     * 盈亏结果金额（派彩）
+     */
+    private Double profitAmount;
 
     /**
      * 投注时间
@@ -95,5 +99,13 @@ public class BettingInfoApp {
 
     public void setTerminal(String terminal) {
         this.terminal = terminal;
+    }
+
+    public Double getProfitAmount() {
+        return profitAmount;
+    }
+
+    public void setProfitAmount(Double profitAmount) {
+        this.profitAmount = profitAmount;
     }
 }
