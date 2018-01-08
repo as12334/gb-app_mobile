@@ -307,30 +307,24 @@ public class MineAppController extends BaseMineController {
 
     @RequestMapping("/getBettingList")
     @ResponseBody
-    public String getBettingList(Date beginBetTime, Date endBetTime,Integer pageSize,Integer currentIndex) {
+    public String getBettingList(PlayerGameOrderListVo listVo) {
 
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
         if (LoginReady(vo)) return JsonTool.toJson(vo);
 
-        PlayerGameOrderListVo listVo = new PlayerGameOrderListVo();
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        listVo.getSearch().setBeginBetTime(beginBetTime);
-        listVo.getSearch().setEndBetTime(endBetTime);
         if (listVo.getSearch().getEndBetTime() != null) {
             listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
         }
 
-        listVo.getPaging().setPageSize(pageSize);
-        listVo.getPaging().setPageNumber((pageSize - currentIndex % pageSize + currentIndex) / pageSize);//计算出页码
-
 
         initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
-
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
 
+        bettingDataApp.setTotalSize(listVo.getPaging().getTotalCount());
         bettingDataApp.setStatisticsData(statisticsData(listVo, TIME_INTERVAL, DEFAULT_TIME));
         bettingDataApp.setList(buildBetting(gameOrderList));
 
