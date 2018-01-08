@@ -286,6 +286,7 @@ public class MineAppController extends BaseMineController {
         dataMap.put("list",listVo);
         dataMap.put("maxDate",SessionManager.getDate().getNow());
         dataMap.put("minDate",SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
+        dataMap.put("totalCount", listVo.getPaging().getTotalCount());
         vo = CommonApp.buildAppModelVo(dataMap);
         return JsonTool.toJson(vo);
     }
