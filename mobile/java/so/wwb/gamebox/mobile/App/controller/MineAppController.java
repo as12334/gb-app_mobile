@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.App.common.CommonApp;
+import so.wwb.gamebox.mobile.App.constant.AppConstant;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.App.model.*;
@@ -37,8 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.targetRegex;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -55,12 +56,7 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (!isLoginUser()) {
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            vo.setError(1);
-            return JsonTool.toJson(vo);
-        }
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> userInfoMap = MapTool.newHashMap();
@@ -127,10 +123,9 @@ public class MineAppController extends BaseMineController {
 
     @RequestMapping("/getMyPromo")
     @ResponseBody
-    public String getMyPromo(HttpServletRequest request) {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
+    public String getMyPromo() {
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
@@ -138,18 +133,16 @@ public class MineAppController extends BaseMineController {
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
 
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        setMapJson(new AppModelVo());
-        mapJson.put("data", vPreferentialRecodeListVo);
-        return JsonTool.toJson(mapJson);
+        vo = CommonApp.buildAppModelVo(vPreferentialRecodeListVo);
+        return JsonTool.toJson(vo);
 
     }
 
     @RequestMapping("/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         UserInfoApp userApp = new UserInfoApp();
         SysUser user = SessionManager.getUser();
@@ -158,17 +151,17 @@ public class MineAppController extends BaseMineController {
 
         setMapJson(new AppModelVo());
         mapJson.put("data", userApp);
+        vo = CommonApp.buildAppModelVo(userApp);
 
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(vo);
     }
 
 
     @RequestMapping("/refresh")
     @ResponseBody
     public String refresh(HttpServletRequest request) {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
         Integer userId = SessionManager.getUserId();
         PlayerApiListVo listVo = initPlayerApiListVo(userId);
         VUserPlayer player = getVPlayer(userId);
@@ -180,17 +173,15 @@ public class MineAppController extends BaseMineController {
         infoApp.setUsername(player.getUsername());
 
         setMapJson(new AppModelVo());
-        mapJson.put("data", infoApp);
-        return JsonTool.toJson(mapJson);
+        vo = CommonApp.buildAppModelVo(infoApp);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/addCard")
     @ResponseBody
     public String addCard() {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
-
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);
         AppModelVo appModelVo = new AppModelVo();
@@ -204,16 +195,14 @@ public class MineAppController extends BaseMineController {
             appModelVo.setMsg("展示银行卡信息");
             appModelVo.setData(userBankcard);
         }
-        setMapJson(appModelVo);
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(appModelVo);
     }
 
     @RequestMapping("/addBtc")
     @ResponseBody
     public String addBtc() {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
         AppModelVo appModelVo = new AppModelVo();
@@ -222,12 +211,11 @@ public class MineAppController extends BaseMineController {
             appModelVo.setCode(202);
             appModelVo.setMsg("用户添加比特币");
         }else {
+            appModelVo = CommonApp.buildAppModelVo(userBankcard);
             appModelVo.setMsg("展示比特币信息");
-            appModelVo.setData(userBankcard);
         }
-        setMapJson(appModelVo);
 
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(appModelVo);
     }
 
     @RequestMapping("/submitBtc")
@@ -239,24 +227,25 @@ public class MineAppController extends BaseMineController {
         bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
         bankcardVo.getResult().setBankcardNumber("abcdefghiklmnopqrstuvwxyz");
 
-        String userName = SessionManagerCommon.getUserName();
         AppModelVo appModelVo = new AppModelVo();
         if (checkCardIsExistsByUserId(bankcardVo)) {
-            appModelVo.setCode(204);
-            appModelVo.setMsg("用户绑定比特币已存在");
+            AppErrorCodeEnum.hasBtc.getCode();
+            appModelVo.setCode(AppErrorCodeEnum.hasBtc.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.hasBtc.getMsg());
+            appModelVo.setVersion(AppConstant.appVersion);
         } else {
             UserBankcard bankcard = bankcardVo.getResult();
             bankcard.setUserId(getAgentId());
             bankcard.setType(UserBankcardTypeEnum.BITCOIN.getCode());
             bankcard.setBankName(BITCOIN);
             bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
-            appModelVo.setCode(205);
-            appModelVo.setMsg("用户绑定比特币成功");
+            appModelVo.setCode(AppErrorCodeEnum.bindingSuccess.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.bindingSuccess.getMsg());
+            appModelVo.setVersion(AppConstant.appVersion);
         }
-        setMapJson(appModelVo);
 
 
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(appModelVo);
     }
 
 
@@ -264,9 +253,8 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord() {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -274,27 +262,27 @@ public class MineAppController extends BaseMineController {
         if (listVo.getSearch().getEndCreateTime() != null) {
             listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         }
-        getFund(mapJson);
+        Map map = MapTool.newHashMap();
+        getFund(map);
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
-        setMapJson(new AppModelVo());
+//        setMapJson(new AppModelVo());
         mapJson.put("data", listVo);
-        return JsonTool.toJson(mapJson);
+        vo = CommonApp.buildAppModelVo(listVo);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/getFundRecordDetails")
     @ResponseBody
     public String getFundRecordDetails(String searchId) {
-        if (!isLoginUser()) {
-            return JsonTool.toJson(mapJson);
-        }
-        searchId = String.valueOf(5002473);
+        AppModelVo appModelVo = new AppModelVo();
+        if (LoginReady(appModelVo)) return JsonTool.toJson(appModelVo);
+        searchId = String.valueOf(5002473);     //测试数据，暂时写死
         if (StringTool.isNotBlank(searchId)) {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
             vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
-            setMapJson(new AppModelVo());
 
             VPlayerTransaction po = vo.getResult();
 
@@ -315,10 +303,10 @@ public class MineAppController extends BaseMineController {
             recordDetailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
             recordDetailApp.setRechargeAmount(po.getRechargeAmount());
             recordDetailApp.setRechargeAddress(po.getRechargeAddress());
-            mapJson.put("data", recordDetailApp);
+            appModelVo = CommonApp.buildAppModelVo(recordDetailApp);
         }
 
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(appModelVo);
     }
 
 
@@ -326,12 +314,8 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getBettingList(Date beginBetTime, Date endBetTime,Integer pageSize,Integer currentIndex) {
 
-        final int TIME_INTERVAL = -30;
-        final int DEFAULT_TIME = 1;
-
-        if (!isLoginUser()) {
-            JsonTool.toJson(mapJson);
-        }
+        AppModelVo vo = new AppModelVo();
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
         PlayerGameOrderListVo listVo = new PlayerGameOrderListVo();
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -357,9 +341,18 @@ public class MineAppController extends BaseMineController {
         bettingDataApp.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
         bettingDataApp.setMaxDate(SessionManager.getDate().getNow());
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", bettingDataApp);
-        return JsonTool.toJson(mapJson);
+        vo = CommonApp.buildAppModelVo(bettingDataApp);
+        return JsonTool.toJson(vo);
+    }
+
+    private boolean LoginReady(AppModelVo vo) {
+        if (!isLoginUser()) {
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            vo.setError(1);
+            return true;
+        }
+        return false;
     }
 
     @RequestMapping("/getBettingDetails")
@@ -374,10 +367,9 @@ public class MineAppController extends BaseMineController {
             vo.setResult(null);
             vo.setResultArray(null);
         }
-        setMapJson(new AppModelVo());
-        mapJson.put("data", buildBettingDetail(vo));
+        AppModelVo appModelVo = CommonApp.buildAppModelVo(buildBettingDetail(vo));
 
-        return JsonTool.toJson(mapJson);
+        return JsonTool.toJson(appModelVo);
     }
 
     /**

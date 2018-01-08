@@ -6,4 +6,11 @@ public interface AppConstant {
     String SplitRegex = ",";
 
     String targetRegex = "x";
+
+    int TIME_INTERVAL = -30;
+
+    int DEFAULT_TIME = 1;
+
+    int PROMO_RECORD_DAYS = -7;
+    int RECOMMEND_DAYS = -1;
 }

@@ -58,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.PROMO_RECORD_DAYS;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.RECOMMEND_DAYS;
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.SplitRegex;
 
 /**
@@ -65,8 +67,7 @@ import static so.wwb.gamebox.mobile.App.constant.AppConstant.SplitRegex;
  */
 public class BaseMineController {
     private Log LOG = LogFactory.getLog(BaseMineController.class);
-    private static final int PROMO_RECORD_DAYS = -7;
-    private static final int RECOMMEND_DAYS = -1;
+
     /**
      * 获取我的个人数据
      */
