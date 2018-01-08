@@ -9,7 +9,7 @@
             <input type="hidden" name="result.rechargeType" value="${scanPay}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <c:set var="onlinePayMax" value="${empty payAccountForScan.singleDepositMax?99999999:payAccountForScan.singleDepositMax}"/>
-            <c:set var="onlinePayMin" value="${empty payAccountForScan.singleDepositMin?0.01:payAccountForScan.singleDepositMin}"/>
+            <c:set var="onlinePayMin" value="${empty payAccountForScan.singleDepositMin?1:payAccountForScan.singleDepositMin}"/>
             <input type="hidden" class="onlinePayMax" value="${onlinePayMax}" name="onlinePayMax"/>
             <input type="hidden" class="onlinePayMin" value="${onlinePayMin}" name="onlinePayMin"/>
             <input type="hidden" name="activityId" id="activityId"/>
@@ -33,14 +33,14 @@
                 <c:if test="${payAccountForScan.randomAmount eq true}">
                     <div class="mui-input-row" id="randomAmountMsg">
                         <marquee scrollamount="5" direction="left" >
-                            <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="为了提高对账速度及成功率,当前支付方式已开启随机额度，整数存款金额将随机增加0.11~0.99元！" disabled/>
+                            <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="${views.deposit_auto['随机额度提示']}" disabled/>
                         </marquee>
                     </div>
                 </c:if>
                 <%@include file="./ChooseAmount.jsp"%>
             </div>
             <div class="mui-row">
-                <div class="gb-form-foot bank-pay-btn" style="padding-bottom:10px;">
+                <div class="gb-form-foot bank-pay-btn">
                     <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['下一步']}</button>
                 </div>
             </div>
