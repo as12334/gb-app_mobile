@@ -12,7 +12,7 @@ public class BettingDataApp {
     private Date maxDate;
     private List<BettingInfoApp> list;
     private Map<String,Object> statisticsData;  //当前页数据
-
+    private long totalSize;    //数据总数
 
     public Date getMinDate() {
         return minDate;
@@ -44,5 +44,14 @@ public class BettingDataApp {
 
     public void setList(List<BettingInfoApp> list) {
         this.list = list;
+    }
+
+
+    public long getTotalSize() {
+        return totalSize;
+    }
+
+    public void setTotalSize(long totalSize) {
+        this.totalSize = totalSize;
     }
 }

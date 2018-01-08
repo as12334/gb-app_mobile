@@ -690,6 +690,7 @@ public class BaseMineController {
             infoApp.setSingleAmount(order.getSingleAmount());
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
+            infoApp.setProfitAmount(order.getProfitAmount());
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
