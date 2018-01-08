@@ -14,6 +14,7 @@ import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
+import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
@@ -51,19 +52,20 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.
  */
 public class BaseMineController {
     private Log LOG = LogFactory.getLog(BaseMineController.class);
-    private static final int PROMO_RECORD_DAYS = -7;
-    private static final int RECOMMEND_DAYS = -1;
+
     /**
      * 获取我的个人数据
      */
@@ -157,7 +159,7 @@ public class BaseMineController {
             }
         }
         //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String[] tags = tag.split(",");
+        String[] tags = tag.split(SplitRegex);
         for (VPlayerAdvisory vo : listVo.getResult()) {
             for (int i = 0; i < tags.length; i++) {
                 if (tags[i] != "") {
@@ -300,24 +302,10 @@ public class BaseMineController {
      * 取款
      */
     protected void withdraw(Map map) {
-        Map tempMap = MapTool.newHashMap();
-
-        //取款时同步彩票余额
-        double apiBalance = 0;
-        if (ParamTool.isLotterySite()) {
-            apiBalance = queryLotteryApiBalance();
-        }
-
-        //是否达到取款上限
-        boolean isFull = isFull(tempMap);
-        PlayerRank rank = (PlayerRank) tempMap.get("rank");
-        UserPlayer user = (UserPlayer) tempMap.get("player");
-        Double totalBalance = user.getWalletBalance() + apiBalance;
-
-        if (rank.getWithdrawMinNum() > totalBalance) {
-            map.put("balanceLess", true);
-            map.put("balanceMin", rank.getWithdrawMinNum());
-        }
+        //获取稽核相关
+        map.put("auditMap", getAuditMap());
+        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+        hasBank(map);
     }
 
     /**
@@ -340,7 +328,6 @@ public class BaseMineController {
         }
         return false;
     }
-
 
     protected Integer getAgentId() {
         Integer agentId = SessionManagerBase.getUserId();
@@ -378,9 +365,8 @@ public class BaseMineController {
         }
         if (isCash) {
             bankcard(map);
-        } else {
-            btc(map);
         }
+
         map.put("hasBank", hasBank);
         return hasBank;
     }
@@ -391,10 +377,6 @@ public class BaseMineController {
         map.put("bankListVo", BankHelper.getBankListVo());
     }
 
-    public void btc(Map map) {
-        //map.put("validate", JsRuleCreator.create(BtcBankcardForm.class));
-    }
-
     private double queryLotteryApiBalance() {
         PlayerApiVo apiVo = new PlayerApiVo();
         apiVo.getSearch().setApiId(Integer.valueOf(ApiProviderEnum.PL.getCode()));
@@ -402,6 +384,63 @@ public class BaseMineController {
         double apiBalance = ServiceSiteTool.playerApiService().queryApiBalance(apiVo);
 
         return apiBalance;
+    }
+
+    /**
+     * 取款稽核
+     */
+    public Map getAuditMap() {
+        if (SessionManagerCommon.getUserId() == null) {
+            throw new RuntimeException("玩家ID不存在");
+        }
+        PlayerTransactionVo vo = new PlayerTransactionVo();
+        vo.setResult(new PlayerTransaction());
+        vo.setPlayerId(SessionManagerCommon.getUserId());
+        vo.setAuditDate(new Date());
+        Map map = ServiceSiteTool.playerTransactionService().getTransactionMap(vo);
+        return toAuditObjectMap(vo, map);
+    }
+
+    public Map<String, Object> toAuditObjectMap(PlayerTransactionVo transactionVo, Map auditMap) {
+        double favorableSum = MapTool.getDouble(auditMap, "favorableSum");
+        double depositSum = MapTool.getDouble(auditMap, "depositSum");
+        double withdrawAmount = 0;
+        if (auditMap.get("withdrawAmount") != null) {
+            withdrawAmount = MapTool.getDouble(auditMap, "withdrawAmount");
+        }
+        double poundage = getPoundage(transactionVo, withdrawAmount);
+        double actualWithdraw = withdrawAmount - depositSum - favorableSum - poundage;
+        //用于显示用的手续用，不能用来计算
+        String counterFee = ServiceSiteTool.playerWithdrawService().getDisplayCounterFee(transactionVo);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("actualWithdraw", actualWithdraw);
+        result.put("deductFavorable", auditMap.get("favorableSum"));
+        result.put("transactionNo", auditMap.get("transactionNo"));
+        result.put("administrativeFee", depositSum);
+        result.put("withdrawAmount", withdrawAmount);
+        result.put("withdrawFeeMoney", poundage);
+        result.put("counterFee", counterFee);
+        boolean flag = MapTool.getBoolean(auditMap, "depositRecord");
+        boolean flag2 = MapTool.getBoolean(auditMap, "favorableRecord");
+        if (flag || flag2) {
+            result.put("recordList", true);
+        } else {
+            result.put("recordList", false);
+        }
+        return result;
+    }
+
+    /**
+     * 获取手续费
+     */
+    public double getPoundage(PlayerTransactionVo transactionVo, double withdrawAmount) {
+        PlayerWithdrawVo withdrawVo = new PlayerWithdrawVo();
+        withdrawVo.setResult(new PlayerWithdraw());
+        withdrawVo.getSearch().setTransactionNo(transactionVo.getResult().getTransactionNo());
+        withdrawVo.getResult().setWithdrawAmount(withdrawAmount);
+        Double poundage = ServiceSiteTool.playerWithdrawService().getWithdrawFeeNum(transactionVo, withdrawVo, transactionVo.getPlayerId());
+        return poundage == null ? 0 : poundage;
     }
 
     protected BettingDetailsApp buildBettingDetail(PlayerGameOrderVo playerGameOrderVo) {
@@ -479,17 +518,6 @@ public class BaseMineController {
             return sysCurrency.getCurrencySign();
         }
         return "";
-    }
-
-    /**
-     * 验证是否今日取款是否达到上限
-     *
-     * @param map
-     * @return
-     */
-    private boolean isFull(Map map) {
-        PlayerRank rank = getRank();
-        return isFull(map, rank);
     }
 
     /**
@@ -660,6 +688,13 @@ public class BaseMineController {
             infoApp.setSingleAmount(order.getSingleAmount());
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
+            infoApp.setProfitAmount(order.getProfitAmount());
+
+            String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
+            infoApp.setApiName(apiName);
+
+            String gameName = CacheBase.getSiteGameName(String.valueOf(order.getGameId()));
+            infoApp.setGameName(gameName);
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
@@ -667,10 +702,10 @@ public class BaseMineController {
 
 
     protected void initQueryDate(VPlayerTransactionListVo listVo) {
-        final int DEFAULT_TIME = -6;
-        listVo.setMinDate(SessionManager.getDate().addDays(DEFAULT_TIME));
+
+        listVo.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
         if (listVo.getSearch().getBeginCreateTime() == null) {
-            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(DEFAULT_TIME));
+            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
         } else if (listVo.getSearch().getBeginCreateTime().before(listVo.getMinDate())) {
             listVo.getSearch().setBeginCreateTime(listVo.getMinDate());
         }
