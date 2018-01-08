@@ -16,4 +16,14 @@ public interface AppConstant {
     int PROMO_RECORD_DAYS = -7; //设置一周前
     int RECOMMEND_DAYS = -1;
     int LAST_WEEK__MIN_TIME = -6; //设置一周查询时间的最小时间
+
+    String keyCaptcha = "captcha";//需要安全密码验证码
+
+    String keyTimes = "times";//安全密码错误剩余次数
+
+    String keyState = "state"; //安全密码状态
+
+    String keyForceStart = "force"; //安全密码生效开始时间
+
+    String customerService = "customer";//客服
 }
