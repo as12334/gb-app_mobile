@@ -9,11 +9,18 @@ public enum AppErrorCodeEnum{
     hasFreeze(101,"全款玩家已被冻结"),
     IsBalanceAdequate(102,"取款金额最少为x元"),
     hasBtc(204,"用户绑定比特币已存在"),
-    bindingSuccess(205,"用户绑定比特币成功"),
     addCard(200,"用户添加银行卡"),
     showBankCardInfomation(201,"展示银行信息"),
     addBtc(202,"用户添加比特币"),
-    submitBtcfild(206,"用户绑定比特币失败");
+    bindingSuccess(205,"用户绑定比特币成功"),
+    submitBtcfild(206,"用户绑定比特币失败"),
+    realName(300,"真实姓名不能为空"),
+    sysCode(301,"验证码输入错误"),
+    realNameError(302,"真实姓名不正确"),
+    originSafePwd(303,"原始密码有误"),
+    realNameSetError(304,"真实姓名修改失败"),
+    safePwdNotNull(305,"安全密码不能为空");
+
     private int code;
     private String msg;
 
