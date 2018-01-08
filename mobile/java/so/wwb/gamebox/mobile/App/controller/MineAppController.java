@@ -293,12 +293,12 @@ public class MineAppController extends BaseMineController {
 
     @RequestMapping("/getFundRecordDetails")
     @ResponseBody
-    public String getFundRecordDetails(String searchId) {
+    public String getFundRecordDetails(Integer searchId) {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(appVersion);
         if (LoginReady(appModelVo)) return JsonTool.toJson(appModelVo);
-        searchId = String.valueOf(5002473);     //测试数据，暂时写死
-        if (StringTool.isNotBlank(searchId)) {
+        searchId = 5002473;     //测试数据，暂时写死
+        if (searchId != 0) {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
             vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
