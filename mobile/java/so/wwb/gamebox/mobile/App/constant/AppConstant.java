@@ -7,6 +7,8 @@ public interface AppConstant {
 
     String targetRegex = "x";
 
+    int appErrorTimes = 5;
+
     int TIME_INTERVAL = -30;
 
     int DEFAULT_TIME = 1;
