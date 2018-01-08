@@ -49,8 +49,6 @@ import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 @Controller
 @RequestMapping("/mineOrigin")
 public class MineAppController extends BaseMineController {
-    private final String version = "app_01";
-    Map<String, Object> mapJson = MapTool.newHashMap();
 
     @RequestMapping("/getLink")
     @ResponseBody
@@ -78,12 +76,7 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (!isLoginUser()) {
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setError(1);
-            return JsonTool.toJson(vo);
-        }
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         //是否已存在取款订单
         if (hasOrder()) {
@@ -151,8 +144,6 @@ public class MineAppController extends BaseMineController {
 
         getAppUserInfo(request, user, userApp);
 
-        setMapJson(new AppModelVo());
-        mapJson.put("data", userApp);
         vo = CommonApp.buildAppModelVo(userApp);
 
         return JsonTool.toJson(vo);
@@ -174,7 +165,6 @@ public class MineAppController extends BaseMineController {
         infoApp.setAssets(queryPlayerAssets(listVo, userId));
         infoApp.setUsername(player.getUsername());
 
-        setMapJson(new AppModelVo());
         vo = CommonApp.buildAppModelVo(infoApp);
         return JsonTool.toJson(vo);
     }
@@ -189,12 +179,12 @@ public class MineAppController extends BaseMineController {
         AppModelVo appModelVo = new AppModelVo();
         if (userBankcard == null) {
             //获取银行列表
-            mapJson.put("data", bankList());
-            appModelVo.setCode(200);
-            appModelVo.setMsg("用户添加银行卡");
+            appModelVo.setCode(AppErrorCodeEnum.addCard.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.addCard.getMsg());
+            appModelVo.setData(bankList());
         }else {
-            appModelVo.setCode(201);
-            appModelVo.setMsg("展示银行卡信息");
+            appModelVo.setCode(AppErrorCodeEnum.showBankCardInfomation.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.showBankCardInfomation.getMsg());
             appModelVo.setData(userBankcard);
         }
         return JsonTool.toJson(appModelVo);
@@ -210,14 +200,15 @@ public class MineAppController extends BaseMineController {
         AppModelVo appModelVo = new AppModelVo();
 
         if (userBankcard == null) {
-            appModelVo.setCode(202);
-            appModelVo.setMsg("用户添加比特币");
+            vo.setCode(AppErrorCodeEnum.addBtc.getCode());
+            vo.setMsg(AppErrorCodeEnum.addBtc.getMsg());
         }else {
-            appModelVo = CommonApp.buildAppModelVo(userBankcard);
-            appModelVo.setMsg("展示比特币信息");
+            vo = CommonApp.buildAppModelVo(userBankcard);
+            vo.setMsg("展示比特币信息");
+
         }
 
-        return JsonTool.toJson(appModelVo);
+        return JsonTool.toJson(vo);
     }
 
     @RequestMapping("/submitBtc")
@@ -228,24 +219,27 @@ public class MineAppController extends BaseMineController {
         UserBankcardVo bankcardVo = new UserBankcardVo();
         bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
         bankcardVo.getResult().setBankcardNumber("abcdefghiklmnopqrstuvwxyz");
-
         AppModelVo appModelVo = new AppModelVo();
+        appModelVo.setVersion(AppConstant.appVersion);
         if (checkCardIsExistsByUserId(bankcardVo)) {
             AppErrorCodeEnum.hasBtc.getCode();
             appModelVo.setCode(AppErrorCodeEnum.hasBtc.getCode());
             appModelVo.setMsg(AppErrorCodeEnum.hasBtc.getMsg());
-            appModelVo.setVersion(AppConstant.appVersion);
-        } else {
-            UserBankcard bankcard = bankcardVo.getResult();
-            bankcard.setUserId(getAgentId());
-            bankcard.setType(UserBankcardTypeEnum.BITCOIN.getCode());
-            bankcard.setBankName(BITCOIN);
-            bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
-            appModelVo.setCode(AppErrorCodeEnum.bindingSuccess.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.bindingSuccess.getMsg());
-            appModelVo.setVersion(AppConstant.appVersion);
+            return JsonTool.toJson(appModelVo);
         }
 
+        UserBankcard bankcard = bankcardVo.getResult();
+        bankcard.setUserId(getAgentId());
+        bankcard.setType(UserBankcardTypeEnum.BITCOIN.getCode());
+        bankcard.setBankName(BITCOIN);
+        bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
+        if (!bankcardVo.isSuccess()) {
+            appModelVo.setCode(AppErrorCodeEnum.submitBtcfild.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.submitBtcfild.getMsg());
+            return JsonTool.toJson(appModelVo);
+        }
+        appModelVo.setCode(AppErrorCodeEnum.bindingSuccess.getCode());
+        appModelVo.setMsg(AppErrorCodeEnum.bindingSuccess.getMsg());
 
         return JsonTool.toJson(appModelVo);
     }
@@ -269,8 +263,6 @@ public class MineAppController extends BaseMineController {
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
-//        setMapJson(new AppModelVo());
-        mapJson.put("data", listVo);
         vo = CommonApp.buildAppModelVo(listVo);
         return JsonTool.toJson(vo);
     }
@@ -279,6 +271,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getFundRecordDetails(String searchId) {
         AppModelVo appModelVo = new AppModelVo();
+        appModelVo.setVersion(appVersion);
         if (LoginReady(appModelVo)) return JsonTool.toJson(appModelVo);
         searchId = String.valueOf(5002473);     //测试数据，暂时写死
         if (StringTool.isNotBlank(searchId)) {
@@ -317,7 +310,9 @@ public class MineAppController extends BaseMineController {
     public String getBettingList(Date beginBetTime, Date endBetTime,Integer pageSize,Integer currentIndex) {
 
         AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
         if (LoginReady(vo)) return JsonTool.toJson(vo);
+
         PlayerGameOrderListVo listVo = new PlayerGameOrderListVo();
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -370,6 +365,7 @@ public class MineAppController extends BaseMineController {
             vo.setResultArray(null);
         }
         AppModelVo appModelVo = CommonApp.buildAppModelVo(buildBettingDetail(vo));
+        appModelVo.setVersion(appVersion);
 
         return JsonTool.toJson(appModelVo);
     }
@@ -386,6 +382,7 @@ public class MineAppController extends BaseMineController {
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
             return JsonTool.toJson(vo);
         }
+        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
         SysUser user = SessionManager.getUser();
         Map<String,Object> map = MapTool.newHashMap();
@@ -447,36 +444,6 @@ public class MineAppController extends BaseMineController {
         return links;
     }
 
-    private void setMapJson(AppModelVo app) {
-        if (app.getError() != 0) {
-            mapJson.put("error", app.getError());
-        } else {
-            mapJson.put("error", 0);
-        }
-
-        if (app.getCode() != 0) {
-            mapJson.put("code", app.getCode());
-        } else {
-            mapJson.put("code", AppErrorCodeEnum.Success.getCode());
-        }
-
-        if (StringTool.isNotBlank(app.getMsg())) {
-            mapJson.put("msg", app.getMsg());
-        } else {
-            mapJson.put("msg", AppErrorCodeEnum.Success.getMsg());
-        }
-
-        if (StringTool.isNotBlank(app.getVersion())) {
-            mapJson.put("version", app.getVersion());
-        } else {
-            mapJson.put("version", version);
-        }
-        if (app.getData() != null) {
-            mapJson.put("data", app.getData());
-        } else {
-            mapJson.put("data", null);
-        }
-    }
 
     /**
      * 是否有登陆账号
@@ -488,10 +455,10 @@ public class MineAppController extends BaseMineController {
             appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             appVo.setError(1);
             appVo.setData(null);
-            setMapJson(appVo);
 
             return false;
         }
         return true;
     }
 }
+
