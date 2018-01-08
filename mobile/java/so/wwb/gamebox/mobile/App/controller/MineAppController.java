@@ -418,6 +418,27 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    @RequestMapping("/setRealName")
+    @ResponseBody
+    public String setRealNameApp(String realName){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(StringTool.isBlank(realName)){
+            vo.setCode(AppErrorCodeEnum.realName.getCode());
+            vo.setMsg(AppErrorCodeEnum.realName.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        if(!setRealName(realName)){
+            vo.setCode(AppErrorCodeEnum.realNameSetError.getCode());
+            vo.setMsg(AppErrorCodeEnum.realNameSetError.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        return JsonTool.toJson(vo);
+    }
+
     @RequestMapping("/updateSafePassword")
     @ResponseBody
     public String updateSafePassword(SecurityPassword password){
