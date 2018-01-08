@@ -12,8 +12,8 @@ public enum AppErrorCodeEnum{
     addCard(200,"用户添加银行卡"),
     showBankCardInfomation(201,"展示银行信息"),
     addBtc(202,"用户添加比特币"),
-    submitBtcfild(206,"用户绑定比特币失败");
     bindingSuccess(205,"用户绑定比特币成功"),
+    submitBtcfild(206,"用户绑定比特币失败"),
     realName(300,"真实姓名不能为空"),
     sysCode(301,"验证码输入错误"),
     realNameError(302,"真实姓名不正确"),

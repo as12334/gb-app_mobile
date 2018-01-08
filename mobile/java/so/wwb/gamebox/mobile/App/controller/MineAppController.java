@@ -51,6 +51,7 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
+import org.soul.commons.bean.Pair;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -63,6 +64,7 @@ import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 @Controller
 @RequestMapping("/mineOrigin")
 public class MineAppController extends BaseMineController {
+    private Log LOG = LogFactory.getLog(MineAppController.class);
 
     @RequestMapping("/getLink")
     @ResponseBody
@@ -318,7 +320,6 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
-
     @RequestMapping("/getBettingList")
     @ResponseBody
     public String getBettingList(PlayerGameOrderListVo listVo) {
@@ -332,7 +333,6 @@ public class MineAppController extends BaseMineController {
         if (listVo.getSearch().getEndBetTime() != null) {
             listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
         }
-
 
         initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
@@ -399,6 +399,7 @@ public class MineAppController extends BaseMineController {
             vo.setData(map);
             return JsonTool.toJson(vo);
         }
+
         map.put("hasPermissionPwd", true);
         if (isLock(user)) {//如果冻结
             map.put("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
@@ -406,6 +407,7 @@ public class MineAppController extends BaseMineController {
             vo.setData(map);
             return JsonTool.toJson(vo);
         }
+
         //判断是否出现验证码,大于2显示验证码
         Integer errorTimes = user.getSecpwdErrorTimes();
         errorTimes = errorTimes == null ? 0 : errorTimes;
