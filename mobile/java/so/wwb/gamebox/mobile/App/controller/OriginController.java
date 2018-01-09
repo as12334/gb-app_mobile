@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.App.model.AppFloatPicItem;
-import so.wwb.gamebox.mobile.App.model.AppModelVo;
-import so.wwb.gamebox.mobile.App.model.AppRequestModelVo;
+import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
@@ -45,6 +44,7 @@ import so.wwb.gamebox.model.master.operation.vo.ActivityMoneyDefaultWinPlayerLis
 import so.wwb.gamebox.model.master.operation.vo.ActivityMoneyDefaultWinPlayerVo;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -163,6 +163,58 @@ public class OriginController extends BaseApiController {
         map.put("page", pageTotal);
         vo.setData(map);
 
+        return JsonTool.toJson(vo);
+    }
+
+    @RequestMapping("getGameLink")
+    @ResponseBody
+    public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(SessionManager.getUser() == null){
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        if(siteGame.getApiId() == null){
+            vo.setCode(AppErrorCodeEnum.gameExist.getCode());
+            vo.setMsg(AppErrorCodeEnum.gameExist.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        if(siteGame.getApiTypeId() == null){
+            vo.setCode(AppErrorCodeEnum.gameExist.getCode());
+            vo.setMsg(AppErrorCodeEnum.gameExist.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        Map map = MapTool.newHashMap();
+
+        if(SessionManager.isAutoPay()){
+            AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request,siteGame.getApiId(),siteGame.getApiTypeId(),siteGame.getGameCode(),modelVo);
+
+            map.put("gameLink",gameUrl.getGameLink());
+            map.put("gameMsg",gameUrl.getGameMsg());
+            vo.setCode(AppErrorCodeEnum.Success.getCode());
+            vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+            vo.setData(map);
+
+            return JsonTool.toJson(vo);
+        }else{
+            if(siteGame.getApiTypeId().equals(ApiTypeEnum.CASINO.getCode())){
+                PlayerApiAccountVo player = new PlayerApiAccountVo();
+                player.setApiId(siteGame.getApiId());
+                player.setApiTypeId(siteGame.getApiTypeId().toString());
+                player.setGameId(siteGame.getGameId());
+                player.setGameCode(siteGame.getGameCode());
+                AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
+                map.put("gameLink",gameUrl.getGameLink());
+                map.put("gameMsg",gameUrl.getGameMsg());
+
+                vo.setCode(AppErrorCodeEnum.Success.getCode());
+                vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+                vo.setData(map);
+                return JsonTool.toJson(vo);
+            }
+        }
         return JsonTool.toJson(vo);
     }
 

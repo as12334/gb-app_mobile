@@ -712,7 +712,7 @@ public abstract class BaseApiController extends BaseDemoController {
         return CollectionTool.toEntityMap(getGameI18n(listVo), SiteGameI18n.PROP_GAME_ID, String.class);
     }
 
-    private AppSiteApiTypeRelationI18n goGameUrl(HttpServletRequest request, Integer apiId, String apiTypeId, String gameCode, AppRequestModelVo model) {
+    protected AppSiteApiTypeRelationI18n goGameUrl(HttpServletRequest request, Integer apiId, String apiTypeId, String gameCode, AppRequestModelVo model) {
         AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
         PlayerApiAccountVo playerApiAccountVo = new PlayerApiAccountVo();
         playerApiAccountVo.setApiId(apiId);
@@ -790,7 +790,7 @@ public abstract class BaseApiController extends BaseDemoController {
      * @param playerApiAccountVo
      * @param request
      */
-    private AppSiteApiTypeRelationI18n getCasinoGameUrl(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request, AppRequestModelVo model) {
+    protected AppSiteApiTypeRelationI18n getCasinoGameUrl(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request, AppRequestModelVo model) {
         AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
         setAccount(playerApiAccountVo, request);
 

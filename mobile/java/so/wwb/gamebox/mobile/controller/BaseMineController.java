@@ -308,6 +308,14 @@ public class BaseMineController {
         map.put("auditMap", getAuditMap());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         hasBank(map);
+        //player
+        UserPlayer player = getPlayer();
+        double totalBalance = 0;
+        if (ParamTool.isLotterySite()) {
+            double apiBalance = queryLotteryApiBalance();
+            totalBalance = apiBalance + totalBalance;
+        }
+        map.put("totalBalance",player.getWalletBalance() + totalBalance);
     }
 
     /**
@@ -417,7 +425,7 @@ public class BaseMineController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("actualWithdraw", actualWithdraw);
-        result.put("deductFavorable", auditMap.get("favorableSum"));
+        result.put("deductFavorable", favorableSum > 0 ? -favorableSum : favorableSum);
         result.put("transactionNo", auditMap.get("transactionNo"));
         result.put("administrativeFee", depositSum);
         result.put("withdrawAmount", withdrawAmount);

@@ -26,6 +26,7 @@ public enum AppErrorCodeEnum{
     pwdNotNull(307,"当前密码不能为空"),
     sysCodeNotNull(308,"验证码不能为空"),
     pwdUpdateError(309,"修改密码失败"),
+    gameExist(400,"游戏不存在"),
     ;
 
     private int code;
