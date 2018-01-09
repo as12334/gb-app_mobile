@@ -602,7 +602,7 @@ public class MineAppController extends BaseMineController {
         SessionManager.refreshUser();
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
-        return null;
+        return JsonTool.toJson(vo);
     }
 
     /**
