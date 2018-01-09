@@ -837,7 +837,7 @@ public abstract class BaseApiController extends BaseDemoController {
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
         playerApiAccountVo.setLobbyUrl(domain.toString());
-        if (request.getHeader("User-Agent").contains("app_android")) {
+        if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
         }
 
