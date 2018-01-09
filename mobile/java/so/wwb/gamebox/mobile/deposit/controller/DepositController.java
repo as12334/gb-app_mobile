@@ -76,7 +76,7 @@ public class DepositController extends BaseCommonDepositController {
         //网银存款,柜员机/柜台存款
         PlayerRank rank = getRank();
         boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
-        Map<String, Object> payAccountMap = getPayAccountMap(isMultipleAccount);
+        Map<String, Object> payAccountMap = getPayAccountMap(isMultipleAccount); //若该层级下没有任何收款账号返回空Map
 
         model.addAttribute("command", new PayAccountVo());
         model.addAttribute("isMultipleAccount", isMultipleAccount);
@@ -90,7 +90,7 @@ public class DepositController extends BaseCommonDepositController {
     }
 
     private Map getPayAccountMap(boolean isMultipleAccount) {
-        List<PayAccount> payAccounts = searchPayAccounts();
+        List<PayAccount> payAccounts = searchPayAccounts(); //满足该层级的所有收款账号
         Map<String, Object> payAccountMap = new LinkedHashMap<>();
 
         if (CollectionTool.isEmpty(payAccounts) && payAccounts.size() <= 0) {
@@ -111,7 +111,7 @@ public class DepositController extends BaseCommonDepositController {
             String type = payAccount.getType();
             String accountType = payAccount.getAccountType();
             if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(type)) {
-                if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) {
+                if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) { //1-9 PayAccountAccountType 类对应
                     onlinePayAccount.add(payAccount);
                 } else if (PayAccountAccountType.WECHAT.getCode().equals(accountType)) {
                     scanPayAccountForWechat.add(payAccount);
@@ -258,8 +258,9 @@ public class DepositController extends BaseCommonDepositController {
             String bankCode = payAccount.getBankCode();
             if (!bankCodes.contains(bankCode)) {
                 bankCodes.add(bankCode);
-                Map<String, Object> bankMap = new HashMap<>(2, 1f);
+                Map<String, Object> bankMap = new HashMap<>(3, 1f);
                 bankMap.put("value", payAccount.getId());
+                bankMap.put("bankCode",payAccount.getBankCode());
                 if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     bankMap.put("text", payAccount.getCustomBankName());
                 } else {
@@ -276,9 +277,10 @@ public class DepositController extends BaseCommonDepositController {
         List<Map<String, Object>> bankList = new ArrayList<>();
         Map<String, Object> bankMap;
         for (PayAccount payAccount : accounts) {
-            bankMap = new HashMap<>(2, 1f);
+            bankMap = new HashMap<>(3, 1f);
             bankMap.put("text", payAccount.getAliasName());
             bankMap.put("value", payAccount.getId());
+            bankMap.put("bankCode",payAccount.getBankCode());
             bankList.add(bankMap);
         }
 
@@ -297,12 +299,13 @@ public class DepositController extends BaseCommonDepositController {
         }
     }
 
+    //查询满足该玩家层级的手机端收款账号
     private List<PayAccount> searchPayAccounts() {
         PayAccountListVo listVo = new PayAccountListVo();
         Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("playerId", SessionManager.getUserId());
-        map.put("currency", SessionManager.getUser().getDefaultCurrency());
-        map.put("terminal", TerminalEnum.MOBILE.getCode());
+        map.put("currency", SessionManager.getUser().getDefaultCurrency()); //默认货币代码
+        map.put("terminal", TerminalEnum.MOBILE.getCode()); //手机端
         listVo.setConditions(map);
         return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
     }
