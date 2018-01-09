@@ -14,8 +14,8 @@ public interface AppConstant {
     int DEFAULT_TIME = 1; //默认时间
 
     int PROMO_RECORD_DAYS = -7; //设置一周前
-
     int RECOMMEND_DAYS = -1;
+    int LAST_WEEK__MIN_TIME = -6; //设置一周查询时间的最小时间
 
     int ZERO = 0;
 

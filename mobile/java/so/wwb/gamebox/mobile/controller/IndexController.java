@@ -113,23 +113,19 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
         if (ParamTool.isMobileUpgrade()) {
             //查询游戏类型对应的分类
-            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
-
+            getApiTypeGame(model);
             //关于我们/注册条款
             model.addAttribute("path", path);
             if (StringTool.isNotBlank(path)) {
                 getAboutAndTerms(path, model, request);
             }
         }
-        //手机弹窗广告
-        model.addAttribute("phoneDialog", getCarousel(request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode()));
-        //查询Banner和公告
-        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        //手机弹窗广告、查询Banner和公告
+        getBannerAndAd(model,request);
         initFloatPic(model);
         return "/Index";
     }
@@ -137,7 +133,6 @@ public class IndexController extends BaseApiController {
     private void initFloatPic(Model model) {
         List<Map> floatList = new ArrayList();
         showMoneyActivityFloat(floatList);
-
         model.addAttribute("floatList", floatList);
     }
 
@@ -210,6 +205,41 @@ public class IndexController extends BaseApiController {
             }
         }
         return resultList;
+    }
+
+    private void getBannerAndAd(Model model, HttpServletRequest request) {
+        Map<String, Map> carouselMap = (Map) Cache.getSiteCarousel();
+        if (MapTool.isEmpty(carouselMap)) {
+            return;
+        }
+        String webSite = ServletTool.getDomainFullAddress(request);
+        List<Map> phoneDialog = new ArrayList<>();
+        List<Map> carousels = new ArrayList<>();
+        String phoneDialogType = CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode();
+        String bannerType = CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode();
+        Date date = new Date();
+        String local = SessionManager.getLocale().toString();
+        for (Map m : carouselMap.values()) {
+            if ((StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local)) && (((Date) m.get("start_time")).before(date) && ((Date) m.get("end_time")).after(date))
+                    && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                String link = MapTool.getString(m,"link");
+                if (StringTool.isNotBlank(link)) {
+                    if (link.contains("${website}")) {
+                        link = link.replace("${website}", webSite);
+                    }
+                }
+                m.put("link", link);
+                if (phoneDialogType.equals(m.get("type"))) {
+                    phoneDialog.add(m);
+                } else if (bannerType.equals(m.get("type"))) {
+                    carousels.add(m);
+                }
+            }
+        }
+        //手机弹窗广告
+        model.addAttribute("phoneDialog", phoneDialog);
+        //查询Banner和公告
+        model.addAttribute("carousels", carousels);
     }
 
 
@@ -423,7 +453,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getBanner")
     public String getBanner(Model model, HttpServletRequest request) {
-        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         return "/game/include/include.banner";
     }

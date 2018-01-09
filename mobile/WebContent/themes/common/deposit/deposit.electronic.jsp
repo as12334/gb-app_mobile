@@ -86,6 +86,7 @@
                                                 <button type="button" id="saveImage" url="${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}" class="btn mui-btn mui-btn-primary">${views.deposit_auto['保存到手机']}</button>
                                             </p>
                                         </div>--%>
+                                    <input type="hidden" id="imgQrCodeUrl" value="${payAccount.qrCodeUrl}">
                                     <c:if test="${not empty payAccount.qrCodeUrl}">
                                         <div class="wechat-code">
                                             <div class="mui-row">
@@ -192,8 +193,8 @@
                                 </div>
                             </div>
                             <div class="mui-row">
-                                <div class="gb-form-foot bank-pay-btn" style="padding-bottom:10px;">
-                                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['提交']}</button>
+                                <div class="gb-form-foot bank-pay-btn">
+                                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount">${views.deposit_auto['提交']}</button>
                                 </div>
                             </div>
 

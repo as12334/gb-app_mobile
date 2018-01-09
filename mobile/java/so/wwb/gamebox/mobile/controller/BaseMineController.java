@@ -58,9 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.PROMO_RECORD_DAYS;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.RECOMMEND_DAYS;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.SplitRegex;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -691,6 +689,12 @@ public class BaseMineController {
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
+
+            String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
+            infoApp.setApiName(apiName);
+
+            String gameName = CacheBase.getSiteGameName(String.valueOf(order.getGameId()));
+            infoApp.setGameName(gameName);
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
@@ -698,10 +702,10 @@ public class BaseMineController {
 
 
     protected void initQueryDate(VPlayerTransactionListVo listVo) {
-        final int DEFAULT_TIME = -6;
-        listVo.setMinDate(SessionManager.getDate().addDays(DEFAULT_TIME));
+
+        listVo.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
         if (listVo.getSearch().getBeginCreateTime() == null) {
-            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(DEFAULT_TIME));
+            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
         } else if (listVo.getSearch().getBeginCreateTime().before(listVo.getMinDate())) {
             listVo.getSearch().setBeginCreateTime(listVo.getMinDate());
         }

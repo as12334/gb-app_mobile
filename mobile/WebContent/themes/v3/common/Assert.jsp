@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
-<soul:button target="userAssert" text="" opType="function" id="login-info" cssClass="mui-hidden login-info" tag="div">
+<div data-rel='{"target":"userAssert","opType":"function"}' id="login-info" class="mui-hidden login-info">
     <div class="user_name"></div>
     <div class="money"></div>
     <div class="ex">
@@ -37,11 +37,11 @@
         </div>
         <div class="ct">
             <p>
-                <soul:button target="refreshApi" text="${views.include_auto['刷新额度']}" opType="function" cssClass="go btn-refresh"/>
+                <a data-rel='{"target":"refreshApi","opType":"function"}' class="go btn-refresh">${views.include_auto['刷新额度']}</a>
             </p>
             <p>
-                <soul:button target="${root}/wallet/deposit/index.html" text="${views.include_auto['存款']}" opType="href" cssClass="go btn-deposit"/>
+                <a data-rel='{"opType":"href","target":"${root}/wallet/deposit/index.html"}' class="go btn-deposit">${views.include_auto['存款']}</a>
             </p>
         </div>
     </div>
-</soul:button>
+</div>

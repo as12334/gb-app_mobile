@@ -1,4 +1,6 @@
-<%--@elvariable id="command" type="so.wwb.gamebox.model.company.site.vo.VSiteApiListVo"--%>
+<%--@elvariable id="lottery" type="java.util.Map<java.lang.Integer,java.util.List<so.wwb.gamebox.model.company.site.po.SiteGame>>"--%>
+<%--@elvariable id="lotteryGames" type="java.util.List<so.wwb.gamebox.model.company.site.po.SiteGame>"--%>
+<%--@elvariable id="apiType" type="so.wwb.gamebox.model.company.site.po.SiteApiType"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
 
@@ -6,10 +8,7 @@
     <div class="mui-scroll-wrapper mui-slider-indicatorcode mui-segmented-control mui-segmented-control-inverted">
         <div class="mui-scroll">
             <ul class="mui-list-unstyled mui-clearfix mui-bar-tab">
-                <c:forEach var="a" items="${type.value}" varStatus="vs">
-                    <c:if test="${vs.index == 0}">
-                        <input type="hidden" id="lottery-id" value="${a.apiId}"/>
-                    </c:if>
+                <c:forEach var="a" items="${apiType.apiTypeRelations}" varStatus="vs">
                     <li>
                         <c:set var="tempType" value=""/>
                         <c:choose>
@@ -20,7 +19,7 @@
                                 <c:set var="tempType" value="api-icon-4-${a.apiId}"/>
                             </c:otherwise>
                         </c:choose>
-                        <a data-rel='{"target":"changeLottery","opType":"function","apiId":"${a.apiId}"}' class="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}">${a.name}</a>
+                        <a data-rel='{"target":"changeLottery","opType":"function","apiId":"${a.apiId}"}' class="${tempType} mui-tab-item ${vs.index == 0 ? 'mui-active':''}">${a.apiName}</a>
                     </li>
                 </c:forEach>
             </ul>
@@ -29,30 +28,22 @@
 </div>
 
 <div class="lottery-content"><!--彩票内容切换-->
-    <c:forEach var="a" items="${type.value}" varStatus="vs">
+    <c:forEach var="a" items="${apiType.apiTypeRelations}" varStatus="vs">
         <div id="lottery-${a.apiId}" class="mui-control-content ${vs.index == 0 ? 'mui-active':''}">
-            <c:forEach var="i" items="${lotteryGame}">
-                <c:if test="${a.apiId == i.key}">
-                    <c:choose>
-                        <c:when test="${fn:length(i.value)>0}">
-                            <c:forEach var="g" items="${i.value}">
-                                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                                    <a data-rel='{"dataApiTypeId":"4","dataApiId":"${g.apiId}","dataApiName":"${gbFn:getGameName(g.gameId)}",
+            <c:set var="lotteryGames" value="${lottery.get(a.apiId)}"/>
+            <c:forEach var="g" items="${lotteryGames}">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="item _api">
-                                        <img src="${soulFn:getImagePath(domain, g.cover)}" alt=""
-                                             class="lottery-img"/>
-                                        <div class="mui-media-body">${gbFn:getGameName(g.gameId)}</div>
-                                    </a>
-                                </li>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
-                        </c:otherwise>
-                    </c:choose>
-                </c:if>
+                        <img src="${soulFn:getImagePath(domain, g.cover)}" class="lottery-img"/>
+                        <div class="mui-media-body">${g.name}</div>
+                    </a>
+                </li>
             </c:forEach>
+            <c:if test="${fn:length(lotteryGames)<=0}">
+                <div class="deficiency-nots">${views.themes_auto['没有找到符合的游戏']}</div>
+            </c:if>
         </div>
     </c:forEach>
 </div>
