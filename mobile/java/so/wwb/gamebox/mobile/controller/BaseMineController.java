@@ -21,6 +21,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.App.model.BettingDetailsApp;
 import so.wwb.gamebox.mobile.App.model.BettingInfoApp;
+import so.wwb.gamebox.mobile.App.model.FundRecordApp;
 import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
@@ -48,6 +49,7 @@ import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
+import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -477,7 +479,9 @@ public class BaseMineController {
 
         detailsApp.setApiName(CacheBase.getSiteApiName(String.valueOf(gameOrder.getApiId())));
         detailsApp.setGameName(CacheBase.getGameName(String.valueOf(gameOrder.getGameId())));
-        detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
+        if (gameOrder.getGameId() != 0) {
+            detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
+        }
         List<Map> list = detailsApp.getResultArray();
         for (Map li : list) {
 
@@ -544,13 +548,25 @@ public class BaseMineController {
         return hasFreeze;
     }
 
-    private String getCurrencySign(String currency) {
+    protected String getCurrencySign(String currency) {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(SessionManagerCommon.getUser().getDefaultCurrency());
         if (sysCurrency != null && StringTool.isNotBlank(sysCurrency.getCurrencySign())) {
             return sysCurrency.getCurrencySign();
         }
         return "";
     }
+
+
+    protected FundRecordApp buildFundRecord(List<VPlayerTransaction> list) {
+
+        for (VPlayerTransaction li : list) {
+
+        }
+        return new FundRecordApp();
+
+    }
+
+
 
     /**
      * 余额是否充足
