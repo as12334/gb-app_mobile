@@ -8,7 +8,7 @@
             <div id="validateRule" style="display: none">${validateRule}</div>
             <c:set var="bank" value="${bankList[0]['value']}"/>
             <c:set var="account" value="${payAccountMap[bank]}"/>
-            <c:set var="onlinePayMin" value="${empty account.singleDepositMin?0.01:account.singleDepositMin}"/>
+            <c:set var="onlinePayMin" value="${empty account.singleDepositMin?1:account.singleDepositMin}"/>
             <c:set var="onlinePayMax" value="${empty account.singleDepositMax?99999999:account.singleDepositMax}"/>
             <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="${onlinePayMin}"/>
             <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="${onlinePayMax}"/>
@@ -48,7 +48,7 @@
                     <c:if test="${account.randomAmount eq true}">
                         <div class="mui-input-row" id="randomAmountMsg">
                             <marquee scrollamount="5" direction="left" >
-                                <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="为了提高对账速度及成功率,当前支付方式已开启随机额度，整数存款金额将随机增加0.11~0.99元！" disabled/>
+                                <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="${views.deposit_auto['随机额度提示']}" disabled/>
                             </marquee>
                         </div>
                     </c:if>
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="mui-row">
-                <div class="gb-form-foot bank-pay-btn" style="padding-bottom:10px;">
+                <div class="gb-form-foot bank-pay-btn">
                     <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['下一步']}</button>
                 </div>
             </div>

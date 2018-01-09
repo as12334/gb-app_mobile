@@ -113,13 +113,11 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sysDomain", getSiteDomain(request));
         model.addAttribute("code", CommonContext.get().getSiteCode());
         if (ParamTool.isLotterySite()) {
-            //model.addAttribute("carousels", getCarousel(request));
             model.addAttribute("lotteries", getLottery(request, 19));
         }
         if (ParamTool.isMobileUpgrade()) {
             //查询游戏类型对应的分类
-            model.addAttribute("SiteApiRelationI18n", getSiteApiRelationI18n(model));
-
+            getApiTypeGame(model);
             //关于我们/注册条款
             model.addAttribute("path", path);
             if (StringTool.isNotBlank(path)) {
@@ -423,7 +421,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getBanner")
     public String getBanner(Model model, HttpServletRequest request) {
-        model.addAttribute("carousels", getCarousel(request,CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         model.addAttribute("announcement", getAnnouncement());
         return "/game/include/include.banner";
     }
