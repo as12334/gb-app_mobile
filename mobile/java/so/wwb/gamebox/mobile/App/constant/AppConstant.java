@@ -17,6 +17,10 @@ public interface AppConstant {
 
     int RECOMMEND_DAYS = -1;
 
+    int ZERO = 0;
+
+    int TWO = 2;
+
     String keyCaptcha = "captcha";//需要安全密码验证码
 
     String keyTimes = "times";//安全密码错误剩余次数

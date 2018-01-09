@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.App.controller;
 
+import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
@@ -11,6 +12,7 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -51,7 +53,7 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
-import org.soul.commons.bean.Pair;
+import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -493,6 +495,155 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    @RequestMapping("/updateLoginPassword")
+    @ResponseBody
+    public String updateLoginPassword(UpdatePasswordVo updatePasswordVo,String code){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+
+        if(!isLoginUser()){
+            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        if(StringTool.isBlank(updatePasswordVo.getPassword())){
+            vo.setCode(AppErrorCodeEnum.pwdNotNull.getCode());
+            vo.setMsg(AppErrorCodeEnum.pwdNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        if(StringTool.isBlank(updatePasswordVo.getNewPassword())){
+            vo.setCode(AppErrorCodeEnum.newPwdNotNull.getCode());
+            vo.setMsg(AppErrorCodeEnum.newPwdNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        //密码相同验证新密码不能和旧密码一样
+        String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), SessionManager.getUserName());
+        if(StringTool.equalsIgnoreCase(newPwd,SessionManager.getUser().getPassword())){
+            vo.setCode(AppErrorCodeEnum.pwdSame.getCode());
+            vo.setMsg(AppErrorCodeEnum.pwdSame.getMsg());
+            return JsonTool.toJson(vo);
+        }
+        SysUser curUser = SessionManagerCommon.getUser();
+        int errorTimes = curUser.getLoginErrorTimes() == null ? -1 : curUser.getLoginErrorTimes();
+        if(errorTimes >= TWO){
+            if(StringTool.isBlank(code)){
+                vo.setCode(AppErrorCodeEnum.sysCodeNotNull.getCode());
+                vo.setMsg(AppErrorCodeEnum.sysCodeNotNull.getMsg());
+                return JsonTool.toJson(vo);
+            }
+            if(!checkCode(code)){
+                vo.setCode(AppErrorCodeEnum.sysCode.getCode());
+                vo.setMsg(AppErrorCodeEnum.sysCode.getMsg());
+                return JsonTool.toJson(vo);
+            }
+        }
+        //验证旧密码
+        String oldPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getPassword(),SessionManager.getUserName());
+        if (!StringTool.equalsIgnoreCase(oldPwd,SessionManager.getUser().getPassword())) {
+            Map map = setPwdErrorTimes(errorTimes);
+            vo.setCode(AppErrorCodeEnum.pwdError.getCode());
+            vo.setMsg(AppErrorCodeEnum.pwdError.getMsg());
+            vo.setData(map);
+            return JsonTool.toJson(vo);
+        }
+
+        SysUserVo sysUserVo = new SysUserVo();
+        SysUser sysUser = new SysUser();
+        sysUser.setId(SessionManager.getUserId());
+        sysUser.setPassword(newPwd);
+        sysUser.setPasswordLevel(updatePasswordVo.getPasswordLevel());
+        sysUserVo.setResult(sysUser);
+        sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL);
+        boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();
+        if(!success){
+            vo.setCode(AppErrorCodeEnum.pwdUpdateError.getCode());
+            vo.setMsg(AppErrorCodeEnum.pwdUpdateError.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        SessionManager.refreshUser();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        return null;
+    }
+
+    /**
+     * 验证吗remote验证
+     * @param code
+     * @return
+     */
+    @RequestMapping("/checkCode")
+    @ResponseBody
+    public boolean checkCode(@RequestParam("code") String code) {
+        String sessionCode = SessionManagerCommon.getCaptcha(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_LOGIN.getSuffix());
+        return StringTool.isNotBlank(sessionCode) && sessionCode.equalsIgnoreCase(code);
+    }
+
+    private Map setPwdErrorTimes(int errorTimes){
+        Map map = MapTool.newHashMap();
+        errorTimes += DEFAULT_TIME;
+        Date now = DateQuickPicker.getInstance().getNow();
+        //int errTimes = getErrorTimes();
+        if(errorTimes == RECOMMEND_DAYS){
+            errorTimes = ZERO;
+        }
+
+        if (errorTimes <= appErrorTimes) {
+            map.put("remainTimes", appErrorTimes - errorTimes);
+            updateSysUserErrorTimes(errorTimes, now, null);
+        }else if(errorTimes >= appErrorTimes){
+            map.put("remainTimes", errorTimes);
+            updateSysUserErrorTimes(errorTimes, now, DateTool.addHours(now, 3));
+            KickoutFilter.loginKickoutAll(SessionManager.getUserId(), OpMode.AUTO,"移动修改密码错误踢出用户");
+        }
+
+        return map;
+    }
+
+    private void setErrorTimes(Map<String, Object> map, SysUser user, Integer errorTimes) {
+        errorTimes += 1;
+        user.setSecpwdErrorTimes(errorTimes);
+        if (errorTimes == 1) {
+            this.updateErrorTimes(user);
+        } else if (errorTimes > 1 && errorTimes < 5) {
+            map.put(keyCaptcha, true);
+            map.put(keyTimes, appErrorTimes - errorTimes);
+            this.updateErrorTimes(user);
+        } else if (errorTimes >= appErrorTimes) {
+            initPwdLock(map, SessionManager.getDate().getNow());
+            this.setSecPwdFreezeTime(user);
+            freezeAccountBalance();
+        }
+    }
+
+    /**
+     * 更新冻结开始,结束,错误次数
+     * @param times
+     * @param startTime
+     * @param endTime
+     */
+    private void updateSysUserErrorTimes(int times, Date startTime, Date endTime) {
+        SysUserVo sysUserVo = new SysUserVo();
+        SysUser sysUser = SessionManagerCommon.getUser();
+        sysUser.setFreezeStartTime(startTime);
+        sysUser.setLoginErrorTimes(times);
+        sysUser.setFreezeEndTime(endTime);
+        sysUserVo.setResult(sysUser);
+        sysUserVo.setProperties(SysUser.PROP_FREEZE_START_TIME, SysUser.PROP_FREEZE_END_TIME,SysUser.PROP_LOGIN_ERROR_TIMES);
+        ServiceTool.sysUserService().updateOnly(sysUserVo);
+        SessionManagerCommon.refreshUser();
+    }
+
+    //错误次数,错误次数达到直接踢出
+    private int getErrorTimes() {
+        SysUser curUser = SessionManagerCommon.getUser();
+        if (curUser != null) {
+            return curUser.getLoginErrorTimes() == null ? -1 : curUser.getLoginErrorTimes();
+        }
+        //判断不出来默认需要权限
+        return 1;
+    }
+
     /**
      * 存储新密码
      */
@@ -570,22 +721,6 @@ public class MineAppController extends BaseMineController {
 
         SessionManager.setUser(user);
         return vo.isSuccess();
-    }
-
-    private void setErrorTimes(Map<String, Object> map, SysUser user, Integer errorTimes) {
-        errorTimes += 1;
-        user.setSecpwdErrorTimes(errorTimes);
-        if (errorTimes == 1) {
-            this.updateErrorTimes(user);
-        } else if (errorTimes > 1 && errorTimes < 5) {
-            map.put(keyCaptcha, true);
-            map.put(keyTimes, appErrorTimes - errorTimes);
-            this.updateErrorTimes(user);
-        } else if (errorTimes >= appErrorTimes) {
-            initPwdLock(map, SessionManager.getDate().getNow());
-            this.setSecPwdFreezeTime(user);
-            freezeAccountBalance();
-        }
     }
 
     //玩家冻结账户余额
@@ -719,7 +854,6 @@ public class MineAppController extends BaseMineController {
 
         return links;
     }
-
 
     /**
      * 是否有登陆账号

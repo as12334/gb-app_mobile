@@ -3,6 +3,8 @@ package so.wwb.gamebox.mobile.App.enums;
 public enum AppErrorCodeEnum{
     Success(0,"请求成功"),
     UN_LOGIN(1,"您还没有登录"),
+    pwdError(11,"密码输入错误"),
+    pwdSame(16,"新密码不能和旧密码相同"),
     IsFull(24,"今日提现次数已达上限"),
     ActivityEnd(31,"该活动不存在或已结束"),
     hasOrder(100,"取款订单已存在"),
@@ -19,7 +21,12 @@ public enum AppErrorCodeEnum{
     realNameError(302,"真实姓名不正确"),
     originSafePwd(303,"原始密码有误"),
     realNameSetError(304,"真实姓名修改失败"),
-    safePwdNotNull(305,"安全密码不能为空");
+    safePwdNotNull(305,"安全密码不能为空"),
+    newPwdNotNull(306,"新密码不能为空"),
+    pwdNotNull(307,"当前密码不能为空"),
+    sysCodeNotNull(308,"验证码不能为空"),
+    pwdUpdateError(309,"修改密码失败"),
+    ;
 
     private int code;
     private String msg;
