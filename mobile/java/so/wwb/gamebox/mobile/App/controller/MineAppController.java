@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.App.controller;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -29,6 +30,7 @@ import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -54,6 +56,7 @@ import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 import org.soul.commons.bean.Pair;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
@@ -136,7 +139,11 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getMyPromo() {
         AppModelVo vo = new AppModelVo();
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
+
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
@@ -153,7 +160,9 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         UserInfoApp userApp = new UserInfoApp();
         SysUser user = SessionManager.getUser();
@@ -170,7 +179,10 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String refresh(HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
         Integer userId = SessionManager.getUserId();
         PlayerApiListVo listVo = initPlayerApiListVo(userId);
         VUserPlayer player = getVPlayer(userId);
@@ -189,7 +201,10 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String addCard() {
         AppModelVo vo = new AppModelVo();
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);
         AppModelVo appModelVo = new AppModelVo();
@@ -210,7 +225,10 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String addBtc() {
         AppModelVo vo = new AppModelVo();
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
         AppModelVo appModelVo = new AppModelVo();
@@ -266,10 +284,10 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getFundRecord(VPlayerTransactionListVo listVo) {
         AppModelVo vo = new AppModelVo();
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
 
-//        VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
-//        listVo.getSearch().setBeginCreateTime();
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
@@ -334,7 +352,10 @@ public class MineAppController extends BaseMineController {
 
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -360,8 +381,22 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    @RequestMapping("/goAddNoticeSite")
+    @ResponseBody
+    public String goAddNoticeSite() {
+//        if (LoginReady())
+
+//        Map<String, Serializable> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
+//        advisoryType.toString();
+//        Map<String,Object> map = MapTool.newHashMap();
+//        map.put("advisoryType", advisoryType);
+        return "";
+    }
+
+
+
     private boolean LoginReady(AppModelVo vo) {
-        if (!isLoginUser()) {
+        if (!isLoginUser(vo)) {
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
             vo.setError(1);
@@ -394,7 +429,7 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (!isLoginUser()) {
+        if (!isLoginUser(vo)) {
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             vo.setError(1);
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
@@ -734,9 +769,8 @@ public class MineAppController extends BaseMineController {
     /**
      * 是否有登陆账号
      */
-    public boolean isLoginUser() {
+    public boolean isLoginUser(AppModelVo appVo) {
         if (SessionManager.getUser() == null) {
-            AppModelVo appVo = new AppModelVo();
             appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
             appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             appVo.setError(1);
