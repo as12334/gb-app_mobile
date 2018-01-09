@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.App.enums;
 
 public enum AppMineLinkEnum {
     deposit("deposit","存款","/wallet/deposit/index.html"),
+    withDraw("withDraw","取款","/wallet/withdraw/index.html"),
     transfer("transfer","额度转换","/transfer/index.html"),
     record("record","资金记录","/fund/record/index.html"),
     betting("betting","投注记录","/fund/betting/index.html"),
