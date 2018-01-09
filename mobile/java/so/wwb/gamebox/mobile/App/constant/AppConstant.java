@@ -17,6 +17,10 @@ public interface AppConstant {
     int RECOMMEND_DAYS = -1;
     int LAST_WEEK__MIN_TIME = -6; //设置一周查询时间的最小时间
 
+    int ZERO = 0;
+
+    int TWO = 2;
+
     String keyCaptcha = "captcha";//需要安全密码验证码
 
     String keyTimes = "times";//安全密码错误剩余次数

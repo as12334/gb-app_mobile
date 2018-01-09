@@ -365,9 +365,9 @@ public class BaseMineController {
         } else if (isBit && bankcardMap.get(UserBankcardTypeEnum.TYPE_BTC) == null) {
             hasBank = false;
         }
-        if (isCash) {
+        /*if (isCash) {
             bankcard(map);
-        }
+        }*/
 
         map.put("hasBank", hasBank);
         return hasBank;
