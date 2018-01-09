@@ -5,6 +5,7 @@ import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
+import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.spring.utils.SpringTool;
@@ -23,6 +24,7 @@ import so.wwb.gamebox.mobile.App.model.BettingInfoApp;
 import so.wwb.gamebox.mobile.App.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
+import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -446,10 +448,14 @@ public class BaseMineController {
     protected BettingDetailsApp buildBettingDetail(PlayerGameOrderVo playerGameOrderVo) {
         PlayerGameOrder gameOrder = playerGameOrderVo.getResult();
         BettingDetailsApp detailsApp = new BettingDetailsApp();
-        detailsApp.setUserName(gameOrder.getUsername());
+        if (gameOrder == null) {
+            return detailsApp;
+        }
+        detailsApp.setUserName(SessionManager.getUserName());
         detailsApp.setTerminal(gameOrder.getTerminal());
         detailsApp.setBetId(gameOrder.getBetId());
         detailsApp.setApiId(gameOrder.getApiId());
+        detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
         detailsApp.setApiTypeId(gameOrder.getApiTypeId());
         detailsApp.setBetTime(gameOrder.getBetTime());
         detailsApp.setSingleAmount(gameOrder.getSingleAmount());
@@ -460,6 +466,24 @@ public class BaseMineController {
         detailsApp.setContributionAmount(gameOrder.getContributionAmount());
         detailsApp.setBetDetail(gameOrder.getBetDetail());
         detailsApp.setResultArray(playerGameOrderVo.getResultArray());
+
+        detailsApp.setApiName(CacheBase.getSiteApiName(String.valueOf(gameOrder.getApiId())));
+        detailsApp.setGameName(CacheBase.getGameName(String.valueOf(gameOrder.getGameId())));
+        detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
+        List<Map> list = detailsApp.getResultArray();
+        for (Map li : list) {
+
+            String playType = LocaleTool.tranMessage(Module.COMMON, "playType." + li.get("playType"));
+            detailsApp.setGameType(playType);
+
+            String betTypeName = LocaleTool.tranMessage(Module.COMMON, "betTypeCode." + li.get("betTypeCode"));
+            detailsApp.setBetTypeName(betTypeName);
+
+            String oddsTypeName = LocaleTool.tranMessage(Module.COMMON, "oddsType." + li.get("oddsType"));
+            detailsApp.setOddsTypeName(oddsTypeName);
+
+
+        }
         return detailsApp;
     }
 
