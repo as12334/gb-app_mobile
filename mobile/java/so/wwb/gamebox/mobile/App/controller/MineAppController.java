@@ -3,7 +3,6 @@ package so.wwb.gamebox.mobile.App.controller;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -30,7 +29,6 @@ import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -75,7 +73,9 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> userInfoMap = MapTool.newHashMap();
@@ -95,7 +95,9 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (LoginReady(vo)) return JsonTool.toJson(vo);
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
 
         //是否已存在取款订单
         if (hasOrder()) {
@@ -231,7 +233,6 @@ public class MineAppController extends BaseMineController {
         }
 
         UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
-        AppModelVo appModelVo = new AppModelVo();
 
         if (userBankcard == null) {
             vo.setCode(AppErrorCodeEnum.addBtc.getCode());
@@ -314,7 +315,11 @@ public class MineAppController extends BaseMineController {
     public String getFundRecordDetails(Integer searchId) {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(appVersion);
-        if (LoginReady(appModelVo)) return JsonTool.toJson(appModelVo);
+
+        if (!isLoginUser(appModelVo)) {
+            return JsonTool.toJson(appModelVo);
+        }
+
         searchId = 5002473;     //测试数据，暂时写死
         if (searchId != 0) {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
@@ -393,17 +398,6 @@ public class MineAppController extends BaseMineController {
         return "";
     }
 
-
-
-    private boolean LoginReady(AppModelVo vo) {
-        if (!isLoginUser(vo)) {
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            vo.setError(1);
-            return true;
-        }
-        return false;
-    }
 
     @RequestMapping("/getBettingDetails")
     @ResponseBody
@@ -489,11 +483,10 @@ public class MineAppController extends BaseMineController {
     public String updateSafePassword(SecurityPassword password){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
-        if(LoginReady(vo)){
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+        if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
         }
+
         if(StringTool.isBlank(password.getRealName())){
             vo.setCode(AppErrorCodeEnum.realName.getCode());
             vo.setMsg(AppErrorCodeEnum.realName.getMsg());
