@@ -56,7 +56,6 @@ import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
@@ -621,7 +620,6 @@ public class MineAppController extends BaseMineController {
         Map map = MapTool.newHashMap();
         errorTimes += DEFAULT_TIME;
         Date now = DateQuickPicker.getInstance().getNow();
-        //int errTimes = getErrorTimes();
         if(errorTimes == RECOMMEND_DAYS){
             errorTimes = ZERO;
         }

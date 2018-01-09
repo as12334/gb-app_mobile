@@ -527,7 +527,7 @@ public abstract class BaseApiController extends BaseDemoController {
             for (ApiTypeEnum type : ApiTypeEnum.values()) {
                 if (type.getCode() == apiType) {
                     vo.setApiTypeName(type.getMsg());
-                    vo.setCover("images/icon-" + apiType + ".png");
+                    vo.setCover(setApiLogoUrl(model, request) + "/api_type_" + apiType + ".png");
                 }
             }
             if (apiType == ApiTypeEnum.LOTTERY.getCode()) {
@@ -612,7 +612,7 @@ public abstract class BaseApiController extends BaseDemoController {
         }
         for (AppResolutionEnum code : AppResolutionEnum.values()) {
             if (StringTool.equalsIgnoreCase(model.getResolution(), code.getCode())) {
-                sb.append("/").append(code.getCode()).append("/api");
+                sb.append("/").append(code.getCode());
             }
         }
 
@@ -634,7 +634,7 @@ public abstract class BaseApiController extends BaseDemoController {
             appI18n.setLocal(i18n.getLocal());
             appI18n.setName(i18n.getName());
             appI18n.setSiteId(i18n.getSiteId());
-            appI18n.setCover(setApiLogoUrl(model, request) + "/api_logo_" + i18n.getApiId() + ".png");
+            appI18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
             //appI18n.setCover("images/icon-" + i18n.getApiTypeId() + "-" + i18n.getApiId() + "" + ".png");
             if (SessionManager.getUser() != null && i18n.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()) {
                 if (i18n.getApiId().equals(ApiProviderEnum.BSG.getCode())) {
@@ -671,7 +671,7 @@ public abstract class BaseApiController extends BaseDemoController {
         String gameType = LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode());
         fishVo.setApiTypeName(gameType);
         fishVo.setLocale(SessionManager.getLocale().toString());
-        fishVo.setCover("images/icon-fish.png");
+        fishVo.setCover(setApiLogoUrl(model, request) + "/fish.png");
         List<AppSiteApiTypeRelationI18n> fishSiteApis = ListTool.newArrayList();
 
         for (SiteApiTypeRelationI18n relationI18n : i18ns) {
@@ -684,7 +684,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setApiId(Integer.parseInt(ApiProviderEnum.AG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
                 i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
-                i18n.setCover(setApiLogoUrl(model, request) + "/api_logo_" + i18n.getApiId() + ".png");
+                i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
                 fishSiteApis.add(i18n);
             }
             if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
@@ -696,7 +696,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 i18n.setApiId(Integer.parseInt(ApiProviderEnum.GG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
                 i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
-                i18n.setCover(setApiLogoUrl(model, request) + "/api_logo_" + i18n.getApiId() + ".png");
+                i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
                 fishSiteApis.add(i18n);
             }
         }
@@ -837,7 +837,7 @@ public abstract class BaseApiController extends BaseDemoController {
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
         playerApiAccountVo.setLobbyUrl(domain.toString());
-        if (request.getHeader("User-Agent").contains("app_android")) {
+        if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
         }
 
