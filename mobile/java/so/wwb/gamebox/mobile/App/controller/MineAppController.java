@@ -539,7 +539,7 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if(!isLoginUser()){
+        if(!isLoginUser(vo)){
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
             return JsonTool.toJson(vo);
