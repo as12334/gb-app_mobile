@@ -18,12 +18,9 @@
         </c:if>
         <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top: 0px;"':''} >
             <div class="${os eq 'app_ios' ? 'mui-scroll':''} mui-scroll2">
-                <%--<div class="gb-notice page-notice bg-white mui-hide" id="bankNotice" ${bankNotices.result.size() == 0 ? 'style="display:none"' : ''}>
-                    <%@include file="./BankNotice.jsp"%>
-                </div>--%>
                 <div class="mui-row">
                     <div class="mui-input-group mine-form">
-                        <div class="bank-selector">
+                        <div class="bank-selector modes-payment">
                             <p>${views.deposit_auto['请选择支付方式']}</p>
                             <c:choose>
                                 <c:when test="${fn:length(payAccountMap) > 0 || !empty digiccyAccountInfo}">
@@ -31,45 +28,51 @@
                                         <ul id="depositWay">
                                             <c:forEach items="${payAccountMap}" var="p">
                                                 <c:if test="${p.key eq 'online_deposit'}">
-                                                    <li key="${p.key}"><a data-online="/wallet/deposit/online/index.html">${views.deposit[p.key]}</a></li>
+                                                    <li key="${p.key}"><a data-online="/wallet/deposit/online/index.html"><i class="pay ${payAccountMap.get(p.key)}"></i><span>${views.deposit[p.key]}</span></a></li>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'wechatpay_scan' || p.key eq 'alipay_scan'||p.key eq 'qqwallet_scan'|| p.key eq 'jdpay_scan' || p.key eq 'bdwallet_san' || p.key eq 'union_pay_scan'}">
-                                                    <li key="${p.key}"><a data-scan="/wallet/deposit/online/scan/scanCode/${p.value}.html">${views.deposit[p.key]}</a></li>
+                                                    <li key="${p.key}"><a data-scan="/wallet/deposit/online/scan/scanCode/${p.value}.html"><i class="pay ${payAccountMap.get(p.key)}"></i><span>${views.deposit[p.key]}</span></a></li>
                                                 </c:if>
 
                                                 <c:if test="${p.key eq 'company_deposit'}">
                                                     <c:forEach items="${p.value}" var="c">
-                                                        <li><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}">${c.text}</a></li>
+                                                        <%--<li><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}">${c.text}</a></li>--%>
+                                                        <li key="${c.value}"><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}"><i class="pay ${c.bankCode}"></i><span>${c.text}</span></a></li>
                                                     </c:forEach>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'electronicPay'}">
                                                     <c:forEach items="${p.value}" var="i">
-                                                        <li>
-                                                            <a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(i.id)}">
-                                                                <c:choose>
-                                                                    <c:when test="${isMultipleAccount}">
-                                                                        ${i.aliasName}
-                                                                    </c:when>
-                                                                    <c:when test="${i.rechargeType eq 'other_fast'}">
-                                                                        ${i.customBankName}
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        ${views.deposit[i.rechargeType]}
-                                                                    </c:otherwise>
-                                                                </c:choose>
+                                                        <li key="${i.id}">
+                                                            <%--<a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(i.id)}">--%>
+                                                            <a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(i.id)}"><i class="pay ${i.bankCode=='onecodepay'?'ymf':i.bankCode}"></i><span>
+                                                                    <c:choose>
+                                                                        <c:when test="${isMultipleAccount}">
+                                                                            ${i.aliasName}
+                                                                        </c:when>
+                                                                        <c:when test="${i.rechargeType eq 'other_fast'}">
+                                                                            ${i.customBankName}
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            ${views.deposit[i.rechargeType]}
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </span>
                                                             </a>
                                                         </li>
                                                     </c:forEach>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'isFastRecharge'}">
-                                                    <li><a data-fastRecharge="${p.value}">${views.deposit_auto['快速充值中心']}</a></li>
+                                                    <%--<li><a data-fastRecharge="${p.value}">${views.deposit_auto['快速充值中心']}</a></li>--%>
+                                                    <li key="${p.key}"><a data-fastRecharge="${p.value}"><i class="pay ks"></i><span>${views.deposit_auto['快速充值中心']}</span></a></li>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'bitcoin_fast'}">
-                                                    <li><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit_auto['比特币支付']}</a></li>
+                                                   <%-- <li><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}">${views.deposit_auto['比特币支付']}</a></li>--%>
+                                                    <li key="${p.key}"><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}"><i class="pay bitcoin"></i><span>${views.deposit_auto['比特币支付']}</span></a></li>
                                                 </c:if>
                                             </c:forEach>
                                             <c:if test="${!empty digiccyAccountInfo}">
-                                                <li><a data-bitcoin="/wallet/deposit/digiccy/index.html">${views.themes_auto['数字货币支付']}</a></li>
+                                                <%--<li><a data-bitcoin="/wallet/deposit/digiccy/index.html">${views.themes_auto['数字货币支付']}</a></li>--%>
+                                                <li key="digiccyAccountInfo"><a data-bitcoin="/wallet/deposit/digiccy/index.html"><i class="pay math"></i><span>${views.themes_auto['数字货币支付']}</span></a></li>
                                             </c:if>
                                         </ul>
                                         <div class="clearfix"></div>

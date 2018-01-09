@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.iservice.master.report.IVPlayerTransactionService;
 import so.wwb.gamebox.mobile.form.PlayerTransactionForm;
@@ -56,7 +56,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
     //region your codes 3
     private IPlayerTransferService playerTransferService() {
         if (playerTransferService == null)
-            playerTransferService = ServiceTool.playerTransferService();
+            playerTransferService = ServiceSiteTool.playerTransferService();
         return playerTransferService;
     }
 
@@ -100,7 +100,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
         Map<String, String> result = new HashMap<>();
-        result.put("withdrawSum", CurrencyTool.formatCurrency(ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo)));
+        result.put("withdrawSum", CurrencyTool.formatCurrency(ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo)));
         result.put("currency", getCurrencySign());
         if (!ParamTool.isLotterySite()) {
             //正在转账中金额
@@ -126,7 +126,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         //正在处理中取款金额
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
-        model.addAttribute("withdrawSum", ServiceTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        model.addAttribute("withdrawSum", ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
 
         if (!ParamTool.isLotterySite()) {
             //正在转账中金额
@@ -160,7 +160,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
             if (StringTool.isNotBlank(vo.getResult().getTransactionNo())) {
                 VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
                 withdrawVo.getSearch().setId(vo.getResult().getSourceId());
-                withdrawVo = ServiceTool.vPlayerWithdrawService().get(withdrawVo);
+                withdrawVo = ServiceSiteTool.vPlayerWithdrawService().get(withdrawVo);
                 model.addAttribute("withdrawVo", withdrawVo);
             }
             if (vo.getResult().getPlayerId() != null) {

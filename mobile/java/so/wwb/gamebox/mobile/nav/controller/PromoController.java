@@ -16,8 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.iservice.master.player.IPlayerRankService;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -68,7 +67,7 @@ public class PromoController {
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
         if(ServletTool.isAjaxSoulRequest(request)) {
-            vPreferentialRecodeListVo = ServiceTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+            vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         }
         model.addAttribute("command", vPreferentialRecodeListVo);
         return ServletTool.isAjaxSoulRequest(request) ? MY_PROMO_URL + "Partial" : MY_PROMO_URL;
@@ -88,9 +87,9 @@ public class PromoController {
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
+            vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
+        vActivityMessageListVo = ServiceSiteTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         //首页只展示部分优惠
         if (isTwoCount) {
             if (vActivityMessageListVo.getResult().size() > 2) {
@@ -135,9 +134,9 @@ public class PromoController {
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo().booleanValue()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(ServiceTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
+            vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        vActivityMessageListVo = ServiceTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
+        vActivityMessageListVo = ServiceSiteTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
 
         model.addAttribute("command", vActivityMessageListVo);
 
@@ -148,7 +147,7 @@ public class PromoController {
     @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
         vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceTool.vPlayerActivityMessageService().search(vActivityMessageVo);
+        vActivityMessageVo = ServiceSiteTool.vPlayerActivityMessageService().search(vActivityMessageVo);
 
         model.addAttribute("command", vActivityMessageVo);
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
@@ -270,7 +269,7 @@ public class PromoController {
         activityPlayerApply.setUserId(SessionManager.getUserId());
 
         activityPlayerApplyVo.setResult(activityPlayerApply);
-        Map<String, Object> resultCode = ServiceTool.vPlayerActivityMessageService().saveActivityApplyInfo(activityPlayerApplyVo, vPlayerActivityMessageVo);
+        Map<String, Object> resultCode = ServiceSiteTool.vPlayerActivityMessageService().saveActivityApplyInfo(activityPlayerApplyVo, vPlayerActivityMessageVo);
 
         boolean flag = false;
         String msg = "";
@@ -353,7 +352,7 @@ public class PromoController {
         ActivityPlayerApplyVo playerApplyVo = new ActivityPlayerApplyVo();
         playerApplyVo.getSearch().setUserId(SessionManager.getUserId());
         playerApplyVo.getSearch().setActivityMessageId(activityMessage.getId());
-        Map result = ServiceTool.activityPlayerApplyService().countPlayerApplyByActivityId(playerApplyVo);
+        Map result = ServiceSiteTool.activityPlayerApplyService().countPlayerApplyByActivityId(playerApplyVo);
         activityMessage.setAcount((int) (long) result.get("count"));
         activityMessage.setApplyTime((Timestamp) result.get("applytime"));
     }
@@ -402,7 +401,7 @@ public class PromoController {
     private Integer getPlayerRankId(Integer userId) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(userId);
-        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult().getRankId();
     }
 
@@ -420,6 +419,6 @@ public class PromoController {
         activityPlayerApplyVo.setActivityMessageId(activityId);
         activityPlayerApplyVo.setApplyStartTime(applyStartTime);
         activityPlayerApplyVo.setApplyEndTime(applyEndTime);
-        return ServiceTool.activityPlayerApplyService().countApplyPlayer(activityPlayerApplyVo);
+        return ServiceSiteTool.activityPlayerApplyService().countApplyPlayer(activityPlayerApplyVo);
     }
 }

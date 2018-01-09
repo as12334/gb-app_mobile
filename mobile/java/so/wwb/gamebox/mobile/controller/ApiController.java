@@ -3,7 +3,6 @@ package so.wwb.gamebox.mobile.controller;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -14,16 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
-import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
-import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
@@ -75,7 +72,7 @@ public class ApiController extends BaseApiController {
                     playerApiAccountVo.setTrial(false);
                 }
             }
-            playerApiAccountVo = ServiceTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
         } else {
             playerApiAccountVo.setLoginSuccess(false);
             resultMap.put("maintain", true);
@@ -156,7 +153,7 @@ public class ApiController extends BaseApiController {
         listVo.getSearch().setPlayerId(userId);
         listVo.setApis(Cache.getApi());
         listVo.setSiteApis(Cache.getSiteApi());
-        double assets = ServiceTool.playerApiService().queryPlayerAssets(listVo);
+        double assets = ServiceSiteTool.playerApiService().queryPlayerAssets(listVo);
         return CurrencyTool.formatCurrency(assets);
     }
 
@@ -168,7 +165,7 @@ public class ApiController extends BaseApiController {
             listVo.getSearch().setApiId(null);
         }
         listVo.setType(ApiQueryTypeEnum.ALL_API.getCode());
-        listVo = ServiceTool.playerApiService().fundRecord(listVo);
+        listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
          /* 翻译api */
         List<Map<String, Object>> maps = new ArrayList<>();
         List<SiteApi> apis = getSiteApi();
@@ -204,7 +201,7 @@ public class ApiController extends BaseApiController {
     private VUserPlayer getPlayer(Integer userId) {
         VUserPlayerVo vo = new VUserPlayerVo();
         vo.getSearch().setId(userId);
-        VUserPlayer player = ServiceTool.vUserPlayerService().queryPlayer4App(vo);
+        VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
         if (player != null) {
             player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
         }
@@ -286,7 +283,7 @@ public class ApiController extends BaseApiController {
         PlayerApiVo playerApiVo = new PlayerApiVo();
         playerApiVo.getSearch().setApiId(apiId);
         playerApiVo.getSearch().setPlayerId(SessionManager.getUserId());
-        playerApiVo = ServiceTool.playerApiService().search(playerApiVo);
+        playerApiVo = ServiceSiteTool.playerApiService().search(playerApiVo);
         return playerApiVo.getResult();
     }
 

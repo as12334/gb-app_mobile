@@ -12,7 +12,7 @@ import org.soul.model.session.SessionKey;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
@@ -50,7 +50,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         if (userId != null) {
             VUserPlayerVo vo = new VUserPlayerVo();
             vo.getSearch().setId(userId);
-            VUserPlayer player = ServiceTool.vUserPlayerService().queryPlayer4App(vo);
+            VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
             if (player != null) {
                 player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
             }
@@ -108,7 +108,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         vActivityMessageVo.setDepositAmount(rechargeAmount);
         vActivityMessageVo.setRankId(userPlayer.getRankId());
         vActivityMessageVo.setLocal(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
+        vActivityMessageVo = ServiceSiteTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
         if(CollectionTool.isEmpty(vActivityMessages)) {
             return new ArrayList<>();
@@ -134,7 +134,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         }
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(type);
-        listVo = ServiceTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
         return setClassifyKeyName(listVo.getResult());
     }
 
@@ -144,7 +144,7 @@ public class BaseDepositController extends BaseCommonDepositController {
     private UserPlayer getUserPlayer() {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
-        userPlayerVo = ServiceTool.userPlayerService().get(userPlayerVo);
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult();
     }
 
@@ -157,7 +157,7 @@ public class BaseDepositController extends BaseCommonDepositController {
     PayAccount getPayAccountById(Integer payAccountId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.getSearch().setId(payAccountId);
-        payAccountVo = ServiceTool.payAccountService().get(payAccountVo);
+        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
         return payAccountVo.getResult();
     }
 
@@ -217,7 +217,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         } else if (isReturnFee && rank.getReturnFeeCount() != null && rank.getReturnFeeCount() > 0 && rank.getReturnTime() != null) {
             listVo.getSearch().setStartTime(DateTool.addHours(now, -rank.getReturnTime()));
         }
-        return ServiceTool.playerRechargeService().searchPlayerRechargeCount(listVo);
+        return ServiceSiteTool.playerRechargeService().searchPlayerRechargeCount(listVo);
     }
 
     /**

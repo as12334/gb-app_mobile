@@ -22,7 +22,7 @@
                 <%@include file="./ChooseAmount.jsp"%>
             </div>
             <div class="mui-row">
-                <div class="gb-form-foot bank-pay-btn" style="padding-bottom:10px;">
+                <div class="gb-form-foot bank-pay-btn">
                     <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['下一步']}</button>
                 </div>
             </div>
