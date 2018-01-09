@@ -390,7 +390,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 if (lottery.get(apiId) == null) {
                     lottery.put(apiId, new ArrayList<>());
                 }
-                game = gameMap.get(siteGame.getId());
+                game = gameMap.get(String.valueOf(siteGame.getGameId()));
                 if (game == null || disabled.equals(game.getStatus()) || disabled.equals(siteGame.getStatus())) {
                     siteGame.setStatus(disabled);
                 } else if (maintain.equals(game.getSystemStatus()) || maintain.equals(siteGame.getSystemStatus())) {
