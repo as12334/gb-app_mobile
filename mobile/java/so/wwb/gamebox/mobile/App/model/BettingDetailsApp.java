@@ -11,6 +11,13 @@ public class BettingDetailsApp {
 
     private String userName;  //玩家账号
     private String terminal;   //终端标示
+    private String apiName;
+    private String gameName;
+    private String gameId;
+
+    private String gameType; // 游戏类型
+    private String betTypeName; //赌注项目
+    private String oddsTypeName; //盘口类型
     /**
      * 注单号码
      */
@@ -28,7 +35,7 @@ public class BettingDetailsApp {
      */
     private java.util.Date betTime;
     /**
-     * 下单金额 (交易量)
+     * 下单金额 (交易量) 投注额
      */
     private Double singleAmount;
     /**
@@ -36,7 +43,7 @@ public class BettingDetailsApp {
      */
     private String orderState;
     /**
-     * 有效交易量
+     * 有效交易量  有效投注额
      */
     private Double effectiveTradeAmount;
     /**
@@ -169,5 +176,53 @@ public class BettingDetailsApp {
 
     public void setResultArray(List<Map> resultArray) {
         this.resultArray = resultArray;
+    }
+
+    public String getApiName() {
+        return apiName;
+    }
+
+    public void setApiName(String apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
+    }
+
+    public String getBetTypeName() {
+        return betTypeName;
+    }
+
+    public void setBetTypeName(String betTypeName) {
+        this.betTypeName = betTypeName;
+    }
+
+    public String getOddsTypeName() {
+        return oddsTypeName;
+    }
+
+    public void setOddsTypeName(String oddsTypeName) {
+        this.oddsTypeName = oddsTypeName;
     }
 }

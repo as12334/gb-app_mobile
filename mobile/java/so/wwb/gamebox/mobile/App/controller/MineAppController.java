@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.App.controller;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -29,6 +30,7 @@ import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -37,6 +39,7 @@ import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
+import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.po.UserBankcard;
@@ -389,12 +392,27 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/goAddNoticeSite")
     @ResponseBody
     public String goAddNoticeSite() {
-//        if (LoginReady())
+        AppModelVo vo = new AppModelVo();
 
-//        Map<String, Serializable> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
-//        advisoryType.toString();
-//        Map<String,Object> map = MapTool.newHashMap();
-//        map.put("advisoryType", advisoryType);
+        if (!isLoginUser(vo)) {
+            return JsonTool.toJson(vo);
+        }
+
+        Map<String, Serializable> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
+        Map<String,Object> map = MapTool.newHashMap();
+        map.put("advisoryType", advisoryType);
+        return JsonTool.toJson(map);
+    }
+
+    @RequestMapping("/addNoticeSite")
+    @ResponseBody
+    public String addNoticeSite(PlayerAdvisoryVo playerAdvisoryVo) {
+        playerAdvisoryVo.setSuccess(false);
+        playerAdvisoryVo.getResult().setAdvisoryTime(SessionManager.getDate().getNow());
+        playerAdvisoryVo.getResult().setPlayerId(SessionManager.getUserId());
+        playerAdvisoryVo.getResult().setReplyCount(0);
+        playerAdvisoryVo.getResult().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
+        playerAdvisoryVo = ServiceSiteTool.playerAdvisoryService().insert(playerAdvisoryVo);
         return "";
     }
 
@@ -403,7 +421,6 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getBettingDetails(Integer id) {
         PlayerGameOrderVo vo = new PlayerGameOrderVo();
-        id = 10111337;//暂时写死，为了验证json
         vo.getSearch().setId(id);
         vo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(vo);
 //        如果不是这个玩家投注的订单，则无视该笔订单
