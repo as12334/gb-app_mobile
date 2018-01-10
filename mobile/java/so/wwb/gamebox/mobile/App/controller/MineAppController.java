@@ -309,6 +309,7 @@ public class MineAppController extends BaseMineController {
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
 
         listVo = preList(listVo);
+        buildDictCommonTransactionType(listVo.getDictCommonTransactionType(), fundRecordApp);
 
         List<VPlayerTransaction> vPlayerTransactionList = listVo.getResult();
 

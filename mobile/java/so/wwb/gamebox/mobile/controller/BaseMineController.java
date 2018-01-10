@@ -778,6 +778,23 @@ public class BaseMineController {
         return playerTransactionListVo;
     }
 
+    protected FundRecordApp buildDictCommonTransactionType(Map map, FundRecordApp fundRecordApp) {
+        Set entries = map.entrySet();
+        Map<String, String> transactionMap = MapTool.newHashMap();
+        if (entries != null) {
+            Iterator iterator = entries.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String key = (String) entry.getKey();
+                String transactionTypeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + key);
+                transactionMap.put(key, transactionTypeName);
+            }
+            fundRecordApp.setTransactionMap(transactionMap);
+        }
+
+        return fundRecordApp;
+    }
+
 
     protected List<FundListApp> buildList(List<VPlayerTransaction> list) {
         List<FundListApp> fundListAppList = ListTool.newArrayList();

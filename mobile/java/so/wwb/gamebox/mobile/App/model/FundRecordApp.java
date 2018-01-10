@@ -4,6 +4,7 @@ import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by legend on 18-1-9.
@@ -19,7 +20,7 @@ public class FundRecordApp {
 
     private String currency; // 钱币的符号
 
-    private String transaction_type; // 资金类型
+    private Map<String, String> transactionMap;
 
     private Double withdrawSum; //取款处理
 
@@ -49,14 +50,6 @@ public class FundRecordApp {
 
     public void setCurrency(String currency) {
         this.currency = currency;
-    }
-
-    public String getTransaction_type() {
-        return transaction_type;
-    }
-
-    public void setTransaction_type(String transaction_type) {
-        this.transaction_type = transaction_type;
     }
 
     public long getTotalCount() {
@@ -89,5 +82,13 @@ public class FundRecordApp {
 
     public void setTransferSum(Double transferSum) {
         this.transferSum = transferSum;
+    }
+
+    public Map<String, String> getTransactionMap() {
+        return transactionMap;
+    }
+
+    public void setTransactionMap(Map<String, String> transactionMap) {
+        this.transactionMap = transactionMap;
     }
 }
