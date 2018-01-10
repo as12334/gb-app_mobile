@@ -87,11 +87,8 @@ import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
  */
 public class BaseMineController {
     private Log LOG = LogFactory.getLog(BaseMineController.class);
-    private static final String WITHDRAW_BALANCE_NOT_ENOUGH = "withdrawForm.balanceNotEnough";
     private static final String WITHDRAW_INVALID_AMOUNT = "withdrawForm.withdrawAmountOver";
-    private static final String WITHDRAW_MAX_COUNT = "withdrawForm.maxCount";
     private static final String WITHDRAW_AMOUNT_ZERO = "withdrawForm.withdrawAmountZero";
-    private static final String WITHDRAW_FREEZE = "withdraw.apply.account.freeze";
 
     /**
      * 获取我的个人数据
