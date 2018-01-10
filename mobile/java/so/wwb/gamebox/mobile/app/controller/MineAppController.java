@@ -73,6 +73,11 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 public class MineAppController extends BaseMineController {
     private Log LOG = LogFactory.getLog(MineAppController.class);
 
+    /**
+     * 我的用户信息，链接
+     * @param request
+     * @return
+     */
     @RequestMapping("/getLink")
     @ResponseBody
     public String getLink(HttpServletRequest request) {
@@ -95,6 +100,10 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 获取取款信息
+     * @return
+     */
     @RequestMapping("/getWithDraw")
     @ResponseBody
     public String getWithDraw() {
@@ -146,6 +155,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
+        //取款
         map = addWithdraw(request,playerVo);
         //成功
         if (map.get("state") != null && MapTool.getBoolean(map, "state")){
@@ -163,6 +173,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 取款判断
+     * @param vo
+     * @return
+     */
     private AppModelVo withDraw(AppModelVo vo){
         if (!isLoginUser(vo)) {
             return vo;
@@ -510,6 +525,10 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
+    /**
+     * 安全码信息
+     * @return
+     */
     @RequestMapping("/initSafePassword")
     @ResponseBody
     public String initSafePassword() {
@@ -550,6 +569,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 设置真实姓名
+     * @param realName
+     * @return
+     */
     @RequestMapping("/setRealName")
     @ResponseBody
     public String setRealNameApp(String realName){
@@ -573,6 +597,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 修改安全码
+     * @param password
+     * @return
+     */
     @RequestMapping("/updateSafePassword")
     @ResponseBody
     public String updateSafePassword(SecurityPassword password){
@@ -582,12 +611,14 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
+        //验证真实姓名
         if(StringTool.isBlank(password.getRealName())){
             vo.setCode(AppErrorCodeEnum.realName.getCode());
             vo.setMsg(AppErrorCodeEnum.realName.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
+        //验证密码
         if(StringTool.isBlank(password.getPwd1())){
             vo.setCode(AppErrorCodeEnum.safePwdNotNull.getCode());
             vo.setMsg(AppErrorCodeEnum.safePwdNotNull.getMsg());
@@ -632,6 +663,12 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 修改登录密码
+     * @param updatePasswordVo
+     * @param code
+     * @return
+     */
     @RequestMapping("/updateLoginPassword")
     @ResponseBody
     public String updateLoginPassword(UpdatePasswordVo updatePasswordVo,String code){
