@@ -318,6 +318,7 @@ public class BaseMineController {
             totalBalance = apiBalance + totalBalance;
         }
         map.put("totalBalance",player.getWalletBalance() + totalBalance);
+        map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
     }
 
     /**
