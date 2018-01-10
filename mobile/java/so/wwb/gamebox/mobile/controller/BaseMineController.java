@@ -483,6 +483,9 @@ public class BaseMineController {
             detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
         }
         List<Map> list = detailsApp.getResultArray();
+        if (list == null || list.size() < 1) {
+            return detailsApp;
+        }
         for (Map li : list) {
 
             String playType = LocaleTool.tranMessage(Module.COMMON, "playType." + li.get("playType"));
