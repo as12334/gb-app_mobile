@@ -33,6 +33,7 @@ import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -301,18 +302,32 @@ public class MineAppController extends BaseMineController {
         if (listVo.getSearch().getEndCreateTime() != null) {
             listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         }
-        Map map = MapTool.newHashMap();
-        getFund(map);
+        FundRecordApp fundRecordApp = new FundRecordApp();
+        getFund(fundRecordApp);
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
 
-        Map<String,Object> dataMap = MapTool.newHashMap();
-        dataMap.put("list",listVo);
-        dataMap.put("maxDate",SessionManager.getDate().getNow());
-        dataMap.put("minDate",SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
-        dataMap.put("totalCount", listVo.getPaging().getTotalCount());
-        vo = CommonApp.buildAppModelVo(dataMap);
+        listVo = preList(listVo);
+        buildDictCommonTransactionType(listVo.getDictCommonTransactionType(), fundRecordApp);
+
+        List<VPlayerTransaction> vPlayerTransactionList = listVo.getResult();
+
+        List<FundListApp> fundListAppList = buildList(vPlayerTransactionList);
+
+
+        fundRecordApp.setFundListApps(fundListAppList);
+        if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
+            fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
+            fundRecordApp.setMaxDate(SessionManager.getDate().getNow());
+        }else {
+            fundRecordApp.setMinDate(listVo.getSearch().getBeginCreateTime());
+            fundRecordApp.setMaxDate(listVo.getSearch().getEndCreateTime());
+        }
+        fundRecordApp.setTotalCount(listVo.getPaging().getTotalCount());
+        fundRecordApp.setCurrency(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
+
+        vo = CommonApp.buildAppModelVo(fundRecordApp);
         return JsonTool.toJson(vo);
     }
 

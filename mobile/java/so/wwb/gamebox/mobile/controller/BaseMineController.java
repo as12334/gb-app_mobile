@@ -1,6 +1,10 @@
 package so.wwb.gamebox.mobile.controller;
 
+import org.soul.commons.bean.Pair;
+import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -8,6 +12,8 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.query.Criteria;
+import org.soul.commons.query.enums.Operator;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
@@ -19,15 +25,9 @@ import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
-import so.wwb.gamebox.mobile.App.model.BettingDetailsApp;
-import so.wwb.gamebox.mobile.App.model.BettingInfoApp;
-import so.wwb.gamebox.mobile.App.model.FundRecordApp;
-import so.wwb.gamebox.mobile.App.model.UserInfoApp;
+import so.wwb.gamebox.mobile.App.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -38,6 +38,8 @@ import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
+import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
@@ -59,6 +61,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
@@ -484,7 +487,7 @@ public class BaseMineController {
             detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
         }
         List<Map> list = detailsApp.getResultArray();
-        if (list == null || list.size() < 1) {
+        if (CollectionTool.isEmpty(list)) {
             return detailsApp;
         }
         for (Map li : list) {
@@ -559,17 +562,6 @@ public class BaseMineController {
         }
         return "";
     }
-
-
-    protected FundRecordApp buildFundRecord(List<VPlayerTransaction> list) {
-
-        for (VPlayerTransaction li : list) {
-
-        }
-        return new FundRecordApp();
-
-    }
-
 
 
     /**
@@ -766,21 +758,83 @@ public class BaseMineController {
         }
     }
 
+
+    protected VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
+        Map<String, Serializable> transactionMap = DictTool.get(DictEnum.COMMON_TRANSACTION_TYPE);
+        /*if (transactionMap != null) {   // 过滤转账类型
+            transactionMap.remove(TransactionTypeEnum.TRANSFERS.getCode());
+        }*/
+        playerTransactionListVo.setDictCommonTransactionType(transactionMap);
+        Map<String, Serializable> dictCommonStatus = DictTool.get(DictEnum.COMMON_STATUS);
+        /*删掉稽核失败待处理状态*/
+        dictCommonStatus.remove(CommonStatusEnum.DEAL_AUDIT_FAIL.getCode());
+        playerTransactionListVo.setDictCommonStatus(dictCommonStatus);
+        /*将 返水 推荐 的成功状态 修改为已发放*/
+        Criteria criteriaType = Criteria.add(VPlayerTransaction.PROP_TRANSACTION_TYPE, Operator.IN, ListTool.newArrayList(TransactionTypeEnum.BACKWATER.getCode(), TransactionTypeEnum.RECOMMEND.getCode()));
+        Criteria criteria = Criteria.add(VPlayerTransaction.PROP_STATUS, Operator.EQ, CommonStatusEnum.LSSUING.getCode());
+        if (!playerTransactionListVo.getResult().isEmpty()) {
+            CollectionTool.batchUpdate(playerTransactionListVo.getResult(), Criteria.and(criteria, criteriaType), MapTool.newHashMap(new Pair<String, Object>(VPlayerTransaction.PROP_STATUS, CommonStatusEnum.SUCCESS.getCode())));
+        }
+        return playerTransactionListVo;
+    }
+
+    protected FundRecordApp buildDictCommonTransactionType(Map map, FundRecordApp fundRecordApp) {
+        Set entries = map.entrySet();
+        Map<String, String> transactionMap = MapTool.newHashMap();
+        if (entries != null) {
+            Iterator iterator = entries.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String key = (String) entry.getKey();
+                String transactionTypeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + key);
+                transactionMap.put(key, transactionTypeName);
+            }
+            fundRecordApp.setTransactionMap(transactionMap);
+        }
+
+        return fundRecordApp;
+    }
+
+
+    protected List<FundListApp> buildList(List<VPlayerTransaction> list) {
+        List<FundListApp> fundListAppList = ListTool.newArrayList();
+
+        for (VPlayerTransaction vplayer : list) {
+            FundListApp app = new FundListApp();
+            String typeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + vplayer.getTransactionType());
+            app.setTransaction_typeName(typeName);
+
+
+            String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + vplayer.getStatus());
+            app.setStatusName(statusName);
+
+            app.setId(vplayer.getId());
+            app.setCreateTime(vplayer.getCreateDate());
+            app.setTransactionMoney(vplayer.getTransactionMoney());
+            app.setTransactionType(vplayer.getTransactionType());
+            app.setStatus(vplayer.getStatus());
+            fundListAppList.add(app);
+        }
+        return fundListAppList;
+    }
+
+
+
     /**
      * 取款处理中/转账处理中的金额
      */
-    protected void getFund(Map map) {
+    protected void getFund(FundRecordApp fundRecordApp) {
         //正在处理中取款金额
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(SessionManager.getUserId());
 
-        map.put("withdrawSum", ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        fundRecordApp.setWithdrawSum(ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
         if (!ParamTool.isLotterySite()) {
             //正在转账中金额
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
 //            model.addAttribute("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
-            map.put("transferSum", getPlayerTransferService().queryProcessAmount(playerTransferVo));
+            fundRecordApp.setTransferSum(getPlayerTransferService().queryProcessAmount(playerTransferVo));
         }
     }
 
