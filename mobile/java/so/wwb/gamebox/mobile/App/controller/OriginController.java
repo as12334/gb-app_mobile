@@ -57,6 +57,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
+import static so.wwb.gamebox.mobile.App.constant.AppConstant.DEFAULT_TIME;
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.SplitRegex;
 import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
 
@@ -174,16 +175,19 @@ public class OriginController extends BaseApiController {
         if(SessionManager.getUser() == null){
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if(siteGame.getApiId() == null){
             vo.setCode(AppErrorCodeEnum.gameExist.getCode());
             vo.setMsg(AppErrorCodeEnum.gameExist.getMsg());
+            vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if(siteGame.getApiTypeId() == null){
             vo.setCode(AppErrorCodeEnum.gameExist.getCode());
             vo.setMsg(AppErrorCodeEnum.gameExist.getMsg());
+            vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         Map map = MapTool.newHashMap();
@@ -228,6 +232,7 @@ public class OriginController extends BaseApiController {
         if (SessionManagerCommon.getUser() == null) {
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
+            vo.setError(DEFAULT_TIME);
             vo.setVersion(appVersion);
             return JsonTool.toJson(vo);
         }
@@ -235,6 +240,7 @@ public class OriginController extends BaseApiController {
         if (StringTool.isBlank(activityMessageId)) {
             vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
             vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setError(DEFAULT_TIME);
             vo.setVersion(appVersion);
             return JsonTool.toJson(vo);
         }
@@ -248,6 +254,7 @@ public class OriginController extends BaseApiController {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId.toString());
             vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
             vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setError(DEFAULT_TIME);
             vo.setVersion(appVersion);
             return JsonTool.toJson(vo);
         }
@@ -257,6 +264,7 @@ public class OriginController extends BaseApiController {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
             vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
             vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setError(DEFAULT_TIME);
             vo.setVersion(appVersion);
             return JsonTool.toJson(vo);
         }
@@ -266,6 +274,7 @@ public class OriginController extends BaseApiController {
             vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
             vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
             vo.setVersion(appVersion);
+            vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
@@ -323,6 +332,7 @@ public class OriginController extends BaseApiController {
         vo.setVersion(appVersion);
         if (SessionManager.getUser() == null) {
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
+            vo.setError(DEFAULT_TIME);
             vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
             return JsonTool.toJson(vo);
         }
@@ -330,6 +340,7 @@ public class OriginController extends BaseApiController {
         if (StringTool.isBlank(activityMessageId)) {
             vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
             vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
 
