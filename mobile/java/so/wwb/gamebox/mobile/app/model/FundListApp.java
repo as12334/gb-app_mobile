@@ -1,6 +1,4 @@
-package so.wwb.gamebox.mobile.App.model;
-
-import java.util.Date;
+package so.wwb.gamebox.mobile.app.model;
 
 /**
  * Created by legend on 18-1-10.

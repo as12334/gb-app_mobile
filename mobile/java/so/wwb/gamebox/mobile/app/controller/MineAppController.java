@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.controller;
+package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
@@ -25,15 +25,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
-import so.wwb.gamebox.mobile.App.common.CommonApp;
-import so.wwb.gamebox.mobile.App.constant.AppConstant;
-import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
-import so.wwb.gamebox.mobile.App.model.*;
+import so.wwb.gamebox.mobile.app.common.CommonApp;
+import so.wwb.gamebox.mobile.app.constant.AppConstant;
+import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -63,7 +62,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.

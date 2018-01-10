@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.enums;
+package so.wwb.gamebox.mobile.app.enums;
 
 public enum AppErrorCodeEnum{
     Success(0,"请求成功"),

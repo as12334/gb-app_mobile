@@ -1,6 +1,4 @@
-package so.wwb.gamebox.mobile.App.model;
-
-import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
+package so.wwb.gamebox.mobile.app.model;
 
 import java.util.Date;
 import java.util.List;

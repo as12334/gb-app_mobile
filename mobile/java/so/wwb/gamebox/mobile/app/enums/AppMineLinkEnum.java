@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.enums;
+package so.wwb.gamebox.mobile.app.enums;
 
 public enum AppMineLinkEnum {
     deposit("deposit","存款","/wallet/deposit/index.html"),

@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.model;
+package so.wwb.gamebox.mobile.app.model;
 
 /**
  * Created by ed on 17-12-26.
