@@ -74,10 +74,10 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <c:if test="${not empty payAccount.remark}">
+                                            <%--<c:if test="${not empty payAccount.remark}">
                                                 <div class="front-end">
                                                     <pre stype="white-space: normal;">${payAccount.remark}</pre>                                                </div>
-                                            </c:if>
+                                            </c:if>--%>
                                         </div>
                                     </div>
                                         <%--<div class="wechat-code">
