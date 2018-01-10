@@ -10,7 +10,7 @@
                     <div  class="cont">
                         <h3>${views.deposit_auto['消息']}</h3>
                         <div class="cont-text">
-                            <p>${views.deposit_auto['金额']}：<span class="org">${rechargeAmount}</span></p>
+                            <p>${views.deposit_auto['金额']}：<span class="org">${soulFn:formatCurrency(rechargeAmount)}</span></p>
                             <p>${views.deposit_auto['手续费']}：${msg}</p>
                         </div>
 
