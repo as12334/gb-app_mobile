@@ -4,6 +4,8 @@ import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -15,6 +17,8 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.spring.utils.SpringTool;
+import org.soul.commons.support._Module;
+import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -27,6 +31,9 @@ import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
+import so.wwb.gamebox.model.common.Const;
+import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -36,9 +43,16 @@ import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
+import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
+import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
+import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
+import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.enums.RankFeeType;
+import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.WithdrawStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
@@ -53,6 +67,7 @@ import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
+import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
@@ -61,6 +76,7 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
@@ -71,6 +87,8 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
  */
 public class BaseMineController {
     private Log LOG = LogFactory.getLog(BaseMineController.class);
+    private static final String WITHDRAW_INVALID_AMOUNT = "withdrawForm.withdrawAmountOver";
+    private static final String WITHDRAW_AMOUNT_ZERO = "withdrawForm.withdrawAmountZero";
 
     /**
      * 获取我的个人数据
@@ -321,6 +339,313 @@ public class BaseMineController {
         }
         map.put("totalBalance",player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
+    }
+
+    /**
+     * 提交取款
+     */
+    public Map addWithdraw(HttpServletRequest request, PlayerTransactionVo vo) {
+        Map map = MapTool.newHashMap();
+        PlayerRank rank = getRank();
+
+        try {
+            map = toWithdraw(request, vo, rank);
+        } catch (Exception ex) {
+            LOG.error(ex, "申请取款出错");
+            getErrorMsg(null, null);
+        }
+        if (map.get("state") != null && MapTool.getBoolean(map, "state")) {
+            // 生成任务提醒
+            tellerReminder(MapTool.getString(map, "transactionNo"));
+            //钱包余额回收到API暂时不用。
+            if(ParamTool.isLotterySite()){
+                transBalanceToLotteryApi();
+            }
+        }
+
+        return map;
+    }
+
+    protected boolean isInvalidAmount(PlayerTransactionVo vo,Map map){
+        Double withdrawAmount = vo.getWithdrawAmount();
+        UserPlayer player = getPlayer();
+        PlayerRank rank = getRank();
+        if (withdrawAmount <  rank.getWithdrawMinNum() || withdrawAmount > rank.getWithdrawMaxNum()) {
+            String msg = LocaleTool.tranMessage(Module.FUND, WITHDRAW_INVALID_AMOUNT)
+                    .replace("{min}", rank.getWithdrawMinNum() + "")
+                    .replace("{max}", rank.getWithdrawMaxNum() + "")
+                    .replace("{walletBalance}", player.getWalletBalance() + "");
+            map.put("msg",msg);
+            return true;
+        }
+        return false;
+    }
+
+    private Map getErrorMsg(String msg, String type) {
+        Map<String, Object> map = new HashMap<>(4, 1f);
+        map.put("state", false);
+        if (StringTool.isBlank(msg)) {
+            msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
+        }
+        map.put("msg", msg);
+        map.put("type", type);
+        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+        return map;
+    }
+
+    private void transBalanceToLotteryApi(){
+        try {
+            UserPlayerVo userPlayerVo = new UserPlayerVo();
+            userPlayerVo.getSearch().setId(SessionManagerCommon.getUserId());
+            userPlayerVo = ServiceSiteTool.userPlayerService().transBalanceToLotteryApi(userPlayerVo);
+            LOG.info("更新API余额是否成功:{0}", userPlayerVo.isSuccess());
+        } catch (Exception ex) {
+            LOG.error(ex, "更新API余额出错");
+        }
+    }
+
+    /**
+     * 取款消息发送给站长中心
+     */
+    public void tellerReminder(String transactionNo) {
+        if (StringTool.isBlank(transactionNo)) {
+            return;
+        }
+        PlayerWithdrawVo withdrawVo = new PlayerWithdrawVo();
+        withdrawVo.setResult(new PlayerWithdraw());
+        withdrawVo.getSearch().setTransactionNo(transactionNo);
+        withdrawVo = ServiceSiteTool.playerWithdrawService().search(withdrawVo);
+        PlayerWithdraw withdraw = withdrawVo.getResult();
+        if (withdraw == null || WithdrawStatusEnum.CANCELLATION_OF_ORDERS.getCode().equals(withdraw.getWithdrawStatus())) {
+            return;
+        }
+        //推送消息给前端
+        MessageVo message = new MessageVo();
+        message.setSubscribeType(CometSubscribeType.MCENTER_WITHDRAW_REMINDER.getCode());
+        Map<String, Object> map = new HashMap<>(6, 1f);
+        map.put("date", withdraw.getCreateTime());
+        map.put("currency", StringTool.isBlank(SessionManagerCommon.getUser().getDefaultCurrency()) ? "" : SessionManagerCommon.getUser().getDefaultCurrency());
+        map.put("type", withdraw.getWithdrawTypeParent());
+        map.put("status", withdraw.getWithdrawStatus());
+        map.put("amount", CurrencyTool.formatCurrency(withdraw.getWithdrawAmount()));
+        map.put("id", withdraw.getId());
+        message.setMsgBody(JsonTool.toJson(map));
+        message.setSendToUser(true);
+        message.setCcenterId(SessionManagerCommon.getSiteParentId());
+        message.setSiteId(SessionManagerCommon.getSiteId());
+        message.setMasterId(SessionManagerCommon.getSiteUserId());
+
+        SysUserDataRightListVo sysUserDataRightListVo = new SysUserDataRightListVo();
+        sysUserDataRightListVo.getSearch().setUserId(SessionManagerCommon.getUserId());
+        sysUserDataRightListVo.getSearch().setModuleType(DataRightModuleType.PLAYERWITHDRAW.getCode());
+        List<Integer> list = ServiceSiteTool.sysUserDataRightService().searchPlayerDataRightEntityId(sysUserDataRightListVo);
+        list.add(Const.MASTER_BUILT_IN_ID);
+
+        //判断账号是否可以查看该层级的记录 add by Bruce.QQ
+        filterUnavailableSubAccount(withdrawVo, list);
+        message.addUserIds(list);
+        ServiceTool.messageService().sendToMcenterMsg(message);
+        createSchedule(list);
+    }
+
+    public Map<String, Object> toWithdraw(HttpServletRequest request, PlayerTransactionVo vo, PlayerRank rank) {
+        String userName = SessionManagerCommon.getUserName();
+        // 取款金额
+        Double withdrawAmount = vo.getWithdrawAmount();
+        LOG.info("玩家{0}取款金额:{1}", userName, withdrawAmount);
+        if (withdrawAmount == null) {
+            return getErrorMsg(null, WITHDRAW_AMOUNT_ZERO);
+        }
+        // 手续费
+        double poundage = getPoundage(withdrawAmount, rank);
+        vo.setPoundage(poundage);
+        LOG.info("计算出玩家{0}需要手续费:{1}", SessionManagerCommon.getUserName(), poundage);
+        Map auditMap = getAuditMap();
+
+        double administrativeFee = MapTool.getDouble(auditMap, "administrativeFee");
+        double deductFavorable = MapTool.getDouble(auditMap, "deductFavorable");
+        LOG.info("玩家{0}需扣除行政费用:{1}和扣除优惠:{2}", userName, administrativeFee, deductFavorable);
+        DecimalFormat df = new DecimalFormat("#.00");
+        poundage = Double.valueOf(df.format(poundage));
+        administrativeFee = Double.valueOf(df.format(administrativeFee));
+        deductFavorable = Double.valueOf(df.format(deductFavorable));
+        double withdrawActualAmount = withdrawAmount - poundage - administrativeFee - deductFavorable;
+        LOG.info("玩家{0}最终可取款金额:{1}", userName, withdrawAmount);
+        vo.setActualWithdrawAmount(withdrawActualAmount);
+        if (withdrawActualAmount <= 0) {
+            return getErrorMsg(null, WITHDRAW_AMOUNT_ZERO);
+        }
+        try {
+            vo = insertTransactionData(request, vo, administrativeFee, deductFavorable);
+        } catch (Exception e) {
+            LOG.error(e, "取款报错{0}", userName);
+            vo.setSuccess(false);
+        }
+        if (vo.isSuccess()) {
+            return getSuccessMsg(vo.getResult().getTransactionNo());
+        }
+        return getErrorMsg(null, null);
+    }
+
+    public void filterUnavailableSubAccount(PlayerWithdrawVo withdrawVo, List<Integer> list) {
+        SysUserDataRightVo sysUserDataRightVo = new SysUserDataRightVo();
+        sysUserDataRightVo.getSearch().setModuleType(DataRightModuleType.PLAYERWITHDRAW.getCode());
+        Map<Integer, List<SysUserDataRight>> udrMap = ServiceSiteTool.sysUserDataRightService().searchDataRightsByModuleType(sysUserDataRightVo);
+        Integer rankId = withdrawVo.getResult().getRankId();
+        if (rankId == null) {
+            UserPlayerVo userPlayerVo = new UserPlayerVo();
+            userPlayerVo.getSearch().setId(SessionManagerCommon.getUserId());
+            userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
+            rankId = userPlayerVo.getResult().getRankId();
+        }
+        for (Iterator<Integer> iterator = list.iterator(); iterator.hasNext(); ) {
+            Integer userId = iterator.next();
+            List<SysUserDataRight> dataRights = udrMap.get(userId);
+            if (dataRights == null || dataRights.size() == 0) {
+                continue;
+            }
+            if (rankId != null) {
+                boolean flag = true;
+                for (SysUserDataRight sysUserDataRight : dataRights) {
+                    if (rankId.equals(sysUserDataRight.getEntityId())) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取手续费
+     *
+     * @param withdrawAmount 取款金额
+     * @return 手续费
+     */
+    public double getPoundage(Double withdrawAmount, PlayerRank rank) {
+        Integer hasCount = 0;     // 设定时间内已取款次数
+        Integer freeCount = rank.getWithdrawFreeCount();
+        Double poundage = 0.0d; // 手续费
+        // 有设置取款次数限制
+        if (rank.getWithdrawTimeLimit() != null && freeCount != null) {
+            hasCount = getHasCount(rank);
+            // 超过免手续费次数(n+1次:即已取款次数+当前取款次数)时需要扣除手续费
+            if (hasCount >= freeCount) {
+                poundage = calPoundage(withdrawAmount, rank);
+            }
+        }else{
+            poundage = calPoundage(withdrawAmount, rank);
+        }
+
+        // 手续费上限
+        Double maxFee = rank.getWithdrawMaxFee();
+        if (maxFee != null && poundage > maxFee) {
+            poundage = maxFee;
+        }
+
+        return poundage;
+    }
+
+    /**
+     * 计算平台设定的手续费
+     *
+     * @param withdrawAmount 取款金额
+     * @param rank           玩家层级信息
+     * @return 手续费
+     */
+    public Double calPoundage(Double withdrawAmount, PlayerRank rank) {
+        Double ratioOrFee = rank.getWithdrawFeeNum();  // 比例或固定费用
+        ratioOrFee = ratioOrFee == null ? 0d : ratioOrFee;
+
+        Double poundage = 0d;
+        if (RankFeeType.PROPORTION.getCode().equals(rank.getWithdrawFeeType())) {   // 比例收费
+            poundage = ratioOrFee / 100 * withdrawAmount;
+        } else if (RankFeeType.FIXED.getCode().equals(rank.getWithdrawFeeType())) { // 固定收费
+            poundage = ratioOrFee;
+        }
+        return poundage;
+    }
+
+    /**
+     * 设定时间内已取款次数
+     */
+    public Integer getHasCount(PlayerRank rank) {
+        //返回多次取款次数，收取手续费
+        if (SessionManagerCommon.getUserId() == null) {
+            throw new RuntimeException("玩家ID不存在");
+        }
+        Date date = new Date();
+        Date lastTime = DateTool.addHours(date, -rank.getWithdrawTimeLimit());
+        PlayerWithdrawVo withdrawVo = new PlayerWithdrawVo();
+        withdrawVo.setResult(new PlayerWithdraw());
+        withdrawVo.getSearch().setPlayerId(SessionManagerCommon.getUserId());
+        withdrawVo.setStartTime(lastTime);
+        withdrawVo.setEndTime(date);
+        Long count = ServiceSiteTool.playerWithdrawService().searchTwoHoursPlayerWithdrawCount(withdrawVo);
+        return count.intValue();
+    }
+
+    /**
+     * 创建任务提醒
+     */
+    public void createSchedule(List<Integer> subUserIds) {
+        UserTaskReminderVo reminderVo = new UserTaskReminderVo();
+        reminderVo.setUserIds(subUserIds);
+        reminderVo.setTaskEnum(UserTaskEnum.PLAYERWITHDRAW);
+        ServiceSiteTool.userTaskReminderService().addTaskReminder(reminderVo);
+    }
+
+    /**
+     * 余额是否充足
+     *
+     * @param player
+     * @param withdrawAmount
+     * @return
+     */
+    public boolean balanceEnough(UserPlayer player, double withdrawAmount) {
+        if (ParamTool.isLotterySite()) {
+            double apiBalance = queryLotteryApiBalance();
+            Double walletBalance = player.getWalletBalance();
+            if(walletBalance!=null){
+                apiBalance += walletBalance.doubleValue();
+            }
+            return !(apiBalance < withdrawAmount);
+
+        }else {
+            return !(player.getWalletBalance() == null || player.getWalletBalance() < withdrawAmount);
+        }
+    }
+
+    private PlayerTransactionVo insertTransactionData(HttpServletRequest request, PlayerTransactionVo vo, double administrativeFee, double deductFavorable) {
+        SysUser user = SessionManagerCommon.getUser();
+        if (user == null) {
+            throw new RuntimeException("玩家不在线");
+        }
+        //添加交易表和取款表数据
+        vo.setSuccess(false);
+        vo.setSysUser(user);
+        PlayerTransaction transaction = new PlayerTransaction();
+        transaction.setAdministrativeFee(administrativeFee);
+        transaction.setDeductFavorable(deductFavorable);
+        transaction.setPlayerId(SessionManagerCommon.getUserId());
+        transaction.setTransactionMoney(vo.getWithdrawAmount());
+        transaction.setOrigin(SessionManagerCommon.withdrawTerminalOrigin(request));
+        vo.setResult(transaction);
+        vo.setIpWithdraw(SessionManagerBase.getIpDb().getIp());
+        vo.setIpDictCode(SessionManagerBase.getIpDictCode());
+        vo = ServiceSiteTool.playerTransactionService().insertData(vo);
+        return vo;
+    }
+
+    private Map getSuccessMsg(String transactionNo) {
+        Map<String, Object> map = new HashMap<>(3, 1f);
+        map.put("state", true);
+        map.put("msg", LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_SUCCESS));
+        map.put("transactionNo", transactionNo);
+        return map;
     }
 
     /**
@@ -775,6 +1100,23 @@ public class BaseMineController {
             CollectionTool.batchUpdate(playerTransactionListVo.getResult(), Criteria.and(criteria, criteriaType), MapTool.newHashMap(new Pair<String, Object>(VPlayerTransaction.PROP_STATUS, CommonStatusEnum.SUCCESS.getCode())));
         }
         return playerTransactionListVo;
+    }
+
+    protected FundRecordApp buildDictCommonTransactionType(Map map, FundRecordApp fundRecordApp) {
+        Set entries = map.entrySet();
+        Map<String, String> transactionMap = MapTool.newHashMap();
+        if (entries != null) {
+            Iterator iterator = entries.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String key = (String) entry.getKey();
+                String transactionTypeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + key);
+                transactionMap.put(key, transactionTypeName);
+            }
+            fundRecordApp.setTransactionMap(transactionMap);
+        }
+
+        return fundRecordApp;
     }
 
 
