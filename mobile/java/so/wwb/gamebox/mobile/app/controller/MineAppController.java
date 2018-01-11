@@ -1071,9 +1071,12 @@ public class MineAppController extends BaseMineController {
      * 验证验证码
      */
     private boolean verifyCode(SecurityPassword password) {
-        if (password.isNeedCaptcha()) {
+        SysUser user = SessionManager.getUser();
+        Integer errorTimes = user.getSecpwdErrorTimes();
+        errorTimes = errorTimes == null ? 0 : errorTimes;
+        if (errorTimes > 1) {
             String sysCode = (String) SessionManager.getAttribute(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_SECURITY_PASSWORD.getSuffix());
-            return !password.getCode().equalsIgnoreCase(sysCode);
+            return !StringTool.equalsIgnoreCase(password.getCode(),sysCode);
         }
         return false;
     }
