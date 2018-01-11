@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
@@ -33,6 +34,7 @@ import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
@@ -44,7 +46,9 @@ import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
+import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -434,7 +438,7 @@ public class MineAppController extends BaseMineController {
     public String getFundRecordDetails(Integer searchId) {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(appVersion);
-
+        VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
         if (!isLoginUser(appModelVo)) {
             return JsonTool.toJson(appModelVo);
         }
@@ -443,6 +447,14 @@ public class MineAppController extends BaseMineController {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
             vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
+
+            if (vo.getResult() != null && TransactionTypeEnum.WITHDRAWALS.getCode().equals(vo.getResult().getTransactionType())) {//如果是取款
+                if (StringTool.isNotBlank(vo.getResult().getTransactionNo())) {
+                    withdrawVo.getSearch().setId(vo.getResult().getSourceId());
+                    withdrawVo = ServiceSiteTool.vPlayerWithdrawService().get(withdrawVo);
+                }
+            }
+
 
             VPlayerTransaction po = vo.getResult();
 
@@ -463,11 +475,21 @@ public class MineAppController extends BaseMineController {
             recordDetailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
             recordDetailApp.setRechargeAmount(po.getRechargeAmount());
             recordDetailApp.setRechargeAddress(po.getRechargeAddress());
-
             recordDetailApp.setRealName(SessionManager.getUser().getRealName());
 
             Map<String, Object> map = po.get_describe();//取json对象里面的值
-            recordDetailApp.setPoundage((Double) map.get("poundage"));
+
+            if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_into")) {//表示外面的钱转入我的钱包
+                recordDetailApp.setTransferOut(CacheBase.getSiteApiName((String) map.get("API")));  //转出
+                recordDetailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON,"FundRecord.record.playerWallet"));
+            }
+            if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_out")) {//从我的钱包转出外面
+                recordDetailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON,"FundRecord.record.playerWallet"));
+                recordDetailApp.setTransferInto(CacheBase.getSiteApiName((String) map.get("API")));
+            }
+
+            recordDetailApp.setPoundage((Double) map.get("poundage"));  //手续费
+
 
             String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
             recordDetailApp.setStatusName(statusName);
@@ -475,6 +497,16 @@ public class MineAppController extends BaseMineController {
             if (StringTool.equalsIgnoreCase("deposit", recordDetailApp.getTransactionType())) { //存款
                 recordDetailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + recordDetailApp.getTransactionWay()));
             }
+            if (StringTool.equalsIgnoreCase("withdrawals", recordDetailApp.getTransactionType())) {//取款
+
+                recordDetailApp.setBankCode((String) map.get("bankCode"));
+                recordDetailApp.setDeductFavorable(withdrawVo.getResult().getDeductFavorable());//扣除优惠
+                recordDetailApp.setPoundage(withdrawVo.getResult().getCounterFee());  //手续费
+                recordDetailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
+                recordDetailApp.setRechargeTotalAmount(withdrawVo.getResult().getWithdrawActualAmount());  //实际到账
+            }
+            recordDetailApp.setBitAmount((String) map.get("bitAmount"));
+
 
             appModelVo = CommonApp.buildAppModelVo(recordDetailApp);
         }

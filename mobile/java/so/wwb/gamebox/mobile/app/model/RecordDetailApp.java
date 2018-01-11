@@ -23,6 +23,11 @@ public class RecordDetailApp {
     private String username;        //账号
     private Double poundage;  //手续费
     private String realName; //真实姓名
+
+    private String transferOut; // 转出
+    private String transferInto; //转入
+    private String bankCode; //取款 银行code
+    private String bitAmount; //比特币
     /**
      * 账号
      */
@@ -199,5 +204,37 @@ public class RecordDetailApp {
 
     public void setPoundage(Double poundage) {
         this.poundage = poundage;
+    }
+
+    public String getTransferOut() {
+        return transferOut;
+    }
+
+    public void setTransferOut(String transferOut) {
+        this.transferOut = transferOut;
+    }
+
+    public String getTransferInto() {
+        return transferInto;
+    }
+
+    public void setTransferInto(String transferInto) {
+        this.transferInto = transferInto;
+    }
+
+    public String getBankCode() {
+        return bankCode;
+    }
+
+    public void setBankCode(String bankCode) {
+        this.bankCode = bankCode;
+    }
+
+    public String getBitAmount() {
+        return bitAmount;
+    }
+
+    public void setBitAmount(String bitAmount) {
+        this.bitAmount = bitAmount;
     }
 }
