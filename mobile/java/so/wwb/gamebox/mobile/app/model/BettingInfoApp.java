@@ -1,7 +1,6 @@
-package so.wwb.gamebox.mobile.App.model;
+package so.wwb.gamebox.mobile.app.model;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by legend on 18-1-3.

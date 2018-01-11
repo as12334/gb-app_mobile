@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.controller;
+package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
@@ -25,15 +25,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
-import so.wwb.gamebox.mobile.App.common.CommonApp;
-import so.wwb.gamebox.mobile.App.constant.AppConstant;
-import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.App.enums.AppMineLinkEnum;
-import so.wwb.gamebox.mobile.App.model.*;
+import so.wwb.gamebox.mobile.app.common.CommonApp;
+import so.wwb.gamebox.mobile.app.constant.AppConstant;
+import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -56,6 +55,7 @@ import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
+import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 
@@ -63,7 +63,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -73,6 +73,11 @@ import static so.wwb.gamebox.mobile.App.constant.AppConstant.*;
 public class MineAppController extends BaseMineController {
     private Log LOG = LogFactory.getLog(MineAppController.class);
 
+    /**
+     * 我的用户信息，链接
+     * @param request
+     * @return
+     */
     @RequestMapping("/getLink")
     @ResponseBody
     public String getLink(HttpServletRequest request) {
@@ -95,14 +100,87 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 获取取款信息
+     * @return
+     */
     @RequestMapping("/getWithDraw")
     @ResponseBody
     public String getWithDraw() {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (!isLoginUser(vo)) {
+        vo = withDraw(vo);
+        if(StringTool.isBlank(vo.getMsg())){
             return JsonTool.toJson(vo);
+        }
+
+        Map<String, Object> map = MapTool.newHashMap();
+        withdraw(map);
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(map);
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 提交取款
+     */
+    @RequestMapping("/submitWithdraw")
+    @ResponseBody
+    @Token(valid = true)
+    public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo) {
+        AppModelVo vo  = new AppModelVo();
+        vo.setVersion(appVersion);
+
+        vo = withDraw(vo);
+        if(StringTool.isNotBlank(vo.getMsg())){
+            return JsonTool.toJson(vo);
+        }
+
+        //是否有取款银行卡
+        Map map = MapTool.newHashMap();
+        if (!hasBank(map)) {
+            vo.setCode(AppErrorCodeEnum.hasBank.getCode());
+            vo.setMsg(AppErrorCodeEnum.hasBank.getMsg());
+            vo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(vo);
+        }
+        //是否符合取款金额设置
+        if(isInvalidAmount(playerVo,map)){
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(map.get("msg").toString());
+            vo.setCode(AppErrorCodeEnum.isInvalidAmount.getCode());
+            return JsonTool.toJson(vo);
+        }
+
+        //取款
+        map = addWithdraw(request,playerVo);
+        //成功
+        if (map.get("state") != null && MapTool.getBoolean(map, "state")){
+            vo.setCode(AppErrorCodeEnum.Success.getCode());
+            vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+            vo.setData(map);
+            return JsonTool.toJson(vo);
+        }
+
+        vo.setError(DEFAULT_TIME);
+        vo.setData(map);
+        vo.setCode(AppErrorCodeEnum.withDrawError.getCode());
+        vo.setMsg(AppErrorCodeEnum.withDrawError.getMsg());
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 取款判断
+     * @param vo
+     * @return
+     */
+    private AppModelVo withDraw(AppModelVo vo){
+        if (!isLoginUser(vo)) {
+            return vo;
         }
 
         //是否已存在取款订单
@@ -110,21 +188,21 @@ public class MineAppController extends BaseMineController {
             vo.setCode(AppErrorCodeEnum.hasOrder.getCode());
             vo.setMsg(AppErrorCodeEnum.hasOrder.getMsg());
             vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+            return vo;
         }
         //是否被冻结
         if (hasFreeze()) {
             vo.setCode(AppErrorCodeEnum.hasFreeze.getCode());
             vo.setMsg(AppErrorCodeEnum.hasFreeze.getMsg());
             vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+            return vo;
         }
         //今日取款是否达到上限
         if (isFull()) {
             vo.setCode(AppErrorCodeEnum.IsFull.getCode());
             vo.setMsg(AppErrorCodeEnum.IsFull.getMsg());
             vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+            return vo;
         }
         //余额是否充足
         Map<String, Object> map = MapTool.newHashMap();
@@ -132,15 +210,10 @@ public class MineAppController extends BaseMineController {
             vo.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
             vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace(targetRegex, map.get("withdrawMinNum").toString()));
             vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+            return vo;
         }
 
-        withdraw(map);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
-        vo.setData(map);
-
-        return JsonTool.toJson(vo);
+        return vo;
     }
 
     @RequestMapping("/getMyPromo")
@@ -481,6 +554,10 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
+    /**
+     * 安全码信息
+     * @return
+     */
     @RequestMapping("/initSafePassword")
     @ResponseBody
     public String initSafePassword() {
@@ -521,6 +598,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 设置真实姓名
+     * @param realName
+     * @return
+     */
     @RequestMapping("/setRealName")
     @ResponseBody
     public String setRealNameApp(String realName){
@@ -544,6 +626,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 修改安全码
+     * @param password
+     * @return
+     */
     @RequestMapping("/updateSafePassword")
     @ResponseBody
     public String updateSafePassword(SecurityPassword password){
@@ -553,12 +640,14 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
+        //验证真实姓名
         if(StringTool.isBlank(password.getRealName())){
             vo.setCode(AppErrorCodeEnum.realName.getCode());
             vo.setMsg(AppErrorCodeEnum.realName.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
+        //验证密码
         if(StringTool.isBlank(password.getPwd1())){
             vo.setCode(AppErrorCodeEnum.safePwdNotNull.getCode());
             vo.setMsg(AppErrorCodeEnum.safePwdNotNull.getMsg());
@@ -603,6 +692,12 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 修改登录密码
+     * @param updatePasswordVo
+     * @param code
+     * @return
+     */
     @RequestMapping("/updateLoginPassword")
     @ResponseBody
     public String updateLoginPassword(UpdatePasswordVo updatePasswordVo,String code){

@@ -1,8 +1,8 @@
-package so.wwb.gamebox.mobile.App.common;
+package so.wwb.gamebox.mobile.app.common;
 
-import so.wwb.gamebox.mobile.App.constant.AppConstant;
-import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.App.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.constant.AppConstant;
+import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.app.model.AppModelVo;
 
 /**
  * Created by legend on 18-1-7.

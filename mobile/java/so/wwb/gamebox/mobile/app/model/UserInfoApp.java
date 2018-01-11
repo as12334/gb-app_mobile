@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.model;
+package so.wwb.gamebox.mobile.app.model;
 
 import java.util.List;
 import java.util.Map;

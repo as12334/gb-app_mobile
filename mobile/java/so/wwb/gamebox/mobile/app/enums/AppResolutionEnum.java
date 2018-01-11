@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.enums;
+package so.wwb.gamebox.mobile.app.enums;
 
 import org.soul.commons.enums.ICodeEnum;
 

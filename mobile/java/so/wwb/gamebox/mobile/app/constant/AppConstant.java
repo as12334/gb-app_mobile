@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.constant;
+package so.wwb.gamebox.mobile.app.constant;
 
 public interface AppConstant {
     String appVersion = "app_01";//版本号

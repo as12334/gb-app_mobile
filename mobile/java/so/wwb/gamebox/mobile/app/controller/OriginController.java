@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.App.controller;
+package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.App.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.App.model.*;
+import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
@@ -57,9 +57,9 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.DEFAULT_TIME;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.SplitRegex;
-import static so.wwb.gamebox.mobile.App.constant.AppConstant.appVersion;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEFAULT_TIME;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.SplitRegex;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.appVersion;
 
 @Controller
 @RequestMapping("/origin")
