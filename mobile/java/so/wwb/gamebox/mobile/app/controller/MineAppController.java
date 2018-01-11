@@ -13,6 +13,7 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.support._Module;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.security.privilege.po.SysUser;
@@ -35,12 +36,14 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
 import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
+import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
@@ -53,11 +56,13 @@ import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
+import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.Token;
+import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 
@@ -524,19 +529,69 @@ public class MineAppController extends BaseMineController {
         Map<String, Serializable> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
         Map<String,Object> map = MapTool.newHashMap();
         map.put("advisoryType", advisoryType);
+        if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >=3) {
+            map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
+            map.put("captcha_value", "/captcha/feedback.html");
+        }
         return JsonTool.toJson(map);
     }
 
     @RequestMapping("/addNoticeSite")
     @ResponseBody
-    public String addNoticeSite(PlayerAdvisoryVo playerAdvisoryVo) {
-        playerAdvisoryVo.setSuccess(false);
-        playerAdvisoryVo.getResult().setAdvisoryTime(SessionManager.getDate().getNow());
-        playerAdvisoryVo.getResult().setPlayerId(SessionManager.getUserId());
-        playerAdvisoryVo.getResult().setReplyCount(0);
-        playerAdvisoryVo.getResult().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
+    public String addNoticeSite(PlayerAdvisoryVo playerAdvisoryVo, String code) {
+        AppModelVo appModelVo = new AppModelVo();
+        appModelVo.setVersion(appVersion);
+        if (playerAdvisoryVo != null && playerAdvisoryVo.getResult() != null){
+            playerAdvisoryVo.setSuccess(false);
+            playerAdvisoryVo.getResult().setAdvisoryTime(SessionManager.getDate().getNow());
+            playerAdvisoryVo.getResult().setPlayerId(SessionManager.getUserId());
+            playerAdvisoryVo.getResult().setReplyCount(0);
+            playerAdvisoryVo.getResult().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
+        }
+
+
+        HashMap map = new HashMap(4,1f);
+        if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= 3) {
+
+            map.put("isOpenCaptcha", true);
+            map.put("captcha_value", "/captcha/feedback.html");
+            if (!StringTool.isNotBlank(code)) {
+                appModelVo.setCode(AppErrorCodeEnum.sysCodeNotNull.getCode());
+                appModelVo.setMsg(AppErrorCodeEnum.sysCodeNotNull.getMsg());
+                appModelVo.setError(DEFAULT_TIME);
+                return JsonTool.toJson(appModelVo);
+            }
+            if (!checkFeedCode(code)) {
+                appModelVo.setCode(AppErrorCodeEnum.sysCode.getCode());
+                appModelVo.setMsg(AppErrorCodeEnum.sysCode.getMsg());
+                appModelVo.setError(DEFAULT_TIME);
+                return JsonTool.toJson(appModelVo);
+            }
+
+        }
         playerAdvisoryVo = ServiceSiteTool.playerAdvisoryService().insert(playerAdvisoryVo);
-        return "";
+
+        if (playerAdvisoryVo.isSuccess()) {
+            playerAdvisoryVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_SUCCESS));
+            //发送消息数量
+            Integer sendMessageCount = SessionManager.getSendMessageCount()==null?0:SessionManager.getSendMessageCount();
+            SessionManager.setsSendMessageCount(sendMessageCount+1);
+            if(SessionManager.getSendMessageCount() >=3){
+                map.put("isOpenCaptcha",true);
+            }
+            //生成任务提醒
+            UserTaskReminderVo userTaskReminderVo = new UserTaskReminderVo();
+            userTaskReminderVo.setTaskEnum(UserTaskEnum.PLAYERCONSULTATION);
+            ServiceSiteTool.userTaskReminderService().addTaskReminder(userTaskReminderVo);
+        }else {
+            playerAdvisoryVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
+        }
+
+        map.put("msg", StringTool.isNotBlank(playerAdvisoryVo.getOkMsg()) ? playerAdvisoryVo.getOkMsg() : playerAdvisoryVo.getErrMsg());
+        map.put("state", Boolean.valueOf(playerAdvisoryVo.isSuccess()));
+        map.put(TokenHandler.TOKEN_VALUE,TokenHandler.generateGUID());
+        appModelVo = CommonApp.buildAppModelVo(map);
+        return JsonTool.toJson(appModelVo);
     }
 
 
@@ -837,6 +892,18 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public boolean checkCode(@RequestParam("code") String code) {
         String sessionCode = SessionManagerCommon.getCaptcha(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_LOGIN.getSuffix());
+        return StringTool.isNotBlank(sessionCode) && sessionCode.equalsIgnoreCase(code);
+    }
+
+    /**
+     * 验证吗remote验证
+     * @param code
+     * @return
+     */
+    @RequestMapping("/checkFeedCode")
+    @ResponseBody
+    public boolean checkFeedCode(@RequestParam("code") String code) {
+        String sessionCode = SessionManagerCommon.getCaptcha(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix());
         return StringTool.isNotBlank(sessionCode) && sessionCode.equalsIgnoreCase(code);
     }
 
