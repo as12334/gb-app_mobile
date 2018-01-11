@@ -30,4 +30,10 @@ public interface AppConstant {
     String keyForceStart = "force"; //安全密码生效开始时间
 
     String customerService = "customer";//客服
+
+    int sysNoticeMinTime = -29; //系统最小时间
+
+    int four = 4;
+
+    float oneF = 1F;
 }

@@ -5,6 +5,7 @@ public enum AppErrorCodeEnum{
     UN_LOGIN(1,"您还没有登录"),
     pwdError(11,"密码输入错误"),
     pwdSame(16,"新密码不能和旧密码相同"),
+    sysInfoNotNull(17,"信息不存在"),
     IsFull(24,"今日提现次数已达上限"),
     ActivityEnd(31,"该活动不存在或已结束"),
     hasOrder(100,"取款订单已存在"),

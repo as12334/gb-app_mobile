@@ -40,6 +40,7 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
 import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
+import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
@@ -831,6 +832,46 @@ public class MineAppController extends BaseMineController {
         SessionManager.refreshUser();
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 系统公告
+     * @return
+     */
+    @RequestMapping("/getSysNotice")
+    @ResponseBody
+    public String getSysNotice(VSystemAnnouncementListVo vListVo){
+        AppModelVo vo = new AppModelVo();
+
+        Map map = getSystemNotice(vListVo);
+        vo.setVersion(appVersion);
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(map);
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 系统公告详情
+     * @return
+     */
+    @RequestMapping("/getSysNoticeDetail")
+    @ResponseBody
+    public String getSysNoticeDetail(VSystemAnnouncementListVo vListVo){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+
+        if(vListVo.getSearch().getId() == null){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(vo);
+        }
+
+        AppSystemNotice sysNotice = getSystemNoticeDetail(vListVo);
+        vo.setData(sysNotice);
         return JsonTool.toJson(vo);
     }
 

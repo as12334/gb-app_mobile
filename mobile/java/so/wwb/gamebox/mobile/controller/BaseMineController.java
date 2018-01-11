@@ -10,6 +10,7 @@ import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateFormat;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -35,6 +36,8 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
+import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
+import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
@@ -47,10 +50,7 @@ import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
 import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
-import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
-import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
-import so.wwb.gamebox.model.master.enums.RankFeeType;
-import so.wwb.gamebox.model.master.enums.UserTaskEnum;
+import so.wwb.gamebox.model.master.enums.*;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.WithdrawStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
@@ -89,6 +89,7 @@ public class BaseMineController {
     private Log LOG = LogFactory.getLog(BaseMineController.class);
     private static final String WITHDRAW_INVALID_AMOUNT = "withdrawForm.withdrawAmountOver";
     private static final String WITHDRAW_AMOUNT_ZERO = "withdrawForm.withdrawAmountZero";
+    private static final String SYSTEM_NOTICE_LINK = "/mineOrigin/getSysNoticeDetail.html";
 
     /**
      * 获取我的个人数据
@@ -1182,6 +1183,56 @@ public class BaseMineController {
         if (playerTransferService == null)
             playerTransferService = ServiceSiteTool.playerTransferService();
         return playerTransferService;
+    }
+
+    /**
+     * 获取系统公告转换成App接口数据
+     * @param vListVo
+     * @return
+     */
+    protected Map<String,Object> getSystemNotice(VSystemAnnouncementListVo vListVo){
+        if(vListVo.getSearch().getStartTime()==null && vListVo.getSearch().getEndTime()==null){
+            vListVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), RECOMMEND_DAYS));
+            vListVo.getSearch().setEndTime(SessionManager.getDate().getNow());
+        }
+        vListVo.getSearch().setLocal(SessionManager.getLocale().toString());
+        vListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.SYSTEM.getCode());
+        vListVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
+        vListVo = ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(vListVo);
+        if (CollectionTool.isNotEmpty(vListVo.getResult())) {
+            for (VSystemAnnouncement vSystemAnnouncement : vListVo.getResult()) {
+                vSystemAnnouncement.setContent(StringTool.replaceHtml(vSystemAnnouncement.getContent()));
+            }
+        }
+
+        Map<String,Object> map = new HashMap<>(four, oneF);
+        List<AppSystemNotice> sysNotices = ListTool.newArrayList();
+        for (VSystemAnnouncement sysAnnounce : vListVo.getResult()){
+            AppSystemNotice sysNotice = new AppSystemNotice();
+            sysNotice.setId(vListVo.getSearchId(sysAnnounce.getId()));
+            sysNotice.setContent(sysAnnounce.getShortContentText50());
+            sysNotice.setPublishTime(sysAnnounce.getPublishTime());
+            sysNotice.setLink(SYSTEM_NOTICE_LINK + "?searchId="+vListVo.getSearchId(sysAnnounce.getId()));
+            sysNotices.add(sysNotice);
+        }
+        map.put("list",sysNotices);
+        map.put("pageTotal",vListVo.getPaging().getTotalCount());
+        map.put("minDate",SessionManager.getDate().addDays(sysNoticeMinTime));
+        map.put("maxDate",new Date());
+        return map;
+    }
+
+    protected AppSystemNotice getSystemNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo){
+        vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
+        vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
+
+        AppSystemNotice sysNotice = new AppSystemNotice();
+        for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()){
+            sysNotice.setTitle(sysAnnounce.getTitle());
+            sysNotice.setPublishTime(sysAnnounce.getPublishTime());
+            sysNotice.setContent(sysAnnounce.getContent());
+        }
+        return sysNotice;
     }
 
 }
