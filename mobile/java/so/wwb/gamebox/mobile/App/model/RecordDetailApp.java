@@ -12,12 +12,17 @@ public class RecordDetailApp {
     private String transactionType;   //资金类型
     private Double transactionMoney;   //取款金额
     private String status;          //状态
+    private String statusName; //状态名称
+
     private String failureReason;    //失败原因
     private Double administrativeFee;  //行政费用
     private Double deductFavorable;    //扣除优惠
     private String fundType;         //资金类型
     private String transactionWay;   //资金类型
+    private String transactionWayName; // 资金类型名称
     private String username;        //账号
+    private Double poundage;  //手续费
+    private String realName; //真实姓名
     /**
      * 账号
      */
@@ -162,5 +167,37 @@ public class RecordDetailApp {
 
     public void setRechargeAddress(String rechargeAddress) {
         this.rechargeAddress = rechargeAddress;
+    }
+
+    public String getTransactionWayName() {
+        return transactionWayName;
+    }
+
+    public void setTransactionWayName(String transactionWayName) {
+        this.transactionWayName = transactionWayName;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public Double getPoundage() {
+        return poundage;
+    }
+
+    public void setPoundage(Double poundage) {
+        this.poundage = poundage;
     }
 }

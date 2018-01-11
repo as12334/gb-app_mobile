@@ -486,6 +486,21 @@ public class BaseMineController {
         if (gameOrder.getGameId() != 0) {
             detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
         }
+        if (gameOrder.getApiTypeId() == 1) {
+            detailsApp.setApiTypeName("真人");
+        }
+        if (gameOrder.getApiTypeId() == 2) {
+            detailsApp.setApiTypeName("电子");
+        }
+        if (gameOrder.getApiTypeId() == 3) {
+            detailsApp.setApiTypeName("体育");
+        }
+        if (gameOrder.getApiTypeId() == 4) {
+            detailsApp.setApiTypeName("彩票");
+        }
+        if (gameOrder.getApiTypeId()!=1 && gameOrder.getApiTypeId()!=2 &&gameOrder.getApiTypeId()!=3&&gameOrder.getApiTypeId()!=4) {
+            detailsApp.setApiTypeName("其他");
+        }
         List<Map> list = detailsApp.getResultArray();
         if (CollectionTool.isEmpty(list)) {
             return detailsApp;
