@@ -44,6 +44,7 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -146,14 +147,11 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
-        if (payAccount.getRandomAmount() != null) {
-            boolean randomAmount = payAccount.getRandomAmount();
-            if (randomAmount) {
-                Double rechargeAmount = playerRecharge.getRechargeAmount();
-                if (rechargeAmount.intValue() == rechargeAmount) {
-                    rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
-                    playerRecharge.setRechargeAmount(rechargeAmount);
-                }
+        if (payAccount.getRandomAmount() != null && payAccount.getRandomAmount()) {
+            Double rechargeAmount = playerRecharge.getRechargeAmount();
+            if (rechargeAmount.intValue() == rechargeAmount) {
+                rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
+                playerRecharge.setRechargeAmount(rechargeAmount);
             }
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
@@ -257,13 +255,15 @@ public class BaseOnlineDepositController extends BaseDepositController {
     public String submit(PlayerRechargeVo playerRechargeVo, Model model) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         double rechargeAmount = playerRecharge.getRechargeAmount();
-
+        if (playerRechargeVo.getResult().getRandomCash() != null) {
+            rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
+        }
         boolean unCheckSuccess = false;
         boolean pop = true;
 
         //验证存款金额的合法性
         if (rechargeAmount <= 0) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountCorrect"));
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER));
         }
         PlayerRank rank = getRank();
         PayAccount payAccount = null;
@@ -282,7 +282,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             max = Const.MAX_MONEY;
         }
         if (max < rechargeAmount || min > rechargeAmount) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, "rechargeAmountOver", min, max));
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max));
         }
         double fee = calculateFee(rank, rechargeAmount);
         if (rechargeAmount + fee <= 0) {

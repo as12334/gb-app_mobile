@@ -18,6 +18,7 @@ public class BettingDetailsApp {
     private String gameType; // 游戏类型
     private String betTypeName; //赌注项目
     private String oddsTypeName; //盘口类型
+    private String apiTypeName; //获得api类型的名称
     /**
      * 注单号码
      */
@@ -224,5 +225,13 @@ public class BettingDetailsApp {
 
     public void setOddsTypeName(String oddsTypeName) {
         this.oddsTypeName = oddsTypeName;
+    }
+
+    public String getApiTypeName() {
+        return apiTypeName;
+    }
+
+    public void setApiTypeName(String apiTypeName) {
+        this.apiTypeName = apiTypeName;
     }
 }

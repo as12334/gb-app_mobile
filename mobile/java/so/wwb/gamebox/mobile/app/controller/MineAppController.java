@@ -33,6 +33,7 @@ import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -382,8 +383,6 @@ public class MineAppController extends BaseMineController {
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
 
-        listVo = preList(listVo);
-        buildDictCommonTransactionType(listVo.getDictCommonTransactionType(), fundRecordApp);
 
         List<VPlayerTransaction> vPlayerTransactionList = listVo.getResult();
 
@@ -405,6 +404,25 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+
+    /**
+     * 获取资金记录的，资金类型
+     * @return
+     */
+    @RequestMapping("/getTransactionType")
+    @ResponseBody
+    public String getTransactionType() {
+        VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
+        FundRecordApp recordApp = new FundRecordApp();
+        listVo = preList(listVo);
+        Map map = listVo.getDictCommonTransactionType();
+
+        recordApp = buildDictCommonTransactionType(map, recordApp);
+        map = recordApp.getTransactionMap();
+        AppModelVo modelVo = CommonApp.buildAppModelVo(map);
+        return JsonTool.toJson(modelVo);
+    }
+
     @RequestMapping("/getFundRecordDetails")
     @ResponseBody
     public String getFundRecordDetails(Integer searchId) {
@@ -415,8 +433,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(appModelVo);
         }
 
-        searchId = 5002473;     //测试数据，暂时写死
-        if (searchId != 0) {
+        if (searchId != null) {
             VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
             vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
@@ -440,6 +457,19 @@ public class MineAppController extends BaseMineController {
             recordDetailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
             recordDetailApp.setRechargeAmount(po.getRechargeAmount());
             recordDetailApp.setRechargeAddress(po.getRechargeAddress());
+
+            recordDetailApp.setRealName(SessionManager.getUser().getRealName());
+
+            Map<String, Object> map = po.get_describe();//取json对象里面的值
+            recordDetailApp.setPoundage((Double) map.get("poundage"));
+
+            String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
+            recordDetailApp.setStatusName(statusName);
+
+            if (StringTool.equalsIgnoreCase("deposit", recordDetailApp.getTransactionType())) { //存款
+                recordDetailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + recordDetailApp.getTransactionWay()));
+            }
+
             appModelVo = CommonApp.buildAppModelVo(recordDetailApp);
         }
 
