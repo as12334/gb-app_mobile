@@ -263,7 +263,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
 
         //验证存款金额的合法性
         if (rechargeAmount <= 0) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountCorrect"));
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER));
         }
         PlayerRank rank = getRank();
         PayAccount payAccount = null;
