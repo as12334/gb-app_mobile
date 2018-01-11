@@ -10,7 +10,7 @@ import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.DateFormat;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -1191,14 +1191,9 @@ public class BaseMineController {
      * @return
      */
     protected Map<String,Object> getSystemNotice(VSystemAnnouncementListVo vListVo){
-        if(vListVo.getSearch().getStartTime()==null && vListVo.getSearch().getEndTime()==null){
-            vListVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), RECOMMEND_DAYS));
-            vListVo.getSearch().setEndTime(SessionManager.getDate().getNow());
-        }
-        vListVo.getSearch().setLocal(SessionManager.getLocale().toString());
         vListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.SYSTEM.getCode());
-        vListVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
-        vListVo = ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(vListVo);
+        vListVo = getNotice(vListVo);
+
         if (CollectionTool.isNotEmpty(vListVo.getResult())) {
             for (VSystemAnnouncement vSystemAnnouncement : vListVo.getResult()) {
                 vSystemAnnouncement.setContent(StringTool.replaceHtml(vSystemAnnouncement.getContent()));
@@ -1222,6 +1217,11 @@ public class BaseMineController {
         return map;
     }
 
+    /**
+     * 系统详情公告
+     * @param vSystemAnnouncementListVo
+     * @return
+     */
     protected AppSystemNotice getSystemNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo){
         vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
@@ -1233,6 +1233,40 @@ public class BaseMineController {
             sysNotice.setContent(sysAnnounce.getContent());
         }
         return sysNotice;
+    }
+
+    /**
+     * 获取游戏公告
+     * @param listVo
+     */
+    protected void getAppGameNotice(VSystemAnnouncementListVo listVo){
+        if(listVo.getSearch().getEndTime()!=null){
+            listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(),DEFAULT_TIME));
+        }
+
+        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        if (param!=null && param.getParamValue()!=null && param.getParamValue().equals("true")) {
+            listVo.getSearch().setApiId(Integer.parseInt(ApiProviderEnum.PL.getCode()));
+        }
+
+        listVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());
+        listVo = getNotice(listVo);
+
+        for (VSystemAnnouncement sysAnnounce : listVo.getResult()){
+        }
+    }
+
+    /**
+     * 提取公共 获取公告信息
+     */
+    private VSystemAnnouncementListVo getNotice(VSystemAnnouncementListVo listVo){
+        if(listVo.getSearch().getStartTime()==null && listVo.getSearch().getEndTime()==null){
+            listVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), RECOMMEND_DAYS));
+            listVo.getSearch().setEndTime(DateQuickPicker.getInstance().getNow());
+        }
+        listVo.getSearch().setLocal(SessionManager.getLocale().toString());
+        listVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
+        return ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(listVo);
     }
 
 }

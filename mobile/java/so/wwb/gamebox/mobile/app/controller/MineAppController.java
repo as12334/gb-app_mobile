@@ -83,6 +83,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 @RequestMapping("/mineOrigin")
 public class MineAppController extends BaseMineController {
     private Log LOG = LogFactory.getLog(MineAppController.class);
+    private static final String safePasswordUrl = "/captcha/securityPwd.html";
 
     /**
      * 我的用户信息，链接
@@ -653,20 +654,18 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (!isLoginUser(vo)) {
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            return JsonTool.toJson(vo);
-        }
+        vo = getSafePassword(vo);
+        return JsonTool.toJson(vo);
+    }
 
+    private AppModelVo getSafePassword(AppModelVo vo){
         SysUser user = SessionManager.getUser();
         Map<String, Object> map = MapTool.newHashMap();
         map.put("hasRealName", StringTool.isNotBlank(user.getRealName()));
         if (StringTool.isBlank(user.getPermissionPwd())) {
             map.put("hasPermissionPwd", false);
             vo.setData(map);
-            return JsonTool.toJson(vo);
+            return vo;
         }
 
         map.put("hasPermissionPwd", true);
@@ -674,7 +673,7 @@ public class MineAppController extends BaseMineController {
             map.put("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
             map.put("lockTime", formatLockTime(user.getSecpwdFreezeStartTime()));
             vo.setData(map);
-            return JsonTool.toJson(vo);
+            return vo;
         }
 
         //判断是否出现验证码,大于2显示验证码
@@ -682,9 +681,9 @@ public class MineAppController extends BaseMineController {
         errorTimes = errorTimes == null ? 0 : errorTimes;
         map.put("isOpenCaptcha", errorTimes > 1);
         map.put("remindTimes", appErrorTimes - errorTimes);
+        map.put("captChaUrl",safePasswordUrl);
         vo.setData(map);
-
-        return JsonTool.toJson(vo);
+        return vo;
     }
 
     /**
@@ -725,10 +724,8 @@ public class MineAppController extends BaseMineController {
     public String updateSafePassword(SecurityPassword password){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
 
+        vo = getSafePassword(vo);
         //验证真实姓名
         if(StringTool.isBlank(password.getRealName())){
             vo.setCode(AppErrorCodeEnum.realName.getCode());
@@ -904,6 +901,17 @@ public class MineAppController extends BaseMineController {
 
         AppSystemNotice sysNotice = getSystemNoticeDetail(vListVo);
         vo.setData(sysNotice);
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 系统公告详情
+     * @return
+     */
+    @RequestMapping("/getGameNotice")
+    @ResponseBody
+    public String getGameNotice(){
+        AppModelVo vo = new AppModelVo();
         return JsonTool.toJson(vo);
     }
 
@@ -1162,9 +1170,12 @@ public class MineAppController extends BaseMineController {
      * 验证验证码
      */
     private boolean verifyCode(SecurityPassword password) {
-        if (password.isNeedCaptcha()) {
+        SysUser user = SessionManager.getUser();
+        Integer errorTimes = user.getSecpwdErrorTimes();
+        errorTimes = errorTimes == null ? 0 : errorTimes;
+        if (errorTimes > 1) {
             String sysCode = (String) SessionManager.getAttribute(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_SECURITY_PASSWORD.getSuffix());
-            return !password.getCode().equalsIgnoreCase(sysCode);
+            return !StringTool.equalsIgnoreCase(password.getCode(),sysCode);
         }
         return false;
     }
