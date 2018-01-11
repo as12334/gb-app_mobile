@@ -807,6 +807,14 @@ public class MineAppController extends BaseMineController {
     public String getSysNoticeDetail(VSystemAnnouncementListVo vListVo){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
+
+        if(vListVo.getSearch().getId() == null){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(vo);
+        }
+
         AppSystemNotice sysNotice = getSystemNoticeDetail(vListVo);
         vo.setData(sysNotice);
         return JsonTool.toJson(vo);
