@@ -873,13 +873,38 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
-     * 系统公告详情
+     * 游戏公告
      * @return
      */
     @RequestMapping("/getGameNotice")
     @ResponseBody
-    public String getGameNotice(){
+    public String getGameNotice(VSystemAnnouncementListVo listVo){
         AppModelVo vo = new AppModelVo();
+
+        Map map = getAppGameNotice(listVo);
+        vo.setVersion(appVersion);
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(map);
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 游戏公告详情
+     * @return
+     */
+    @RequestMapping("/getGameNoticeDetail")
+    @ResponseBody
+    public String getGameNoticeDetail(VSystemAnnouncementListVo listVo){
+        AppModelVo vo = new AppModelVo();
+
+        AppGameNotice gameNotice = getAppGameNoticeDetail(listVo);
+        vo.setVersion(appVersion);
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(gameNotice);
+
         return JsonTool.toJson(vo);
     }
 

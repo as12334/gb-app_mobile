@@ -42,6 +42,7 @@ import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
@@ -90,6 +91,7 @@ public class BaseMineController {
     private static final String WITHDRAW_INVALID_AMOUNT = "withdrawForm.withdrawAmountOver";
     private static final String WITHDRAW_AMOUNT_ZERO = "withdrawForm.withdrawAmountZero";
     private static final String SYSTEM_NOTICE_LINK = "/mineOrigin/getSysNoticeDetail.html";
+    private static final String GAME_NOTICE_LINK = "/mineOrigin/getGameNoticeDetail.html";
 
     /**
      * 获取我的个人数据
@@ -1239,7 +1241,7 @@ public class BaseMineController {
      * 获取游戏公告
      * @param listVo
      */
-    protected void getAppGameNotice(VSystemAnnouncementListVo listVo){
+    protected Map<String,Object> getAppGameNotice(VSystemAnnouncementListVo listVo){
         if(listVo.getSearch().getEndTime()!=null){
             listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(),DEFAULT_TIME));
         }
@@ -1252,8 +1254,64 @@ public class BaseMineController {
         listVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());
         listVo = getNotice(listVo);
 
+        List<AppGameNotice> gameNotices = ListTool.newArrayList();
         for (VSystemAnnouncement sysAnnounce : listVo.getResult()){
+            for(SiteApiI18n siteApi : Cache.getSiteApiI18n().values()){
+                if(siteApi.getApiId().equals(sysAnnounce.getApiId())){
+                    AppGameNotice gameNotice = new AppGameNotice();
+                    gameNotice.setId(listVo.getSearchId(sysAnnounce.getId()));
+                    gameNotice.setTitle(sysAnnounce.getShortTitle80());
+                    gameNotice.setContext(sysAnnounce.getShortContentText80());
+                    gameNotice.setLink(GAME_NOTICE_LINK + "?searchId=" + listVo.getSearchId(sysAnnounce.getId()));
+
+                    //游戏拼接
+                    StringBuilder sb = new StringBuilder();
+                    if(sysAnnounce.getApiId() != null){
+                        sb.append(CacheBase.getSiteApiName(sysAnnounce.getApiId().toString()));
+                    }
+                    if(sysAnnounce.getGameId() != null){
+                        sb.append("——").append(CacheBase.getSiteGameName(sysAnnounce.getGameId().toString()));
+                    }
+                    gameNotice.setGameName(sb.toString());
+                    gameNotice.setPublishTime(sysAnnounce.getPublishTime());
+                    gameNotices.add(gameNotice);
+                }
+            }
         }
+        Map<String,Object> map = new HashMap<>(appErrorTimes,oneF);
+        map.put("list",gameNotices);
+        map.put("pageTotal",listVo.getPaging().getTotalCount());
+        map.put("maxDate", SessionManager.getDate().getNow());
+        map.put("minDate", SessionManager.getDate().addDays(sysNoticeMinTime));
+
+        List<AppSelectSiteApiI18n> appSiteApis = ListTool.newArrayList();
+        for(SiteApiI18n siteApi : Cache.getSiteApiI18n().values()){
+            AppSelectSiteApiI18n appSiteApi = new AppSelectSiteApiI18n();
+            appSiteApi.setApiId(siteApi.getApiId());
+            appSiteApi.setApiName(siteApi.getName());
+            appSiteApis.add(appSiteApi);
+        }
+        map.put("apiSelect", appSiteApis);//获取SiteApi
+
+        return map;
+    }
+
+    /**
+     * 获取游戏公告详情
+     * @param vSystemAnnouncementListVo
+     * @return
+     */
+    protected AppGameNotice getAppGameNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo){
+        vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
+        vSystemAnnouncementListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());
+        vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
+        AppGameNotice gameNotice = new AppGameNotice();
+        for(VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()){
+            gameNotice.setId(sysAnnounce.getId().toString());
+            gameNotice.setContext(sysAnnounce.getContent());
+            gameNotice.setPublishTime(sysAnnounce.getPublishTime());
+        }
+        return gameNotice;
     }
 
     /**

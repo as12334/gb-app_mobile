@@ -34,6 +34,7 @@ public interface AppConstant {
     int sysNoticeMinTime = -29; //系统最小时间
 
     int four = 4;
+    int six = 6;
 
     float oneF = 1F;
 }
