@@ -89,7 +89,12 @@
 				/discounts/index.html = anon
 				/discounts/activityType.html = anon
 				/discounts/promo.html = anon
-				/origin/*.html = anon
+				/origin/mainIndex.html = anon
+				/origin/getCarouse.html = anon
+				/origin/getAnnouncement.html = anon
+				/origin/getSiteApiRelation.html = anon
+				/origin/getFloat.html = anon
+				/origin/getCasinoGame.html = anon
 				/discountsOrigin/*.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>

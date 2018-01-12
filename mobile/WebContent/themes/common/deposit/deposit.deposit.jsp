@@ -2,7 +2,7 @@
 <%@ include file="/include/include.inc.jsp" %>
 
 <body class="gb-theme mine-page no-backdrop" >
-<div id="offCanvasWrapper" class="mui-draggable">
+<div id="offCanvasWrapper" class="mui-draggable mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <c:if test="${os ne 'android'}">
@@ -16,8 +16,8 @@
                 </c:if>
             </header>
         </c:if>
-        <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top: 0px;"':''} >
-            <div class="${os eq 'app_ios' ? 'mui-scroll':''} mui-scroll2">
+        <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper mui-scroll2">
+            <div class="mui-scroll">
                 <div class="mui-row">
                     <div class="mui-input-group mine-form">
                         <div class="bank-selector modes-payment">
@@ -36,12 +36,12 @@
 
                                                 <c:if test="${p.key eq 'company_deposit'}">
                                                     <c:forEach items="${p.value}" var="c">
-                                                        <li key="${c.value}"><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}" class="${fn:length(c.text)>5?'long':''}"><i class="pay ${c.bankCode}"></i><span>${c.text}</span></a></li>
+                                                        <li key="${command.getSearchId(c.value)}"><a data-company="/wallet/deposit/company/index.html?searchId=${command.getSearchId(c.value)}" class="${fn:length(c.text)>5?'long':''}"><i class="pay ${c.bankCode}"></i><span>${c.text}</span></a></li>
                                                     </c:forEach>
                                                 </c:if>
                                                 <c:if test="${p.key eq 'electronicPay'}">
                                                     <c:forEach items="${p.value}" var="i">
-                                                        <li key="${i.id}">
+                                                        <li key="${command.getSearchId(i.id)}">
                                                             <c:choose>
                                                                 <c:when test="${isMultipleAccount}">
                                                                     <a data-fast="/wallet/deposit/company/electronic/index.html?searchId=${command.getSearchId(i.id)}" class="${fn:length(i.aliasName)>5?'long':''}"><i class="pay ${i.bankCode=='onecodepay'?'ymf':i.bankCode}"></i><span>
@@ -100,6 +100,11 @@
                     </div>
                 </div>
                 <div class="mui-row" id="deposit"></div>
+            </div>
+            <div class="mui-row">
+                <div class="gb-form-foot bank-pay-btn">
+                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" >${views.deposit_auto['下一步']}</button>
+                </div>
             </div>
         </div>
     </div>
