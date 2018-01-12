@@ -110,10 +110,10 @@ public class MineAppController extends BaseMineController {
 
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> userInfoMap = MapTool.newHashMap();
-        map.put("isBit", ParamTool.isBit());
-        map.put("isCash", ParamTool.isCash());
-        map.put("link", setLink());
-        getMineLinkInfo(userInfoMap, request);
+        map.put("isBit", ParamTool.isBit());//是否存在比特币
+        map.put("isCash", ParamTool.isCash());//是否存在银行卡
+        map.put("link", setLink());//链接地址
+        getMineLinkInfo(userInfoMap, request);//用户金额信息
         map.put("user", userInfoMap);
         vo.setData(map);
 
@@ -311,10 +311,17 @@ public class MineAppController extends BaseMineController {
 
         UserInfoApp userApp = new UserInfoApp();
         SysUser user = SessionManager.getUser();
-
         getAppUserInfo(request, user, userApp);
 
-        vo = CommonApp.buildAppModelVo(userApp);
+        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> userInfoMap = MapTool.newHashMap();
+        map.put("isBit", ParamTool.isBit());//是否存在比特币
+        map.put("isCash", ParamTool.isCash());//是否存在银行卡
+        map.put("link", setLink());//链接地址
+        getMineLinkInfo(userInfoMap, request);//用户金额信息
+        map.put("user", userInfoMap);
+        map.put("userApi",userApp);
+        vo = CommonApp.buildAppModelVo(map);
 
         return JsonTool.toJson(vo);
     }
