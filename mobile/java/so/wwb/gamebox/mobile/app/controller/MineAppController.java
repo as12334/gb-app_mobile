@@ -17,10 +17,12 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.support._Module;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeVo;
+import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,14 +51,14 @@ import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
+import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
-import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
-import so.wwb.gamebox.model.master.player.po.UserBankcard;
-import so.wwb.gamebox.model.master.player.po.UserPlayer;
-import so.wwb.gamebox.model.master.player.po.VUserPlayer;
+import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
@@ -231,14 +233,16 @@ public class MineAppController extends BaseMineController {
 
     @RequestMapping("/getMyPromo")
     @ResponseBody
-    public String getMyPromo() {
+    public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo) {
         AppModelVo vo = new AppModelVo();
 
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
         }
+        if (vPreferentialRecodeListVo == null) {
+            vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
+        }
 
-        VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
 
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
@@ -259,7 +263,7 @@ public class MineAppController extends BaseMineController {
             }
             promoApp.setApplyTime(recode.getApplyTime());
             if (recode.getPreferentialAudit() != null && recode.getPreferentialAudit() != 0) {
-                promoApp.setPreferentialAuditName("倍稽核");  //倍稽核
+                promoApp.setPreferentialAuditName("倍稽核");  // 倍稽核
             }else {
                 promoApp.setPreferentialAuditName("免稽核");
             }
@@ -616,6 +620,7 @@ public class MineAppController extends BaseMineController {
 
         vo = CommonApp.buildAppModelVo(bettingDataApp);
         return JsonTool.toJson(vo);
+
     }
 
     @RequestMapping("/goAddNoticeSite")
@@ -636,6 +641,28 @@ public class MineAppController extends BaseMineController {
         }
         return JsonTool.toJson(map);
     }
+
+
+//    @RequestMapping("/advisoryMessage")
+//    @ResponseBody
+//    public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
+//        AppModelVo appModelVo = new AppModelVo();
+//
+//        if (listVo == null) {
+//            listVo = new VPlayerAdvisoryListVo();
+//        }
+//
+//
+//        //提问内容+未读数量
+//        Map<String, Object> map = MapTool.newHashMap();
+//        listVo = this.unReadCount(listVo, map);
+//
+//        listVo.getResult();
+//
+//        return "";
+//    }
+
+
 
     @RequestMapping("/addNoticeSite")
     @ResponseBody
@@ -699,18 +726,28 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getBettingDetails")
     @ResponseBody
     public String getBettingDetails(Integer id) {
-        PlayerGameOrderVo vo = new PlayerGameOrderVo();
-        vo.getSearch().setId(id);
-        vo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(vo);
-//        如果不是这个玩家投注的订单，则无视该笔订单
-        if (vo.getResult() == null || vo.getResult().getPlayerId() != SessionManager.getUserId().intValue()) {
-            vo.setResult(null);
-            vo.setResultArray(null);
-        }
-        AppModelVo appModelVo = CommonApp.buildAppModelVo(buildBettingDetail(vo));
-        appModelVo.setVersion(appVersion);
+//        PlayerGameOrderVo vo = new PlayerGameOrderVo();
+//        vo.getSearch().setId(id);
+//        vo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(vo);
+////        如果不是这个玩家投注的订单，则无视该笔订单
+//        if (vo.getResult() == null || vo.getResult().getPlayerId() != SessionManager.getUserId().intValue()) {
+//            vo.setResult(null);
+//            vo.setResultArray(null);
+//        }
+//        AppModelVo appModelVo = CommonApp.buildAppModelVo(buildBettingDetail(vo));
+//        appModelVo.setVersion(appVersion);
+        PlayerActivityMessage message = new PlayerActivityMessage();
+        message.setSearchId(String.valueOf(id));
+        StringBuffer sb = new StringBuffer();
 
-        return JsonTool.toJson(appModelVo);
+        String url = "test01.ccenter.test.so/fund/betting/gameRecordDetail.html?";
+
+        Map map = MapTool.newHashMap();
+        if (StringTool.isNotBlank(message.getSearchId())) {
+            map.put("url", sb.append(url).append(message.getSearchId()));
+        }
+
+        return JsonTool.toJson(map);
     }
 
     /**
@@ -1332,6 +1369,61 @@ public class MineAppController extends BaseMineController {
             return false;
         }
         return true;
+    }
+
+    private VPlayerAdvisoryListVo unReadCount(VPlayerAdvisoryListVo listVo, Map map) {
+        //系统消息-未读数量
+        VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
+        Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
+        map.put("length", length);
+        //玩家咨询-未读数量
+        listVo.setSearch(null);
+        listVo.getSearch().setSearchType("player");
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
+        listVo.getSearch().setPlayerDelete(false);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
+        Integer advisoryUnReadCount = 0;
+        String tag  = "";
+        //所有咨询数据
+        for (VPlayerAdvisory obj : listVo.getResult()) {
+            //查询回复表每一条在已读表是否存在
+            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
+            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
+                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+                readVo.setResult(new PlayerAdvisoryRead());
+                readVo.getSearch().setUserId(SessionManager.getUserId());
+                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
+                //不存在未读+1，标记已读咨询Id
+                if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
+                    advisoryUnReadCount++;
+                    tag+=replay.getPlayerAdvisoryId().toString()+",";
+                }
+            }
+        }
+        //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
+        String [] tags = tag.split(",");
+        for(VPlayerAdvisory vo:listVo.getResult()){
+            for(int i=0;i<tags.length;i++){
+                if(tags[i]!=""){
+                    VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
+                    pa.getSearch().setId(Integer.valueOf(tags[i]));
+                    VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
+                    if(vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())){
+                        vo.setIsRead(false);
+                    }
+                }
+            }
+        }
+        Long sysMessageUnReadCount = null ;
+        advisoryUnReadCount = 0;
+        sysMessageUnReadCount = length;
+        map.put("sysMessageUnReadCount", sysMessageUnReadCount);
+        map.put("advisoryUnReadCount", advisoryUnReadCount);
+        return listVo;
     }
 }
 
