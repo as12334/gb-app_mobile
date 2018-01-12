@@ -34,6 +34,11 @@ public interface AppConstant {
     int sysNoticeMinTime = -29; //系统最小时间
 
     int four = 4;
+    int six = 6;
 
     float oneF = 1F;
+
+    int RECOVERY_TIME_INTERVAL = 10;//一键回收按钮时间间隔，以秒为单位
+
+    int API_RECOVERY_TIME_INTERVAL = 3;//单个api回收按钮时间间隔，以秒为单位
 }
