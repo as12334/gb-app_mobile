@@ -931,6 +931,13 @@ public class MineAppController extends BaseMineController {
     public String getGameNoticeDetail(VSystemAnnouncementListVo listVo){
         AppModelVo vo = new AppModelVo();
 
+        if(listVo.getSearch().getId() == null){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
         AppGameNotice gameNotice = getAppGameNoticeDetail(listVo);
         vo.setVersion(appVersion);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
