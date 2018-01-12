@@ -49,6 +49,7 @@ import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
+import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -244,7 +245,51 @@ public class MineAppController extends BaseMineController {
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
 
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        vo = CommonApp.buildAppModelVo(vPreferentialRecodeListVo);
+
+        List<MyPromoApp> myPromoApps = ListTool.newArrayList();
+        vPreferentialRecodeListVo.getResult().get(0).getApplyTime();  //时间
+        List<VPreferentialRecode> vPreferentialRecodeList= vPreferentialRecodeListVo.getResult();
+        Integer userId = SessionManager.getUser().getId();
+        for (VPreferentialRecode recode: vPreferentialRecodeList) {
+
+            MyPromoApp promoApp = new MyPromoApp();
+
+            if (userId != null) {
+                promoApp.setId(recode.getId());
+            }
+            promoApp.setApplyTime(recode.getApplyTime());
+            if (recode.getPreferentialAudit() != null && recode.getPreferentialAudit() != 0) {
+                promoApp.setPreferentialAuditName("倍稽核");  //倍稽核
+            }else {
+                promoApp.setPreferentialAuditName("免稽核");
+            }
+            promoApp.setPreferentialAudit(recode.getPreferentialAudit());
+            promoApp.setActivityName(recode.getActivityName());
+            promoApp.setPreferentialValue(recode.getPreferentialValue());
+            promoApp.setUserId(userId);
+            promoApp.setCheckState(recode.getCheckState());
+            String checkState = recode.getCheckState();
+            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equalsIgnoreCase("2", checkState)
+                    || StringTool.equalsIgnoreCase("4", checkState)) {
+                promoApp.setCheckStateName("已发放");
+            }else if (StringTool.equalsIgnoreCase("1", checkState)) {
+                promoApp.setCheckStateName("待审核");
+            }else if (StringTool.equalsIgnoreCase("0", checkState)) {
+                promoApp.setCheckStateName("进行中");
+            }
+
+            promoApp.setCheckState(recode.getCheckState());
+
+            myPromoApps.add(promoApp);
+
+        }
+
+
+        Map<String, Object> map = MapTool.newHashMap();
+        map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
+        map.put("list", myPromoApps);
+
+        vo = CommonApp.buildAppModelVo(map);
         return JsonTool.toJson(vo);
 
     }
@@ -294,6 +339,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String addCard() {
         AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
 
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
@@ -310,6 +356,29 @@ public class MineAppController extends BaseMineController {
             appModelVo.setCode(AppErrorCodeEnum.showBankCardInfomation.getCode());
             appModelVo.setMsg(AppErrorCodeEnum.showBankCardInfomation.getMsg());
             appModelVo.setData(userBankcard);
+        }
+        return JsonTool.toJson(appModelVo);
+    }
+
+
+    @RequestMapping("submitBankCard")
+    @ResponseBody
+    public String submitBankCard(UserBankcardVo vo) {
+        AppModelVo appModelVo = new AppModelVo();
+        String userName = SessionManagerCommon.getUserName();
+        UserBankcard userBankcard = vo.getResult();
+        if (checkCardIsExistsByUserId(vo)) {
+            appModelVo.setCode(AppErrorCodeEnum.hasbibindingBankCard.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.hasbibindingBankCard.getMsg());
+            appModelVo.setError(DEFAULT_TIME);
+        }
+        if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
+            vo.getResult().setBankcardMasterName(SessionManager.getUser().getRealName());
+        }
+        vo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(vo);
+        SessionManagerCommon.refreshUser();
+        if (vo.isSuccess()) {
+            appModelVo = CommonApp.buildAppModelVo("");
         }
         return JsonTool.toJson(appModelVo);
     }
@@ -344,7 +413,7 @@ public class MineAppController extends BaseMineController {
         final String BITCOIN = "bitcoin";
         UserBankcardVo bankcardVo = new UserBankcardVo();
         bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
-        bankcardVo.getResult().setBankcardNumber("abcdefghiklmnopqrstuvwxyz");
+        bankcardVo.getResult().setBankcardNumber(bankcardNumber);
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(AppConstant.appVersion);
         if (checkCardIsExistsByUserId(bankcardVo)) {
