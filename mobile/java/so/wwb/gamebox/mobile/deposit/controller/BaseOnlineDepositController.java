@@ -312,7 +312,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             }
             model.addAttribute("msg", msg);
         }
-        return submitReturn(model, unCheckSuccess, pop, rechargeAmount, null);
+        return submitReturn(model, unCheckSuccess, pop, rechargeAmount, "");
     }
 
     private String submitReturn(Model model, boolean unCheckSuccess, boolean pop, Double rechargeAmount, String tips) {

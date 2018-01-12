@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.deposit.form.OnlineScanDeposit2Form;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -86,7 +87,8 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
         model.addAttribute("currency", getCurrencySign());
         model.addAttribute("username", SessionManager.getUserName());
         //验证规则
-        model.addAttribute("validateRule", JsRuleCreator.create(OnlineScanDepositForm.class));
+        boolean isRandomAmount = payAccountForScan.getRandomAmount() == null ? false : payAccountForScan.getRandomAmount();
+        model.addAttribute("validateRule", JsRuleCreator.create(isRandomAmount?OnlineScanDeposit2Form.class:OnlineScanDepositForm.class));
         model.addAttribute("rank", rank);
         model.addAttribute("command", new PayAccountVo());
         return "/deposit/ScanCode";
@@ -98,4 +100,19 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     public Map<String, Object> ScanCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result) {
         return commonDeposit(playerRechargeVo, result);
     }
+
+    /**
+     * 开启随机额度时提交方法
+     * @param playerRechargeVo
+     * @param form
+     * @param result
+     * @return
+     */
+    @RequestMapping("/scanRandomCodeSubmit")
+    @ResponseBody
+    @Token(valid = true)
+    public Map<String, Object> scanRandomCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDeposit2Form form, BindingResult result) {
+        return commonDeposit(playerRechargeVo, result);
+    }
+
 }

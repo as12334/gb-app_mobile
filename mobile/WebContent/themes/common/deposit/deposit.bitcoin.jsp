@@ -9,10 +9,10 @@
             <h1 class="mui-title">${views.deposit_auto['比特币支付']}</h1>
         </header>
         <form id="bitcoinForm">
-            <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0!important"':''}>
+            <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper mui-scroll2" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <c:choose>
                 <c:when test="${not empty payAccount}">
-                <div class="mui-scroll2 main-coutent">
+                <div class="mui-scroll main-coutent">
                     <div id="validateRule" style="display: none">${validateRule}</div>
                     <gb:token/>
                     <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
@@ -117,13 +117,13 @@
                     </div>
                 </div>
             </div>
-            </c:when>
-            <c:otherwise>
+        </c:when>
+        <c:otherwise>
             <div class="mui-scroll2">
                 <div class="mui-row">${views.deposit_auto['请确认是否有收款账号']}</div>
             </div>
-            </c:otherwise>
-            </c:choose>
+        </c:otherwise>
+      </c:choose>
     </div>
     <div class="mui-off-canvas-backdrop"></div>
     </form>

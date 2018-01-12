@@ -9,7 +9,7 @@
             <input type="hidden" name="result.rechargeType" value="${scanPay}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <c:set var="onlinePayMax" value="${empty payAccountForScan.singleDepositMax?99999999:payAccountForScan.singleDepositMax}"/>
-            <c:set var="onlinePayMin" value="${empty payAccountForScan.singleDepositMin?1:payAccountForScan.singleDepositMin}"/>
+            <c:set var="onlinePayMin" value="${empty payAccountForScan.singleDepositMin?0.01:payAccountForScan.singleDepositMin}"/>
             <input type="hidden" class="onlinePayMax" value="${onlinePayMax}" name="onlinePayMax"/>
             <input type="hidden" class="onlinePayMin" value="${onlinePayMin}" name="onlinePayMin"/>
             <input type="hidden" name="activityId" id="activityId"/>
@@ -17,7 +17,7 @@
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
                     <label>${views.deposit_auto['金额']}</label>
-                    <div class="ct">
+                    <%--<div class="ct">--%>
                         <p class="text-gray-light">
                             <c:if test="${payAccountForScan.randomAmount eq true}">
                                 <% int randomCash = (int)(Math.random()*88+11);%>
@@ -27,7 +27,7 @@
                             <input type="text" value="" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
                                    name="result.rechargeAmount" id="result.rechargeAmount" autocomplete="off" style="display:inline-block;width:50%;text-align: right;float:right;height:40px;padding-right:8px;"/>
                         </p>
-                    </div>
+                   <%-- </div>--%>
                 </div>
                 <!--随机额度提示-->
                 <c:if test="${payAccountForScan.randomAmount eq true}">
@@ -38,11 +38,6 @@
                     </div>
                 </c:if>
                 <%@include file="./ChooseAmount.jsp"%>
-            </div>
-            <div class="mui-row">
-                <div class="gb-form-foot bank-pay-btn">
-                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['下一步']}</button>
-                </div>
             </div>
         </form>
     </c:when>
