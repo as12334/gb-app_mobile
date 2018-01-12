@@ -56,6 +56,8 @@ public class PromoController {
     private static final String APPLIED = "apply.tip.next";
     private static final String PARTICIPATION = "apply.tip.doing";
     private static final String APPLY_FULL = "apply.tip.vacancies";
+    private static final String APPLY_FAIL_TITLE = "apply.tip.fail.title";
+    private static final String APPLY_HAVE_TITLE = "apply.tip.have.title";
 
     /**
      * 我的优惠记录
@@ -190,19 +192,21 @@ public class PromoController {
         activityMessage.setRegisterTime(SessionManager.getUser().getCreateTime());
         if (activityMessage.getAcount() > 0) {
             if (activityMessage.getCompareActivityTime() || activityMessage.getCompareRegisterAndActivityTime()) {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED));
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
             } else {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, REGIST_APPLIED));
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, REGIST_APPLIED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
                /* map.put("msg", LocaleTool.tranMessage("player","已申请"));*/
             }
         } else {
             if ((Boolean) activityMessage.getRegistSendEffectiveTime().get("flag")) {
                 apply(vPlayerActivityMessageVo, map);
             } else {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, "apply.tip.qualified",
+                setApplyFailReturnStates(map,
+                        LocaleTool.tranMessage(Module.ACTIVITY, "apply.tip.qualified",
                         ActivityEffectiveTime.getEffectiveTime(activityMessage.getEffectiveTime()),
                         LocaleDateTool.formatDate(SessionManager.getUser().getCreateTime(),
-                                CommonContext.getDateFormat().getDAY_SECOND(), CommonContext.get().getSiteTimeZone())));
+                        CommonContext.getDateFormat().getDAY_SECOND(), CommonContext.get().getSiteTimeZone())),
+                        LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
             }
         }
     }
@@ -211,10 +215,10 @@ public class PromoController {
         LOG.debug("优惠活动申请：id：{0},code：{1}", activityMessage.getId(), activityMessage.getCode());
         setPlayerApplyCountAndTIime(activityMessage);
         if (activityMessage.getCompareActivityTime()) {
-            setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED));
+            setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
         } else {
             if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLIED));
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLIED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
             } else {
                 apply(vPlayerActivityMessageVo, map);
             }
@@ -237,17 +241,17 @@ public class PromoController {
         if (placesNumber > 0) {
             if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
 
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, PARTICIPATION));//参与中
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, PARTICIPATION),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));//参与中
             } else {
                 if (activityMessage.getCountPlaceNumber() >= placesNumber) {
-                    setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FULL));
+                    setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FULL),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
                 } else {
                     apply(vPlayerActivityMessageVo, map);
                 }
             }
         } else {
             if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY,APPLIED));//已申请
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY,APPLIED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));//已申请
             } else {
                 apply(vPlayerActivityMessageVo, map);
             }
@@ -357,9 +361,10 @@ public class PromoController {
         activityMessage.setApplyTime((Timestamp) result.get("applytime"));
     }
 
-    private void setApplyFailReturnStates(Map map, String msg) {
+    private void setApplyFailReturnStates(Map map, String msg,String title) {
         map.put("msg", msg);
         map.put("state", false);
+        map.put("title",title);
     }
 
     private String getPlayerActivitiesIdsJsonByRankId(Integer rankId, HttpServletRequest request) {
