@@ -48,6 +48,7 @@ import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
+import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
@@ -261,6 +262,131 @@ public class BaseMineController {
         infoApp.setAssets(queryPlayerAssets(listVo, userId));
         infoApp.setUsername(player.getUsername());
         return infoApp;
+    }
+
+    /**
+     * 一键回收
+     * @return
+     */
+    protected Map appRecovery(){
+        PlayerApiVo playerApiVo = new PlayerApiVo();
+        playerApiVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        Map map = doRecovery(playerApiVo);
+        return map;
+    }
+
+    /**
+     * 回收资金需赋值条件
+     *
+     * @param playerApiVo
+     * @return
+     */
+    public Map doRecovery(PlayerApiVo playerApiVo) {
+        Integer apiId = playerApiVo.getSearch().getApiId();
+        //是否允许回收资金
+        Map map = isAllowRecovery(apiId);
+        if (MapTool.isNotEmpty(map) && !MapTool.getBooleanValue(map, "isSuccess")) {
+            return map;
+        }
+        if (StringTool.isBlank(playerApiVo.getOrigin())) {
+            playerApiVo.setOrigin(TransactionOriginEnum.PC.getCode());
+        }
+        SysUser user = SessionManagerBase.getUser();
+        SysUserVo sysUserVo = new SysUserVo();
+        sysUserVo._setSiteId(playerApiVo._getSiteId());
+        sysUserVo.setResult(user);
+        //回收单个玩家所有api
+        if (apiId == null) {
+            SessionManagerCommon.setUserRecoveryAllApiTime(new Date());
+            ServiceSiteTool.freeTranferServcice().transferBackByTransRecord(sysUserVo, playerApiVo.getOrigin());
+        } else { //回收单个玩家单个api
+            SessionManagerCommon.setUserRecoveryApiTime(new Date());
+            return ServiceSiteTool.freeTranferServcice().recoverMoney(sysUserVo, apiId, playerApiVo.getOrigin());
+        }
+        return getMsg(true, null, null);
+    }
+
+    /**
+     * 获取消息提示
+     *
+     * @param isSuccess
+     * @param msgConst
+     * @return
+     */
+    protected Map<String, Object> getMsg(boolean isSuccess, String msgConst, String code) {
+        HashMap<String, Object> map = new HashMap(2,1f);
+        map.put("isSuccess", isSuccess);
+        if (StringTool.isNotBlank(msgConst) && StringTool.isNotBlank(code)) {
+            map.put("msg", LocaleTool.tranMessage(code, msgConst));
+        }
+        return map;
+    }
+
+    private Map<String, Object> isAllowRecovery(Integer apiId) {
+        if (!SessionManagerCommon.isAutoPay()) {
+            return getMsg(false, MessageI18nConst.IS_NOT_AUTO_PAY, Module.FUND_TRANSFER.getCode());
+        }
+        //回收时间间隔是否符合
+        if (!isAllowRecoveryTimeInterval(apiId)) {
+            return getMsg(false, MessageI18nConst.RECOVERY_TIME_FREQUENTLY, Module.FUND_TRANSFER.getCode());
+        }
+        //api状态回收是否符合
+        if (apiId != null && !isAllowRecoveryApiStatus(apiId)) {
+            return getMsg(false, MessageI18nConst.RECOVERY_API_MAINTAIN, Module.FUND_TRANSFER.getCode());
+        }
+        //模拟账号且是自主api可用,其他试玩模式下不支持转账
+        if (SessionManagerCommon.getDemoModelEnum() != null) {
+            if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(SessionManagerCommon.getDemoModelEnum()) && (
+                    apiId == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
+                            apiId == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+            } else {
+                return getMsg(false, MessageI18nConst.RECOVERY_DEMO_UNSUPPORTED, Module.FUND_TRANSFER.getCode());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 是否允许回收
+     *
+     * @param apiId
+     * @return
+     */
+    public boolean isAllowRecoveryApiStatus(Integer apiId) {
+        if (apiId == null)
+            return false;
+        Map<String, Api> apiMap = Cache.getApi();
+        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
+        Api api = apiMap.get(apiId.toString());
+        SiteApi siteApi = siteApiMap.get(apiId.toString());
+        if (api == null || siteApi == null) {
+            return false;
+        }
+        if (GameStatusEnum.MAINTAIN.getCode().equals(api.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(siteApi.getSystemStatus()))
+            return false;
+        return true;
+    }
+
+    /**
+     * 回收是否允许时间间隔
+     *
+     * @return
+     */
+    private boolean isAllowRecoveryTimeInterval(Integer apiId) {
+        Date date = SessionManagerBase.getDate().getNow();
+        if (apiId == null) {
+            Date lastRecoveryTime = SessionManagerCommon.getUserRecoveryAllApiTime();
+            if (lastRecoveryTime == null) {
+                return true;
+            }
+            return DateTool.secondsBetween(date, lastRecoveryTime) > RECOVERY_TIME_INTERVAL;
+        } else {
+            Date lastRecoveryTime = SessionManagerCommon.getUserRecoveryApiTime();
+            if (lastRecoveryTime == null) {
+                return true;
+            }
+            return DateTool.secondsBetween(date, lastRecoveryTime) > API_RECOVERY_TIME_INTERVAL;
+        }
     }
 
     protected void getAppUserInfo(HttpServletRequest request, SysUser user,UserInfoApp userInfoApp) {
