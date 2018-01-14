@@ -2,7 +2,7 @@
 <%@ include file="/include/include.inc.jsp" %>
 
 <body class="gb-theme mine-page no-backdrop">
-<div id="offCanvasWrapper" class="mui-draggable mui-off-canvas-wrap">
+<div id="offCanvasWrapper" class="mui-draggable"><%-- mui-off-canvas-wrap --%>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
