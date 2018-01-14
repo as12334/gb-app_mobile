@@ -33,6 +33,7 @@ public enum AppErrorCodeEnum{
     pwdUpdateError(309,"修改密码失败"),
     gameExist(400,"游戏不存在"),
     updateStatusError(401,"更新失败"),
+    autoPay(402,"非免转不能一键回收"),
     ;
 
     private int code;

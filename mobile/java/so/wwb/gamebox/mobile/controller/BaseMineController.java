@@ -105,6 +105,7 @@ public class BaseMineController {
     protected void getMineLinkInfo(Map<String, Object> userInfo, HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
+        userInfo.put("autoPay",SessionManagerCommon.isAutoPay());
         userInfo.put("isBit", ParamTool.isBit());//是否存在比特币
         userInfo.put("isCash", ParamTool.isCash());//是否存在银行卡
         try {

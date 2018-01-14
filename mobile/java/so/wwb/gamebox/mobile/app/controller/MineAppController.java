@@ -1331,6 +1331,12 @@ public class MineAppController extends BaseMineController {
     public String recovery(HttpServletRequest request){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
+        if(!SessionManagerCommon.isAutoPay()){
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(AppErrorCodeEnum.autoPay.getMsg());
+            vo.setCode(AppErrorCodeEnum.autoPay.getCode());
+            return JsonTool.toJson(vo);
+        }
         Map map = appRecovery();
         if(map.get("isSuccess") == null && MapTool.getBoolean(map, "isSuccess") == false){
             vo.setError(DEFAULT_TIME);
