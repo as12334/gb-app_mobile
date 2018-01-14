@@ -893,7 +893,7 @@ public class MineAppController extends BaseMineController {
         message.setSearchId(String.valueOf(id));
         StringBuffer sb = new StringBuffer();
 
-        String url = "test01.ccenter.test.so/fund/betting/gameRecordDetail.html?";
+        String url = "/fund/betting/gameRecordDetail.html?";
 
         Map map = MapTool.newHashMap();
         if (StringTool.isNotBlank(message.getSearchId())) {
