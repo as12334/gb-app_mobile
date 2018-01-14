@@ -9,7 +9,7 @@
             <input type="hidden" name="result.rechargeType" value="${scanPay}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <c:set var="onlinePayMax" value="${empty payAccountForScan.singleDepositMax?99999999:payAccountForScan.singleDepositMax}"/>
-            <c:set var="onlinePayMin" value="${empty payAccountForScan.singleDepositMin?0.01:payAccountForScan.singleDepositMin}"/>
+            <c:set var="onlinePayMin" value="${empty payAccountForScan.singleDepositMin || payAccountForScan.singleDepositMin <= 0 ?0.01:payAccountForScan.singleDepositMin}"/>
             <input type="hidden" class="onlinePayMax" value="${onlinePayMax}" name="onlinePayMax"/>
             <input type="hidden" class="onlinePayMin" value="${onlinePayMin}" name="onlinePayMin"/>
             <input type="hidden" name="activityId" id="activityId"/>

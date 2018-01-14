@@ -8,7 +8,7 @@
             <div id="validateRule" style="display: none">${validateRule}</div>
             <c:set var="bank" value="${bankList[0]['value']}"/>
             <c:set var="account" value="${payAccountMap[bank]}"/>
-            <c:set var="onlinePayMin" value="${empty account.singleDepositMin?0.01:account.singleDepositMin}"/>
+            <c:set var="onlinePayMin" value="${empty account.singleDepositMin || account.singleDepositMin <= 0 ? 0.01 : account.singleDepositMin}"/>
             <c:set var="onlinePayMax" value="${empty account.singleDepositMax?99999999:account.singleDepositMax}"/>
             <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="${onlinePayMin}"/>
             <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="${onlinePayMax}"/>
