@@ -52,6 +52,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <input type="hidden" id="ImageQrCodeUrl" value="${payAccount.qrCodeUrl}"/>
                                 <c:if test="${not empty payAccount.qrCodeUrl}">
                                     <div class="wechat-code">
                                         <div class="mui-row">

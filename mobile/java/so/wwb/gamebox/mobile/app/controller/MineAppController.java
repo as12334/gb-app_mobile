@@ -588,6 +588,8 @@ public class MineAppController extends BaseMineController {
             if (StringTool.equalsIgnoreCase("withdrawals", recordDetailApp.getTransactionType())) {//取款
 
                 recordDetailApp.setBankCode((String) map.get("bankCode"));
+                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + recordDetailApp.getBankCode());
+                recordDetailApp.setBankCodeName(bankName);
                 recordDetailApp.setDeductFavorable(withdrawVo.getResult().getDeductFavorable());//扣除优惠
                 recordDetailApp.setPoundage(withdrawVo.getResult().getCounterFee());  //手续费
                 recordDetailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
