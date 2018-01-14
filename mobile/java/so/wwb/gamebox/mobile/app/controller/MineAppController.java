@@ -242,6 +242,11 @@ public class MineAppController extends BaseMineController {
         return vo;
     }
 
+    /**
+     *　我的优惠记录
+     * @param vPreferentialRecodeListVo
+     * @return
+     */
     @RequestMapping("/getMyPromo")
     @ResponseBody
     public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo) {
@@ -309,6 +314,11 @@ public class MineAppController extends BaseMineController {
 
     }
 
+    /**
+     * 获取用户信息
+     * @param request
+     * @return
+     */
     @RequestMapping("/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
@@ -334,6 +344,11 @@ public class MineAppController extends BaseMineController {
     }
 
 
+    /**
+     * 一键刷新
+     * @param request
+     * @return
+     */
     @RequestMapping("/refresh")
     @ResponseBody
     public String refresh(HttpServletRequest request) {
@@ -348,6 +363,10 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 跳转和获取用户银行卡信息
+     * @return
+     */
     @RequestMapping("/addCard")
     @ResponseBody
     public String addCard() {
@@ -374,6 +393,11 @@ public class MineAppController extends BaseMineController {
     }
 
 
+    /**
+     * 提交银行卡信息
+     * @param vo
+     * @return
+     */
     @RequestMapping("/submitBankCard")
     @ResponseBody
     public String submitBankCard(UserBankcardVo vo) {
@@ -396,6 +420,10 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
+    /**
+     * 跳转和获取用户比特币信息，（暂时废弃）
+     * @return
+     */
     @RequestMapping("/addBtc")
     @ResponseBody
     public String addBtc() {
@@ -419,6 +447,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 提交比特币信息
+     * @param bankcardNumber
+     * @return
+     */
     @RequestMapping("/submitBtc")
     @ResponseBody
     public String submitBtc(String bankcardNumber) {
@@ -454,7 +487,11 @@ public class MineAppController extends BaseMineController {
     }
 
 
-
+    /**
+     * 获取资金记录列表
+     * @param listVo
+     * @return
+     */
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord(VPlayerTransactionListVo listVo) {
@@ -515,6 +552,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(modelVo);
     }
 
+    /**
+     * 获取资金记录详情
+     * @param searchId
+     * @return
+     */
     @RequestMapping("/getFundRecordDetails")
     @ResponseBody
     public String getFundRecordDetails(Integer searchId) {
@@ -599,6 +641,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
+    /**
+     * 获取投注记录列表
+     * @param listVo
+     * @return
+     */
     @RequestMapping("/getBettingList")
     @ResponseBody
     public String getBettingList(PlayerGameOrderListVo listVo) {
@@ -635,6 +682,10 @@ public class MineAppController extends BaseMineController {
 
     }
 
+    /**
+     * 初始化跳转站点消息－发送消息－获取类型
+     * @return
+     */
     @RequestMapping("/goAddNoticeSite")
     @ResponseBody
     public String goAddNoticeSite() {
@@ -654,7 +705,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(map);
     }
 
-
+    /**
+     * 获取站点消息－我的消息　所有发送的问题
+     * @param listVo
+     * @return
+     */
     @RequestMapping("/advisoryMessage")
     @ResponseBody
     public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
@@ -677,6 +732,7 @@ public class MineAppController extends BaseMineController {
             String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone());
             messageApp.setAdvisoryTime(time);
             messageApp.setReplyTitle(advisory.getReplyTitle());
+            messageApp.setId(advisory.getId());
 
             messageAppList.add(messageApp);
 
@@ -837,7 +893,7 @@ public class MineAppController extends BaseMineController {
         message.setSearchId(String.valueOf(id));
         StringBuffer sb = new StringBuffer();
 
-        String url = "test01.ccenter.test.so/fund/betting/gameRecordDetail.html?";
+        String url = "/fund/betting/gameRecordDetail.html?";
 
         Map map = MapTool.newHashMap();
         if (StringTool.isNotBlank(message.getSearchId())) {
