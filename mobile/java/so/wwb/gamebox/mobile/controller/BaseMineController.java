@@ -1351,6 +1351,10 @@ public class BaseMineController {
         return ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(listVo);
     }
 
+    /**
+     * 站点消息-->系统消息
+     * @return
+     */
     protected Map getAppSiteSysNotice(){
         VNoticeReceivedTextListVo listVo = new VNoticeReceivedTextListVo();
         listVo.getSearch().setReceiverId(SessionManager.getUserId());
@@ -1374,6 +1378,12 @@ public class BaseMineController {
         return map;
     }
 
+    /**
+     * 系统信息详情
+     * @param noticeReceiveVo
+     * @param request
+     * @return
+     */
     protected AppSystemNotice getAppSiteNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
         List list = new ArrayList();
         list.add(noticeReceiveVo.getSearch().getId());
