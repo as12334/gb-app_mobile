@@ -17,6 +17,7 @@ import org.soul.commons.support._Module;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.NoticeVo;
+import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -1073,11 +1074,11 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping("/getSiteSysNotice")
     @ResponseBody
-    public String getSiteSysNotice(){
+    public String getSiteSysNotice(VNoticeReceivedTextListVo listVo){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        Map map = getAppSiteSysNotice();
+        Map map = getAppSiteSysNotice(listVo);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
@@ -1127,7 +1128,7 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping("/getSiteSysNoticeDetail")
     @ResponseBody
-    public String getSiteSysNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+    public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo,NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
         if(noticeReceiveVo.getSearch().getId() == null){
@@ -1137,7 +1138,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        AppSystemNotice sysNotice = getAppSiteNoticeDetail(noticeReceiveVo,request);
+        AppSystemNotice sysNotice = getAppSiteNoticeDetail(vReceivedVo,noticeReceiveVo,request);
         vo.setData(sysNotice);
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setCode(AppErrorCodeEnum.Success.getCode());

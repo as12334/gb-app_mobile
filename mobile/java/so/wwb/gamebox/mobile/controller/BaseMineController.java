@@ -1230,7 +1230,7 @@ public class BaseMineController {
         List<AppSystemNotice> sysNotices = ListTool.newArrayList();
         for (VSystemAnnouncement sysAnnounce : vListVo.getResult()){
             AppSystemNotice sysNotice = new AppSystemNotice();
-            sysNotice.setId(vListVo.getSearchId(sysAnnounce.getId()));
+            sysNotice.setSearchId(vListVo.getSearchId(sysAnnounce.getId()));
             sysNotice.setContent(sysAnnounce.getShortContentText50());
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
             sysNotice.setLink(SYSTEM_NOTICE_LINK + "?searchId="+vListVo.getSearchId(sysAnnounce.getId()));
@@ -1331,7 +1331,6 @@ public class BaseMineController {
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
         AppGameNotice gameNotice = new AppGameNotice();
         for(VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()){
-            gameNotice.setId(sysAnnounce.getId().toString());
             gameNotice.setContext(sysAnnounce.getContent());
             gameNotice.setPublishTime(sysAnnounce.getPublishTime());
         }
@@ -1355,8 +1354,7 @@ public class BaseMineController {
      * 站点消息-->系统消息
      * @return
      */
-    protected Map getAppSiteSysNotice(){
-        VNoticeReceivedTextListVo listVo = new VNoticeReceivedTextListVo();
+    protected Map getAppSiteSysNotice(VNoticeReceivedTextListVo listVo){
         listVo.getSearch().setReceiverId(SessionManager.getUserId());
         listVo = ServiceTool.noticeService().fetchReceivedSiteMsg(listVo);
         List<AppSystemNotice> sysNotices = ListTool.newArrayList();
@@ -1365,7 +1363,10 @@ public class BaseMineController {
             text.setTitle(text.getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
 
             AppSystemNotice sysNotice = new AppSystemNotice();
-            sysNotice.setId(listVo.getSearchId(text.getId()));
+            if(text.getId() != null){
+                sysNotice.setId(text.getId().toString());
+            }
+            sysNotice.setSearchId(listVo.getSearchId(text.getId()));
             sysNotice.setTitle(text.getShortTitle50());
             sysNotice.setPublishTime(text.getReceiveTime());
             sysNotice.setLink(SITE_SYSTEM_NOTICE + "?searchId=" + listVo.getSearchId(text.getId()));
@@ -1384,17 +1385,24 @@ public class BaseMineController {
      * @param request
      * @return
      */
-    protected AppSystemNotice getAppSiteNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+    protected AppSystemNotice getAppSiteNoticeDetail(VNoticeReceivedTextVo vo,NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+        //标记为已读
         List list = new ArrayList();
         list.add(noticeReceiveVo.getSearch().getId());
         noticeReceiveVo.setIds(list);
         ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
 
-        VNoticeReceivedTextVo vo = new VNoticeReceivedTextVo();
+        //查询详情信息
         vo = ServiceTool.noticeService().fetchReceivedSiteMsgDetail(vo);
-        vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
-        vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{sitename\\}",SessionManager.getSiteName(request)));
-        vo.getResult().setTitle(vo.getResult().getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        if(StringTool.isNotBlank(vo.getResult().getContent())){
+            vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        }
+        if(StringTool.isNotBlank(vo.getResult().getContent())){
+            vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{sitename\\}",SessionManager.getSiteName(request)));
+        }
+        if(StringTool.isNotBlank(vo.getResult().getTitle())){
+            vo.getResult().setTitle(vo.getResult().getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        }
 
         AppSystemNotice sysNotice = new AppSystemNotice();
         sysNotice.setTitle(vo.getResult().getTitle());
