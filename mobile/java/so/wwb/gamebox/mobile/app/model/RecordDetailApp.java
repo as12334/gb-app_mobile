@@ -22,11 +22,14 @@ public class RecordDetailApp {
     private String transactionWayName; // 资金类型名称
     private String username;        //账号
     private Double poundage;  //手续费
+    private String poundageName; // 是否免手续费（中文汉字）
     private String realName; //真实姓名
 
     private String transferOut; // 转出
     private String transferInto; //转入
     private String bankCode; //取款 银行code
+    private String bankCodeName; // 银行名称
+
     private String bitAmount; //比特币
     /**
      * 账号
@@ -236,5 +239,13 @@ public class RecordDetailApp {
 
     public void setBitAmount(String bitAmount) {
         this.bitAmount = bitAmount;
+    }
+
+    public String getPoundageName() {
+        return poundageName;
+    }
+
+    public void setPoundageName(String poundageName) {
+        this.poundageName = poundageName;
     }
 }
