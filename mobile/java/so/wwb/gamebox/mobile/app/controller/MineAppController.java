@@ -339,17 +339,9 @@ public class MineAppController extends BaseMineController {
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
         }
-        Integer userId = SessionManager.getUserId();
-        PlayerApiListVo listVo = initPlayerApiListVo(userId);
-        VUserPlayer player = getVPlayer(userId);
+        UserInfoApp userInfo = appRefresh(request);
+        vo = CommonApp.buildAppModelVo(userInfo);
 
-        UserInfoApp infoApp = new UserInfoApp();
-        infoApp.setApis(getSiteApis(listVo, request, true));
-        infoApp.setCurrSign(player.getCurrencySign());
-        infoApp.setAssets(queryPlayerAssets(listVo, userId));
-        infoApp.setUsername(player.getUsername());
-
-        vo = CommonApp.buildAppModelVo(infoApp);
         return JsonTool.toJson(vo);
     }
 
