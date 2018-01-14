@@ -1125,6 +1125,44 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 删除系统信息
+     * @param noticeVo
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/deleteSiteSysNotice")
+    @ResponseBody
+    public String deleteSiteSysNotice(NoticeReceiveVo noticeVo, String ids){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(StringTool.isBlank(ids)){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        String[] idArray = ids.split(SplitRegex);
+        List<Integer> list = new ArrayList();
+        for (String id : idArray) {
+            list.add(Integer.valueOf(id));
+        }
+        noticeVo.setIds(list);
+        boolean bool = ServiceTool.noticeService().deleteSiteMsg(noticeVo);
+        if(!bool){
+            vo.setError(DEFAULT_TIME);
+            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
+            vo.setMsg(AppErrorCodeEnum.updateStatusError.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
      * 站点消息-->系统消息详情
      * @return
      */
