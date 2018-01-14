@@ -319,8 +319,7 @@ public class MineAppController extends BaseMineController {
 
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> userInfoMap = MapTool.newHashMap();
-        map.put("isBit", ParamTool.isBit());//是否存在比特币
-        map.put("isCash", ParamTool.isCash());//是否存在银行卡
+
         map.put("link", setLink());//链接地址
         getMineLinkInfo(userInfoMap, request);//用户金额信息
         map.put("user", userInfoMap);
@@ -583,6 +582,7 @@ public class MineAppController extends BaseMineController {
 
             if (StringTool.equalsIgnoreCase("deposit", recordDetailApp.getTransactionType())) { //存款
                 recordDetailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + recordDetailApp.getTransactionWay()));
+
             }
             if (StringTool.equalsIgnoreCase("withdrawals", recordDetailApp.getTransactionType())) {//取款
 
