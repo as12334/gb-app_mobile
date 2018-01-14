@@ -248,4 +248,12 @@ public class RecordDetailApp {
     public void setPoundageName(String poundageName) {
         this.poundageName = poundageName;
     }
+
+    public String getBankCodeName() {
+        return bankCodeName;
+    }
+
+    public void setBankCodeName(String bankCodeName) {
+        this.bankCodeName = bankCodeName;
+    }
 }
