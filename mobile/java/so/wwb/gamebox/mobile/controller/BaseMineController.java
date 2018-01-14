@@ -234,6 +234,7 @@ public class BaseMineController {
             userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
         }
         userInfo.put("currency", getCurrencySign());
+        userInfo.put("realName",StringTool.overlayName(sysUser.getRealName()));
     }
 
     protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
@@ -242,6 +243,24 @@ public class BaseMineController {
         listVo.setApis(Cache.getApi());
         listVo.setSiteApis(Cache.getSiteApi());
         return listVo;
+    }
+
+    /**
+     * 刷新额度
+     * @param request
+     * @return
+     */
+    protected  UserInfoApp appRefresh(HttpServletRequest request){
+        Integer userId = SessionManager.getUserId();
+        PlayerApiListVo listVo = initPlayerApiListVo(userId);
+        VUserPlayer player = getVPlayer(userId);
+
+        UserInfoApp infoApp = new UserInfoApp();
+        infoApp.setApis(getSiteApis(listVo, request, true));
+        infoApp.setCurrSign(player.getCurrencySign());
+        infoApp.setAssets(queryPlayerAssets(listVo, userId));
+        infoApp.setUsername(player.getUsername());
+        return infoApp;
     }
 
     protected void getAppUserInfo(HttpServletRequest request, SysUser user,UserInfoApp userInfoApp) {

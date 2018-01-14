@@ -146,19 +146,6 @@
 <div id="selectDate" class="mui-popover scroll-popover" style="height: 300px">
     <%@include file="/include/include.popover.jsp"%>
 </div>
-<script language="JavaScript">
-    mui.init({
-        swipeBack: true //启用右滑关闭功能
-    });
-    mui('.popover-scroll').scroll();
-    mui('body').on('shown', '.mui-popover', function(e) {
-        //console.log('shown', e.detail.id);//detail为当前popover元素
-    });
-    mui('body').on('hidden', '.mui-popover', function(e) {
-        //console.log('hidden', e.detail.id);//detail为当前popover元素
-    });
-</script>
-<%--<script src="${resRoot}/js/my/message/Notice.js?v=${rcVersion}"></script>--%>
 <soul:import res="site/my/message/Notice"/>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
