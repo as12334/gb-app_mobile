@@ -21,10 +21,9 @@ import javax.validation.constraints.Pattern;
 @Comment("电子支付验证")
 public class CompanyBankDeposit2Form implements IForm {
     private String result_payAccountId;
-    private String result_rechargeAmount;
     private String result_payerName;
     private String result_rechargeAddress;
-    private String $code;
+//    private String $code;
 
     @Comment("存入银行")
     @NotBlank(message = "valid.rechargeForm.payAccountIdNotBlank")
@@ -34,19 +33,6 @@ public class CompanyBankDeposit2Form implements IForm {
 
     public void setResult_payAccountId(String result_payAccountId) {
         this.result_payAccountId = result_payAccountId;
-    }
-
-    @Comment("存款金额")
-    @NotBlank(message = "valid.rechargeForm.rechargeAmountNotBlank")
-    @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
-    //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyBankDepositController.class, checkMethod = "checkAmount")
-    @Max(message = "valid.rechargeForm.rechargeAmountMax", value = 99999999)
-    public String getResult_rechargeAmount() {
-        return result_rechargeAmount;
-    }
-
-    public void setResult_rechargeAmount(String result_rechargeAmount) {
-        this.result_rechargeAmount = result_rechargeAmount;
     }
 
     @Comment("存款人")
@@ -72,14 +58,14 @@ public class CompanyBankDeposit2Form implements IForm {
         this.result_rechargeAddress = result_rechargeAddress;
     }
 
-    @Comment("验证码")
-    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})
-    @Remote(message = "fund.rechargeForm.code.correct", checkMethod = "checkCaptcha", checkClass = BaseDepositController.class)
-    public String get$code() {
-        return $code;
-    }
-
-    public void set$code(String $code) {
-        this.$code = $code;
-    }
+//    @Comment("验证码")
+//    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})
+//    @Remote(message = "fund.rechargeForm.code.correct", checkMethod = "checkCaptcha", checkClass = BaseDepositController.class)
+//    public String get$code() {
+//        return $code;
+//    }
+//
+//    public void set$code(String $code) {
+//        this.$code = $code;
+//    }
 }

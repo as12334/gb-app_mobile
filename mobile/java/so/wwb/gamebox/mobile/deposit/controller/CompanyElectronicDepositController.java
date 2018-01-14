@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositCashForm;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -60,10 +61,14 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     @RequestMapping("/depositCash")
     @Token(generate = true)
     public String depositCash(PayAccountVo payAccountVo, Model model){
+        PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
+        if(payAccount != null){
+            model.addAttribute("electronicPayAccount",payAccount);
+        }
         model.addAttribute("rank", getRank());
         model.addAttribute("currency",getCurrencySign());
-        model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
-        return "/deposit/DepositCash";
+        model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositCashForm.class));
+        return "/deposit/DepositElectronicCash";
     }
 
     @RequestMapping("/index")

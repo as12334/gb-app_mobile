@@ -19,23 +19,9 @@ import javax.validation.constraints.Pattern;
  */
 @Comment("电子支付验证")
 public class CompanyElectronicDepositForm implements IForm {
-    private String result_rechargeAmount;
     private String result_payerBankcard;
     private String result_bankOrder;
-    private String $code;
-
-    @Comment("存款金额")
-    @NotBlank(message = "valid.rechargeForm.rechargeAmountNotBlank")
-    @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
-    //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyElectronicDepositController.class, checkMethod = "checkAmount")
-    @Max(message = "valid.rechargeForm.rechargeAmountMax", value = 99999999)
-    public String getResult_rechargeAmount() {
-        return result_rechargeAmount;
-    }
-
-    public void setResult_rechargeAmount(String result_rechargeAmount) {
-        this.result_rechargeAmount = result_rechargeAmount;
-    }
+//    private String $code;
 
     @Comment("存款账号")
     @Depends(property ="result.rechargeType", operator = Operator.NE,value= RechargeTypeEnum.RECHARGE_TYPE_ONECODEPAY_FASE,message = "valid.rechargeForm.payerBankcardNotBlank")
@@ -59,14 +45,14 @@ public class CompanyElectronicDepositForm implements IForm {
         this.result_bankOrder = result_bankOrder;
     }
 
-    @Comment("验证码")
-    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})
-    @Remote(message = "fund.rechargeForm.code.correct", checkMethod = "checkCaptcha", checkClass = BaseDepositController.class)
-    public String get$code() {
-        return $code;
-    }
-
-    public void set$code(String $code) {
-        this.$code = $code;
-    }
+//    @Comment("验证码")
+//    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})
+//    @Remote(message = "fund.rechargeForm.code.correct", checkMethod = "checkCaptcha", checkClass = BaseDepositController.class)
+//    public String get$code() {
+//        return $code;
+//    }
+//
+//    public void set$code(String $code) {
+//        this.$code = $code;
+//    }
 }

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
+<div id="depositSalePop">
 <c:choose>
     <c:when test="${unCheckSuccess}">
         <c:choose>
@@ -58,3 +58,4 @@
 <span style="display: none" id="pop" pop="${pop}"></span>
 <span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>
 <span style="display: none" id="tips" tips="${tips}"></span>
+</div>
