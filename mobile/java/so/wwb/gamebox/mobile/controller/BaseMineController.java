@@ -21,6 +21,7 @@ import org.soul.commons.spring.utils.SpringTool;
 import org.soul.commons.support._Module;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
+import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
@@ -73,6 +74,7 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
+import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
@@ -102,6 +104,8 @@ public class BaseMineController {
     protected void getMineLinkInfo(Map<String, Object> userInfo, HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
+        userInfo.put("isBit", ParamTool.isBit());//是否存在比特币
+        userInfo.put("isCash", ParamTool.isCash());//是否存在银行卡
         try {
             //总资产
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
@@ -142,11 +146,28 @@ public class BaseMineController {
         for (UserBankcard userBankcard : userBankcards) {
             int length = userBankcard.getBankcardNumber().length();
             if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
-                userInfo.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
+                bankcardNumMap = new HashMap<>();
+                bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
+                bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+
+                userInfo.put("btc", bankcardNumMap);
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
                 bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+
+                UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
+                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
+                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
+                bankcardNumMap.put("bankName", bankName);
+                bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
+
                 userInfo.put("bankcard", bankcardNumMap);
+
+
+
+                bankcard.setBankcardNumber(BankCardTool.overlayBankcard(userBankcard.getBankcardNumber())); //隐藏部分银行卡账号
+                bankcard.setBankDeposit(userBankcard.getBankDeposit());
             }
         }
 
@@ -1330,6 +1351,10 @@ public class BaseMineController {
         return ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(listVo);
     }
 
+    /**
+     * 站点消息-->系统消息
+     * @return
+     */
     protected Map getAppSiteSysNotice(){
         VNoticeReceivedTextListVo listVo = new VNoticeReceivedTextListVo();
         listVo.getSearch().setReceiverId(SessionManager.getUserId());
@@ -1344,12 +1369,38 @@ public class BaseMineController {
             sysNotice.setTitle(text.getShortTitle50());
             sysNotice.setPublishTime(text.getReceiveTime());
             sysNotice.setLink(SITE_SYSTEM_NOTICE + "?searchId=" + listVo.getSearchId(text.getId()));
+            sysNotice.setRead( StringTool.equalsIgnoreCase(text.getReceiveStatus(),isRead) ? true : false);
             sysNotices.add(sysNotice);
         }
         Map<String,Object> map = new HashMap<>(TWO,oneF);
         map.put("list",sysNotices);
         map.put("pageTotal",listVo.getPaging().getTotalCount());
         return map;
+    }
+
+    /**
+     * 系统信息详情
+     * @param noticeReceiveVo
+     * @param request
+     * @return
+     */
+    protected AppSystemNotice getAppSiteNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+        List list = new ArrayList();
+        list.add(noticeReceiveVo.getSearch().getId());
+        noticeReceiveVo.setIds(list);
+        ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
+
+        VNoticeReceivedTextVo vo = new VNoticeReceivedTextVo();
+        vo = ServiceTool.noticeService().fetchReceivedSiteMsgDetail(vo);
+        vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{sitename\\}",SessionManager.getSiteName(request)));
+        vo.getResult().setTitle(vo.getResult().getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+
+        AppSystemNotice sysNotice = new AppSystemNotice();
+        sysNotice.setTitle(vo.getResult().getTitle());
+        sysNotice.setContent(vo.getResult().getContent());
+        sysNotice.setPublishTime(vo.getResult().getReceiveTime());
+        return sysNotice;
     }
 
 }

@@ -15,6 +15,7 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.support._Module;
 import org.soul.model.log.audit.enums.OpMode;
+import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
@@ -22,7 +23,6 @@ import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -319,8 +319,7 @@ public class MineAppController extends BaseMineController {
 
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> userInfoMap = MapTool.newHashMap();
-        map.put("isBit", ParamTool.isBit());//是否存在比特币
-        map.put("isCash", ParamTool.isCash());//是否存在银行卡
+
         map.put("link", setLink());//链接地址
         getMineLinkInfo(userInfoMap, request);//用户金额信息
         map.put("user", userInfoMap);
@@ -583,6 +582,7 @@ public class MineAppController extends BaseMineController {
 
             if (StringTool.equalsIgnoreCase("deposit", recordDetailApp.getTransactionType())) { //存款
                 recordDetailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + recordDetailApp.getTransactionWay()));
+
             }
             if (StringTool.equalsIgnoreCase("withdrawals", recordDetailApp.getTransactionType())) {//取款
 
@@ -1081,6 +1081,66 @@ public class MineAppController extends BaseMineController {
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 站点消息-->系统消息 -->标记已读
+     * @return
+     */
+    @RequestMapping("/setSiteSysNoticeStatus")
+    @ResponseBody
+    public String setSiteSysNoticeStatus(NoticeReceiveVo noticeReceiveVo, String ids){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(StringTool.isBlank(ids)){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(vo);
+        }
+
+        String[] idArray = ids.split(SplitRegex);
+        List<Integer> list = ListTool.newArrayList();
+        for (String id : idArray) {
+            list.add(Integer.valueOf(id));
+        }
+        noticeReceiveVo.setIds(list);
+
+        boolean b = ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
+        if(!b){
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(AppErrorCodeEnum.updateStatusError.getMsg());
+            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
+            return JsonTool.toJson(vo);
+        }
+
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 站点消息-->系统消息详情
+     * @return
+     */
+    @RequestMapping("/getSiteSysNoticeDetail")
+    @ResponseBody
+    public String getSiteSysNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(noticeReceiveVo.getSearch().getId() == null){
+            vo.setError(DEFAULT_TIME);
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        AppSystemNotice sysNotice = getAppSiteNoticeDetail(noticeReceiveVo,request);
+        vo.setData(sysNotice);
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
 
         return JsonTool.toJson(vo);
     }
