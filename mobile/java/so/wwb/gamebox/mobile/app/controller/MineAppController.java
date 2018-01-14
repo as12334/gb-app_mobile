@@ -1068,6 +1068,24 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 站点消息-->系统消息
+     * @return
+     */
+    @RequestMapping("/getSiteSysNotice")
+    @ResponseBody
+    public String getSiteSysNotice(){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+
+        Map map = getAppSiteSysNotice();
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(map);
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
      * 一键回收
      * @return
      */
