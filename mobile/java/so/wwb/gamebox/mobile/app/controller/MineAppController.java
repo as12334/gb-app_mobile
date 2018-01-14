@@ -20,6 +20,7 @@ import org.soul.commons.support._Module;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.NoticeVo;
+import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -1163,11 +1164,11 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping("/getSiteSysNotice")
     @ResponseBody
-    public String getSiteSysNotice(){
+    public String getSiteSysNotice(VNoticeReceivedTextListVo listVo){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        Map map = getAppSiteSysNotice();
+        Map map = getAppSiteSysNotice(listVo);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
@@ -1212,12 +1213,50 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 删除系统信息
+     * @param noticeVo
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/deleteSiteSysNotice")
+    @ResponseBody
+    public String deleteSiteSysNotice(NoticeReceiveVo noticeVo, String ids){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(StringTool.isBlank(ids)){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        String[] idArray = ids.split(SplitRegex);
+        List<Integer> list = new ArrayList();
+        for (String id : idArray) {
+            list.add(Integer.valueOf(id));
+        }
+        noticeVo.setIds(list);
+        boolean bool = ServiceTool.noticeService().deleteSiteMsg(noticeVo);
+        if(!bool){
+            vo.setError(DEFAULT_TIME);
+            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
+            vo.setMsg(AppErrorCodeEnum.updateStatusError.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
      * 站点消息-->系统消息详情
      * @return
      */
     @RequestMapping("/getSiteSysNoticeDetail")
     @ResponseBody
-    public String getSiteSysNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+    public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo,NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
         if(noticeReceiveVo.getSearch().getId() == null){
@@ -1227,7 +1266,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        AppSystemNotice sysNotice = getAppSiteNoticeDetail(noticeReceiveVo,request);
+        AppSystemNotice sysNotice = getAppSiteNoticeDetail(vReceivedVo,noticeReceiveVo,request);
         vo.setData(sysNotice);
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setCode(AppErrorCodeEnum.Success.getCode());
