@@ -20,6 +20,8 @@ import org.soul.commons.query.enums.Operator;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.commons.support._Module;
 import org.soul.model.comet.vo.MessageVo;
+import org.soul.model.msg.notice.po.VNoticeReceivedText;
+import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -92,6 +94,7 @@ public class BaseMineController {
     private static final String WITHDRAW_AMOUNT_ZERO = "withdrawForm.withdrawAmountZero";
     private static final String SYSTEM_NOTICE_LINK = "/mineOrigin/getSysNoticeDetail.html";
     private static final String GAME_NOTICE_LINK = "/mineOrigin/getGameNoticeDetail.html";
+    private static final String SITE_SYSTEM_NOTICE = "/mineOrigin/getSiteSysNoticeDetail.html";
 
     /**
      * 获取我的个人数据
@@ -1325,6 +1328,28 @@ public class BaseMineController {
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
         listVo.getSearch().setPublishTime(SessionManager.getUser().getCreateTime());
         return ServiceTool.vSystemAnnouncementService().searchMasterSystemNotice(listVo);
+    }
+
+    protected Map getAppSiteSysNotice(){
+        VNoticeReceivedTextListVo listVo = new VNoticeReceivedTextListVo();
+        listVo.getSearch().setReceiverId(SessionManager.getUserId());
+        listVo = ServiceTool.noticeService().fetchReceivedSiteMsg(listVo);
+        List<AppSystemNotice> sysNotices = ListTool.newArrayList();
+        for(VNoticeReceivedText text : listVo.getResult()){
+            text.setContent(text.getContent().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+            text.setTitle(text.getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+
+            AppSystemNotice sysNotice = new AppSystemNotice();
+            sysNotice.setId(listVo.getSearchId(text.getId()));
+            sysNotice.setTitle(text.getShortTitle50());
+            sysNotice.setPublishTime(text.getReceiveTime());
+            sysNotice.setLink(SITE_SYSTEM_NOTICE + "?searchId=" + listVo.getSearchId(text.getId()));
+            sysNotices.add(sysNotice);
+        }
+        Map<String,Object> map = new HashMap<>(TWO,oneF);
+        map.put("list",sysNotices);
+        map.put("pageTotal",listVo.getPaging().getTotalCount());
+        return map;
     }
 
 }
