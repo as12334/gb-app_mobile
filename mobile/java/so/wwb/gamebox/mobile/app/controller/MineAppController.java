@@ -8,15 +8,19 @@ import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateFormat;
 import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.query.Criterion;
+import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.NoticeVo;
+import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -338,17 +342,9 @@ public class MineAppController extends BaseMineController {
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
         }
-        Integer userId = SessionManager.getUserId();
-        PlayerApiListVo listVo = initPlayerApiListVo(userId);
-        VUserPlayer player = getVPlayer(userId);
+        UserInfoApp userInfo = appRefresh(request);
+        vo = CommonApp.buildAppModelVo(userInfo);
 
-        UserInfoApp infoApp = new UserInfoApp();
-        infoApp.setApis(getSiteApis(listVo, request, true));
-        infoApp.setCurrSign(player.getCurrencySign());
-        infoApp.setAssets(queryPlayerAssets(listVo, userId));
-        infoApp.setUsername(player.getUsername());
-
-        vo = CommonApp.buildAppModelVo(infoApp);
         return JsonTool.toJson(vo);
     }
 
@@ -378,7 +374,7 @@ public class MineAppController extends BaseMineController {
     }
 
 
-    @RequestMapping("submitBankCard")
+    @RequestMapping("/submitBankCard")
     @ResponseBody
     public String submitBankCard(UserBankcardVo vo) {
         AppModelVo appModelVo = new AppModelVo();
@@ -659,25 +655,110 @@ public class MineAppController extends BaseMineController {
     }
 
 
-//    @RequestMapping("/advisoryMessage")
-//    @ResponseBody
-//    public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
-//        AppModelVo appModelVo = new AppModelVo();
-//
-//        if (listVo == null) {
-//            listVo = new VPlayerAdvisoryListVo();
-//        }
-//
-//
-//        //提问内容+未读数量
-//        Map<String, Object> map = MapTool.newHashMap();
-//        listVo = this.unReadCount(listVo, map);
-//
-//        listVo.getResult();
-//
-//        return "";
-//    }
+    @RequestMapping("/advisoryMessage")
+    @ResponseBody
+    public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
 
+        if (listVo == null) {
+            listVo = new VPlayerAdvisoryListVo();
+        }
+
+
+        //提问内容+未读数量
+        Map<String, Object> map = MapTool.newHashMap();
+        listVo = this.unReadCount(listVo, map);
+
+        List<VPlayerAdvisory> advisoryList = listVo.getResult();
+        List<AdvisoryMessageApp> messageAppList = ListTool.newArrayList();
+        for (VPlayerAdvisory advisory : advisoryList) {
+            AdvisoryMessageApp messageApp = new AdvisoryMessageApp();
+            messageApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
+            messageApp.setAdvisoryContent(advisory.getAdvisoryContent());
+            String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone());
+            messageApp.setAdvisoryTime(time);
+            messageApp.setReplyTitle(advisory.getReplyTitle());
+
+            messageAppList.add(messageApp);
+
+        }
+        AppModelVo vo = CommonApp.buildAppModelVo(messageAppList);
+
+
+        return JsonTool.toJson(vo);
+    }
+
+    @RequestMapping("/deleteAdvisoryMessage")
+    @ResponseBody
+    public String deleteAdvisoryMessage(String ids) {
+        String[] id = ids.split(",");
+        PlayerAdvisoryVo vo = new PlayerAdvisoryVo();
+        for (String messageId : id) {
+            PlayerAdvisoryListVo listVo = new PlayerAdvisoryListVo();
+            listVo.getSearch().setContinueQuizId(Integer.valueOf(messageId));
+            listVo = ServiceSiteTool.playerAdvisoryService().search(listVo);
+            for(PlayerAdvisory obj:listVo.getResult()){
+                vo.setSuccess(false);
+                vo.setResult(new PlayerAdvisory());
+                vo.getResult().setId(obj.getId());
+                vo.getResult().setPlayerDelete(true);
+                vo.setProperties(PlayerAdvisory.PROP_PLAYER_DELETE);
+                vo = ServiceSiteTool.playerAdvisoryService().updateOnly(vo);
+            }
+            vo.setSuccess(false);
+            vo.setResult(new PlayerAdvisory());
+            vo.getResult().setId(Integer.valueOf(messageId));
+            vo.getResult().setPlayerDelete(true);
+            vo.setProperties(PlayerAdvisory.PROP_PLAYER_DELETE);
+            vo = ServiceSiteTool.playerAdvisoryService().updateOnly(vo);
+        }
+        if (vo.isSuccess()) {
+            vo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_SUCCESS));
+        } else {
+            vo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.DELETE_FAILED));
+        }
+        HashMap map = new HashMap(2,1f);
+        map.put("msg", StringTool.isNotBlank(vo.getOkMsg()) ? vo.getOkMsg() : vo.getErrMsg());
+        map.put("state", Boolean.valueOf(vo.isSuccess()));
+
+        AppModelVo appModelVo = CommonApp.buildAppModelVo(map);
+        return JsonTool.toJson(appModelVo);
+    }
+
+    @RequestMapping("/getSelectAdvisoryMessageIds")
+    @ResponseBody
+    public String getSelectAdvisoryMessageIds(String ids) {
+        String[] id = ids.split(",");
+        for (String messageId : id) {
+            //当前回复表Id
+            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
+            parListVo.getSearch().setPlayerAdvisoryId(Integer.valueOf(messageId));
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+
+            //判断是否已读
+            PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+            readVo.getSearch().setUserId(SessionManager.getUserId());
+            readVo.getSearch().setPlayerAdvisoryId(Integer.valueOf(messageId));
+            readVo.getQuery().setCriterions(new Criterion[]{new Criterion(PlayerAdvisoryRead.PROP_USER_ID, Operator.EQ, readVo.getSearch().getUserId())
+                    , new Criterion(PlayerAdvisoryRead.PROP_PLAYER_ADVISORY_ID, Operator.EQ, readVo.getSearch().getPlayerAdvisoryId())});
+
+            ServiceSiteTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
+
+            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
+                PlayerAdvisoryReadVo parVo = new PlayerAdvisoryReadVo();
+                parVo.setResult(new PlayerAdvisoryRead());
+                parVo.getResult().setUserId(SessionManager.getUserId());
+                parVo.getResult().setPlayerAdvisoryReplyId(replay.getId());
+                parVo.getResult().setPlayerAdvisoryId(Integer.valueOf(messageId));
+                ServiceSiteTool.playerAdvisoryReadService().insert(parVo);
+            }
+        }
+
+        HashMap map = new HashMap(1,1f);
+
+        map.put("state", true);
+        AppModelVo appModelVo = CommonApp.buildAppModelVo(map);
+        return JsonTool.toJson(appModelVo);
+    }
 
 
     @RequestMapping("/addNoticeSite")
@@ -1075,11 +1156,11 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping("/getSiteSysNotice")
     @ResponseBody
-    public String getSiteSysNotice(){
+    public String getSiteSysNotice(VNoticeReceivedTextListVo listVo){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        Map map = getAppSiteSysNotice();
+        Map map = getAppSiteSysNotice(listVo);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
@@ -1124,12 +1205,50 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 删除系统信息
+     * @param noticeVo
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/deleteSiteSysNotice")
+    @ResponseBody
+    public String deleteSiteSysNotice(NoticeReceiveVo noticeVo, String ids){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+        if(StringTool.isBlank(ids)){
+            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setError(DEFAULT_TIME);
+            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        String[] idArray = ids.split(SplitRegex);
+        List<Integer> list = new ArrayList();
+        for (String id : idArray) {
+            list.add(Integer.valueOf(id));
+        }
+        noticeVo.setIds(list);
+        boolean bool = ServiceTool.noticeService().deleteSiteMsg(noticeVo);
+        if(!bool){
+            vo.setError(DEFAULT_TIME);
+            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
+            vo.setMsg(AppErrorCodeEnum.updateStatusError.getMsg());
+            return JsonTool.toJson(vo);
+        }
+
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+
+        return JsonTool.toJson(vo);
+    }
+
+    /**
      * 站点消息-->系统消息详情
      * @return
      */
     @RequestMapping("/getSiteSysNoticeDetail")
     @ResponseBody
-    public String getSiteSysNoticeDetail(NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+    public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo,NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
         if(noticeReceiveVo.getSearch().getId() == null){
@@ -1139,7 +1258,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        AppSystemNotice sysNotice = getAppSiteNoticeDetail(noticeReceiveVo,request);
+        AppSystemNotice sysNotice = getAppSiteNoticeDetail(vReceivedVo,noticeReceiveVo,request);
         vo.setData(sysNotice);
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setCode(AppErrorCodeEnum.Success.getCode());

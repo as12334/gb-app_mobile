@@ -12,6 +12,15 @@ public class AppSystemNotice {
     private String link;
     private String title;
     private boolean read;
+    private String searchId;
+
+    public String getSearchId() {
+        return searchId;
+    }
+
+    public void setSearchId(String searchId) {
+        this.searchId = searchId;
+    }
 
     public boolean isRead() {
         return read;
