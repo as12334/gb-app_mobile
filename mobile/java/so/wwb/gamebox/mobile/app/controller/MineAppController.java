@@ -337,6 +337,7 @@ public class MineAppController extends BaseMineController {
         map.put("link", setLink());//链接地址
         getMineLinkInfo(userInfoMap, request);//用户金额信息
         map.put("user", userInfoMap);
+        map.put("bankList", bankList());
         map.put("userApi",userApp);
         vo = CommonApp.buildAppModelVo(map);
 
@@ -604,12 +605,14 @@ public class MineAppController extends BaseMineController {
             Map<String, Object> map = po.get_describe();//取json对象里面的值
 
             if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_into")) {//表示外面的钱转入我的钱包
-                recordDetailApp.setTransferOut(CacheBase.getSiteApiName((String) map.get("API")));  //转出
+                Integer apiId = (Integer) map.get("API");
+                recordDetailApp.setTransferOut(CacheBase.getSiteApiName(String.valueOf(apiId)));
                 recordDetailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON,"FundRecord.record.playerWallet"));
             }
             if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_out")) {//从我的钱包转出外面
                 recordDetailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON,"FundRecord.record.playerWallet"));
-                recordDetailApp.setTransferInto(CacheBase.getSiteApiName((String) map.get("API")));
+                Integer apiId = (Integer) map.get("API");
+                recordDetailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
             }
 
             recordDetailApp.setPoundage((Double) map.get("poundage"));  //手续费
@@ -743,6 +746,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(vo);
     }
 
+    /**
+     * 站点消息－我的消息　删除提问
+     * @param ids
+     * @return
+     */
     @RequestMapping("/deleteAdvisoryMessage")
     @ResponseBody
     public String deleteAdvisoryMessage(String ids) {
@@ -780,6 +788,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
+    /**
+     * 站点消息－我的消息　标记已读
+     * @param ids
+     * @return
+     */
     @RequestMapping("/getSelectAdvisoryMessageIds")
     @ResponseBody
     public String getSelectAdvisoryMessageIds(String ids) {
@@ -814,6 +827,17 @@ public class MineAppController extends BaseMineController {
         map.put("state", true);
         AppModelVo appModelVo = CommonApp.buildAppModelVo(map);
         return JsonTool.toJson(appModelVo);
+    }
+
+    @RequestMapping("/advisoryMessageDetail")
+    @ResponseBody
+    public String advisoryMessageDetail(Integer id) {
+        //当前咨询信息
+        VPlayerAdvisoryReplyListVo listVo = new VPlayerAdvisoryReplyListVo();
+        listVo.getPaging().setPageSize(60);
+
+
+        return "";
     }
 
 

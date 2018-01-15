@@ -163,6 +163,7 @@ public class BaseMineController {
                 String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
                 bankcardNumMap.put("bankName", bankName);
                 bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
+                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
 
                 userInfo.put("bankcard", bankcardNumMap);
 
