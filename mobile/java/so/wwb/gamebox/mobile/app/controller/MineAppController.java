@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.app.controller;
 
+import org.apache.shiro.session.SessionException;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
@@ -14,6 +15,7 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criterion;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
@@ -26,6 +28,8 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
 import org.soul.web.session.SessionManagerBase;
+import org.soul.web.shiro.local.PassportResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,9 +86,11 @@ import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
+import so.wwb.gamebox.web.shiro.common.delegate.IPassportDelegate;
 import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.*;
 
@@ -1374,6 +1380,36 @@ public class MineAppController extends BaseMineController {
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         return JsonTool.toJson(vo);
     }
+
+    /**
+     * 退出登录
+     * @return
+     */
+    @RequestMapping("/logout")
+    @ResponseBody
+    public String logout(HttpServletRequest request, HttpServletResponse response){
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
+
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        Integer entranceId = passportDelegate.getEntranceType(contextPath, uri);
+        SessionManagerCommon.setAttribute(SessionKey.S_ENTRANCE, String.valueOf(entranceId));
+        try {
+            passportDelegate.onLogoutDelegate(request, response);
+            SessionManagerCommon.clearSession();
+        } catch (SessionException ise) {
+            LOG.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
+        }
+
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(PassportResult.SUCCESS);
+        return JsonTool.toJson(vo);
+    }
+
+    @Autowired(required = false)
+    private IPassportDelegate passportDelegate;
 
     /**
      * 验证吗remote验证
