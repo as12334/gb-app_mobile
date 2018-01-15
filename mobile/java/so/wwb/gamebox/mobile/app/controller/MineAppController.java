@@ -120,7 +120,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(four,oneF);
         Map<String, Object> userInfoMap = MapTool.newHashMap();
         map.put("isBit", ParamTool.isBit());//是否存在比特币
         map.put("isCash", ParamTool.isCash());//是否存在银行卡
