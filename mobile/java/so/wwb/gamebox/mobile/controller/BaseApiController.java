@@ -749,6 +749,10 @@ public abstract class BaseApiController extends BaseDemoController {
         }
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
+        if(gameApiResult == null){
+            return appI18n;
+        }
+
         String url = (gameApiResult instanceof RegisterResult) ?
                 ((RegisterResult) gameApiResult).getDefaultLink() : ((LoginResult) gameApiResult).getDefaultLink();
         url = buildGameUrl(url, model, apiId);
@@ -815,6 +819,9 @@ public abstract class BaseApiController extends BaseDemoController {
         }
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
+        if(gameApiResult == null){
+            return appI18n;
+        }
         String url = (gameApiResult instanceof RegisterResult) ?
                 ((RegisterResult) gameApiResult).getDefaultLink() : ((LoginResult) gameApiResult).getDefaultLink();
         url = buildGameUrl(url, model, playerApiAccountVo.getApiId());
