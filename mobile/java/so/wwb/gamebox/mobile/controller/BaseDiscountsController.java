@@ -2,12 +2,16 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.app.common.CommonApp;
 import so.wwb.gamebox.mobile.app.model.ActivityTypeApp;
+import so.wwb.gamebox.mobile.app.model.ActivityTypeListApp;
+import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
@@ -57,7 +61,41 @@ public class BaseDiscountsController {
         return vActivityMessageListVo.getResult();
     }
 
-    protected List<ActivityTypeApp> getActivity(HttpServletRequest request){
+    protected List<ActivityTypeListApp> getActivityMessageList(String key, HttpServletRequest request) {
+        Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
+        List<SiteI18n> siteI18nTemp = ListTool.newArrayList();
+        List<VActivityMessage> vActivityMessageList = ListTool.newArrayList();
+        List<ActivityTypeListApp> listApps = ListTool.newArrayList();
+        for (SiteI18n site : siteI18nMap.values()) {
+            if(StringTool.equalsIgnoreCase(site.getLocale(), SessionManager.getLocale().toString())){
+                VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
+                vActivityMessageListVo.getSearch().setActivityClassifyKey(site.getKey());
+                vActivityMessageList = setDefaultImage(getActivityMessage(vActivityMessageListVo),request);
+                siteI18nTemp.add(site);
+            }
+        }
+
+        for (VActivityMessage message : vActivityMessageList) {
+            ActivityTypeListApp app = new ActivityTypeListApp();
+            if (StringTool.isNotBlank(key)) {
+                    if (StringTool.equalsIgnoreCase(key, message.getClassifyKeyName())) {
+                        app.setPhoto(message.getActivityCover());
+                        app.setUrl("promo/promoDetail.html?search.id=" + message.getId());
+                        listApps.add(app);
+                    }
+            } else {
+                message.getActivityCover();
+                app.setPhoto(message.getActivityCover());
+                app.setUrl("promo/promoDetail.html?search.id=" + message.getId());
+                listApps.add(app);
+            }
+
+        }
+        return listApps;
+    }
+
+
+    protected String getActivityMessageType(HttpServletRequest request) {
         Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
 
         Map<String,List<VActivityMessage>> activityMessage = MapTool.newHashMap();
@@ -74,37 +112,18 @@ public class BaseDiscountsController {
                 siteI18nTemp.add(site);
             }
         }
-
         for (SiteI18n i18n : siteI18nTemp) {
             ActivityTypeApp activityTypeApp = new ActivityTypeApp();
 
             activityTypeApp.setId(i18n.getId());
-            activityTypeApp.setModule(i18n.getModule());
-            activityTypeApp.setType(i18n.getType());
-            activityTypeApp.setKey(i18n.getKey());
-            activityTypeApp.setLocale(i18n.getLocale());
-            activityTypeApp.setValue(i18n.getValue());
-            activityTypeApp.setSiteId(i18n.getSiteId());
-            activityTypeApp.setRemark(i18n.getRemark());
-            activityTypeApp.setDefaultValue(i18n.getDefaultValue());
-            activityTypeApp.setBuiltIn(i18n.getBuiltIn());
-            activityTypeApp.setCacheKey(i18n.getCacheKey());
-            activityTypeApp.setCacheKeyLocale(i18n.getCacheKeyLocale());
-
-            Iterator<String> iterator = activityMessage.keySet().iterator();
-            Map<String,List<VActivityMessage>> messageMap = MapTool.newHashMap();
-            while(iterator.hasNext()){
-                String key = iterator.next();
-                if (StringTool.equalsIgnoreCase(activityTypeApp.getKey(),key)) {
-                    messageMap.put("list", activityMessage.get(key));
-                    activityTypeApp.setTypeMessageMap(messageMap);
-                }
-            }
-
+            activityTypeApp.setActivityTypeName(i18n.getValue());
+            activityTypeApp.setActivityKey(i18n.getKey());
             activityTypeApps.add(activityTypeApp);
         }
 
-        return activityTypeApps;
+        AppModelVo vo = CommonApp.buildAppModelVo(activityTypeApps);
+
+        return JsonTool.toJson(vo);
     }
 
 }

@@ -834,10 +834,65 @@ public class MineAppController extends BaseMineController {
     public String advisoryMessageDetail(Integer id) {
         //当前咨询信息
         VPlayerAdvisoryReplyListVo listVo = new VPlayerAdvisoryReplyListVo();
+        VPlayerAdvisoryListVo vPlayerAdvisoryListVo = new VPlayerAdvisoryListVo();
+        AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
+        AppModelVo appModelVo = new AppModelVo();
         listVo.getPaging().setPageSize(60);
+        vPlayerAdvisoryListVo.getSearch().setId(id);
 
+        List<VPlayerAdvisory> vPlayerAdvisoryList = ServiceSiteTool.vPlayerAdvisoryService().searchVPlayerAdvisoryReply(vPlayerAdvisoryListVo);
 
-        return "";
+        Map map = new TreeMap(new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                return ((Integer) o1) - ((Integer) o2);
+            }
+        });
+
+        for (VPlayerAdvisory obj : vPlayerAdvisoryList) {
+            //回复标题和内容
+            listVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            listVo = ServiceSiteTool.vPlayerAdvisoryReplyService().search(listVo);
+            map.put(obj.getId(), listVo);
+
+            //判断是否已读
+            //当前回复表Id
+            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
+            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+
+            PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+            readVo.getSearch().setUserId(SessionManager.getUserId());
+            readVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            readVo.getQuery().setCriterions(new Criterion[]{new Criterion(PlayerAdvisoryRead.PROP_USER_ID, Operator.EQ, readVo.getSearch().getUserId())
+                    , new Criterion(PlayerAdvisoryRead.PROP_PLAYER_ADVISORY_ID, Operator.EQ, readVo.getSearch().getPlayerAdvisoryId())});
+            ServiceSiteTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
+
+            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
+                PlayerAdvisoryReadVo parVo = new PlayerAdvisoryReadVo();
+                parVo.setResult(new PlayerAdvisoryRead());
+                parVo.getResult().setUserId(SessionManager.getUserId());
+                parVo.getResult().setPlayerAdvisoryReplyId(replay.getId());
+                parVo.getResult().setPlayerAdvisoryId(obj.getId());
+                ServiceSiteTool.playerAdvisoryReadService().insert(parVo);
+            }
+        }
+
+        if (vPlayerAdvisoryList.size() == 1) {
+            VPlayerAdvisory advisory = vPlayerAdvisoryList.get(0);
+
+            detailApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
+            detailApp.setAdvisoryContent(advisory.getAdvisoryContent());
+            detailApp.setQuestionType(advisory.getQuestionType());
+            detailApp.setAdvisoryTime(LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone()));
+            detailApp.setReplyTime(LocaleDateTool.formatDate(advisory.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+            detailApp.setReplyTitle(advisory.getReplyTitle());
+            detailApp.setReplyContent(advisory.getReplyContent());
+
+        }
+        appModelVo = CommonApp.buildAppModelVo(detailApp);
+
+        return JsonTool.toJson(appModelVo);
     }
 
 
