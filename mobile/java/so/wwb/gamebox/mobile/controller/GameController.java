@@ -221,9 +221,11 @@ public class GameController extends BaseApiController {
             siteGameList.add(siteGame);
             if (siteGame.getGameId().equals(fishId)) {
                 fish = setGameStatus(listVo, siteGameList).get(0);
-            }
-            else {
-                newGames.add(setGameStatus(listVo, siteGameList).get(0));
+            } else {
+                siteGameList = setGameStatus(listVo, siteGameList);
+                if (CollectionTool.isNotEmpty(siteGameList)) {
+                    newGames.add(siteGameList.get(0));
+                }
             }
         }
         listVo.setResult(newGames);
