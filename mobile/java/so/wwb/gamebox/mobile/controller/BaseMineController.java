@@ -513,6 +513,7 @@ public class BaseMineController {
         }
         map.put("totalBalance",player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
+        map.put("auditLogUrl","/wallet/withdraw/showAuditLog.html");//查看稽核地址
     }
 
     /**
