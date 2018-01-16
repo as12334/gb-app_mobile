@@ -707,6 +707,7 @@ public class MineAppController extends BaseMineController {
         Map<String, Serializable> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
         Map<String,Object> map = MapTool.newHashMap();
         map.put("advisoryType", advisoryType);
+        map.put("isOpenCaptcha", false);
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >=3) {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
             map.put("captcha_value", "/captcha/feedback.html");
@@ -835,6 +836,11 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
+    /**
+     * 我的消息，问题详细
+     * @param id
+     * @return
+     */
     @RequestMapping("/advisoryMessageDetail")
     @ResponseBody
     public String advisoryMessageDetail(Integer id) {
