@@ -313,18 +313,19 @@ public abstract class BaseApiController extends BaseDemoController {
 
     /**
      * 获取电子游戏请求路劲
+     *
      * @param siteGame
      * @return
      */
-    private String getCasinoGameRequestUrl(SiteGame siteGame){
+    private String getCasinoGameRequestUrl(SiteGame siteGame) {
         StringBuilder sb = new StringBuilder();
         sb.append("/origin/getGameLink.html")
                 .append("?apiId=").append(siteGame.getApiId())
                 .append("&apiTypeId=").append(siteGame.getApiTypeId());
-        if(siteGame.getGameId() !=null){
+        if (siteGame.getGameId() != null) {
             sb.append("&gameId=").append(siteGame.getGameId());
         }
-        if(StringTool.isNotBlank(siteGame.getCode())){
+        if (StringTool.isNotBlank(siteGame.getCode())) {
             sb.append("&gameCode=").append(siteGame.getCode());
         }
         return sb.toString();
@@ -388,11 +389,12 @@ public abstract class BaseApiController extends BaseDemoController {
         String maintain = GameStatusEnum.MAINTAIN.getCode();
         String normal = GameStatusEnum.NORMAL.getCode();
         Game game;
+        String mobile = GameSupportTerminalEnum.PHONE.getCode();
         for (SiteGame siteGame : siteGameMap.values()) {
             apiId = siteGame.getApiId();
-            if (fishGameType.equals(siteGame.getGameType()) && fishMap.get(apiId) == null) {
+            if (fishGameType.equals(siteGame.getGameType()) && fishMap.get(apiId) == null && mobile.equals(siteGame.getSupportTerminal())) {
                 fishMap.put(apiId, getApiName(apiId, apiI18nMap, siteApiI18nMap));
-            } else if (lotteryType == siteGame.getApiTypeId()) {
+            } else if (lotteryType == siteGame.getApiTypeId() && mobile.equals(siteGame.getSupportTerminal())) {
                 if (lottery.get(apiId) == null) {
                     lottery.put(apiId, new ArrayList<>());
                 }
@@ -512,6 +514,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
     /**
      * 获取游戏类集合
+     *
      * @param request
      * @param model
      * @return

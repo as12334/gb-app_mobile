@@ -45,14 +45,20 @@
                         <%--</div>--%>
                     </div>
                     <!--随机额度提示-->
-                    <c:if test="${account.randomAmount eq true}">
+                   <%-- <c:if test="${account.randomAmount eq true}">
                         <div class="mui-input-row" id="randomAmountMsg">
                             <marquee scrollamount="5" direction="left" >
                                 <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="${views.deposit_auto['随机额度提示']}" disabled/>
                             </marquee>
                         </div>
-                    </c:if>
+                    </c:if>--%>
                     <%@include file="./ChooseAmount.jsp"%>
+                    <!--随机额度提示-->
+                    <c:if test="${account.randomAmount eq true}">
+                        <div class="gb-form-notice" id="randomAmountMsg">
+                            <p name="randomAmountMsg">${views.deposit_auto['随机额度提示']}</p>
+                        </div>
+                    </c:if>
                 </div>
             </div>
             <input type="hidden" id="bankJson" value='${bankJson}' />
