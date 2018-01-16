@@ -139,9 +139,9 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         boolean unCheckSuccess = false;
         boolean pop = true;
         String tips = "";
-        double rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
+        Double rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
         //验证存款金额的合法性
-        if (rechargeAmount <= 0) {
+        if (rechargeAmount==null || rechargeAmount <= 0) {
             tips = LocaleTool.tranMessage(Module.FUND,"rechargeForm.rechargeAmountCorrect");
             model.addAttribute("tips",tips);
         } else if (rechargeAmount > 0) {
