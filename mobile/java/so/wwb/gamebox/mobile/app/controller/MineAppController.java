@@ -197,7 +197,6 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        vo.setError(DEFAULT_TIME);
         vo.setData(map);
         vo.setCode(AppErrorCodeEnum.withDrawError.getCode());
         vo.setMsg(AppErrorCodeEnum.withDrawError.getMsg());
