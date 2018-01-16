@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
 <body class="gb-theme mine-page ex-wechat">
-<div id="offCanvasWrapper" class="mui-draggable">
+<div id="offCanvasWrapper" class="mui-draggable mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
@@ -31,16 +31,16 @@
             </h1>
         </header>
         <form id="electronicForm">
-            <div class="mui-content ${os eq 'app_ios' ? 'mui-scroll-wrapper':''}" ${os eq 'android'?'style="padding-top:0!important"':''}>
+            <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper mui-scroll2" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <c:choose>
                     <c:when test="${not empty payAccount}">
-                        <div class="${os eq 'app_ios' ? 'mui-scroll':''} mui-scroll2">
+                        <div class="mui-scroll">
                             <div id="validateRule" style="display: none">${validateRule}</div>
                             <gb:token/>
                             <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
                             <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
-                            <input type="hidden" name="onlinePayMin" value="${rank.onlinePayMin}"/>
-                            <input type="hidden" name="onlinePayMax" value="${rank.onlinePayMax}"/>
+                            <%--<input type="hidden" name="onlinePayMin" value="${rank.onlinePayMin}"/>
+                            <input type="hidden" name="onlinePayMax" value="${rank.onlinePayMax}"/>--%>
                             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
                             <div class="mui-row">
                                 <div class="gb-panel" style="border-top-color: #fff;">
@@ -74,10 +74,10 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <c:if test="${not empty payAccount.remark}">
+                                            <%--<c:if test="${not empty payAccount.remark}">
                                                 <div class="front-end">
                                                     <pre stype="white-space: normal;">${payAccount.remark}</pre>                                                </div>
-                                            </c:if>
+                                            </c:if>--%>
                                         </div>
                                     </div>
                                         <%--<div class="wechat-code">
@@ -192,12 +192,11 @@
                                     </c:if>
                                 </div>
                             </div>
-                            <div class="mui-row">
-                                <div class="gb-form-foot bank-pay-btn">
-                                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount">${views.deposit_auto['提交']}</button>
-                                </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="gb-form-foot bank-pay-btn">
+                                <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount">${views.deposit_auto['提交']}</button>
                             </div>
-
                         </div>
                     </c:when>
                     <c:otherwise>
@@ -206,7 +205,6 @@
                         </div>
                     </c:otherwise>
                 </c:choose>
-
             </div>
         </form>
     </div>

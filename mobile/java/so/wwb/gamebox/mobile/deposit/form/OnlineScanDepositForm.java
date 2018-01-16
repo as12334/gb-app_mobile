@@ -19,7 +19,7 @@ import javax.validation.constraints.Pattern;
 @Comment("扫码支付验证")
 public class OnlineScanDepositForm implements IForm {
     private String result_rechargeAmount;
-    private String $code;
+//    private String $code;
 
     @Comment("存款金额")
     @NotBlank(message = "deposit_auto.请输入存款金额")
@@ -34,15 +34,15 @@ public class OnlineScanDepositForm implements IForm {
     public void setResult_rechargeAmount(String result_rechargeAmount) {
         this.result_rechargeAmount = result_rechargeAmount;
     }
-
-    @Comment("验证码")
-    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})
-    @Remote(message = "fund.rechargeForm.code.correct", checkMethod = "checkCaptcha", checkClass = BaseDepositController.class)
-    public String get$code() {
-        return $code;
-    }
-
-    public void set$code(String $code) {
-        this.$code = $code;
-    }
+//
+//    @Comment("验证码")
+//    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})
+//    @Remote(message = "fund.rechargeForm.code.correct", checkMethod = "checkCaptcha", checkClass = BaseDepositController.class)
+//    public String get$code() {
+//        return $code;
+//    }
+//
+//    public void set$code(String $code) {
+//        this.$code = $code;
+//    }
 }

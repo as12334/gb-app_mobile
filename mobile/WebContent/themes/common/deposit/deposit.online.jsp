@@ -8,7 +8,7 @@
             <div id="validateRule" style="display: none">${validateRule}</div>
             <c:set var="bank" value="${bankList[0]['value']}"/>
             <c:set var="account" value="${payAccountMap[bank]}"/>
-            <c:set var="onlinePayMin" value="${empty account.singleDepositMin?1:account.singleDepositMin}"/>
+            <c:set var="onlinePayMin" value="${empty account.singleDepositMin || account.singleDepositMin <= 0 ? 0.01 : account.singleDepositMin}"/>
             <c:set var="onlinePayMax" value="${empty account.singleDepositMax?99999999:account.singleDepositMax}"/>
             <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="${onlinePayMin}"/>
             <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="${onlinePayMax}"/>
@@ -32,7 +32,7 @@
                 <div class="mui-input-group mine-form m-t-sm">
                     <div class="mui-input-row">
                         <label>${views.deposit_auto['金额']}</label>
-                        <div class="ct">
+                        <%--<div class="ct">--%>
                             <p class="text-gray-light">
                                 <c:if test="${account.randomAmount eq true}">
                                     <% int randomCash = (int)(Math.random()*88+11);%>
@@ -42,22 +42,23 @@
                                 <input type="text" value="" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"
                                        name="result.rechargeAmount" id="result.rechargeAmount" autocomplete="off" style="display:inline-block;width:50%;text-align: right;float:right;height:40px;padding-right:8px;"/>
                             </p>
-                        </div>
+                        <%--</div>--%>
                     </div>
                     <!--随机额度提示-->
-                    <c:if test="${account.randomAmount eq true}">
+                   <%-- <c:if test="${account.randomAmount eq true}">
                         <div class="mui-input-row" id="randomAmountMsg">
                             <marquee scrollamount="5" direction="left" >
                                 <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="${views.deposit_auto['随机额度提示']}" disabled/>
                             </marquee>
                         </div>
-                    </c:if>
+                    </c:if>--%>
                     <%@include file="./ChooseAmount.jsp"%>
-                </div>
-            </div>
-            <div class="mui-row">
-                <div class="gb-form-foot bank-pay-btn">
-                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount" disabled="disabled">${views.deposit_auto['下一步']}</button>
+                    <!--随机额度提示-->
+                    <c:if test="${account.randomAmount eq true}">
+                        <div class="gb-form-notice" id="randomAmountMsg">
+                            <p name="randomAmountMsg">${views.deposit_auto['随机额度提示']}</p>
+                        </div>
+                    </c:if>
                 </div>
             </div>
             <input type="hidden" id="bankJson" value='${bankJson}' />

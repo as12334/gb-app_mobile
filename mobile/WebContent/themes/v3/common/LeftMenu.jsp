@@ -9,7 +9,7 @@
                 <!--登录前-->
                 <div class="un-login">
                     <p>${views.themes_auto['欢迎观临']}</p>
-                    <soul:button target="login" text="${views.themes_auto['用户登录']}" opType="function" cssClass="mui-btn mui-btn-success btn-login" tag="button"/>
+                    <button data-rel='{"target":"login","opType":"function"}' class="mui-btn mui-btn-success btn-login">${views.themes_auto['用户登录']}</button>
                 </div>
                 <!--登陆后-->
                 <div class="login" style="display: none;">
@@ -17,7 +17,7 @@
                         <img width="100%" height="100%" src="${resRoot}/images/avatar.png" id="avatarImg">
                     </i>
                     <p></p>
-                    <soul:button target="goTab" skip="4" dataHref="/mine/index.html?channel=mine&skip=4" isLeft="true" text="${views.themes_auto['个人中心']}" opType="function" cssClass="mui-btn mui-btn-success btn-person" tag="button"/>
+                    <button data-rel='{"target":"goTab","opType":"function","skip":"4","dataHref":"/mine/index.html?channel=mine&skip=4","isLeft":"true"}' class="mui-btn mui-btn-success btn-person">${views.themes_auto['个人中心']}</button>
                 </div>
             </div>
             <!--side-nav-->

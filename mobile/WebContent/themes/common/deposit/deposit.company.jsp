@@ -2,7 +2,7 @@
 <%@ include file="/include/include.inc.jsp" %>
 
 <body class="gb-theme mine-page no-backdrop">
-<div id="offCanvasWrapper" class="mui-draggable">
+<div id="offCanvasWrapper" class="mui-draggable"><%-- mui-off-canvas-wrap --%>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav ${os eq 'android'?'mui-hide':''}">
@@ -10,16 +10,16 @@
             <h1 class="mui-title">${views.deposit_auto['银行卡转账']}</h1>
         </header>
         <form id="confirmCompanyForm">
-            <div class="mui-content" ${os eq 'android'?'style="padding-top:0!important"':''}>
+            <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper mui-scroll2" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <c:choose>
                     <c:when test="${not empty payAccount}">
-                        <div class="mui-scroll2">
+                        <div class="mui-scroll">
                             <gb:token/>
-                            <c:set var="onlinePayMin" value="${empty rank.onlinePayMin?1:rank.onlinePayMin}"/>
+                            <%--<c:set var="onlinePayMin" value="${empty rank.onlinePayMin?1:rank.onlinePayMin}"/>
                             <c:set var="onlinePayMax" value="${empty rank.onlinePayMax?99999999:rank.onlinePayMax}"/>
                             <input type="hidden" name="onlinePayMin" value="${onlinePayMin}"/>
                             <input type="hidden" name="onlinePayMax" value="${onlinePayMax}"/>
-                            <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
+                            <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>--%>
                             <div id="validateRule" style="display: none">${validateRule}</div>
                             <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
                             <input type="hidden" id="rechargeTypeJson" value='${rechargeTypeJson}' />
@@ -129,10 +129,10 @@
 
                                 </div>
                             </div>
-                            <div class="mui-row">
-                                <div class="gb-form-foot bank-pay-btn">
-                                    <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount">${views.deposit_auto['提交']}</button>
-                                </div>
+                        </div>
+                        <div class="mui-row">
+                            <div class="gb-form-foot bank-pay-btn">
+                                <button class="mui-btn mui-btn-primary submit" type="button" id="submitAmount">${views.deposit_auto['提交']}</button>
                             </div>
                         </div>
                     </c:when>

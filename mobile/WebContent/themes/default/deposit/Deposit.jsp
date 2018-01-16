@@ -13,14 +13,12 @@
 <c:choose>
     <c:when test="${isDemo}">
         <body class="gb-theme mine-page no-backdrop" >
-        <c:if test="${os ne 'android'}">
-            <header class="mui-bar mui-bar-nav">
-                <c:if test="${os ne 'app_ios'}">
-                    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-                </c:if>
-                <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
-            </header>
-        </c:if>
+        <header class="mui-bar mui-bar-nav" style="${os eq 'app_android'?'padding-top: 0px;display:none':''}">
+            <c:if test="${os ne 'app_ios'}">
+                <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            </c:if>
+            <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
+        </header>
         <center>
             <img src="${resRoot}/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
         </center>

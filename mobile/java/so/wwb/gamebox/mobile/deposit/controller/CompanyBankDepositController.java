@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2CashForm;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2Form;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -65,10 +66,14 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
     @RequestMapping("/depositCash")
     @Token(generate = true)
     public String depositCash(PayAccountVo payAccountVo, Model model){
+        PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
+        if(payAccount!=null) {
+            model.addAttribute("companyPayAccount",payAccount);
+        }
         model.addAttribute("rank", getRank());
         model.addAttribute("currency",getCurrencySign());
-        model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
-        return "/deposit/DepositCash";
+        model.addAttribute("validateRule", JsRuleCreator.create(CompanyBankDeposit2CashForm.class));
+        return "/deposit/DepositCompanyCash";
     }
 
     @RequestMapping("/index")

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
+<div id="depositSalePop">
 <c:choose>
     <c:when test="${unCheckSuccess}">
         <c:choose>
@@ -10,7 +10,7 @@
                     <div  class="cont">
                         <h3>${views.deposit_auto['消息']}</h3>
                         <div class="cont-text">
-                            <p>${views.deposit_auto['金额']}：<span class="org">${rechargeAmount}</span></p>
+                            <p>${views.deposit_auto['金额']}：<span class="org">${soulFn:formatCurrency(rechargeAmount)}</span></p>
                             <p>${views.deposit_auto['手续费']}：${msg}</p>
                         </div>
 
@@ -58,3 +58,4 @@
 <span style="display: none" id="pop" pop="${pop}"></span>
 <span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>
 <span style="display: none" id="tips" tips="${tips}"></span>
+</div>
