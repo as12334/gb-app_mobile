@@ -143,7 +143,7 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(appVersion);
 
         vo = withDraw(vo);
-        if(StringTool.isBlank(vo.getMsg())){
+        if(StringTool.isNotBlank(vo.getMsg())){
             return JsonTool.toJson(vo);
         }
 
