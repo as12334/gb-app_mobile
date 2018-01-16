@@ -142,7 +142,7 @@ public class DiscountsAppController{
         listVo.getSearch().setIsDisplay(Boolean.TRUE);
         listVo.getSearch().setIsDeleted(Boolean.FALSE);
         listVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        if (listVo.getSearch().getActivityClassifyKey() != null) {
+        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey()) ) {
             listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
         }
 
