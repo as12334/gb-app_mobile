@@ -1566,11 +1566,10 @@ public class BaseMineController {
     }
 
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
-        Map<String,Object> map = new HashMap<>(2,1f);
+        Map<String,Object> map = new HashMap<>(TWO,oneF);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
-        //model.addAttribute("length", length);
         //玩家咨询-未读数量
         listVo.setSearch(null);
         listVo.getSearch().setSearchType("player");
@@ -1588,7 +1587,6 @@ public class BaseMineController {
             parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
-                readVo.setResult(new PlayerAdvisoryRead());
                 readVo.getSearch().setUserId(SessionManager.getUserId());
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
                 readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
@@ -1601,9 +1599,6 @@ public class BaseMineController {
         }
         map.put("sysMessageUnReadCount",length);
         map.put("advisoryUnReadCount",advisoryUnReadCount);
-        //this.advisoryUnReadCount = advisoryUnReadCount;
-        //model.addAttribute("sysMessageUnReadCount",sysMessageUnReadCount);
-        //model.addAttribute("advisoryUnReadCount", advisoryUnReadCount);
         return map;
     }
 
