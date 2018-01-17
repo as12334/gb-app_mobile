@@ -913,7 +913,12 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
-
+    /**
+     * 申请优惠，保存发送消息
+     * @param playerAdvisoryVo
+     * @param code
+     * @return
+     */
     @RequestMapping("/addNoticeSite")
     @ResponseBody
     public String addNoticeSite(PlayerAdvisoryVo playerAdvisoryVo, String code) {
@@ -1509,7 +1514,7 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
-     * 验证吗remote验证
+     * 我的消息  保存申请验证吗remote验证
      * @param code
      * @return
      */
