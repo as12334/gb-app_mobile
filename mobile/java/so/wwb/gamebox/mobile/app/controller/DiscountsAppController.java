@@ -124,7 +124,7 @@ public class DiscountsAppController{
             types = getActivityTypes();
         }
 
-        Map<String, Object> activityTypes = new HashMap<>(types.size(),oneF);
+        Map<String, Object> activityTypes = new HashMap<>(types.size(),ONE_FLOAT);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             Map messages = getActivityMessages(listVo, request);
@@ -156,7 +156,7 @@ public class DiscountsAppController{
         listVo = setDefaultImages(listVo, request);
 
         //转换接口所需数据
-        Map<String,Object> map = new HashMap<>(TWO,oneF);
+        Map<String,Object> map = new HashMap<>(TWO,ONE_FLOAT);
         List<ActivityTypeListApp> messages = ListTool.newArrayList();
         for (VActivityMessage message : listVo.getResult()) {
             ActivityTypeListApp activityApp = new ActivityTypeListApp();

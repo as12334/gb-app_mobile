@@ -1372,7 +1372,7 @@ public class BaseMineController {
             }
         }
 
-        Map<String, Object> map = new HashMap<>(four, oneF);
+        Map<String, Object> map = new HashMap<>(FOUR, ONE_FLOAT);
         List<AppSystemNotice> sysNotices = ListTool.newArrayList();
         for (VSystemAnnouncement sysAnnounce : vListVo.getResult()) {
             AppSystemNotice sysNotice = new AppSystemNotice();
@@ -1384,7 +1384,7 @@ public class BaseMineController {
         }
         map.put("list", sysNotices);
         map.put("pageTotal", vListVo.getPaging().getTotalCount());
-        map.put("minDate", SessionManager.getDate().addDays(sysNoticeMinTime));
+        map.put("minDate", SessionManager.getDate().addDays(SYSTEM_NOTICE_MIN_TIME));
         map.put("maxDate", new Date());
         return map;
     }
@@ -1450,11 +1450,11 @@ public class BaseMineController {
                 }
             }
         }
-        Map<String, Object> map = new HashMap<>(appErrorTimes, oneF);
+        Map<String, Object> map = new HashMap<>(APP_ERROR_TIMES, ONE_FLOAT);
         map.put("list", gameNotices);
         map.put("pageTotal", listVo.getPaging().getTotalCount());
         map.put("maxDate", SessionManager.getDate().getNow());
-        map.put("minDate", SessionManager.getDate().addDays(sysNoticeMinTime));
+        map.put("minDate", SessionManager.getDate().addDays(SYSTEM_NOTICE_MIN_TIME));
 
         List<AppSelectSiteApiI18n> appSiteApis = ListTool.newArrayList();
         for (SiteApiI18n siteApi : Cache.getSiteApiI18n().values()) {
@@ -1522,10 +1522,10 @@ public class BaseMineController {
             sysNotice.setTitle(text.getShortTitle50());
             sysNotice.setPublishTime(text.getReceiveTime());
             sysNotice.setLink(SITE_SYSTEM_NOTICE + "?searchId=" + listVo.getSearchId(text.getId()));
-            sysNotice.setRead(StringTool.equalsIgnoreCase(text.getReceiveStatus(), isRead) ? true : false);
+            sysNotice.setRead(StringTool.equalsIgnoreCase(text.getReceiveStatus(), IS_READ) ? true : false);
             sysNotices.add(sysNotice);
         }
-        Map<String, Object> map = new HashMap<>(TWO, oneF);
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         map.put("list", sysNotices);
         map.put("pageTotal", listVo.getPaging().getTotalCount());
         return map;
@@ -1565,7 +1565,7 @@ public class BaseMineController {
     }
 
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
-        Map<String, Object> map = new HashMap<>(TWO, oneF);
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);

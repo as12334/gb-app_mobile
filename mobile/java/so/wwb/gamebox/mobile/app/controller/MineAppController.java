@@ -113,7 +113,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        Map<String, Object> map = new HashMap<>(four, oneF);
+        Map<String, Object> map = new HashMap<>(FOUR, ONE_FLOAT);
         Map<String, Object> userInfoMap = MapTool.newHashMap();
         map.put("isBit", ParamTool.isBit());//是否存在比特币
         map.put("isCash", ParamTool.isCash());//是否存在银行卡
@@ -234,7 +234,7 @@ public class MineAppController extends BaseMineController {
         Map<String, Object> map = MapTool.newHashMap();
         if (isBalanceAdequate(map)) {
             vo.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
-            vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace(targetRegex, map.get("withdrawMinNum").toString()));
+            vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
             vo.setError(DEFAULT_TIME);
             return vo;
         }
@@ -1060,7 +1060,7 @@ public class MineAppController extends BaseMineController {
         Integer errorTimes = user.getSecpwdErrorTimes();
         errorTimes = errorTimes == null ? 0 : errorTimes;
         map.put("isOpenCaptcha", errorTimes > 1);
-        map.put("remindTimes", appErrorTimes - errorTimes);
+        map.put("remindTimes", APP_ERROR_TIMES - errorTimes);
         map.put("captChaUrl", safePasswordUrl);
         vo.setData(map);
         return vo;
@@ -1570,10 +1570,10 @@ public class MineAppController extends BaseMineController {
         }
 
         map.put("isOpenCaptcha", errorTimes >= TWO);
-        if (errorTimes <= appErrorTimes) {
-            map.put("remainTimes", appErrorTimes - errorTimes);
+        if (errorTimes <= APP_ERROR_TIMES) {
+            map.put("remainTimes", APP_ERROR_TIMES - errorTimes);
             updateSysUserErrorTimes(errorTimes, now, null);
-        } else if (errorTimes >= appErrorTimes) {
+        } else if (errorTimes >= APP_ERROR_TIMES) {
             map.put("remainTimes", errorTimes);
             updateSysUserErrorTimes(errorTimes, now, DateTool.addHours(now, 3));
             KickoutFilter.loginKickoutAll(SessionManager.getUserId(), OpMode.AUTO, "移动修改密码错误踢出用户");
@@ -1588,10 +1588,10 @@ public class MineAppController extends BaseMineController {
         if (errorTimes == 1) {
             this.updateErrorTimes(user);
         } else if (errorTimes > 1 && errorTimes < 5) {
-            map.put(keyCaptcha, true);
-            map.put(keyTimes, appErrorTimes - errorTimes);
+            map.put(KEY_CAPTCHA, true);
+            map.put(KEY_TIMES_KEY, APP_ERROR_TIMES - errorTimes);
             this.updateErrorTimes(user);
-        } else if (errorTimes >= appErrorTimes) {
+        } else if (errorTimes >= APP_ERROR_TIMES) {
             initPwdLock(map, SessionManager.getDate().getNow());
             this.setSecPwdFreezeTime(user);
             freezeAccountBalance();
@@ -1662,10 +1662,10 @@ public class MineAppController extends BaseMineController {
      * 安全密码正确
      */
     private void securityPasswordCorrect(Map<String, Object> map, SysUser user) {
-        map.put(keyState, PrivilegeStatusEnum.CODE_100.getCode());
-        map.put(keyTimes, appErrorTimes);
-        map.put(keyForceStart, SessionManager.getDate().getNow().getTime());
-        map.put(keyCaptcha, false);
+        map.put(KEY_STATE_KEY, PrivilegeStatusEnum.CODE_100.getCode());
+        map.put(KEY_TIMES_KEY, APP_ERROR_TIMES);
+        map.put(KEY_FORCE_START, SessionManager.getDate().getNow().getTime());
+        map.put(KEY_CAPTCHA, false);
 
         user.setSecpwdErrorTimes(0);
         updateErrorTimes(user);
@@ -1763,10 +1763,10 @@ public class MineAppController extends BaseMineController {
      * 密码锁定时的提示内容
      */
     private void initPwdLock(Map<String, Object> map, Date date) {
-        map.put(keyState, PrivilegeStatusEnum.CODE_99.getCode());
-        map.put(keyTimes, 0);
-        map.put(keyForceStart, formatLockTime(date));
-        map.put(customerService, SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
+        map.put(KEY_STATE_KEY, PrivilegeStatusEnum.CODE_99.getCode());
+        map.put(KEY_TIMES_KEY, 0);
+        map.put(KEY_FORCE_START, formatLockTime(date));
+        map.put(CUSTOMER_SERVICE_KEY, SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
     }
 
     /**
