@@ -27,6 +27,7 @@ import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
+import org.soul.model.sys.po.SysDict;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.shiro.local.PassportResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -703,9 +704,22 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        Map<String, Serializable> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
+        Map<String, SysDict> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
+        Iterator<String> iter = advisoryType.keySet().iterator();
+        List<AdvisoryType> advisoryTypeList = ListTool.newArrayList();
+        while(iter.hasNext()){
+            String key = iter.next();
+            AdvisoryType type = new AdvisoryType();
+            SysDict dict = advisoryType.get(key);
+            dict.getRemark();
+            type.setAdvisoryType(key);
+            type.setAdvisoryName(dict.getRemark());
+            advisoryTypeList.add(type);
+
+        }
+
         Map<String,Object> map = MapTool.newHashMap();
-        map.put("advisoryType", advisoryType);
+        map.put("advisoryType", advisoryTypeList);
         map.put("isOpenCaptcha", false);
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >=3) {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
