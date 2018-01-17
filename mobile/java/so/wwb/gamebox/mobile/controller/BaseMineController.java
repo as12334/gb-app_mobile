@@ -1489,8 +1489,10 @@ public class BaseMineController {
      * 提取公共 获取公告信息
      */
     private VSystemAnnouncementListVo getNotice(VSystemAnnouncementListVo listVo){
-        if(listVo.getSearch().getStartTime()==null && listVo.getSearch().getEndTime()==null){
+        if(listVo.getSearch().getStartTime()==null){
             listVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), RECOMMEND_DAYS));
+        }
+        if(listVo.getSearch().getEndTime()==null){
             listVo.getSearch().setEndTime(DateQuickPicker.getInstance().getNow());
         }
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
@@ -1557,6 +1559,50 @@ public class BaseMineController {
         sysNotice.setContent(vo.getResult().getContent());
         sysNotice.setPublishTime(vo.getResult().getReceiveTime());
         return sysNotice;
+    }
+
+    protected void getSiteUnReadCount(){
+
+    }
+
+    protected VPlayerAdvisoryListVo unReadCount(VPlayerAdvisoryListVo listVo) {
+        //系统消息-未读数量
+        VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
+        Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
+        //model.addAttribute("length", length);
+        //玩家咨询-未读数量
+        listVo.setSearch(null);
+        listVo.getSearch().setSearchType("player");
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
+        listVo.getSearch().setPlayerDelete(false);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
+        Integer advisoryUnReadCount = 0;
+        String tag  = "";
+        //所有咨询数据
+        for (VPlayerAdvisory obj : listVo.getResult()) {
+            //查询回复表每一条在已读表是否存在
+            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
+            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
+                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+                readVo.setResult(new PlayerAdvisoryRead());
+                readVo.getSearch().setUserId(SessionManager.getUserId());
+                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
+                //不存在未读+1，标记已读咨询Id
+                if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
+                    advisoryUnReadCount++;
+                    tag+=replay.getPlayerAdvisoryId().toString()+",";
+                }
+            }
+        }
+        long sysMessageUnReadCount = length;
+        //this.advisoryUnReadCount = advisoryUnReadCount;
+        //model.addAttribute("sysMessageUnReadCount",sysMessageUnReadCount);
+        //model.addAttribute("advisoryUnReadCount", advisoryUnReadCount);
+        return listVo;
     }
 
 }

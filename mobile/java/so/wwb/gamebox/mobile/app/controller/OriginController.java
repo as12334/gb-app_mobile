@@ -203,7 +203,7 @@ public class OriginController extends BaseApiController {
 
             return JsonTool.toJson(vo);
         }else{
-            if(siteGame.getApiTypeId().equals(ApiTypeEnum.CASINO.getCode())){
+            if( Integer.parseInt(siteGame.getApiTypeId()) == ApiTypeEnum.CASINO.getCode()){
                 PlayerApiAccountVo player = new PlayerApiAccountVo();
                 player.setApiId(siteGame.getApiId());
                 player.setApiTypeId(siteGame.getApiTypeId().toString());

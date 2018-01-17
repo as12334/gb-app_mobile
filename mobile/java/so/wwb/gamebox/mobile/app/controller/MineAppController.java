@@ -15,7 +15,6 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criterion;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
@@ -27,7 +26,6 @@ import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
-import org.soul.web.session.SessionManagerBase;
 import org.soul.web.shiro.local.PassportResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,15 +50,9 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
 import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
-import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
-import so.wwb.gamebox.model.company.setting.po.Api;
-import so.wwb.gamebox.model.company.site.po.SiteApi;
-import so.wwb.gamebox.model.enums.DemoModelEnum;
-import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
@@ -81,7 +73,6 @@ import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankHelper;
-import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
@@ -143,7 +134,7 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(appVersion);
 
         vo = withDraw(vo);
-        if(StringTool.isBlank(vo.getMsg())){
+        if(StringTool.isNotBlank(vo.getMsg())){
             return JsonTool.toJson(vo);
         }
 
@@ -1409,6 +1400,19 @@ public class MineAppController extends BaseMineController {
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setCode(AppErrorCodeEnum.Success.getCode());
 
+        return JsonTool.toJson(vo);
+    }
+
+    /**
+     * 获取站点中心未读条数
+     * @return
+     */
+    @RequestMapping("/getUnReadCount")
+    @ResponseBody
+    public String getUnReadCount(VPlayerAdvisoryListVo listVo ){
+        AppModelVo vo = new AppModelVo();
+
+        unReadCount(listVo);
         return JsonTool.toJson(vo);
     }
 
