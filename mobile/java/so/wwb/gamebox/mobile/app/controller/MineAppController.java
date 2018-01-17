@@ -1411,8 +1411,13 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getUnReadCount(VPlayerAdvisoryListVo listVo ){
         AppModelVo vo = new AppModelVo();
+        vo.setVersion(appVersion);
 
-        unReadCount(listVo);
+        Map map = unReadCount(listVo);
+        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setData(map);
+
         return JsonTool.toJson(vo);
     }
 

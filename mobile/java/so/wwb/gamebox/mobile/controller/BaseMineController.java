@@ -1565,7 +1565,8 @@ public class BaseMineController {
 
     }
 
-    protected VPlayerAdvisoryListVo unReadCount(VPlayerAdvisoryListVo listVo) {
+    protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
+        Map<String,Object> map = new HashMap<>(2,1f);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
@@ -1598,11 +1599,12 @@ public class BaseMineController {
                 }
             }
         }
-        long sysMessageUnReadCount = length;
+        map.put("sysMessageUnReadCount",length);
+        map.put("advisoryUnReadCount",advisoryUnReadCount);
         //this.advisoryUnReadCount = advisoryUnReadCount;
         //model.addAttribute("sysMessageUnReadCount",sysMessageUnReadCount);
         //model.addAttribute("advisoryUnReadCount", advisoryUnReadCount);
-        return listVo;
+        return map;
     }
 
 }
