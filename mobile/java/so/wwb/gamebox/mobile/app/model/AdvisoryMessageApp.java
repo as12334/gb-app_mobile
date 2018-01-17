@@ -16,6 +16,8 @@ public class AdvisoryMessageApp {
 
     private String replyTitle; // 回复标题
 
+    private Boolean isRead; // 是否读了
+
     public String getAdvisoryTitle() {
         return advisoryTitle;
     }
@@ -54,5 +56,13 @@ public class AdvisoryMessageApp {
 
     public void setReplyTitle(String replyTitle) {
         this.replyTitle = replyTitle;
+    }
+
+    public Boolean getRead() {
+        return isRead;
+    }
+
+    public void setRead(Boolean read) {
+        isRead = read;
     }
 }
