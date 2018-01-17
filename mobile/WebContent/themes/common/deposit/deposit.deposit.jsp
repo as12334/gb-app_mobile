@@ -16,7 +16,7 @@
                 </c:if>
             </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper mui-scroll2">
+        <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper main-contents">
             <div class="mui-scroll">
                 <div class="mui-row">
                     <div class="mui-input-group mine-form">
