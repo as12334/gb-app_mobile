@@ -710,7 +710,7 @@ public class MineAppController extends BaseMineController {
         }
 
         Map<String,Object> map = MapTool.newHashMap();
-        map.put("advisoryType", advisoryTypeList);
+        map.put("advisoryTypeList", advisoryTypeList);
         map.put("isOpenCaptcha", false);
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >=3) {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
@@ -990,7 +990,7 @@ public class MineAppController extends BaseMineController {
         message.setSearchId(String.valueOf(id));
         StringBuffer sb = new StringBuffer();
 
-        String url = "/fund/betting/gameRecordDetail.html?";
+        String url = "/fund/betting/gameRecordDetail.html?searchId=";
 
         Map map = MapTool.newHashMap();
         if (StringTool.isNotBlank(message.getSearchId())) {
