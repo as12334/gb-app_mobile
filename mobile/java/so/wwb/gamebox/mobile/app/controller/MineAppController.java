@@ -733,7 +733,7 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTime(time);
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
-
+            messageApp.setRead(advisory.getIsRead());
             messageAppList.add(messageApp);
 
         }
