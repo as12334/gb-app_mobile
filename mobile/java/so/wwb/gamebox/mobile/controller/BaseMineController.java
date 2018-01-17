@@ -152,25 +152,11 @@ public class BaseMineController {
                 bankcardNumMap = new HashMap<>();
                 bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
                 bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-
                 userInfo.put("btc", bankcardNumMap);
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
                 bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-
-                UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
-                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
-                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
-                bankcardNumMap.put("bankName", bankName);
-                bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
-                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
-
                 userInfo.put("bankcard", bankcardNumMap);
-
-
-
-                bankcard.setBankcardNumber(BankCardTool.overlayBankcard(userBankcard.getBankcardNumber())); //隐藏部分银行卡账号
-                bankcard.setBankDeposit(userBankcard.getBankDeposit());
             }
         }
 

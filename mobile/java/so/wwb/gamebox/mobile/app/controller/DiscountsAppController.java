@@ -62,12 +62,13 @@ public class DiscountsAppController{
         AppModelVo vo = new AppModelVo();
         vo.setVersion(appVersion);
 
-        if (StringTool.isBlank(listVo.getSearch().getActivityClassifyKey())) {
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
-            return JsonTool.toJson(vo);
-        }
+//        if (StringTool.isBlank(listVo.getSearch().getActivityClassifyKey())) {
+//            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+//            vo.setError(DEFAULT_TIME);
+//            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+//            return JsonTool.toJson(vo);
+//        }
+
 
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
@@ -141,7 +142,10 @@ public class DiscountsAppController{
         listVo.getSearch().setIsDisplay(Boolean.TRUE);
         listVo.getSearch().setIsDeleted(Boolean.FALSE);
         listVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
+        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey()) ) {
+            listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
+        }
+
         //通过玩家层级判断是否显示活动
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
