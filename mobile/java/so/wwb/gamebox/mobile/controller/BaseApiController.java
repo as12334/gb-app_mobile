@@ -765,6 +765,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
         if (gameApiResult == null) {
+            appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             return appI18n;
         }
 
@@ -835,6 +836,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
         if (gameApiResult == null) {
+            appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             return appI18n;
         }
         String url = (gameApiResult instanceof RegisterResult) ?
