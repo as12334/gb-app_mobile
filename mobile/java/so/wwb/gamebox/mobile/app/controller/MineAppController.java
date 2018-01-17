@@ -716,7 +716,9 @@ public class MineAppController extends BaseMineController {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
             map.put("captcha_value", "/captcha/feedback.html");
         }
-        return JsonTool.toJson(map);
+
+        vo = CommonApp.buildAppModelVo(map);
+        return JsonTool.toJson(vo);
     }
 
     /**
