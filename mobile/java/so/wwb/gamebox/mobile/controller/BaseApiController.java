@@ -545,11 +545,9 @@ public abstract class BaseApiController extends BaseDemoController {
                     vo.setCover(setApiLogoUrl(model, request) + "/api_type_" + apiType + ".png");
                 }
             }
+            vo.setLevel(false);
             if (apiType == ApiTypeEnum.LOTTERY.getCode()) {
                 vo.setLevel(true);
-
-            } else {
-                vo.setLevel(false);
             }
             //获取游戏集合
             vo.setSiteApis(setAppApiRelationI18n(siteApiRelation.get(apiType), request, model));
@@ -765,6 +763,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
         if (gameApiResult == null) {
+            appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             return appI18n;
         }
 
@@ -835,6 +834,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
         if (gameApiResult == null) {
+            appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             return appI18n;
         }
         String url = (gameApiResult instanceof RegisterResult) ?
