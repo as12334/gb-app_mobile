@@ -1857,6 +1857,8 @@ public class MineAppController extends BaseMineController {
                     VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
                     if(vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())){
                         vo.setIsRead(false);
+                    }else {
+                        vo.setIsRead(true);
                     }
                 }
             }

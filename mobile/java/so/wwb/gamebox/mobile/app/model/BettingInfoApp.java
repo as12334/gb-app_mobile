@@ -14,6 +14,8 @@ public class BettingInfoApp {
     private String terminal;
     private String apiName;
     private String gameName;
+
+    private String url; // 投注记录详情的h5链接,不用再请求详情接口
     /**
      * 盈亏结果金额（派彩）
      */
@@ -124,5 +126,13 @@ public class BettingInfoApp {
 
     public void setGameName(String gameName) {
         this.gameName = gameName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

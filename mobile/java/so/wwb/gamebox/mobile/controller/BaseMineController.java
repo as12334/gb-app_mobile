@@ -63,6 +63,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -1247,6 +1248,11 @@ public class BaseMineController {
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
+
+            PlayerActivityMessage message = new PlayerActivityMessage();
+//            message.setSearchId(String.valueOf(order.getId()));
+            message.setId(order.getId());
+            infoApp.setUrl("/fund/betting/gameRecordDetail.html?searchId=" + message.getSearchId());
 
             String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
             infoApp.setApiName(apiName);
