@@ -46,7 +46,7 @@ public class DiscountsAppController{
     @ResponseBody
     public String getActivityType() {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(getActivityTypes());
@@ -60,7 +60,7 @@ public class DiscountsAppController{
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
 //        if (StringTool.isBlank(listVo.getSearch().getActivityClassifyKey())) {
 //            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
@@ -84,7 +84,7 @@ public class DiscountsAppController{
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         vo.setData(getActivityTypeMessages(listVo, request));
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());

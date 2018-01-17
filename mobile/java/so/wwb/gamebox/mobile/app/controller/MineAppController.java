@@ -107,7 +107,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getLink(HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
@@ -134,7 +134,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getWithDraw() {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {
@@ -158,7 +158,7 @@ public class MineAppController extends BaseMineController {
     @Token(valid = true)
     public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {
@@ -376,7 +376,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String addCard() {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
@@ -469,7 +469,7 @@ public class MineAppController extends BaseMineController {
         bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
         bankcardVo.getResult().setBankcardNumber(bankcardNumber);
         AppModelVo appModelVo = new AppModelVo();
-        appModelVo.setVersion(AppConstant.appVersion);
+        appModelVo.setVersion(AppConstant.APP_VERSION);
         if (checkCardIsExistsByUserId(bankcardVo)) {
             AppErrorCodeEnum.hasBtc.getCode();
             appModelVo.setCode(AppErrorCodeEnum.hasBtc.getCode());
@@ -572,7 +572,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getFundRecordDetails(Integer searchId) {
         AppModelVo appModelVo = new AppModelVo();
-        appModelVo.setVersion(appVersion);
+        appModelVo.setVersion(APP_VERSION);
         VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
         if (!isLoginUser(appModelVo)) {
             return JsonTool.toJson(appModelVo);
@@ -665,7 +665,7 @@ public class MineAppController extends BaseMineController {
     public String getBettingList(PlayerGameOrderListVo listVo) {
 
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         if (!isLoginUser(vo)) {
             return JsonTool.toJson(vo);
@@ -936,7 +936,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String addNoticeSite(PlayerAdvisoryVo playerAdvisoryVo, String code) {
         AppModelVo appModelVo = new AppModelVo();
-        appModelVo.setVersion(appVersion);
+        appModelVo.setVersion(APP_VERSION);
         if (playerAdvisoryVo != null && playerAdvisoryVo.getResult() != null) {
             playerAdvisoryVo.setSuccess(false);
             playerAdvisoryVo.getResult().setAdvisoryTime(SessionManager.getDate().getNow());
@@ -1003,7 +1003,7 @@ public class MineAppController extends BaseMineController {
 //            vo.setResultArray(null);
 //        }
 //        AppModelVo appModelVo = CommonApp.buildAppModelVo(buildBettingDetail(vo));
-//        appModelVo.setVersion(appVersion);
+//        appModelVo.setVersion(APP_VERSION);
         PlayerActivityMessage message = new PlayerActivityMessage();
         message.setSearchId(String.valueOf(id));
         StringBuffer sb = new StringBuffer();
@@ -1027,7 +1027,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String initSafePassword() {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         vo = getSafePassword(vo);
         return JsonTool.toJson(vo);
@@ -1071,7 +1071,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String setRealNameApp(String realName) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(realName)) {
             vo.setCode(AppErrorCodeEnum.realName.getCode());
             vo.setMsg(AppErrorCodeEnum.realName.getMsg());
@@ -1100,7 +1100,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String updateSafePassword(SecurityPassword password) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         vo = getSafePassword(vo);
         //验证真实姓名
@@ -1166,7 +1166,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String updateLoginPassword(UpdatePasswordVo updatePasswordVo, String code) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         if (!isLoginUser(vo)) {
             vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
@@ -1253,7 +1253,7 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
 
         Map map = getSystemNotice(vListVo);
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
@@ -1270,7 +1270,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getSysNoticeDetail(VSystemAnnouncementListVo vListVo) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         if (vListVo.getSearch().getId() == null) {
             vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
@@ -1295,7 +1295,7 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
 
         Map map = getAppGameNotice(listVo);
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(map);
@@ -1321,7 +1321,7 @@ public class MineAppController extends BaseMineController {
         }
 
         AppGameNotice gameNotice = getAppGameNoticeDetail(listVo);
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
         vo.setMsg(AppErrorCodeEnum.Success.getMsg());
         vo.setData(gameNotice);
@@ -1338,7 +1338,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getSiteSysNotice(VNoticeReceivedTextListVo listVo) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         Map map = getAppSiteSysNotice(listVo);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
@@ -1357,7 +1357,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String setSiteSysNoticeStatus(NoticeReceiveVo noticeReceiveVo, String ids) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(ids)) {
             vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
             vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
@@ -1365,7 +1365,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        String[] idArray = ids.split(SplitRegex);
+        String[] idArray = ids.split(SPLIT_REGEX);
         List<Integer> list = ListTool.newArrayList();
         for (String id : idArray) {
             list.add(Integer.valueOf(id));
@@ -1396,7 +1396,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String deleteSiteSysNotice(NoticeReceiveVo noticeVo, String ids) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(ids)) {
             vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
             vo.setError(DEFAULT_TIME);
@@ -1404,7 +1404,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        String[] idArray = ids.split(SplitRegex);
+        String[] idArray = ids.split(SPLIT_REGEX);
         List<Integer> list = new ArrayList();
         for (String id : idArray) {
             list.add(Integer.valueOf(id));
@@ -1433,7 +1433,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo, NoticeReceiveVo noticeReceiveVo, HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         if (noticeReceiveVo.getSearch().getId() == null) {
             vo.setError(DEFAULT_TIME);
             vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
@@ -1458,7 +1458,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getUnReadCount(VPlayerAdvisoryListVo listVo) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         Map map = unReadCount(listVo);
         vo.setCode(AppErrorCodeEnum.Success.getCode());
@@ -1477,7 +1477,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String recovery(HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         if (!SessionManagerCommon.isAutoPay()) {
             vo.setError(DEFAULT_TIME);
             vo.setMsg(AppErrorCodeEnum.autoPay.getMsg());
@@ -1507,7 +1507,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();

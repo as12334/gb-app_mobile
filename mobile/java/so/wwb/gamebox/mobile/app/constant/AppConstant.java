@@ -1,9 +1,9 @@
 package so.wwb.gamebox.mobile.app.constant;
 
 public interface AppConstant {
-    String appVersion = "app_01";//版本号
+    String APP_VERSION = "app_01";//版本号
 
-    String SplitRegex = ",";//String转数据
+    String SPLIT_REGEX = ",";//String转数据
 
     String targetRegex = "x";//匹配正则替换
 

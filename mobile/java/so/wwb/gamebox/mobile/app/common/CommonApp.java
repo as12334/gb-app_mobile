@@ -12,7 +12,7 @@ public class CommonApp {
     public static AppModelVo buildAppModelVo(Object data) {
         AppModelVo appModelVo = new AppModelVo();
 
-        appModelVo.setVersion(AppConstant.appVersion);
+        appModelVo.setVersion(AppConstant.APP_VERSION);
         appModelVo.setMsg(AppErrorCodeEnum.Success.getMsg());
         appModelVo.setCode(AppErrorCodeEnum.Success.getCode());
         appModelVo.setData(data);

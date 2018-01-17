@@ -200,7 +200,7 @@ public class BaseMineController {
             }
         }
         //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String[] tags = tag.split(SplitRegex);
+        String[] tags = tag.split(SPLIT_REGEX);
         for (VPlayerAdvisory vo : listVo.getResult()) {
             for (int i = 0; i < tags.length; i++) {
                 if (tags[i] != "") {
