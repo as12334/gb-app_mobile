@@ -1568,15 +1568,14 @@ public class BaseMineController {
         Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
-        Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
+        long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
         //玩家咨询-未读数量
-        listVo.setSearch(null);
         listVo.getSearch().setSearchType("player");
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
         listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
-        Integer advisoryUnReadCount = 0;
+        int advisoryUnReadCount = 0;
         String tag = "";
         //所有咨询数据
         for (VPlayerAdvisory obj : listVo.getResult()) {
