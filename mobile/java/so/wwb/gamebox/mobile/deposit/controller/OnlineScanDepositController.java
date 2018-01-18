@@ -64,7 +64,7 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
                 scanPay = RechargeTypeEnum.WECHATPAY_SCAN.getCode();
                 break;
             case QQWALLET:
-                payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_FAST.getCode());
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_SCAN.getCode());
                 scanPay = RechargeTypeEnum.QQWALLET_SCAN.getCode();
                 break;
             case JDWALLET:
