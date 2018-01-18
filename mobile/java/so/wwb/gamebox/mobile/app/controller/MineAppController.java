@@ -143,8 +143,8 @@ public class MineAppController extends BaseMineController {
 
         Map<String, Object> map = MapTool.newHashMap();
         withdraw(map);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(map);
 
         return JsonTool.toJson(vo);
@@ -185,8 +185,8 @@ public class MineAppController extends BaseMineController {
         map = addWithdraw(request, playerVo);
         //成功
         if (map.get("state") != null && MapTool.getBoolean(map, "state")) {
-            vo.setCode(AppErrorCodeEnum.Success.getCode());
-            vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+            vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+            vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
             vo.setData(map);
             return JsonTool.toJson(vo);
         }
@@ -1090,8 +1090,8 @@ public class MineAppController extends BaseMineController {
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         return JsonTool.toJson(vo);
     }
 
@@ -1150,12 +1150,12 @@ public class MineAppController extends BaseMineController {
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
-        boolean isSuccess = savePassword(password.getPwd1());
-        if (isSuccess) {
+        boolean isSUCCESS = savePassword(password.getPwd1());
+        if (isSUCCESS) {
             SessionManager.clearPrivilegeStatus();
         }
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
 
         return JsonTool.toJson(vo);
     }
@@ -1242,8 +1242,8 @@ public class MineAppController extends BaseMineController {
         }
 
         SessionManager.refreshUser();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         return JsonTool.toJson(vo);
     }
 
@@ -1259,8 +1259,8 @@ public class MineAppController extends BaseMineController {
 
         Map map = getSystemNotice(vListVo);
         vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(map);
 
         return JsonTool.toJson(vo);
@@ -1301,8 +1301,8 @@ public class MineAppController extends BaseMineController {
 
         Map map = getAppGameNotice(listVo);
         vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(map);
 
         return JsonTool.toJson(vo);
@@ -1327,8 +1327,8 @@ public class MineAppController extends BaseMineController {
 
         AppGameNotice gameNotice = getAppGameNoticeDetail(listVo);
         vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(gameNotice);
 
         return JsonTool.toJson(vo);
@@ -1346,8 +1346,8 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(APP_VERSION);
 
         Map map = getAppSiteSysNotice(listVo);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(map);
 
         return JsonTool.toJson(vo);
@@ -1385,8 +1385,8 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         return JsonTool.toJson(vo);
     }
 
@@ -1423,8 +1423,8 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
 
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
 
         return JsonTool.toJson(vo);
     }
@@ -1448,8 +1448,8 @@ public class MineAppController extends BaseMineController {
 
         AppSystemNotice sysNotice = getAppSiteNoticeDetail(vReceivedVo, noticeReceiveVo, request);
         vo.setData(sysNotice);
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
 
         return JsonTool.toJson(vo);
     }
@@ -1466,8 +1466,8 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(APP_VERSION);
 
         Map map = unReadCount(listVo);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(map);
 
         return JsonTool.toJson(vo);
@@ -1490,7 +1490,7 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
         Map map = appRecovery();
-        if (map.get("isSuccess") == null && MapTool.getBoolean(map, "isSuccess") == false) {
+        if (map.get("isSUCCESS") == null && MapTool.getBoolean(map, "isSUCCESS") == false) {
             vo.setError(DEFAULT_TIME);
             vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
             vo.setMsg(map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.updateStatusError.getMsg());
@@ -1498,8 +1498,8 @@ public class MineAppController extends BaseMineController {
         }
 
         vo.setData(appRefresh(request));
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         return JsonTool.toJson(vo);
     }
 
@@ -1525,8 +1525,8 @@ public class MineAppController extends BaseMineController {
             LOG.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
         }
 
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(PassportResult.SUCCESS);
         return JsonTool.toJson(vo);
     }

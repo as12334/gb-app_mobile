@@ -69,8 +69,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setMsg(APP_VERSION);
 
         Map<String, Object> map = MapTool.newHashMap();
@@ -87,8 +87,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
 
         //轮播图
@@ -103,8 +103,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String getAnnounce() {
         AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
 
         //公告
@@ -119,8 +119,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
 
         //游戏
@@ -135,8 +135,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
 
         //浮动图
@@ -151,8 +151,8 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, AppRequestModelVo modelVo) {
         AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
 
         //电子游戏
@@ -195,8 +195,8 @@ public class OriginController extends BaseApiController {
 
             map.put("gameLink",gameUrl.getGameLink());
             map.put("gameMsg",gameUrl.getGameMsg());
-            vo.setCode(AppErrorCodeEnum.Success.getCode());
-            vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+            vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+            vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
             vo.setData(map);
 
             return JsonTool.toJson(vo);
@@ -211,8 +211,8 @@ public class OriginController extends BaseApiController {
                 map.put("gameLink",gameUrl.getGameLink());
                 map.put("gameMsg",gameUrl.getGameMsg());
 
-                vo.setCode(AppErrorCodeEnum.Success.getCode());
-                vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+                vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+                vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
                 vo.setData(map);
                 return JsonTool.toJson(vo);
             }
@@ -309,8 +309,8 @@ public class OriginController extends BaseApiController {
         map.put("nextLotteryTime", startTime);
 
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
         vo.setData(map);
 

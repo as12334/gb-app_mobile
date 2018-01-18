@@ -1,7 +1,7 @@
 package so.wwb.gamebox.mobile.app.enums;
 
 public enum AppErrorCodeEnum{
-    Success(0,"请求成功"),
+    SUCCESS(0,"请求成功"),
     UN_LOGIN(1,"您还没有登录"),
     pwdError(11,"密码输入错误"),
     pwdSame(16,"新密码不能和旧密码相同"),

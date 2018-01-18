@@ -47,8 +47,8 @@ public class DiscountsAppController{
     public String getActivityType() {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(getActivityTypes());
         return JsonTool.toJson(vo);
     }
@@ -70,8 +70,8 @@ public class DiscountsAppController{
 //        }
 
 
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(getActivityMessages(listVo, request));
 
         return JsonTool.toJson(vo);
@@ -86,8 +86,8 @@ public class DiscountsAppController{
         AppModelVo vo = new AppModelVo();
         vo.setVersion(APP_VERSION);
         vo.setData(getActivityTypeMessages(listVo, request));
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
 
         return JsonTool.toJson(vo);
     }
