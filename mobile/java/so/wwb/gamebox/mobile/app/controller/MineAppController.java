@@ -268,7 +268,7 @@ public class MineAppController extends BaseMineController {
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
 
         List<MyPromoApp> myPromoApps = ListTool.newArrayList();
-        vPreferentialRecodeListVo.getResult().get(0).getApplyTime();  //时间
+
         List<VPreferentialRecode> vPreferentialRecodeList = vPreferentialRecodeListVo.getResult();
         Integer userId = SessionManager.getUser().getId();
         for (VPreferentialRecode recode : vPreferentialRecodeList) {
