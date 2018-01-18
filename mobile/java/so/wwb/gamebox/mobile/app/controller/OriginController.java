@@ -177,14 +177,14 @@ public class OriginController extends BaseApiController {
             return JsonTool.toJson(vo);
         }
         if(siteGame.getApiId() == null){
-            vo.setCode(AppErrorCodeEnum.gameExist.getCode());
-            vo.setMsg(AppErrorCodeEnum.gameExist.getMsg());
+            vo.setCode(AppErrorCodeEnum.GAME_NOT_EXIST.getCode());
+            vo.setMsg(AppErrorCodeEnum.GAME_NOT_EXIST.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if(siteGame.getApiTypeId() == null){
-            vo.setCode(AppErrorCodeEnum.gameExist.getCode());
-            vo.setMsg(AppErrorCodeEnum.gameExist.getMsg());
+            vo.setCode(AppErrorCodeEnum.GAME_NOT_EXIST.getCode());
+            vo.setMsg(AppErrorCodeEnum.GAME_NOT_EXIST.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -236,8 +236,8 @@ public class OriginController extends BaseApiController {
         }
 
         if (StringTool.isBlank(activityMessageId)) {
-            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
-            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
+            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
             vo.setError(DEFAULT_TIME);
             vo.setVersion(APP_VERSION);
             return JsonTool.toJson(vo);
@@ -250,8 +250,8 @@ public class OriginController extends BaseApiController {
 
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId.toString());
-            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
-            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
+            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
             vo.setError(DEFAULT_TIME);
             vo.setVersion(APP_VERSION);
             return JsonTool.toJson(vo);
@@ -260,8 +260,8 @@ public class OriginController extends BaseApiController {
         Date now = new Date();
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
-            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
-            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
+            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
             vo.setError(DEFAULT_TIME);
             vo.setVersion(APP_VERSION);
             return JsonTool.toJson(vo);
@@ -269,8 +269,8 @@ public class OriginController extends BaseApiController {
         Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
         if (!containUserRank) {
-            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
-            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
+            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
             vo.setVersion(APP_VERSION);
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
@@ -336,8 +336,8 @@ public class OriginController extends BaseApiController {
         }
 
         if (StringTool.isBlank(activityMessageId)) {
-            vo.setCode(AppErrorCodeEnum.ActivityEnd.getCode());
-            vo.setMsg(AppErrorCodeEnum.ActivityEnd.getMsg());
+            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
+            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }

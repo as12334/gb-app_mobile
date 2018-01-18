@@ -168,8 +168,8 @@ public class MineAppController extends BaseMineController {
         //是否有取款银行卡
         Map map = MapTool.newHashMap();
         if (!hasBank(map)) {
-            vo.setCode(AppErrorCodeEnum.hasBank.getCode());
-            vo.setMsg(AppErrorCodeEnum.hasBank.getMsg());
+            vo.setCode(AppErrorCodeEnum.NO_BANK.getCode());
+            vo.setMsg(AppErrorCodeEnum.NO_BANK.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -177,7 +177,7 @@ public class MineAppController extends BaseMineController {
         if (isInvalidAmount(playerVo, map)) {
             vo.setError(DEFAULT_TIME);
             vo.setMsg(map.get("msg").toString());
-            vo.setCode(AppErrorCodeEnum.isInvalidAmount.getCode());
+            vo.setCode(AppErrorCodeEnum.WITH_DRAW_BETWEEN_MIN_MAX.getCode());
             return JsonTool.toJson(vo);
         }
 
@@ -192,8 +192,8 @@ public class MineAppController extends BaseMineController {
         }
 
         vo.setData(map);
-        vo.setCode(AppErrorCodeEnum.withDrawError.getCode());
-        vo.setMsg(AppErrorCodeEnum.withDrawError.getMsg());
+        vo.setCode(AppErrorCodeEnum.WITH_DRAW_FAIL.getCode());
+        vo.setMsg(AppErrorCodeEnum.WITH_DRAW_FAIL.getMsg());
 
         return JsonTool.toJson(vo);
     }
@@ -211,30 +211,30 @@ public class MineAppController extends BaseMineController {
 
         //是否已存在取款订单
         if (hasOrder()) {
-            vo.setCode(AppErrorCodeEnum.hasOrder.getCode());
-            vo.setMsg(AppErrorCodeEnum.hasOrder.getMsg());
+            vo.setCode(AppErrorCodeEnum.WITH_DRAW_HAS_ORDER.getCode());
+            vo.setMsg(AppErrorCodeEnum.WITH_DRAW_HAS_ORDER.getMsg());
             vo.setError(DEFAULT_TIME);
             return vo;
         }
         //是否被冻结
         if (hasFreeze()) {
-            vo.setCode(AppErrorCodeEnum.hasFreeze.getCode());
-            vo.setMsg(AppErrorCodeEnum.hasFreeze.getMsg());
+            vo.setCode(AppErrorCodeEnum.USER_HAS_FREEZE.getCode());
+            vo.setMsg(AppErrorCodeEnum.USER_HAS_FREEZE.getMsg());
             vo.setError(DEFAULT_TIME);
             return vo;
         }
         //今日取款是否达到上限
         if (isFull()) {
-            vo.setCode(AppErrorCodeEnum.IsFull.getCode());
-            vo.setMsg(AppErrorCodeEnum.IsFull.getMsg());
+            vo.setCode(AppErrorCodeEnum.WITH_DRAW_IS_FULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.WITH_DRAW_IS_FULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return vo;
         }
         //余额是否充足
         Map<String, Object> map = MapTool.newHashMap();
         if (isBalanceAdequate(map)) {
-            vo.setCode(AppErrorCodeEnum.IsBalanceAdequate.getCode());
-            vo.setMsg(AppErrorCodeEnum.IsBalanceAdequate.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
+            vo.setCode(AppErrorCodeEnum.WITH_DRAW_MIN_AMOUNT.getCode());
+            vo.setMsg(AppErrorCodeEnum.WITH_DRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
             vo.setError(DEFAULT_TIME);
             return vo;
         }
@@ -386,12 +386,12 @@ public class MineAppController extends BaseMineController {
         AppModelVo appModelVo = new AppModelVo();
         if (userBankcard == null) {
             //获取银行列表
-            appModelVo.setCode(AppErrorCodeEnum.addCard.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.addCard.getMsg());
+            appModelVo.setCode(AppErrorCodeEnum.USER_ADD_BANK_CARD.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.USER_ADD_BANK_CARD.getMsg());
             appModelVo.setData(bankList());
         } else {
-            appModelVo.setCode(AppErrorCodeEnum.showBankCardInfomation.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.showBankCardInfomation.getMsg());
+            appModelVo.setCode(AppErrorCodeEnum.SHOW_BANK_CARD_INFO.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.SHOW_BANK_CARD_INFO.getMsg());
             appModelVo.setData(userBankcard);
         }
         return JsonTool.toJson(appModelVo);
@@ -411,8 +411,8 @@ public class MineAppController extends BaseMineController {
         String userName = SessionManagerCommon.getUserName();
         UserBankcard userBankcard = vo.getResult();
         if (checkCardIsExistsByUserId(vo)) {
-            appModelVo.setCode(AppErrorCodeEnum.hasbibindingBankCard.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.hasbibindingBankCard.getMsg());
+            appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg());
             appModelVo.setError(DEFAULT_TIME);
         }
         if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
@@ -443,8 +443,8 @@ public class MineAppController extends BaseMineController {
         UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
 
         if (userBankcard == null) {
-            vo.setCode(AppErrorCodeEnum.addBtc.getCode());
-            vo.setMsg(AppErrorCodeEnum.addBtc.getMsg());
+            vo.setCode(AppErrorCodeEnum.USER_ADD_BTC.getCode());
+            vo.setMsg(AppErrorCodeEnum.USER_ADD_BTC.getMsg());
         } else {
             vo = CommonApp.buildAppModelVo(userBankcard);
             vo.setMsg("展示比特币信息");
@@ -471,9 +471,9 @@ public class MineAppController extends BaseMineController {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(AppConstant.APP_VERSION);
         if (checkCardIsExistsByUserId(bankcardVo)) {
-            AppErrorCodeEnum.hasBtc.getCode();
-            appModelVo.setCode(AppErrorCodeEnum.hasBtc.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.hasBtc.getMsg());
+            AppErrorCodeEnum.HAS_BTC.getCode();
+            appModelVo.setCode(AppErrorCodeEnum.HAS_BTC.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.HAS_BTC.getMsg());
             return JsonTool.toJson(appModelVo);
         }
 
@@ -483,13 +483,13 @@ public class MineAppController extends BaseMineController {
         bankcard.setBankName(BITCOIN);
         bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
         if (!bankcardVo.isSuccess()) {
-            appModelVo.setCode(AppErrorCodeEnum.submitBtcfild.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.submitBtcfild.getMsg());
+            appModelVo.setCode(AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.SUBMIT_BTC_FAIL.getMsg());
             appModelVo.setError(DEFAULT_TIME);
             return JsonTool.toJson(appModelVo);
         }
-        appModelVo.setCode(AppErrorCodeEnum.bindingSuccess.getCode());
-        appModelVo.setMsg(AppErrorCodeEnum.bindingSuccess.getMsg());
+        appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BTC_SUCCESS.getCode());
+        appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BTC_SUCCESS.getMsg());
 
         return JsonTool.toJson(appModelVo);
     }
@@ -957,14 +957,14 @@ public class MineAppController extends BaseMineController {
             map.put("isOpenCaptcha", true);
             map.put("captcha_value", "/captcha/feedback.html");
             if (!StringTool.isNotBlank(code)) {
-                appModelVo.setCode(AppErrorCodeEnum.sysCodeNotNull.getCode());
-                appModelVo.setMsg(AppErrorCodeEnum.sysCodeNotNull.getMsg());
+                appModelVo.setCode(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode());
+                appModelVo.setMsg(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg());
                 appModelVo.setError(DEFAULT_TIME);
                 return JsonTool.toJson(appModelVo);
             }
             if (!checkFeedCode(code)) {
-                appModelVo.setCode(AppErrorCodeEnum.sysCode.getCode());
-                appModelVo.setMsg(AppErrorCodeEnum.sysCode.getMsg());
+                appModelVo.setCode(AppErrorCodeEnum.VALIDATE_ERROR.getCode());
+                appModelVo.setMsg(AppErrorCodeEnum.VALIDATE_ERROR.getMsg());
                 appModelVo.setError(DEFAULT_TIME);
                 return JsonTool.toJson(appModelVo);
             }
@@ -1078,15 +1078,15 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(realName)) {
-            vo.setCode(AppErrorCodeEnum.realName.getCode());
-            vo.setMsg(AppErrorCodeEnum.realName.getMsg());
+            vo.setCode(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
 
         if (!setRealName(realName)) {
-            vo.setCode(AppErrorCodeEnum.realNameSetError.getCode());
-            vo.setMsg(AppErrorCodeEnum.realNameSetError.getMsg());
+            vo.setCode(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getCode());
+            vo.setMsg(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1110,27 +1110,27 @@ public class MineAppController extends BaseMineController {
         vo = getSafePassword(vo);
         //验证真实姓名
         if (StringTool.isBlank(password.getRealName())) {
-            vo.setCode(AppErrorCodeEnum.realName.getCode());
-            vo.setMsg(AppErrorCodeEnum.realName.getMsg());
+            vo.setCode(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         //验证密码
         if (StringTool.isBlank(password.getPwd1())) {
-            vo.setCode(AppErrorCodeEnum.safePwdNotNull.getCode());
-            vo.setMsg(AppErrorCodeEnum.safePwdNotNull.getMsg());
+            vo.setCode(AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if (verifyCode(password)) {
-            vo.setCode(AppErrorCodeEnum.sysCode.getCode());
-            vo.setMsg(AppErrorCodeEnum.sysCode.getMsg());
+            vo.setCode(AppErrorCodeEnum.VALIDATE_ERROR.getCode());
+            vo.setMsg(AppErrorCodeEnum.VALIDATE_ERROR.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if (!verifyRealName(password)) {
-            vo.setCode(AppErrorCodeEnum.realNameError.getCode());
-            vo.setMsg(AppErrorCodeEnum.realNameError.getMsg());
+            vo.setCode(AppErrorCodeEnum.REAL_NAME_ERROR.getCode());
+            vo.setMsg(AppErrorCodeEnum.REAL_NAME_ERROR.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1139,14 +1139,14 @@ public class MineAppController extends BaseMineController {
             SysUser user = SessionManager.getUser();
             Integer errorTimes = user.getSecpwdErrorTimes() == null ? 0 : user.getSecpwdErrorTimes();
             setErrorTimes(map, user, errorTimes);
-            vo.setCode(AppErrorCodeEnum.originSafePwd.getCode());
-            vo.setMsg(AppErrorCodeEnum.originSafePwd.getMsg());
+            vo.setCode(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode());
+            vo.setMsg(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if (!setRealName(password.getRealName())) {
-            vo.setCode(AppErrorCodeEnum.realNameSetError.getCode());
-            vo.setMsg(AppErrorCodeEnum.realNameSetError.getMsg());
+            vo.setCode(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getCode());
+            vo.setMsg(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1180,22 +1180,22 @@ public class MineAppController extends BaseMineController {
             return JsonTool.toJson(vo);
         }
         if (StringTool.isBlank(updatePasswordVo.getPassword())) {
-            vo.setCode(AppErrorCodeEnum.pwdNotNull.getCode());
-            vo.setMsg(AppErrorCodeEnum.pwdNotNull.getMsg());
+            vo.setCode(AppErrorCodeEnum.PASSWORD_NOT_NULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.PASSWORD_NOT_NULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         if (StringTool.isBlank(updatePasswordVo.getNewPassword())) {
-            vo.setCode(AppErrorCodeEnum.newPwdNotNull.getCode());
-            vo.setMsg(AppErrorCodeEnum.newPwdNotNull.getMsg());
+            vo.setCode(AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
         //密码相同验证新密码不能和旧密码一样
         String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), SessionManager.getUserName());
         if (StringTool.equalsIgnoreCase(newPwd, SessionManager.getUser().getPassword())) {
-            vo.setCode(AppErrorCodeEnum.pwdSame.getCode());
-            vo.setMsg(AppErrorCodeEnum.pwdSame.getMsg());
+            vo.setCode(AppErrorCodeEnum.PASSWORD_SAME.getCode());
+            vo.setMsg(AppErrorCodeEnum.PASSWORD_SAME.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1203,14 +1203,14 @@ public class MineAppController extends BaseMineController {
         int errorTimes = curUser.getLoginErrorTimes() == null ? -1 : curUser.getLoginErrorTimes();
         if (errorTimes >= TWO) {
             if (StringTool.isBlank(code)) {
-                vo.setCode(AppErrorCodeEnum.sysCodeNotNull.getCode());
-                vo.setMsg(AppErrorCodeEnum.sysCodeNotNull.getMsg());
+                vo.setCode(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode());
+                vo.setMsg(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg());
                 vo.setError(DEFAULT_TIME);
                 return JsonTool.toJson(vo);
             }
             if (!checkCode(code)) {
-                vo.setCode(AppErrorCodeEnum.sysCode.getCode());
-                vo.setMsg(AppErrorCodeEnum.sysCode.getMsg());
+                vo.setCode(AppErrorCodeEnum.VALIDATE_ERROR.getCode());
+                vo.setMsg(AppErrorCodeEnum.VALIDATE_ERROR.getMsg());
                 vo.setError(DEFAULT_TIME);
                 return JsonTool.toJson(vo);
             }
@@ -1219,8 +1219,8 @@ public class MineAppController extends BaseMineController {
         String oldPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getPassword(), SessionManager.getUserName());
         if (!StringTool.equalsIgnoreCase(oldPwd, SessionManager.getUser().getPassword())) {
             Map map = setPwdErrorTimes(errorTimes);
-            vo.setCode(AppErrorCodeEnum.pwdError.getCode());
-            vo.setMsg(AppErrorCodeEnum.pwdError.getMsg());
+            vo.setCode(AppErrorCodeEnum.PASSWORD_ERROR.getCode());
+            vo.setMsg(AppErrorCodeEnum.PASSWORD_ERROR.getMsg());
             vo.setError(DEFAULT_TIME);
             vo.setData(map);
             return JsonTool.toJson(vo);
@@ -1235,8 +1235,8 @@ public class MineAppController extends BaseMineController {
         sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL);
         boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();
         if (!success) {
-            vo.setCode(AppErrorCodeEnum.pwdUpdateError.getCode());
-            vo.setMsg(AppErrorCodeEnum.pwdUpdateError.getMsg());
+            vo.setCode(AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode());
+            vo.setMsg(AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1278,8 +1278,8 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(APP_VERSION);
 
         if (vListVo.getSearch().getId() == null) {
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
+            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1319,9 +1319,9 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
 
         if (listVo.getSearch().getId() == null) {
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
             vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
             return JsonTool.toJson(vo);
         }
 
@@ -1364,8 +1364,8 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(ids)) {
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
+            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
             vo.setError(DEFAULT_TIME);
             return JsonTool.toJson(vo);
         }
@@ -1380,8 +1380,8 @@ public class MineAppController extends BaseMineController {
         boolean b = ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
         if (!b) {
             vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.updateStatusError.getMsg());
-            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
+            vo.setMsg(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg());
+            vo.setCode(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode());
             return JsonTool.toJson(vo);
         }
 
@@ -1403,9 +1403,9 @@ public class MineAppController extends BaseMineController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(ids)) {
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
             vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
             return JsonTool.toJson(vo);
         }
 
@@ -1418,8 +1418,8 @@ public class MineAppController extends BaseMineController {
         boolean bool = ServiceTool.noticeService().deleteSiteMsg(noticeVo);
         if (!bool) {
             vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
-            vo.setMsg(AppErrorCodeEnum.updateStatusError.getMsg());
+            vo.setCode(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode());
+            vo.setMsg(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg());
             return JsonTool.toJson(vo);
         }
 
@@ -1441,8 +1441,8 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(APP_VERSION);
         if (noticeReceiveVo.getSearch().getId() == null) {
             vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
+            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
             return JsonTool.toJson(vo);
         }
 
@@ -1485,15 +1485,15 @@ public class MineAppController extends BaseMineController {
         vo.setVersion(APP_VERSION);
         if (!SessionManagerCommon.isAutoPay()) {
             vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.autoPay.getMsg());
-            vo.setCode(AppErrorCodeEnum.autoPay.getCode());
+            vo.setMsg(AppErrorCodeEnum.NOT_RECOVER.getMsg());
+            vo.setCode(AppErrorCodeEnum.NOT_RECOVER.getCode());
             return JsonTool.toJson(vo);
         }
         Map map = appRecovery();
         if (map.get("isSUCCESS") == null && MapTool.getBoolean(map, "isSUCCESS") == false) {
             vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.updateStatusError.getCode());
-            vo.setMsg(map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.updateStatusError.getMsg());
+            vo.setCode(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode());
+            vo.setMsg(map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg());
             return JsonTool.toJson(vo);
         }
 
