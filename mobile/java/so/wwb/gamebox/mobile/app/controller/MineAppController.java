@@ -177,7 +177,7 @@ public class MineAppController extends BaseMineController {
         if (isInvalidAmount(playerVo, map)) {
             vo.setError(DEFAULT_TIME);
             vo.setMsg(map.get("msg").toString());
-            vo.setCode(AppErrorCodeEnum.WITH_DRAW_BETWEEN_MIN_MAX.getCode());
+            vo.setCode(AppErrorCodeEnum.WITHDRAW_BETWEEN_MIN_MAX.getCode());
             return JsonTool.toJson(vo);
         }
 
@@ -192,8 +192,8 @@ public class MineAppController extends BaseMineController {
         }
 
         vo.setData(map);
-        vo.setCode(AppErrorCodeEnum.WITH_DRAW_FAIL.getCode());
-        vo.setMsg(AppErrorCodeEnum.WITH_DRAW_FAIL.getMsg());
+        vo.setCode(AppErrorCodeEnum.WITHDRAW_FAIL.getCode());
+        vo.setMsg(AppErrorCodeEnum.WITHDRAW_FAIL.getMsg());
 
         return JsonTool.toJson(vo);
     }
@@ -211,8 +211,8 @@ public class MineAppController extends BaseMineController {
 
         //是否已存在取款订单
         if (hasOrder()) {
-            vo.setCode(AppErrorCodeEnum.WITH_DRAW_HAS_ORDER.getCode());
-            vo.setMsg(AppErrorCodeEnum.WITH_DRAW_HAS_ORDER.getMsg());
+            vo.setCode(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getCode());
+            vo.setMsg(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getMsg());
             vo.setError(DEFAULT_TIME);
             return vo;
         }
@@ -225,16 +225,16 @@ public class MineAppController extends BaseMineController {
         }
         //今日取款是否达到上限
         if (isFull()) {
-            vo.setCode(AppErrorCodeEnum.WITH_DRAW_IS_FULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.WITH_DRAW_IS_FULL.getMsg());
+            vo.setCode(AppErrorCodeEnum.WITHDRAW_IS_FULL.getCode());
+            vo.setMsg(AppErrorCodeEnum.WITHDRAW_IS_FULL.getMsg());
             vo.setError(DEFAULT_TIME);
             return vo;
         }
         //余额是否充足
         Map<String, Object> map = MapTool.newHashMap();
         if (isBalanceAdequate(map)) {
-            vo.setCode(AppErrorCodeEnum.WITH_DRAW_MIN_AMOUNT.getCode());
-            vo.setMsg(AppErrorCodeEnum.WITH_DRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
+            vo.setCode(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getCode());
+            vo.setMsg(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
             vo.setError(DEFAULT_TIME);
             return vo;
         }
