@@ -3,10 +3,10 @@ package so.wwb.gamebox.mobile.app.enums;
 import org.soul.commons.enums.ICodeEnum;
 
 public enum AppResolutionEnum implements ICodeEnum {
-    XXHDPI("xxhdpi", "安卓"),
-    XXXHDPI("xxxhdpi", "安卓"),
-    TWOX("2x", "ios"),
-    THREEX("3x", "ios");
+    XX_HDPI("xxhdpi", "安卓"),
+    XXX_HDPI("xxxhdpi", "安卓"),
+    TWO_X("2x", "ios"),
+    THREE_X("3x", "ios");
 
     AppResolutionEnum(String code, String trans) {
         this.code = code;

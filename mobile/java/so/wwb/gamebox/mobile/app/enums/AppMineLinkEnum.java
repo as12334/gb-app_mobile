@@ -1,20 +1,20 @@
 package so.wwb.gamebox.mobile.app.enums;
 
 public enum AppMineLinkEnum {
-    deposit("deposit","存款","/wallet/deposit/index.html"),
-    withDraw("withDraw","取款","/wallet/withdraw/index.html"),
-    transfer("transfer","额度转换","/transfer/index.html"),
-    record("record","资金记录","/fund/record/index.html"),
-    betting("betting","投注记录","/fund/betting/index.html"),
-    myPromo("myPromo","优惠记录","/promo/myPromo.html"),
-    bankCard("bankCard","银行卡","/bankCard/page/addCard.html"),
-    btc("btc","比特币钱包","/bankCard/page/addBtc.html"),
-    gameNotice("gameNotice","申请优惠","/message/gameNotice.html?isSendMessage=true"),
-    securityPassword("securityPassword","修改安全密码","/passport/securityPassword/edit.html"),
-    loginPassword("loginPassword","修改登录密码","/my/password/editPassword.html"),
-    help("help","常见问题","/help/firstType.html"),
-    terms("terms","注册条款",""),
-    about("about","关于我们","");
+    DEPOSIT("deposit","存款","/wallet/deposit/index.html"),
+    WITH_DRAW("withDraw","取款","/wallet/withdraw/index.html"),
+    TRANSFER("transfer","额度转换","/transfer/index.html"),
+    RECORD("record","资金记录","/fund/record/index.html"),
+    BETTING("betting","投注记录","/fund/betting/index.html"),
+    MY_PROMO("myPromo","优惠记录","/promo/myPromo.html"),
+    BANK_CARD("bankCard","银行卡","/bankCard/page/addCard.html"),
+    BTC("btc","比特币钱包","/bankCard/page/addBtc.html"),
+    GAME_NOTICE("gameNotice","申请优惠","/message/gameNotice.html?isSendMessage=true"),
+    SECURITY_PASSWORD("securityPassword","修改安全密码","/passport/securityPassword/edit.html"),
+    LOGIN_PASSWORD("loginPassword","修改登录密码","/my/password/editPassword.html"),
+    HELP("help","常见问题","/help/firstType.html"),
+    TERMS("terms","注册条款",""),
+    ABOUT("about","关于我们","");
 
     AppMineLinkEnum(String code,String name,String link){
         this.code = code;
