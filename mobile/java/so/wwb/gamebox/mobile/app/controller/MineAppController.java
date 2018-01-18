@@ -407,12 +407,14 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String submitBankCard(UserBankcardVo vo) {
         AppModelVo appModelVo = new AppModelVo();
-        String userName = SessionManagerCommon.getUserName();
-        UserBankcard userBankcard = vo.getResult();
+
+        vo.setUserType(SessionManagerCommon.getUserType().getCode());
+        vo.getResult().setUserId(SessionManager.getUserId());
         if (checkCardIsExistsByUserId(vo)) {
             appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode());
             appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg());
             appModelVo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(appModelVo);
         }
         if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
             vo.getResult().setBankcardMasterName(SessionManager.getUser().getRealName());
@@ -420,7 +422,13 @@ public class MineAppController extends BaseMineController {
         vo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(vo);
         SessionManagerCommon.refreshUser();
         if (vo.isSuccess()) {
-            appModelVo = CommonApp.buildAppModelVo("");
+            Map<String, String> map = MapTool.newHashMap();
+            map.put("realNme", vo.getResult().getBankcardMasterName());
+            map.put("bankName", vo.getResult().getBankName());
+            map.put("bankCardNumber", vo.getResult().getBankcardNumber());
+            map.put("bankDeposit", vo.getResult().getBankDeposit());
+
+            appModelVo = CommonApp.buildAppModelVo(map);
         }
         return JsonTool.toJson(appModelVo);
     }
