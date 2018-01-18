@@ -141,7 +141,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         String tips = "";
         Double rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
         //验证存款金额的合法性
-        if (rechargeAmount == null || rechargeAmount <= 0) {
+        if (rechargeAmount==null || rechargeAmount <= 0) {
             tips = LocaleTool.tranMessage(Module.FUND,"rechargeForm.rechargeAmountCorrect");
             model.addAttribute("tips",tips);
         } else if (rechargeAmount > 0) {

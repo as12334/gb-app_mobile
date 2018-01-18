@@ -63,6 +63,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -105,7 +106,7 @@ public class BaseMineController {
     protected void getMineLinkInfo(Map<String, Object> userInfo, HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         Integer userId = SessionManager.getUserId();
-        userInfo.put("autoPay",SessionManagerCommon.isAutoPay());
+        userInfo.put("autoPay", SessionManagerCommon.isAutoPay());
         userInfo.put("isBit", ParamTool.isBit());//是否存在比特币
         userInfo.put("isCash", ParamTool.isCash());//是否存在银行卡
         try {
@@ -152,25 +153,11 @@ public class BaseMineController {
                 bankcardNumMap = new HashMap<>();
                 bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
                 bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-
                 userInfo.put("btc", bankcardNumMap);
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
                 bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-
-                UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
-                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
-                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
-                bankcardNumMap.put("bankName", bankName);
-                bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
-                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
-
                 userInfo.put("bankcard", bankcardNumMap);
-
-
-
-                bankcard.setBankcardNumber(BankCardTool.overlayBankcard(userBankcard.getBankcardNumber())); //隐藏部分银行卡账号
-                bankcard.setBankDeposit(userBankcard.getBankDeposit());
             }
         }
 
@@ -213,7 +200,7 @@ public class BaseMineController {
             }
         }
         //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String[] tags = tag.split(SplitRegex);
+        String[] tags = tag.split(SPLIT_REGEX);
         for (VPlayerAdvisory vo : listVo.getResult()) {
             for (int i = 0; i < tags.length; i++) {
                 if (tags[i] != "") {
@@ -237,7 +224,7 @@ public class BaseMineController {
             userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
         }
         userInfo.put("currency", getCurrencySign());
-        userInfo.put("realName",StringTool.overlayName(sysUser.getRealName()));
+        userInfo.put("realName", StringTool.overlayName(sysUser.getRealName()));
     }
 
     protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
@@ -250,10 +237,11 @@ public class BaseMineController {
 
     /**
      * 刷新额度
+     *
      * @param request
      * @return
      */
-    protected  UserInfoApp appRefresh(HttpServletRequest request){
+    protected UserInfoApp appRefresh(HttpServletRequest request) {
         Integer userId = SessionManager.getUserId();
         PlayerApiListVo listVo = initPlayerApiListVo(userId);
         VUserPlayer player = getVPlayer(userId);
@@ -268,9 +256,10 @@ public class BaseMineController {
 
     /**
      * 一键回收
+     *
      * @return
      */
-    protected Map appRecovery(){
+    protected Map appRecovery() {
         PlayerApiVo playerApiVo = new PlayerApiVo();
         playerApiVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
         Map map = doRecovery(playerApiVo);
@@ -316,7 +305,7 @@ public class BaseMineController {
      * @return
      */
     protected Map<String, Object> getMsg(boolean isSuccess, String msgConst, String code) {
-        HashMap<String, Object> map = new HashMap(2,1f);
+        HashMap<String, Object> map = new HashMap(2, 1f);
         map.put("isSuccess", isSuccess);
         if (StringTool.isNotBlank(msgConst) && StringTool.isNotBlank(code)) {
             map.put("msg", LocaleTool.tranMessage(code, msgConst));
@@ -391,7 +380,7 @@ public class BaseMineController {
         }
     }
 
-    protected void getAppUserInfo(HttpServletRequest request, SysUser user,UserInfoApp userInfoApp) {
+    protected void getAppUserInfo(HttpServletRequest request, SysUser user, UserInfoApp userInfoApp) {
         PlayerApiListVo listVo = initPlayerApiListVo(user.getId());
         VUserPlayer player = getVPlayer(user.getId());
         // API 余额
@@ -511,9 +500,9 @@ public class BaseMineController {
             double apiBalance = queryLotteryApiBalance();
             totalBalance = apiBalance + totalBalance;
         }
-        map.put("totalBalance",player.getWalletBalance() + totalBalance);
+        map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
-        map.put("auditLogUrl","/wallet/withdraw/showAuditLog.html");//查看稽核地址
+        map.put("auditLogUrl", "/wallet/withdraw/showAuditLog.html");//查看稽核地址
     }
 
     /**
@@ -533,7 +522,7 @@ public class BaseMineController {
             // 生成任务提醒
             tellerReminder(MapTool.getString(map, "transactionNo"));
             //钱包余额回收到API暂时不用。
-            if(ParamTool.isLotterySite()){
+            if (ParamTool.isLotterySite()) {
                 transBalanceToLotteryApi();
             }
         }
@@ -541,16 +530,16 @@ public class BaseMineController {
         return map;
     }
 
-    protected boolean isInvalidAmount(PlayerTransactionVo vo,Map map){
+    protected boolean isInvalidAmount(PlayerTransactionVo vo, Map map) {
         Double withdrawAmount = vo.getWithdrawAmount();
         UserPlayer player = getPlayer();
         PlayerRank rank = getRank();
-        if (withdrawAmount <  rank.getWithdrawMinNum() || withdrawAmount > rank.getWithdrawMaxNum()) {
+        if (withdrawAmount < rank.getWithdrawMinNum() || withdrawAmount > rank.getWithdrawMaxNum()) {
             String msg = LocaleTool.tranMessage(Module.FUND, WITHDRAW_INVALID_AMOUNT)
                     .replace("{min}", rank.getWithdrawMinNum() + "")
                     .replace("{max}", rank.getWithdrawMaxNum() + "")
                     .replace("{walletBalance}", player.getWalletBalance() + "");
-            map.put("msg",msg);
+            map.put("msg", msg);
             return true;
         }
         return false;
@@ -568,7 +557,7 @@ public class BaseMineController {
         return map;
     }
 
-    private void transBalanceToLotteryApi(){
+    private void transBalanceToLotteryApi() {
         try {
             UserPlayerVo userPlayerVo = new UserPlayerVo();
             userPlayerVo.getSearch().setId(SessionManagerCommon.getUserId());
@@ -711,7 +700,7 @@ public class BaseMineController {
             if (hasCount >= freeCount) {
                 poundage = calPoundage(withdrawAmount, rank);
             }
-        }else{
+        } else {
             poundage = calPoundage(withdrawAmount, rank);
         }
 
@@ -784,12 +773,12 @@ public class BaseMineController {
         if (ParamTool.isLotterySite()) {
             double apiBalance = queryLotteryApiBalance();
             Double walletBalance = player.getWalletBalance();
-            if(walletBalance!=null){
+            if (walletBalance != null) {
                 apiBalance += walletBalance.doubleValue();
             }
             return !(apiBalance < withdrawAmount);
 
-        }else {
+        } else {
             return !(player.getWalletBalance() == null || player.getWalletBalance() < withdrawAmount);
         }
     }
@@ -825,14 +814,15 @@ public class BaseMineController {
 
     /**
      * 判断银行卡是否存在
+     *
      * @param vo
      * @return
      */
     protected boolean checkCardIsExistsByUserId(UserBankcardVo vo) {
         String bankcardNumber = vo.getResult().getBankcardNumber();
-        if(StringTool.isBlank(vo.getUserType())){
+        if (StringTool.isBlank(vo.getUserType())) {
             //用户类型为空，不能判断银行卡是否存在，所以判断为不能添加
-            LOG.info("保存银行卡{0}时，用户类型为空，不能判断银行卡是否存在，所以判断为不能添加",bankcardNumber);
+            LOG.info("保存银行卡{0}时，用户类型为空，不能判断银行卡是否存在，所以判断为不能添加", bankcardNumber);
             return true;
         }
         vo.getSearch().setBankcardNumber(bankcardNumber);
@@ -878,16 +868,16 @@ public class BaseMineController {
         } else if (isBit && bankcardMap.get(UserBankcardTypeEnum.TYPE_BTC) == null) {
             hasBank = false;
         }
-        /*if (isCash) {
-            bankcard(map);
-        }*/
 
         map.put("hasBank", hasBank);
         return hasBank;
     }
 
+    /**
+     * 获取用户银行卡信息
+     * @param map
+     */
     public void bankcard(Map map) {
-        //model.addAttribute("validate", JsRuleCreator.create(AddBankcardForm.class));
         map.put("user", SessionManagerCommon.getUser());
         map.put("bankListVo", BankHelper.getBankListVo());
     }
@@ -997,7 +987,7 @@ public class BaseMineController {
         if (gameOrder.getApiTypeId() == 4) {
             detailsApp.setApiTypeName("彩票");
         }
-        if (gameOrder.getApiTypeId()!=1 && gameOrder.getApiTypeId()!=2 &&gameOrder.getApiTypeId()!=3&&gameOrder.getApiTypeId()!=4) {
+        if (gameOrder.getApiTypeId() != 1 && gameOrder.getApiTypeId() != 2 && gameOrder.getApiTypeId() != 3 && gameOrder.getApiTypeId() != 4) {
             detailsApp.setApiTypeName("其他");
         }
         List<Map> list = detailsApp.getResultArray();
@@ -1039,18 +1029,11 @@ public class BaseMineController {
     /**
      * 验证是否余额冻结
      *
-     * @param map
      * @return
      */
-    public boolean hasFreeze(Map map) {
+    protected boolean hasFreeze() {
         UserPlayer player = getPlayer();
-        map.put("player", player);
-        return hasFreeze(map, player);
-    }
-
-    protected boolean hasFreeze(){
-        UserPlayer player = getPlayer();
-        if(player == null){
+        if (player == null) {
             return true;
         }
         boolean hasFreeze = player.getBalanceFreezeEndTime() != null
@@ -1059,16 +1042,11 @@ public class BaseMineController {
         return hasFreeze;
     }
 
-    public boolean hasFreeze(Map map, UserPlayer player) {
-        map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
-        boolean hasFreeze = player.getBalanceFreezeEndTime() != null
-                && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
-        map.put("hasFreeze", hasFreeze);
-        LOG.info("取款玩家{0}是否冻结{1}", SessionManagerCommon.getUserName(), hasFreeze);
-
-        return hasFreeze;
-    }
-
+    /**
+     * 获取货币标志
+     * @param currency
+     * @return
+     */
     protected String getCurrencySign(String currency) {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(SessionManagerCommon.getUser().getDefaultCurrency());
         if (sysCurrency != null && StringTool.isNotBlank(sysCurrency.getCurrencySign())) {
@@ -1080,12 +1058,13 @@ public class BaseMineController {
 
     /**
      * 余额是否充足
+     *
      * @return
      */
-    protected boolean isBalanceAdequate(Map map){
+    protected boolean isBalanceAdequate(Map map) {
         PlayerRank rank = getRank();
         UserPlayer player = getPlayer();
-        if(rank == null || player == null){
+        if (rank == null || player == null) {
             return true;
         }
         //取款时同步彩票余额
@@ -1094,8 +1073,8 @@ public class BaseMineController {
             double apiBalance = queryLotteryApiBalance();
             totalBalance = apiBalance + totalBalance;
         }
-        if(rank.getWithdrawMinNum() > player.getWalletBalance() + totalBalance){
-            map.put("withdrawMinNum",formatCurrency(rank.getWithdrawMinNum()));
+        if (rank.getWithdrawMinNum() > player.getWalletBalance() + totalBalance) {
+            map.put("withdrawMinNum", formatCurrency(rank.getWithdrawMinNum()));
             return true;
         }
         return false;
@@ -1103,6 +1082,7 @@ public class BaseMineController {
 
     /**
      * 获取银行列表
+     *
      * @return
      */
     public List<Map> bankList() {
@@ -1118,8 +1098,6 @@ public class BaseMineController {
         return maps;
     }
 
-
-
     /**
      * 获取玩家层级
      *
@@ -1134,30 +1112,11 @@ public class BaseMineController {
     /**
      * 验证是否今日取款是否达到上限
      *
-     * @param rank
      * @return
      */
-    private boolean isFull(Map map, PlayerRank rank) {
-        //层级信息
-        map.put("rank", rank);
-        int count = get24HHasCount();
-        if (rank.getIsWithdrawLimit() != null && rank.getIsWithdrawLimit() && rank.getWithdrawCount() != null && count >= rank.getWithdrawCount()) {
-            // 已达取款次数上限
-            map.put("isFull", true);
-            LOG.info("取款玩家{0}取款次数已达到上限{1},当前玩家取款次数{2}", SessionManagerCommon.getUserName(), rank.getWithdrawCount(), count);
-            return true;
-        }
-        if (rank.getWithdrawCount() != null) {
-            // 还剩取款次数
-            map.put("reminder", rank.getWithdrawCount() - count);
-            LOG.info("取款玩家{0}取款次数{1},剩余取款次数{2}", SessionManagerCommon.getUserName(), count, rank.getWithdrawCount() - count);
-        }
-        return false;
-    }
-
-    protected boolean isFull(){
+    protected boolean isFull() {
         PlayerRank rank = getRank();
-        if(rank == null){
+        if (rank == null) {
             return true;
         }
 
@@ -1209,26 +1168,24 @@ public class BaseMineController {
         return player;
     }
 
-
     protected void initQueryDateForgetBetting(PlayerGameOrderListVo playerGameOrderListVo, int TIME_INTERVAL, int DEFAULT_TIME) {
         playerGameOrderListVo.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
         if (playerGameOrderListVo.getSearch().getBeginBetTime() == null) {
             playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME));//拿到明天在-1相当于拿到今天时间00:00:00
         }
-        if (playerGameOrderListVo.getSearch().getEndBetTime() == null||playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
-            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(),-1));
+        if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
+            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -1));
         }
     }
 
     /**
      * 统计当前页数据
-     * @param listVo
      */
-    protected Map<String,Object> statisticsData(PlayerGameOrderListVo listVo, int TIME_INTERVAL, int DEFAULT_TIME) {
+    protected Map<String, Object> statisticsData(PlayerGameOrderListVo listVo, int TIME_INTERVAL, int DEFAULT_TIME) {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        initQueryDateForgetBetting(listVo,TIME_INTERVAL,DEFAULT_TIME);
+        initQueryDateForgetBetting(listVo, TIME_INTERVAL, DEFAULT_TIME);
         // 统计数据
-        listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
+        listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1), -1));
         Map map = ServiceSiteTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
         map.put("currency", getCurrencySign());
         return map;
@@ -1247,6 +1204,11 @@ public class BaseMineController {
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
+
+            PlayerActivityMessage message = new PlayerActivityMessage();
+//            message.setSearchId(String.valueOf(order.getId()));
+            message.setId(order.getId());
+            infoApp.setUrl("/fund/betting/gameRecordDetail.html?searchId=" + message.getSearchId());
 
             String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
             infoApp.setApiName(apiName);
@@ -1333,7 +1295,6 @@ public class BaseMineController {
     }
 
 
-
     /**
      * 取款处理中/转账处理中的金额
      */
@@ -1353,6 +1314,7 @@ public class BaseMineController {
     }
 
     private IPlayerTransferService playerTransferService;
+
     private IPlayerTransferService getPlayerTransferService() {
         if (playerTransferService == null)
             playerTransferService = ServiceSiteTool.playerTransferService();
@@ -1361,10 +1323,11 @@ public class BaseMineController {
 
     /**
      * 获取系统公告转换成App接口数据
+     *
      * @param vListVo
      * @return
      */
-    protected Map<String,Object> getSystemNotice(VSystemAnnouncementListVo vListVo){
+    protected Map<String, Object> getSystemNotice(VSystemAnnouncementListVo vListVo) {
         vListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.SYSTEM.getCode());
         vListVo = getNotice(vListVo);
 
@@ -1374,34 +1337,35 @@ public class BaseMineController {
             }
         }
 
-        Map<String,Object> map = new HashMap<>(four, oneF);
+        Map<String, Object> map = new HashMap<>(FOUR, ONE_FLOAT);
         List<AppSystemNotice> sysNotices = ListTool.newArrayList();
-        for (VSystemAnnouncement sysAnnounce : vListVo.getResult()){
+        for (VSystemAnnouncement sysAnnounce : vListVo.getResult()) {
             AppSystemNotice sysNotice = new AppSystemNotice();
             sysNotice.setSearchId(vListVo.getSearchId(sysAnnounce.getId()));
             sysNotice.setContent(sysAnnounce.getShortContentText50());
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
-            sysNotice.setLink(SYSTEM_NOTICE_LINK + "?searchId="+vListVo.getSearchId(sysAnnounce.getId()));
+            sysNotice.setLink(SYSTEM_NOTICE_LINK + "?searchId=" + vListVo.getSearchId(sysAnnounce.getId()));
             sysNotices.add(sysNotice);
         }
-        map.put("list",sysNotices);
-        map.put("pageTotal",vListVo.getPaging().getTotalCount());
-        map.put("minDate",SessionManager.getDate().addDays(sysNoticeMinTime));
-        map.put("maxDate",new Date());
+        map.put("list", sysNotices);
+        map.put("pageTotal", vListVo.getPaging().getTotalCount());
+        map.put("minDate", SessionManager.getDate().addDays(SYSTEM_NOTICE_MIN_TIME));
+        map.put("maxDate", new Date());
         return map;
     }
 
     /**
      * 系统详情公告
+     *
      * @param vSystemAnnouncementListVo
      * @return
      */
-    protected AppSystemNotice getSystemNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo){
+    protected AppSystemNotice getSystemNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo) {
         vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
 
         AppSystemNotice sysNotice = new AppSystemNotice();
-        for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()){
+        for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()) {
             sysNotice.setTitle(sysAnnounce.getTitle());
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
             sysNotice.setContent(sysAnnounce.getContent());
@@ -1411,15 +1375,16 @@ public class BaseMineController {
 
     /**
      * 获取游戏公告
+     *
      * @param listVo
      */
-    protected Map<String,Object> getAppGameNotice(VSystemAnnouncementListVo listVo){
-        if(listVo.getSearch().getEndTime()!=null){
-            listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(),DEFAULT_TIME));
+    protected Map<String, Object> getAppGameNotice(VSystemAnnouncementListVo listVo) {
+        if (listVo.getSearch().getEndTime() != null) {
+            listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(), DEFAULT_TIME));
         }
 
-        SysParam param= ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
-        if (param!=null && param.getParamValue()!=null && param.getParamValue().equals("true")) {
+        SysParam param = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
+        if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {
             listVo.getSearch().setApiId(Integer.parseInt(ApiProviderEnum.PL.getCode()));
         }
 
@@ -1427,9 +1392,9 @@ public class BaseMineController {
         listVo = getNotice(listVo);
 
         List<AppGameNotice> gameNotices = ListTool.newArrayList();
-        for (VSystemAnnouncement sysAnnounce : listVo.getResult()){
-            for(SiteApiI18n siteApi : Cache.getSiteApiI18n().values()){
-                if(siteApi.getApiId().equals(sysAnnounce.getApiId())){
+        for (VSystemAnnouncement sysAnnounce : listVo.getResult()) {
+            for (SiteApiI18n siteApi : Cache.getSiteApiI18n().values()) {
+                if (siteApi.getApiId().equals(sysAnnounce.getApiId())) {
                     AppGameNotice gameNotice = new AppGameNotice();
                     gameNotice.setId(listVo.getSearchId(sysAnnounce.getId()));
                     gameNotice.setTitle(sysAnnounce.getShortTitle80());
@@ -1438,10 +1403,10 @@ public class BaseMineController {
 
                     //游戏拼接
                     StringBuilder sb = new StringBuilder();
-                    if(sysAnnounce.getApiId() != null){
+                    if (sysAnnounce.getApiId() != null) {
                         sb.append(CacheBase.getSiteApiName(sysAnnounce.getApiId().toString()));
                     }
-                    if(sysAnnounce.getGameId() != null){
+                    if (sysAnnounce.getGameId() != null) {
                         sb.append("——").append(CacheBase.getSiteGameName(sysAnnounce.getGameId().toString()));
                     }
                     gameNotice.setGameName(sb.toString());
@@ -1450,14 +1415,14 @@ public class BaseMineController {
                 }
             }
         }
-        Map<String,Object> map = new HashMap<>(appErrorTimes,oneF);
-        map.put("list",gameNotices);
-        map.put("pageTotal",listVo.getPaging().getTotalCount());
+        Map<String, Object> map = new HashMap<>(APP_ERROR_TIMES, ONE_FLOAT);
+        map.put("list", gameNotices);
+        map.put("pageTotal", listVo.getPaging().getTotalCount());
         map.put("maxDate", SessionManager.getDate().getNow());
-        map.put("minDate", SessionManager.getDate().addDays(sysNoticeMinTime));
+        map.put("minDate", SessionManager.getDate().addDays(SYSTEM_NOTICE_MIN_TIME));
 
         List<AppSelectSiteApiI18n> appSiteApis = ListTool.newArrayList();
-        for(SiteApiI18n siteApi : Cache.getSiteApiI18n().values()){
+        for (SiteApiI18n siteApi : Cache.getSiteApiI18n().values()) {
             AppSelectSiteApiI18n appSiteApi = new AppSelectSiteApiI18n();
             appSiteApi.setApiId(siteApi.getApiId());
             appSiteApi.setApiName(siteApi.getName());
@@ -1470,15 +1435,16 @@ public class BaseMineController {
 
     /**
      * 获取游戏公告详情
+     *
      * @param vSystemAnnouncementListVo
      * @return
      */
-    protected AppGameNotice getAppGameNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo){
+    protected AppGameNotice getAppGameNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo) {
         vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
         vSystemAnnouncementListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
         AppGameNotice gameNotice = new AppGameNotice();
-        for(VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()){
+        for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()) {
             gameNotice.setContext(sysAnnounce.getContent());
             gameNotice.setPublishTime(sysAnnounce.getPublishTime());
         }
@@ -1488,11 +1454,11 @@ public class BaseMineController {
     /**
      * 提取公共 获取公告信息
      */
-    private VSystemAnnouncementListVo getNotice(VSystemAnnouncementListVo listVo){
-        if(listVo.getSearch().getStartTime()==null){
+    private VSystemAnnouncementListVo getNotice(VSystemAnnouncementListVo listVo) {
+        if (listVo.getSearch().getStartTime() == null) {
             listVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), RECOMMEND_DAYS));
         }
-        if(listVo.getSearch().getEndTime()==null){
+        if (listVo.getSearch().getEndTime() == null) {
             listVo.getSearch().setEndTime(DateQuickPicker.getInstance().getNow());
         }
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
@@ -1502,40 +1468,42 @@ public class BaseMineController {
 
     /**
      * 站点消息-->系统消息
+     *
      * @return
      */
-    protected Map getAppSiteSysNotice(VNoticeReceivedTextListVo listVo){
+    protected Map getAppSiteSysNotice(VNoticeReceivedTextListVo listVo) {
         listVo.getSearch().setReceiverId(SessionManager.getUserId());
         listVo = ServiceTool.noticeService().fetchReceivedSiteMsg(listVo);
         List<AppSystemNotice> sysNotices = ListTool.newArrayList();
-        for(VNoticeReceivedText text : listVo.getResult()){
-            text.setContent(text.getContent().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
-            text.setTitle(text.getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        for (VNoticeReceivedText text : listVo.getResult()) {
+            text.setContent(text.getContent().replaceAll("\\$\\{user\\}", SessionManager.getUserName()));
+            text.setTitle(text.getTitle().replaceAll("\\$\\{user\\}", SessionManager.getUserName()));
 
             AppSystemNotice sysNotice = new AppSystemNotice();
-            if(text.getId() != null){
+            if (text.getId() != null) {
                 sysNotice.setId(text.getId().toString());
             }
             sysNotice.setSearchId(listVo.getSearchId(text.getId()));
             sysNotice.setTitle(text.getShortTitle50());
             sysNotice.setPublishTime(text.getReceiveTime());
             sysNotice.setLink(SITE_SYSTEM_NOTICE + "?searchId=" + listVo.getSearchId(text.getId()));
-            sysNotice.setRead( StringTool.equalsIgnoreCase(text.getReceiveStatus(),isRead) ? true : false);
+            sysNotice.setRead(StringTool.equalsIgnoreCase(text.getReceiveStatus(), IS_READ) ? true : false);
             sysNotices.add(sysNotice);
         }
-        Map<String,Object> map = new HashMap<>(TWO,oneF);
-        map.put("list",sysNotices);
-        map.put("pageTotal",listVo.getPaging().getTotalCount());
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
+        map.put("list", sysNotices);
+        map.put("pageTotal", listVo.getPaging().getTotalCount());
         return map;
     }
 
     /**
      * 系统信息详情
+     *
      * @param noticeReceiveVo
      * @param request
      * @return
      */
-    protected AppSystemNotice getAppSiteNoticeDetail(VNoticeReceivedTextVo vo,NoticeReceiveVo noticeReceiveVo,HttpServletRequest request){
+    protected AppSystemNotice getAppSiteNoticeDetail(VNoticeReceivedTextVo vo, NoticeReceiveVo noticeReceiveVo, HttpServletRequest request) {
         //标记为已读
         List list = new ArrayList();
         list.add(noticeReceiveVo.getSearch().getId());
@@ -1544,14 +1512,14 @@ public class BaseMineController {
 
         //查询详情信息
         vo = ServiceTool.noticeService().fetchReceivedSiteMsgDetail(vo);
-        if(StringTool.isNotBlank(vo.getResult().getContent())){
-            vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        if (StringTool.isNotBlank(vo.getResult().getContent())) {
+            vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{user\\}", SessionManager.getUserName()));
         }
-        if(StringTool.isNotBlank(vo.getResult().getContent())){
-            vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{sitename\\}",SessionManager.getSiteName(request)));
+        if (StringTool.isNotBlank(vo.getResult().getContent())) {
+            vo.getResult().setContent(vo.getResult().getContent().replaceAll("\\$\\{sitename\\}", SessionManager.getSiteName(request)));
         }
-        if(StringTool.isNotBlank(vo.getResult().getTitle())){
-            vo.getResult().setTitle(vo.getResult().getTitle().replaceAll("\\$\\{user\\}",SessionManager.getUserName()));
+        if (StringTool.isNotBlank(vo.getResult().getTitle())) {
+            vo.getResult().setTitle(vo.getResult().getTitle().replaceAll("\\$\\{user\\}", SessionManager.getUserName()));
         }
 
         AppSystemNotice sysNotice = new AppSystemNotice();
@@ -1561,24 +1529,24 @@ public class BaseMineController {
         return sysNotice;
     }
 
-    protected void getSiteUnReadCount(){
-
-    }
-
+    /**
+     * 获取站点信息未读总数
+     * @param listVo
+     * @return
+     */
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
-        Map<String,Object> map = new HashMap<>(TWO,oneF);
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
-        Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
+        long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
         //玩家咨询-未读数量
-        listVo.setSearch(null);
         listVo.getSearch().setSearchType("player");
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
         listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
-        Integer advisoryUnReadCount = 0;
-        String tag  = "";
+        int advisoryUnReadCount = 0;
+        String tag = "";
         //所有咨询数据
         for (VPlayerAdvisory obj : listVo.getResult()) {
             //查询回复表每一条在已读表是否存在
@@ -1591,14 +1559,14 @@ public class BaseMineController {
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
                 readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
                 //不存在未读+1，标记已读咨询Id
-                if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
+                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
                     advisoryUnReadCount++;
-                    tag+=replay.getPlayerAdvisoryId().toString()+",";
+                    tag += replay.getPlayerAdvisoryId().toString() + ",";
                 }
             }
         }
-        map.put("sysMessageUnReadCount",length);
-        map.put("advisoryUnReadCount",advisoryUnReadCount);
+        map.put("sysMessageUnReadCount", length);
+        map.put("advisoryUnReadCount", advisoryUnReadCount);
         return map;
     }
 

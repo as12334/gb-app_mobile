@@ -545,11 +545,9 @@ public abstract class BaseApiController extends BaseDemoController {
                     vo.setCover(setApiLogoUrl(model, request) + "/api_type_" + apiType + ".png");
                 }
             }
+            vo.setLevel(false);
             if (apiType == ApiTypeEnum.LOTTERY.getCode()) {
                 vo.setLevel(true);
-
-            } else {
-                vo.setLevel(false);
             }
             //获取游戏集合
             vo.setSiteApis(setAppApiRelationI18n(siteApiRelation.get(apiType), request, model));

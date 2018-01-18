@@ -16,7 +16,7 @@
                 </c:if>
             </header>
         </c:if>
-        <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper main-contents">
+        <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper main-contents" style="${os eq 'android'?'padding-top:0!important;':''}">
             <div class="mui-scroll">
                 <div class="mui-row">
                     <div class="mui-input-group mine-form">

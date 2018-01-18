@@ -46,9 +46,9 @@ public class DiscountsAppController{
     @ResponseBody
     public String getActivityType() {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setVersion(APP_VERSION);
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(getActivityTypes());
         return JsonTool.toJson(vo);
     }
@@ -60,17 +60,18 @@ public class DiscountsAppController{
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
 
-        if (StringTool.isBlank(listVo.getSearch().getActivityClassifyKey())) {
-            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
-            return JsonTool.toJson(vo);
-        }
+//        if (StringTool.isBlank(listVo.getSearch().getActivityClassifyKey())) {
+//            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
+//            vo.setError(DEFAULT_TIME);
+//            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
+//            return JsonTool.toJson(vo);
+//        }
 
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setData(getActivityMessages(listVo, request));
 
         return JsonTool.toJson(vo);
@@ -83,10 +84,10 @@ public class DiscountsAppController{
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(appVersion);
+        vo.setVersion(APP_VERSION);
         vo.setData(getActivityTypeMessages(listVo, request));
-        vo.setCode(AppErrorCodeEnum.Success.getCode());
-        vo.setMsg(AppErrorCodeEnum.Success.getMsg());
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
 
         return JsonTool.toJson(vo);
     }
@@ -123,7 +124,7 @@ public class DiscountsAppController{
             types = getActivityTypes();
         }
 
-        Map<String, Object> activityTypes = new HashMap<>(types.size(),oneF);
+        Map<String, Object> activityTypes = new HashMap<>(types.size(),ONE_FLOAT);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             Map messages = getActivityMessages(listVo, request);
@@ -141,7 +142,10 @@ public class DiscountsAppController{
         listVo.getSearch().setIsDisplay(Boolean.TRUE);
         listVo.getSearch().setIsDeleted(Boolean.FALSE);
         listVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
+        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey()) ) {
+            listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
+        }
+
         //通过玩家层级判断是否显示活动
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
@@ -152,7 +156,7 @@ public class DiscountsAppController{
         listVo = setDefaultImages(listVo, request);
 
         //转换接口所需数据
-        Map<String,Object> map = new HashMap<>(TWO,oneF);
+        Map<String,Object> map = new HashMap<>(TWO,ONE_FLOAT);
         List<ActivityTypeListApp> messages = ListTool.newArrayList();
         for (VActivityMessage message : listVo.getResult()) {
             ActivityTypeListApp activityApp = new ActivityTypeListApp();
