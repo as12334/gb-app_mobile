@@ -305,7 +305,6 @@ public class MineAppController extends BaseMineController {
 
         }
 
-
         Map<String, Object> map = MapTool.newHashMap();
         map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
         map.put("list", myPromoApps);
@@ -995,33 +994,6 @@ public class MineAppController extends BaseMineController {
         return JsonTool.toJson(appModelVo);
     }
 
-
-    @RequestMapping("/getBettingDetails")
-    @ResponseBody
-    public String getBettingDetails(Integer id) {
-//        PlayerGameOrderVo vo = new PlayerGameOrderVo();
-//        vo.getSearch().setId(id);
-//        vo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(vo);
-////        如果不是这个玩家投注的订单，则无视该笔订单
-//        if (vo.getResult() == null || vo.getResult().getPlayerId() != SessionManager.getUserId().intValue()) {
-//            vo.setResult(null);
-//            vo.setResultArray(null);
-//        }
-//        AppModelVo appModelVo = CommonApp.buildAppModelVo(buildBettingDetail(vo));
-//        appModelVo.setVersion(APP_VERSION);
-        PlayerActivityMessage message = new PlayerActivityMessage();
-        message.setSearchId(String.valueOf(id));
-        StringBuffer sb = new StringBuffer();
-
-        String url = "/fund/betting/gameRecordDetail.html?searchId=";
-
-        Map map = MapTool.newHashMap();
-        if (StringTool.isNotBlank(message.getSearchId())) {
-            map.put("url", sb.append(url).append(message.getSearchId()));
-        }
-
-        return JsonTool.toJson(map);
-    }
 
     /**
      * 安全码信息
