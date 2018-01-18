@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.ListTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -35,7 +34,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 @Controller
 @RequestMapping("/discountsOrigin")
-public class DiscountsAppController{
+public class DiscountsAppController {
     private Log LOG = LogFactory.getLog(DiscountsAppController.class);
     private static final String activityDetailUrl = "/promo/promoDetail.html";
 
@@ -45,12 +44,7 @@ public class DiscountsAppController{
     @RequestMapping("/getActivityType")
     @ResponseBody
     public String getActivityType() {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(getActivityTypes());
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypes(), APP_VERSION);
     }
 
     /**
@@ -59,22 +53,7 @@ public class DiscountsAppController{
     @RequestMapping("/getActivityTypeList")
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-//        if (StringTool.isBlank(listVo.getSearch().getActivityClassifyKey())) {
-//            vo.setMsg(AppErrorCodeEnum.sysInfoNotNull.getMsg());
-//            vo.setError(DEFAULT_TIME);
-//            vo.setCode(AppErrorCodeEnum.sysInfoNotNull.getCode());
-//            return JsonTool.toJson(vo);
-//        }
-
-
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(getActivityMessages(listVo, request));
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, request), APP_VERSION);
     }
 
     /**
@@ -83,13 +62,7 @@ public class DiscountsAppController{
     @RequestMapping("/getActivityTypes")
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-        vo.setData(getActivityTypeMessages(listVo, request));
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
     }
 
     /**
@@ -124,7 +97,7 @@ public class DiscountsAppController{
             types = getActivityTypes();
         }
 
-        Map<String, Object> activityTypes = new HashMap<>(types.size(),ONE_FLOAT);
+        Map<String, Object> activityTypes = new HashMap<>(types.size(), ONE_FLOAT);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             Map messages = getActivityMessages(listVo, request);
@@ -142,7 +115,7 @@ public class DiscountsAppController{
         listVo.getSearch().setIsDisplay(Boolean.TRUE);
         listVo.getSearch().setIsDeleted(Boolean.FALSE);
         listVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey()) ) {
+        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey())) {
             listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
         }
 
@@ -156,7 +129,7 @@ public class DiscountsAppController{
         listVo = setDefaultImages(listVo, request);
 
         //转换接口所需数据
-        Map<String,Object> map = new HashMap<>(TWO,ONE_FLOAT);
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         List<ActivityTypeListApp> messages = ListTool.newArrayList();
         for (VActivityMessage message : listVo.getResult()) {
             ActivityTypeListApp activityApp = new ActivityTypeListApp();
@@ -165,15 +138,14 @@ public class DiscountsAppController{
             activityApp.setUrl(activityDetailUrl + "?search.id=" + message.getId());
             messages.add(activityApp);
         }
-        map.put("list",messages);
-        map.put("total",listVo.getPaging().getTotalCount());
+        map.put("list", messages);
+        map.put("total", listVo.getPaging().getTotalCount());
 
         return map;
     }
 
     /**
      * 没有图片为默认图片
-     *
      */
     private VActivityMessageListVo setDefaultImages(VActivityMessageListVo vActivityMessageListVo, HttpServletRequest request) {
         for (VActivityMessage a : vActivityMessageListVo.getResult()) {

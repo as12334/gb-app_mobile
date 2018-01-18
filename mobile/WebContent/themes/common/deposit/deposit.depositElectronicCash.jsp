@@ -4,13 +4,13 @@
 <c:choose>
     <c:when test="${electronicPayAccount != null}">
         <form id="electronicCashForm" onsubmit="return false">
+            <div id="validateRule" style="display: none">${validateRule}</div>
             <gb:token/>
             <c:set var="onlinePayMin" value="${empty rank.onlinePayMin || rank.onlinePayMin <= 0 ?0.01:rank.onlinePayMin}"/>
             <c:set var="onlinePayMax" value="${empty rank.onlinePayMax?99999999:rank.onlinePayMax}"/>
             <input type="hidden" name="onlinePayMin" value="${onlinePayMin}"/>
             <input type="hidden" name="onlinePayMax" value="${onlinePayMax}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
-            <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="activityId" id="activityId"/>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">

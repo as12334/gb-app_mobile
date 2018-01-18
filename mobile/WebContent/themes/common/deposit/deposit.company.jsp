@@ -10,7 +10,7 @@
             <h1 class="mui-title">${views.deposit_auto['银行卡转账']}</h1>
         </header>
         <form id="confirmCompanyForm">
-            <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper mui-scroll2" ${os eq 'android'?'style="padding-top:0!important"':''}>
+            <div class="mui-content mui-scroll-wrapper deposit-scroll-wrapper main-contents" ${os eq 'android'?'style="padding-top:0!important"':''}>
                 <c:choose>
                     <c:when test="${not empty payAccount}">
                         <div class="mui-scroll">
@@ -137,7 +137,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="mui-scroll2">
+                        <div class="mui-scroll main-contents">
                             <div class="mui-row">${views.deposit_auto['请确认是否有收款账号']}</div>
                         </div>
                     </c:otherwise>
