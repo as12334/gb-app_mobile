@@ -164,8 +164,8 @@ public class BaseDepositController extends BaseCommonDepositController {
     /**
      * 计算手续费
      */
-    double calculateFee(PlayerRank rank, double rechargeAmount) {
-        if (rank == null) {
+    Double calculateFee(PlayerRank rank, Double rechargeAmount) {
+        if (rank == null || rechargeAmount == null) {
             return 0d;
         }
         //手续费标志
@@ -186,7 +186,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         if (isReturnFee && rank.getReturnFeeCount() != null && count >= rank.getReturnFeeCount()) {
             return 0d;
         }
-        double fee = 0d;
+        Double fee = 0d;
         if (isFee && rank.getFeeMoney() != null) {
             fee = computeFee(rank.getFeeType(), rank.getFeeMoney(), rechargeAmount, rank.getMaxFee());
         } else if (isReturnFee && rank.getReturnMoney() != null) {
@@ -197,7 +197,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         } else {
             fee = Math.abs(fee);
         }
-        return fee;
+        return fee == null ? 0d : fee;
     }
 
     /**
@@ -228,12 +228,14 @@ public class BaseDepositController extends BaseCommonDepositController {
      * @param rechargeAmount 存款金额
      * @param maxFee         手续费最大值
      */
-    private double computeFee(String feeType, Double feeMoney, double rechargeAmount, Double maxFee) {
+    private double computeFee(String feeType, Double feeMoney, Double rechargeAmount, Double maxFee) {
         double fee = 0d;
-        if (RankFeeType.PROPORTION.getCode().equals(feeType)) {
-            fee = rechargeAmount * feeMoney / 100.0;
-        } else if (RankFeeType.FIXED.getCode().equals(feeType)) {
-            fee = feeMoney;
+        if(feeMoney != null || rechargeAmount != null) {
+            if (RankFeeType.PROPORTION.getCode().equals(feeType)) {
+                fee = rechargeAmount * feeMoney / 100.0;
+            } else if (RankFeeType.FIXED.getCode().equals(feeType)) {
+                fee = feeMoney;
+            }
         }
         if (maxFee != null && fee > maxFee) {
             fee = maxFee;

@@ -254,24 +254,16 @@ public class BaseOnlineDepositController extends BaseDepositController {
     @RequestMapping("/submit")
     public String submit(PlayerRechargeVo playerRechargeVo, Model model) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
-        double rechargeAmount = playerRecharge.getRechargeAmount();
-        if (playerRechargeVo.getResult().getRandomCash() != null) {
-            rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
-        }
+        Double rechargeAmount = playerRecharge.getRechargeAmount();
         boolean unCheckSuccess = false;
         boolean pop = true;
-
-        //验证存款金额的合法性
-        if (rechargeAmount <= 0) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER));
+        if (playerRechargeVo.getResult().getRandomCash() != null || rechargeAmount != null) {
+            rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
         }
         PlayerRank rank = getRank();
         PayAccount payAccount = null;
         if (StringTool.isNotBlank(playerRechargeVo.getAccount())) {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
-        }
-        if (payAccount == null) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
         }
         Integer max = payAccount.getSingleDepositMax();
         Integer min = payAccount.getSingleDepositMin();
@@ -281,10 +273,20 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (max == null) {
             max = Const.MAX_MONEY;
         }
+        //验证存款金额的合法性
+        if (rechargeAmount == null || rechargeAmount <= 0) {
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER,min,max));
+        }
+
+        if (payAccount == null) {
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
+        }
+
         if (max < rechargeAmount || min > rechargeAmount) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max));
         }
-        double fee = calculateFee(rank, rechargeAmount);
+        Double fee = calculateFee(rank, rechargeAmount);
+        fee = fee == null ? 0 : fee ;
         if (rechargeAmount + fee <= 0) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
         }
