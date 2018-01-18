@@ -2,14 +2,26 @@ package so.wwb.gamebox.mobile.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.soul.commons.data.json.JsonTool;
-import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 
-public class AppModelVo {
+import java.io.Serializable;
+
+public class AppModelVo implements Serializable {
+    private static final long serialVersionUID = 8257995679263616666L;
+
     private Integer error;
     private Integer code;
     private String msg;
     private Object data;
     private String version;
+
+    public AppModelVo(Integer error, Integer code, String msg, Object data, String version) {
+        this.error = error;
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+        this.version = version;
+    }
+
 
     public Integer getError() {
         return error;
@@ -56,18 +68,7 @@ public class AppModelVo {
     }
 
     @JsonIgnore
-    public static AppModelVo createAppModeVo(Integer error, Integer code, String msg, Object data, String version) {
-        AppModelVo appModelVo = new AppModelVo();
-        appModelVo.setCode(code);
-        appModelVo.setError(error);
-        appModelVo.setMsg(msg);
-        appModelVo.setData(data);
-        appModelVo.setVersion(version);
-        return appModelVo;
-    }
-
-    @JsonIgnore
     public static String getAppModeVoJson(Integer error, Integer code, String msg, Object data, String version) {
-        return JsonTool.toJson(createAppModeVo(error, code, msg, data, version));
+        return JsonTool.toJson(new AppModelVo(error, code, msg, data, version));
     }
 }
