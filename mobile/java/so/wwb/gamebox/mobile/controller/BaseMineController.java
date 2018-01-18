@@ -148,9 +148,9 @@ public class BaseMineController {
         Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
         for (UserBankcard userBankcard : userBankcards) {
             int length = userBankcard.getBankcardNumber().length();
+            bankcardNumMap = new HashMap<>(1,1f);
             if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
                 UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
-                bankcardNumMap = new HashMap<>();
                 bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
                 bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
                 userInfo.put("btc", bankcardNumMap);
@@ -165,6 +165,7 @@ public class BaseMineController {
                 bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
                 bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
                 bankcardNumMap.put("realName", SessionManager.getUser().getRealName());  //真实姓名
+                userInfo.put("bankcard", bankcardNumMap);
             }
         }
 
