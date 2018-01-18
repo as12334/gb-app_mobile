@@ -157,7 +157,14 @@ public class BaseMineController {
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
                 bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-                userInfo.put("bankcard", bankcardNumMap);
+
+                UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
+                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
+                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
+                bankcardNumMap.put("bankName", bankName);
+                bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
+                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
+                bankcardNumMap.put("realName", SessionManager.getUser().getRealName());  //真实姓名
             }
         }
 
