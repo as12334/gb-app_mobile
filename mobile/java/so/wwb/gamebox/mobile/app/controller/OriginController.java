@@ -68,156 +68,150 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
-        AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setMsg(APP_VERSION);
-
         Map<String, Object> map = MapTool.newHashMap();
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
         map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
         map.put("activity", getMoneyActivityFloat(request));
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     @RequestMapping("/getCarouse")
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setVersion(APP_VERSION);
-
         //轮播图
         Map<String, Object> map = MapTool.newHashMap();
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     @RequestMapping("/getAnnouncement")
     @ResponseBody
     public String getAnnounce() {
-        AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setVersion(APP_VERSION);
-
         //公告
         Map<String, Object> map = MapTool.newHashMap();
         map.put("announcement", getAnnouncement());
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     @RequestMapping("/getSiteApiRelation")
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
-        AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setVersion(APP_VERSION);
-
         //游戏
         Map<String, Object> map = MapTool.newHashMap();
         map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     @RequestMapping("/getFloat")
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setVersion(APP_VERSION);
-
         //浮动图
         Map<String, Object> map = MapTool.newHashMap();
         map.put("activity", getMoneyActivityFloat(request));
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     @RequestMapping("/getCasinoGame")
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, AppRequestModelVo modelVo) {
-        AppModelVo vo = new AppModelVo();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setVersion(APP_VERSION);
-
         //电子游戏
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> pageTotal = MapTool.newHashMap();
         map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, modelVo));
         map.put("page", pageTotal);
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     @RequestMapping("getGameLink")
     @ResponseBody
-    public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo){
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-        if(SessionManager.getUser() == null){
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+    public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
+        if (SessionManager.getUser() == null) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UN_LOGIN.getCode(),
+                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
+                    null, APP_VERSION);
         }
-        if(siteGame.getApiId() == null){
-            vo.setCode(AppErrorCodeEnum.GAME_NOT_EXIST.getCode());
-            vo.setMsg(AppErrorCodeEnum.GAME_NOT_EXIST.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+        if (siteGame.getApiId() == null) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
-        if(siteGame.getApiTypeId() == null){
-            vo.setCode(AppErrorCodeEnum.GAME_NOT_EXIST.getCode());
-            vo.setMsg(AppErrorCodeEnum.GAME_NOT_EXIST.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+        if (siteGame.getApiTypeId() == null) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
         Map map = MapTool.newHashMap();
 
-        if(SessionManager.isAutoPay()){
-            AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request,siteGame.getApiId(),siteGame.getApiTypeId(),siteGame.getGameCode(),modelVo);
+        if (SessionManager.isAutoPay()) {
+            AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo);
 
-            map.put("gameLink",gameUrl.getGameLink());
-            map.put("gameMsg",gameUrl.getGameMsg());
-            vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-            vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-            vo.setData(map);
+            map.put("gameLink", gameUrl.getGameLink());
+            map.put("gameMsg", gameUrl.getGameMsg());
 
-            return JsonTool.toJson(vo);
-        }else{
-            if( Integer.parseInt(siteGame.getApiTypeId()) == ApiTypeEnum.CASINO.getCode()){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getMsg(),
+                    map,
+                    APP_VERSION);
+        } else {
+            if (Integer.parseInt(siteGame.getApiTypeId()) == ApiTypeEnum.CASINO.getCode()) {
                 PlayerApiAccountVo player = new PlayerApiAccountVo();
                 player.setApiId(siteGame.getApiId());
                 player.setApiTypeId(siteGame.getApiTypeId().toString());
                 player.setGameId(siteGame.getGameId());
                 player.setGameCode(siteGame.getGameCode());
                 AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
-                map.put("gameLink",gameUrl.getGameLink());
-                map.put("gameMsg",gameUrl.getGameMsg());
+                map.put("gameLink", gameUrl.getGameLink());
+                map.put("gameMsg", gameUrl.getGameMsg());
 
-                vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-                vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-                vo.setData(map);
-                return JsonTool.toJson(vo);
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        map,
+                        APP_VERSION);
             }
         }
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     /**
