@@ -868,16 +868,16 @@ public class BaseMineController {
         } else if (isBit && bankcardMap.get(UserBankcardTypeEnum.TYPE_BTC) == null) {
             hasBank = false;
         }
-        /*if (isCash) {
-            bankcard(map);
-        }*/
 
         map.put("hasBank", hasBank);
         return hasBank;
     }
 
+    /**
+     * 获取用户银行卡信息
+     * @param map
+     */
     public void bankcard(Map map) {
-        //model.addAttribute("validate", JsRuleCreator.create(AddBankcardForm.class));
         map.put("user", SessionManagerCommon.getUser());
         map.put("bankListVo", BankHelper.getBankListVo());
     }
@@ -1029,15 +1029,8 @@ public class BaseMineController {
     /**
      * 验证是否余额冻结
      *
-     * @param map
      * @return
      */
-    public boolean hasFreeze(Map map) {
-        UserPlayer player = getPlayer();
-        map.put("player", player);
-        return hasFreeze(map, player);
-    }
-
     protected boolean hasFreeze() {
         UserPlayer player = getPlayer();
         if (player == null) {
@@ -1049,16 +1042,11 @@ public class BaseMineController {
         return hasFreeze;
     }
 
-    public boolean hasFreeze(Map map, UserPlayer player) {
-        map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
-        boolean hasFreeze = player.getBalanceFreezeEndTime() != null
-                && player.getBalanceFreezeEndTime().getTime() > SessionManagerCommon.getDate().getNow().getTime();
-        map.put("hasFreeze", hasFreeze);
-        LOG.info("取款玩家{0}是否冻结{1}", SessionManagerCommon.getUserName(), hasFreeze);
-
-        return hasFreeze;
-    }
-
+    /**
+     * 获取货币标志
+     * @param currency
+     * @return
+     */
     protected String getCurrencySign(String currency) {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(SessionManagerCommon.getUser().getDefaultCurrency());
         if (sysCurrency != null && StringTool.isNotBlank(sysCurrency.getCurrencySign())) {
@@ -1110,7 +1098,6 @@ public class BaseMineController {
         return maps;
     }
 
-
     /**
      * 获取玩家层级
      *
@@ -1125,27 +1112,8 @@ public class BaseMineController {
     /**
      * 验证是否今日取款是否达到上限
      *
-     * @param rank
      * @return
      */
-    private boolean isFull(Map map, PlayerRank rank) {
-        //层级信息
-        map.put("rank", rank);
-        int count = get24HHasCount();
-        if (rank.getIsWithdrawLimit() != null && rank.getIsWithdrawLimit() && rank.getWithdrawCount() != null && count >= rank.getWithdrawCount()) {
-            // 已达取款次数上限
-            map.put("isFull", true);
-            LOG.info("取款玩家{0}取款次数已达到上限{1},当前玩家取款次数{2}", SessionManagerCommon.getUserName(), rank.getWithdrawCount(), count);
-            return true;
-        }
-        if (rank.getWithdrawCount() != null) {
-            // 还剩取款次数
-            map.put("reminder", rank.getWithdrawCount() - count);
-            LOG.info("取款玩家{0}取款次数{1},剩余取款次数{2}", SessionManagerCommon.getUserName(), count, rank.getWithdrawCount() - count);
-        }
-        return false;
-    }
-
     protected boolean isFull() {
         PlayerRank rank = getRank();
         if (rank == null) {
@@ -1200,7 +1168,6 @@ public class BaseMineController {
         return player;
     }
 
-
     protected void initQueryDateForgetBetting(PlayerGameOrderListVo playerGameOrderListVo, int TIME_INTERVAL, int DEFAULT_TIME) {
         playerGameOrderListVo.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
         if (playerGameOrderListVo.getSearch().getBeginBetTime() == null) {
@@ -1213,8 +1180,6 @@ public class BaseMineController {
 
     /**
      * 统计当前页数据
-     *
-     * @param listVo
      */
     protected Map<String, Object> statisticsData(PlayerGameOrderListVo listVo, int TIME_INTERVAL, int DEFAULT_TIME) {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -1564,6 +1529,11 @@ public class BaseMineController {
         return sysNotice;
     }
 
+    /**
+     * 获取站点信息未读总数
+     * @param listVo
+     * @return
+     */
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
         Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
