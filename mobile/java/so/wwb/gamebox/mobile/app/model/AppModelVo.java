@@ -70,11 +70,4 @@ public class AppModelVo {
     public static String getAppModeVoJson(Integer error, Integer code, String msg, Object data, String version) {
         return JsonTool.toJson(createAppModeVo(error, code, msg, data, version));
     }
-
-    public static void main(String[] args) {
-        AppErrorCodeEnum[] appErrorCodeEnumList = AppErrorCodeEnum.values();
-        for (AppErrorCodeEnum appErrorCodeEnum : appErrorCodeEnumList) {
-            System.out.println(appErrorCodeEnum.getMsg() + "=" + appErrorCodeEnum.getMsg());
-        }
-    }
 }
