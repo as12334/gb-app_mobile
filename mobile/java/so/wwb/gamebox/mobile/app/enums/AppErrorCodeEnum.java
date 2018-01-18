@@ -1,26 +1,30 @@
 package so.wwb.gamebox.mobile.app.enums;
 
 public enum AppErrorCodeEnum{
-    Success(0,"请求成功"),
+    SUCCESS(0,"请求成功"),
+    //与登录用户、密码相关
     UN_LOGIN(1,"您还没有登录"),
-    pwdError(11,"密码输入错误"),
-    pwdSame(16,"新密码不能和旧密码相同"),
-    sysInfoNotNull(17,"信息不存在"),
-    IsFull(24,"今日提现次数已达上限"),
-    ActivityEnd(31,"该活动不存在或已结束"),
-    hasOrder(100,"取款订单已存在"),
-    hasFreeze(101,"全款玩家已被冻结"),
-    IsBalanceAdequate(102,"取款金额最少为x元"),
-    hasBank(103,"没有银行卡信息"),
-    isInvalidAmount(104,"取款金额应在x-x范围内，并且小于等于x"),
-    withDrawError(105,"取款失败"),
-    hasBtc(204,"用户绑定比特币已存在"),
+    PWD_ERROR(11,"密码输入错误"),
+    PWD_SAME(16,"新密码不能和旧密码相同"),
+    INFO_NOT_EXISTS(17,"信息不存在"),
+    //取款相关
+    WITHDRAW_IS_FULL(24,"今日提现次数已达上限"),
+    WITHDRAW_HAS_ORDER(100,"取款订单已存在"),
+    WITHDRAW_USER_FREEZE(101,"全款玩家已被冻结"),
+    WITHDRAW_BALANCE_ADEQUATE(102,"取款金额最少为x元"),
+    WITHDRAW_NOT_BANK(103,"没有银行卡信息"),
+    WITHDRAW_INVALID_AMOUNT(104,"取款金额应在x-x范围内，并且小于等于x"),
+    WITHDRAW_ERROR(105,"取款失败"),
+    //活动相关
+    ACTIVITY_NOT_EXIST_OR_END(31,"该活动不存在或已结束"),
+    //个人信息相关
+    BTC_EXISTS(204,"用户绑定比特币已存在"),
     addCard(200,"用户添加银行卡"),
-    showBankCardInfomation(201,"展示银行信息"),
     addBtc(202,"用户添加比特币"),
     bindingSuccess(205,"用户绑定比特币成功"),
     submitBtcfild(206,"用户绑定比特币失败"),
     hasbibindingBankCard(207,"用户绑定银行卡号已存在"),
+    showBankCardInfomation(201,"展示银行信息"),
     realName(300,"真实姓名不能为空"),
     sysCode(301,"验证码输入错误"),
     realNameError(302,"真实姓名不正确"),
@@ -31,8 +35,9 @@ public enum AppErrorCodeEnum{
     pwdNotNull(307,"当前密码不能为空"),
     sysCodeNotNull(308,"验证码不能为空"),
     pwdUpdateError(309,"修改密码失败"),
-    gameExist(400,"游戏不存在"),
     updateStatusError(401,"更新失败"),
+    //游戏相关
+    gameExist(400,"游戏不存在"),
     autoPay(402,"非免转不能一键回收"),
     ;
 
