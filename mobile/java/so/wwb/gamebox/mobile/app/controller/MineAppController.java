@@ -423,7 +423,7 @@ public class MineAppController extends BaseMineController {
         SessionManagerCommon.refreshUser();
         if (vo.isSuccess()) {
             Map<String, String> map = MapTool.newHashMap();
-            map.put("realNme", vo.getResult().getBankcardMasterName());
+            map.put("realName", vo.getResult().getBankcardMasterName());
             map.put("bankName", vo.getResult().getBankName());
             map.put("bankCardNumber", vo.getResult().getBankcardNumber());
             map.put("bankDeposit", vo.getResult().getBankDeposit());
@@ -539,6 +539,14 @@ public class MineAppController extends BaseMineController {
 
 
         fundRecordApp.setFundListApps(fundListAppList);
+
+        PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
+        transactionListVo.setMinDate(listVo.getMinDate());
+        transactionListVo.setMaxDate(listVo.getMaxDate());
+
+
+        ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
+
         if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
             fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
             fundRecordApp.setMaxDate(SessionManager.getDate().getNow());
