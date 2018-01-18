@@ -1,18 +1,26 @@
 package so.wwb.gamebox.mobile.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.soul.commons.data.json.JsonTool;
+import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
+
 public class AppModelVo {
-    private int error;
-    private int code;
+    private Integer error;
+    private Integer code;
     private String msg;
     private Object data;
     private String version;
 
-    public int getError() {
+    public Integer getError() {
         return error;
     }
 
-    public void setError(int error) {
+    public void setError(Integer error) {
         this.error = error;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public int getCode() {
@@ -45,5 +53,28 @@ public class AppModelVo {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    @JsonIgnore
+    public static AppModelVo createAppModeVo(Integer error, Integer code, String msg, Object data, String version) {
+        AppModelVo appModelVo = new AppModelVo();
+        appModelVo.setCode(code);
+        appModelVo.setError(error);
+        appModelVo.setMsg(msg);
+        appModelVo.setData(data);
+        appModelVo.setVersion(version);
+        return appModelVo;
+    }
+
+    @JsonIgnore
+    public static String getAppModeVoJson(Integer error, Integer code, String msg, Object data, String version) {
+        return JsonTool.toJson(createAppModeVo(error, code, msg, data, version));
+    }
+
+    public static void main(String[] args) {
+        AppErrorCodeEnum[] appErrorCodeEnumList = AppErrorCodeEnum.values();
+        for (AppErrorCodeEnum appErrorCodeEnum : appErrorCodeEnumList) {
+            System.out.println(appErrorCodeEnum.getMsg() + "=" + appErrorCodeEnum.getMsg());
+        }
     }
 }
