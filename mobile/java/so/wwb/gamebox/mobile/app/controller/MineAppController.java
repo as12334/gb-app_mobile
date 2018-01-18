@@ -475,6 +475,8 @@ public class MineAppController extends BaseMineController {
         UserBankcardVo bankcardVo = new UserBankcardVo();
         bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
         bankcardVo.getResult().setBankcardNumber(bankcardNumber);
+        bankcardVo.getResult().setUserId(SessionManager.getUserId());
+        bankcardVo.setUserType(SessionManagerCommon.getUserType().getCode());
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(AppConstant.APP_VERSION);
         if (checkCardIsExistsByUserId(bankcardVo)) {
@@ -497,7 +499,9 @@ public class MineAppController extends BaseMineController {
         }
         appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BTC_SUCCESS.getCode());
         appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BTC_SUCCESS.getMsg());
-
+        Map<String, String> map = MapTool.newHashMap();
+        map.put("btcNumber", bankcardVo.getResult().getBankcardNumber());
+        appModelVo.setData(map);
         return JsonTool.toJson(appModelVo);
     }
 
