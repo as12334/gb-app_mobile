@@ -36,7 +36,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 @RequestMapping("/discountsOrigin")
 public class DiscountsAppController {
     private Log LOG = LogFactory.getLog(DiscountsAppController.class);
-    private static final String activityDetailUrl = "/promo/promoDetail.html";
+    private static final String ACTIVITY_DETAIL_URL = "/promo/promoDetail.html";
 
     /**
      * 获取优惠活动类型
@@ -135,7 +135,7 @@ public class DiscountsAppController {
             ActivityTypeListApp activityApp = new ActivityTypeListApp();
             activityApp.setId(message.getId());
             activityApp.setPhoto(message.getActivityAffiliated());
-            activityApp.setUrl(activityDetailUrl + "?search.id=" + message.getId());
+            activityApp.setUrl(ACTIVITY_DETAIL_URL + "?search.id=" + message.getId());
             messages.add(activityApp);
         }
         map.put("list", messages);

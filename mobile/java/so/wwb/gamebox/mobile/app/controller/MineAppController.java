@@ -95,7 +95,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 @RequestMapping("/mineOrigin")
 public class MineAppController extends BaseMineController {
     private Log LOG = LogFactory.getLog(MineAppController.class);
-    private static final String safePasswordUrl = "/captcha/securityPwd.html";
+    private static final String SAFE_PASSWORD_VALIDATE_CODE_URL = "/captcha/securityPwd.html";
 
     /**
      * 我的用户信息，链接
@@ -1033,7 +1033,7 @@ public class MineAppController extends BaseMineController {
         errorTimes = errorTimes == null ? 0 : errorTimes;
         map.put("isOpenCaptcha", errorTimes > 1);
         map.put("remindTimes", APP_ERROR_TIMES - errorTimes);
-        map.put("captChaUrl", safePasswordUrl);
+        map.put("captChaUrl", SAFE_PASSWORD_VALIDATE_CODE_URL);
         vo.setData(map);
         return vo;
     }
