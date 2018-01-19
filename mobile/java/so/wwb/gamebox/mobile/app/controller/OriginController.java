@@ -220,21 +220,18 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/countDrawTimes")
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
-        AppModelVo vo = new AppModelVo();
         if (SessionManagerCommon.getUser() == null) {
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setVersion(APP_VERSION);
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UN_LOGIN.getCode(),
+                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
+                    null,APP_VERSION);
         }
 
         if (StringTool.isBlank(activityMessageId)) {
-            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
-            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setVersion(APP_VERSION);
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                    null,APP_VERSION);
         }
 
         Map<String, java.io.Serializable> map = new HashMap<>(4, 1f);
@@ -244,30 +241,27 @@ public class OriginController extends BaseApiController {
 
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId.toString());
-            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
-            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setVersion(APP_VERSION);
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                    null,APP_VERSION);
         }
 
         Date now = new Date();
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
-            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
-            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setVersion(APP_VERSION);
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                    null,APP_VERSION);
         }
         Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
         if (!containUserRank) {
-            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
-            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
-            vo.setVersion(APP_VERSION);
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                    null,APP_VERSION);
         }
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
@@ -303,12 +297,11 @@ public class OriginController extends BaseApiController {
         map.put("nextLotteryTime", startTime);
 
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setVersion(APP_VERSION);
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.ACTIVITY_END.getCode(),
+                AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                map,APP_VERSION);
     }
 
     /**
@@ -323,17 +316,19 @@ public class OriginController extends BaseApiController {
         AppModelVo vo = new AppModelVo();
         vo.setVersion(APP_VERSION);
         if (SessionManager.getUser() == null) {
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UN_LOGIN.getCode(),
+                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
+                    null,APP_VERSION);
         }
 
         if (StringTool.isBlank(activityMessageId)) {
-            vo.setCode(AppErrorCodeEnum.ACTIVITY_END.getCode());
-            vo.setMsg(AppErrorCodeEnum.ACTIVITY_END.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                    null,APP_VERSION);
         }
 
         Map map = new HashMap();
@@ -343,8 +338,11 @@ public class OriginController extends BaseApiController {
                 //没有红包活动
                 map.put("gameNum", -3);
                 map.put("award", 0);
-                vo.setData(map);
-                return JsonTool.toJson(vo);
+
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        map,APP_VERSION);
             }
             Integer playerId = SessionManagerBase.getUserId();
             PlayerActivityMessage moneyActivity = findMoneyActivity();
@@ -352,16 +350,22 @@ public class OriginController extends BaseApiController {
                 //没有红包活动
                 map.put("gameNum", -3);
                 map.put("award", 0);
-                vo.setData(map);
-                return JsonTool.toJson(vo);
+
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        map,APP_VERSION);
             }
             Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
             if (!id.equals(moneyActivity.getId())) {
                 //没有红包活动
                 map.put("gameNum", -3);
                 map.put("award", 0);
-                vo.setData(map);
-                return JsonTool.toJson(vo);
+
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        map,APP_VERSION);
             }
 
             Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
@@ -369,8 +373,11 @@ public class OriginController extends BaseApiController {
             if (!containUserRank) {
                 map.put("gameNum", -4);
                 map.put("award", 0);
-                vo.setData(map);
-                return JsonTool.toJson(vo);
+
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        map,APP_VERSION);
             }
             boolean allDayLottery = isAllDayLottery(playerId, moneyActivity.getId());
             if (allDayLottery) {//全天开奖
@@ -392,9 +399,17 @@ public class OriginController extends BaseApiController {
             map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
             map.put("gameNum", -2);
             map.put("award", 0);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getMsg(),
+                    map,APP_VERSION);
         }
-        vo.setData(map);
-        return JsonTool.toJson(vo);
+
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,APP_VERSION);
     }
     //endregion mainIndex
 
