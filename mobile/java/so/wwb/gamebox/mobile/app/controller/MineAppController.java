@@ -1277,6 +1277,8 @@ public class MineAppController extends BaseMineController {
 
         AppSystemNotice sysNotice = getSystemNoticeDetail(vListVo);
         vo.setData(sysNotice);
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
         return JsonTool.toJson(vo);
     }
 
