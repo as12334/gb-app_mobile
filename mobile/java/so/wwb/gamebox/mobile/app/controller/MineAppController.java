@@ -366,15 +366,13 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/refresh")
     @ResponseBody
     public String refresh(HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
         UserInfoApp userInfo = appRefresh(request);
-        vo = CommonApp.buildAppModelVo(userInfo);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                userInfo,
+                APP_VERSION);
     }
 
     /**
