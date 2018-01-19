@@ -107,12 +107,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getLink")
     @ResponseBody
     public String getLink(HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
 
         Map<String, Object> map = new HashMap<>(FOUR, ONE_FLOAT);
         Map<String, Object> userInfoMap = MapTool.newHashMap();
@@ -121,9 +115,12 @@ public class MineAppController extends BaseMineController {
         map.put("link", setLink());//链接地址
         getMineLinkInfo(userInfoMap, request);//用户金额信息
         map.put("user", userInfoMap);
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     /**
@@ -135,20 +132,24 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getWithDraw() {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
 
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    vo.getCode(),
+                    vo.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
 
         Map<String, Object> map = MapTool.newHashMap();
         withdraw(map);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     /**
@@ -159,44 +160,53 @@ public class MineAppController extends BaseMineController {
     @Token(valid = true)
     public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
 
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    vo.getCode(),
+                    vo.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
 
         //是否有取款银行卡
         Map map = MapTool.newHashMap();
         if (!hasBank(map)) {
-            vo.setCode(AppErrorCodeEnum.NO_BANK.getCode());
-            vo.setMsg(AppErrorCodeEnum.NO_BANK.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.NO_BANK.getCode(),
+                    AppErrorCodeEnum.NO_BANK.getMsg(),
+                    null,
+                    APP_VERSION);
         }
         //是否符合取款金额设置
         if (isInvalidAmount(playerVo, map)) {
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(map.get("msg").toString());
-            vo.setCode(AppErrorCodeEnum.WITHDRAW_BETWEEN_MIN_MAX.getCode());
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.WITHDRAW_BETWEEN_MIN_MAX.getCode(),
+                    map.get("msg").toString(),
+                    null,
+                    APP_VERSION);
         }
 
         //取款
         map = addWithdraw(request, playerVo);
         //成功
         if (map.get("state") != null && MapTool.getBoolean(map, "state")) {
-            vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-            vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-            vo.setData(map);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getMsg(),
+                    map,
+                    APP_VERSION);
         }
 
-        vo.setData(map);
-        vo.setCode(AppErrorCodeEnum.WITHDRAW_FAIL.getCode());
-        vo.setMsg(AppErrorCodeEnum.WITHDRAW_FAIL.getMsg());
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                AppErrorCodeEnum.WITHDRAW_FAIL.getCode(),
+                AppErrorCodeEnum.WITHDRAW_FAIL.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     /**
