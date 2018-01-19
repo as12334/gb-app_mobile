@@ -45,6 +45,7 @@ import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.app.model.*;
+import so.wwb.gamebox.mobile.app.validateForm.PlayerAdvisoryAppForm;
 import so.wwb.gamebox.mobile.app.validateForm.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -1000,15 +1001,32 @@ public class MineAppController extends BaseMineController {
     /**
      * 申请优惠，保存发送消息
      *
-     * @param playerAdvisoryVo
+     * @param result
      * @param code
      * @return
      */
     @RequestMapping("/addNoticeSite")
     @ResponseBody
-    public String addNoticeSite(PlayerAdvisoryVo playerAdvisoryVo, String code) {
+    public String addNoticeSite(@FormModel @Valid PlayerAdvisoryAppForm form, BindingResult result, String code) {//PlayerAdvisoryVo playerAdvisoryVo,
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(APP_VERSION);
+
+        if (result.hasErrors()) {
+            appModelVo.setCode(AppErrorCodeEnum.USER_SEND_NOTICE_SITE_FAIL.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.USER_SEND_NOTICE_SITE_FAIL.getMsg() + ": " + result.getAllErrors().get(0).getDefaultMessage());
+            appModelVo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(appModelVo);
+        }
+
+        PlayerAdvisoryVo playerAdvisoryVo = new PlayerAdvisoryVo();
+        if (playerAdvisoryVo.getResult() == null) {
+            playerAdvisoryVo.setResult(new PlayerAdvisory());
+        }
+
+        playerAdvisoryVo.getResult().setAdvisoryType(form.getResult_advisoryType());
+        playerAdvisoryVo.getResult().setAdvisoryTitle(form.getResult_advisoryTitle());
+        playerAdvisoryVo.getResult().setAdvisoryContent(form.getResult_advisoryContent());
+
         if (playerAdvisoryVo != null && playerAdvisoryVo.getResult() != null) {
             playerAdvisoryVo.setSuccess(false);
             playerAdvisoryVo.getResult().setAdvisoryTime(SessionManager.getDate().getNow());
