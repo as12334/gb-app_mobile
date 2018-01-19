@@ -224,21 +224,21 @@ public class MineAppController extends BaseMineController {
         if (hasOrder()) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getCode());
             vo.setMsg(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getMsg());
-            vo.setError(DEFAULT_TIME);
+            vo.setError(AppErrorCodeEnum.FAIL_COED);
             return vo;
         }
         //是否被冻结
         if (hasFreeze()) {
             vo.setCode(AppErrorCodeEnum.USER_HAS_FREEZE.getCode());
             vo.setMsg(AppErrorCodeEnum.USER_HAS_FREEZE.getMsg());
-            vo.setError(DEFAULT_TIME);
+            vo.setError(AppErrorCodeEnum.FAIL_COED);
             return vo;
         }
         //今日取款是否达到上限
         if (isFull()) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_IS_FULL.getCode());
             vo.setMsg(AppErrorCodeEnum.WITHDRAW_IS_FULL.getMsg());
-            vo.setError(DEFAULT_TIME);
+            vo.setError(AppErrorCodeEnum.FAIL_COED);
             return vo;
         }
         //余额是否充足
@@ -246,7 +246,7 @@ public class MineAppController extends BaseMineController {
         if (isBalanceAdequate(map)) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getCode());
             vo.setMsg(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
-            vo.setError(DEFAULT_TIME);
+            vo.setError(AppErrorCodeEnum.FAIL_COED);
             return vo;
         }
 
