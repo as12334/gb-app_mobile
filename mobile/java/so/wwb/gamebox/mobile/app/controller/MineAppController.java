@@ -54,6 +54,7 @@ import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
+import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
@@ -532,21 +533,19 @@ public class MineAppController extends BaseMineController {
         listVo.getSearch().setLotterySite(ParamTool.isLotterySite());
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
 
-
         List<VPlayerTransaction> vPlayerTransactionList = listVo.getResult();
-
         List<FundListApp> fundListAppList = buildList(vPlayerTransactionList);
-
-
         fundRecordApp.setFundListApps(fundListAppList);
 
         PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
-        transactionListVo.setMinDate(listVo.getMinDate());
-        transactionListVo.setMaxDate(listVo.getMaxDate());
+        transactionListVo.getSearch().setBeginCreateTime(listVo.getSearch().getBeginCreateTime());
+        transactionListVo.getSearch().setEndCreateTime(listVo.getSearch().getEndCreateTime());
+        transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
+        transactionListVo.getSearch().setStates(new String[]{CommonStatusEnum.SUCCESS.getCode(), CommonStatusEnum.LSSUING.getCode()});
 
+        Map map = ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
 
-        ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
-
+        fundRecordApp.setSumPlayerMap(map);
         if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
             fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
             fundRecordApp.setMaxDate(SessionManager.getDate().getNow());

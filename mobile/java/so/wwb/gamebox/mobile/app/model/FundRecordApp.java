@@ -24,6 +24,8 @@ public class FundRecordApp {
 
     private Double transferSum;  //转账处理
 
+    private Map<String, Object> sumPlayerMap; // 统计总和 充值额度,体现总额,优惠总额,反水总额
+
 
     public Date getMaxDate() {
         return maxDate;
@@ -88,5 +90,13 @@ public class FundRecordApp {
 
     public void setTransactionMap(Map<String, String> transactionMap) {
         this.transactionMap = transactionMap;
+    }
+
+    public Map<String, Object> getSumPlayerMap() {
+        return sumPlayerMap;
+    }
+
+    public void setSumPlayerMap(Map<String, Object> sumPlayerMap) {
+        this.sumPlayerMap = sumPlayerMap;
     }
 }
