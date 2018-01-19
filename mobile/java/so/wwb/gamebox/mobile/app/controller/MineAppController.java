@@ -1279,15 +1279,13 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getSysNotice")
     @ResponseBody
     public String getSysNotice(VSystemAnnouncementListVo vListVo) {
-        AppModelVo vo = new AppModelVo();
-
         Map map = getSystemNotice(vListVo);
-        vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     /**
@@ -1298,21 +1296,20 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getSysNoticeDetail")
     @ResponseBody
     public String getSysNoticeDetail(VSystemAnnouncementListVo vListVo) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
         if (vListVo.getSearch().getId() == null) {
-            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
-            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
-        AppSystemNotice sysNotice = getSystemNoticeDetail(vListVo);
-        vo.setData(sysNotice);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getSystemNoticeDetail(vListVo),
+                APP_VERSION);
     }
 
     /**
@@ -1323,15 +1320,11 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getGameNotice")
     @ResponseBody
     public String getGameNotice(VSystemAnnouncementListVo listVo) {
-        AppModelVo vo = new AppModelVo();
-
-        Map map = getAppGameNotice(listVo);
-        vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(map);
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getAppGameNotice(listVo),
+                APP_VERSION);
     }
 
     /**
@@ -1342,22 +1335,18 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getGameNoticeDetail")
     @ResponseBody
     public String getGameNoticeDetail(VSystemAnnouncementListVo listVo) {
-        AppModelVo vo = new AppModelVo();
-
         if (listVo.getSearch().getId() == null) {
-            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
-
-        AppGameNotice gameNotice = getAppGameNoticeDetail(listVo);
-        vo.setVersion(APP_VERSION);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(gameNotice);
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getAppGameNoticeDetail(listVo),
+                APP_VERSION);
     }
 
     /**
@@ -1368,15 +1357,11 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getSiteSysNotice")
     @ResponseBody
     public String getSiteSysNotice(VNoticeReceivedTextListVo listVo) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        Map map = getAppSiteSysNotice(listVo);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(map);
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getAppSiteSysNotice(listVo),
+                APP_VERSION);
     }
 
     /**
@@ -1387,13 +1372,12 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/setSiteSysNoticeStatus")
     @ResponseBody
     public String setSiteSysNoticeStatus(NoticeReceiveVo noticeReceiveVo, String ids) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(ids)) {
-            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
-            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
         String[] idArray = ids.split(SPLIT_REGEX);
@@ -1405,15 +1389,18 @@ public class MineAppController extends BaseMineController {
 
         boolean b = ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
         if (!b) {
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg());
-            vo.setCode(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode());
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
     }
 
     /**
@@ -1426,13 +1413,12 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/deleteSiteSysNotice")
     @ResponseBody
     public String deleteSiteSysNotice(NoticeReceiveVo noticeVo, String ids) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(ids)) {
-            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
         String[] idArray = ids.split(SPLIT_REGEX);
@@ -1443,16 +1429,19 @@ public class MineAppController extends BaseMineController {
         noticeVo.setIds(list);
         boolean bool = ServiceTool.noticeService().deleteSiteMsg(noticeVo);
         if (!bool) {
-            vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode());
-            vo.setMsg(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg());
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
     }
 
     /**
@@ -1463,21 +1452,19 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getSiteSysNoticeDetail")
     @ResponseBody
     public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo, NoticeReceiveVo noticeReceiveVo, HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if (noticeReceiveVo.getSearch().getId() == null) {
-            vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode());
-            vo.setMsg(AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg());
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
-        AppSystemNotice sysNotice = getAppSiteNoticeDetail(vReceivedVo, noticeReceiveVo, request);
-        vo.setData(sysNotice);
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getAppSiteNoticeDetail(vReceivedVo, noticeReceiveVo, request),
+                APP_VERSION);
     }
 
     /**
@@ -1488,15 +1475,11 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getUnReadCount")
     @ResponseBody
     public String getUnReadCount(VPlayerAdvisoryListVo listVo) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        Map map = unReadCount(listVo);
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(map);
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                unReadCount(listVo),
+                APP_VERSION);
     }
 
     /**
@@ -1507,26 +1490,27 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/recovery")
     @ResponseBody
     public String recovery(HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if (!SessionManagerCommon.isAutoPay()) {
-            vo.setError(DEFAULT_TIME);
-            vo.setMsg(AppErrorCodeEnum.NOT_RECOVER.getMsg());
-            vo.setCode(AppErrorCodeEnum.NOT_RECOVER.getCode());
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.NOT_RECOVER.getCode(),
+                    AppErrorCodeEnum.NOT_RECOVER.getMsg(),
+                    null,
+                    APP_VERSION);
         }
         Map map = appRecovery();
         if (map.get("isSUCCESS") == null && MapTool.getBoolean(map, "isSUCCESS") == false) {
-            vo.setError(DEFAULT_TIME);
-            vo.setCode(AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode());
-            vo.setMsg(map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg());
-            return JsonTool.toJson(vo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
-        vo.setData(appRefresh(request));
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                appRefresh(request),
+                APP_VERSION);
     }
 
     /**
@@ -1537,9 +1521,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/logout")
     @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();
         Integer entranceId = passportDelegate.getEntranceType(contextPath, uri);
@@ -1551,10 +1532,11 @@ public class MineAppController extends BaseMineController {
             LOG.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
         }
 
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        vo.setData(PassportResult.SUCCESS);
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                PassportResult.SUCCESS,
+                APP_VERSION);
     }
 
     @Autowired(required = false)
