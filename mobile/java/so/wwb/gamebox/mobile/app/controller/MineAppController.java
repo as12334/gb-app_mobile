@@ -45,6 +45,7 @@ import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.app.model.*;
+import so.wwb.gamebox.mobile.app.validateForm.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
@@ -78,6 +79,7 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.agent.form.UserBankcardForm;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.Token;
@@ -415,15 +417,30 @@ public class MineAppController extends BaseMineController {
     /**
      * 提交银行卡信息
      *
-     * @param vo
+     * @param result
      * @return
      */
     @RequestMapping("/submitBankCard")
     @ResponseBody
-    public String submitBankCard(UserBankcardVo vo) {
+    public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {//  result_bankcardNumber  UserBankcardVo vo
         AppModelVo appModelVo = new AppModelVo();
 
+        if (result.hasErrors()) {
+            appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BANK_CARD_FAIL.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BANK_CARD_FAIL.getMsg() + ": " + result.getAllErrors().get(0).getDefaultMessage());
+            appModelVo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(appModelVo);
+        }
+
+        UserBankcardVo vo = new UserBankcardVo();
         vo.setUserType(SessionManagerCommon.getUserType().getCode());
+        if (vo.getResult() == null) {
+            vo.setResult(new UserBankcard());
+        }
+        vo.getResult().setBankcardMasterName(form.getResult_bankcardMasterName());
+        vo.getResult().setBankName(form.getResult_bankName());
+        vo.getResult().setBankcardNumber(form.getResult_bankcardNumber());
+        vo.getResult().setBankDeposit(form.getResult_bankDeposit());
         vo.getResult().setUserId(SessionManager.getUserId());
         if (checkCardIsExistsByUserId(vo)) {
             appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode());
@@ -431,6 +448,14 @@ public class MineAppController extends BaseMineController {
             appModelVo.setError(DEFAULT_TIME);
             return JsonTool.toJson(appModelVo);
         }
+        if (StringTool.isBlank(SessionManager.getUser().getRealName()) && StringTool.isBlank(vo.getResult().getBankcardMasterName())) {
+            appModelVo.setCode(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode());
+            appModelVo.setMsg(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg());
+            appModelVo.setError(DEFAULT_TIME);
+            return JsonTool.toJson(appModelVo);
+        }
+
+
         if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
             vo.getResult().setBankcardMasterName(SessionManager.getUser().getRealName());
         }
