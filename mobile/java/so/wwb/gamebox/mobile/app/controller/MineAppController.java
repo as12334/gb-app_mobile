@@ -959,6 +959,7 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 申请优惠，保存发送消息
+     *
      * @param playerAdvisoryVo
      * @param code
      * @return
@@ -1074,24 +1075,29 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/setRealName")
     @ResponseBody
     public String setRealNameApp(String realName) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if (StringTool.isBlank(realName)) {
-            vo.setCode(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
         if (!setRealName(realName)) {
-            vo.setCode(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getCode());
-            vo.setMsg(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getCode(),
+                    AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        return JsonTool.toJson(vo);
+
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
     }
 
     /**
@@ -1104,59 +1110,72 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String updateSafePassword(SecurityPassword password) {
         AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
 
         vo = getSafePassword(vo);
         //验证真实姓名
         if (StringTool.isBlank(password.getRealName())) {
-            vo.setCode(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
         //验证密码
         if (StringTool.isBlank(password.getPwd1())) {
-            vo.setCode(AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
         if (verifyCode(password)) {
-            vo.setCode(AppErrorCodeEnum.VALIDATE_ERROR.getCode());
-            vo.setMsg(AppErrorCodeEnum.VALIDATE_ERROR.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
+                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
         if (!verifyRealName(password)) {
-            vo.setCode(AppErrorCodeEnum.REAL_NAME_ERROR.getCode());
-            vo.setMsg(AppErrorCodeEnum.REAL_NAME_ERROR.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.REAL_NAME_ERROR.getCode(),
+                    AppErrorCodeEnum.REAL_NAME_ERROR.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
         if (!verifyOriginPwd(password)) {
             Map<String, Object> map = MapTool.newHashMap();
             SysUser user = SessionManager.getUser();
             Integer errorTimes = user.getSecpwdErrorTimes() == null ? 0 : user.getSecpwdErrorTimes();
             setErrorTimes(map, user, errorTimes);
-            vo.setCode(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode());
-            vo.setMsg(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
         if (!setRealName(password.getRealName())) {
-            vo.setCode(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getCode());
-            vo.setMsg(AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getCode(),
+                    AppErrorCodeEnum.UPDATE_REAL_NAME_FAIL.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
         }
         boolean isSUCCESS = savePassword(password.getPwd1());
         if (isSUCCESS) {
             SessionManager.clearPrivilegeStatus();
         }
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                vo.getData(),
+                APP_VERSION);
     }
 
     /**
@@ -1169,60 +1188,62 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/updateLoginPassword")
     @ResponseBody
     public String updateLoginPassword(UpdatePasswordVo updatePasswordVo, String code) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        if (!isLoginUser(vo)) {
-            vo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            vo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
-        }
         if (StringTool.isBlank(updatePasswordVo.getPassword())) {
-            vo.setCode(AppErrorCodeEnum.PASSWORD_NOT_NULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.PASSWORD_NOT_NULL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PASSWORD_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.PASSWORD_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
         if (StringTool.isBlank(updatePasswordVo.getNewPassword())) {
-            vo.setCode(AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
         //密码相同验证新密码不能和旧密码一样
         String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), SessionManager.getUserName());
         if (StringTool.equalsIgnoreCase(newPwd, SessionManager.getUser().getPassword())) {
-            vo.setCode(AppErrorCodeEnum.PASSWORD_SAME.getCode());
-            vo.setMsg(AppErrorCodeEnum.PASSWORD_SAME.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PASSWORD_SAME.getCode(),
+                    AppErrorCodeEnum.PASSWORD_SAME.getMsg(),
+                    null,
+                    APP_VERSION);
         }
         SysUser curUser = SessionManagerCommon.getUser();
         int errorTimes = curUser.getLoginErrorTimes() == null ? -1 : curUser.getLoginErrorTimes();
         if (errorTimes >= TWO) {
             if (StringTool.isBlank(code)) {
-                vo.setCode(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode());
-                vo.setMsg(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg());
-                vo.setError(DEFAULT_TIME);
-                return JsonTool.toJson(vo);
+
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
+                        AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg(),
+                        null,
+                        APP_VERSION);
             }
             if (!checkCode(code)) {
-                vo.setCode(AppErrorCodeEnum.VALIDATE_ERROR.getCode());
-                vo.setMsg(AppErrorCodeEnum.VALIDATE_ERROR.getMsg());
-                vo.setError(DEFAULT_TIME);
-                return JsonTool.toJson(vo);
+
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
+                        AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
+                        null,
+                        APP_VERSION);
             }
         }
         //验证旧密码
         String oldPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getPassword(), SessionManager.getUserName());
         if (!StringTool.equalsIgnoreCase(oldPwd, SessionManager.getUser().getPassword())) {
             Map map = setPwdErrorTimes(errorTimes);
-            vo.setCode(AppErrorCodeEnum.PASSWORD_ERROR.getCode());
-            vo.setMsg(AppErrorCodeEnum.PASSWORD_ERROR.getMsg());
-            vo.setError(DEFAULT_TIME);
-            vo.setData(map);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.PASSWORD_ERROR.getMsg(),
+                    map,
+                    APP_VERSION);
         }
 
         SysUserVo sysUserVo = new SysUserVo();
@@ -1234,16 +1255,20 @@ public class MineAppController extends BaseMineController {
         sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL);
         boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();
         if (!success) {
-            vo.setCode(AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode());
-            vo.setMsg(AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getMsg());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode(),
+                    AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
         SessionManager.refreshUser();
-        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
-        vo.setMsg(AppErrorCodeEnum.SUCCESS.getMsg());
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
     }
 
     /**
@@ -1550,8 +1575,9 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 验证吗remote验证
-     *
+     * <p>
      * 我的消息  保存申请验证吗remote验证
+     *
      * @param code
      * @return
      */
