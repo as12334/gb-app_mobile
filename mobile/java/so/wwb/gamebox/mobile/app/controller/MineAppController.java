@@ -1023,11 +1023,11 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/initSafePassword")
     @ResponseBody
     public String initSafePassword() {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        vo = getSafePassword(vo);
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getSafePassword(new AppModelVo()).getData(),
+                APP_VERSION);
     }
 
     private AppModelVo getSafePassword(AppModelVo vo) {
