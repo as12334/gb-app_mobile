@@ -3,11 +3,12 @@ package so.wwb.gamebox.mobile.app.validateForm;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.soul.commons.validation.form.support.Comment;
+import org.soul.web.support.IForm;
 
 /**
  * Created by legend on 18-1-19.
  */
-public class PlayerAdvisoryAppForm {
+public class PlayerAdvisoryAppForm implements IForm {
 
 //    result.advisoryType
     private String result_advisoryType;
@@ -34,11 +35,11 @@ public class PlayerAdvisoryAppForm {
         return result_advisoryContent;
     }
 
-    @NotBlank(message = "标题类型未输入")
+
     public void setResult_advisoryContent(String result_advisoryContent) {
         this.result_advisoryContent = result_advisoryContent;
     }
-
+    @NotBlank(message = "标题类型未输入")
     public String getResult_advisoryType() {
         return result_advisoryType;
     }
