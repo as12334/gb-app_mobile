@@ -13,7 +13,7 @@
 <c:choose>
     <c:when test="${isDemo}">
         <body class="gb-theme mine-page no-backdrop" >
-        <header class="mui-bar mui-bar-nav" style="${os eq 'app_android'?'padding-top: 0px;display:none':''}">
+        <header class="mui-bar mui-bar-nav" style="${os eq 'android'?'padding-top: 0px;display:none':''}">
             <c:if test="${os ne 'app_ios'}">
                 <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             </c:if>
