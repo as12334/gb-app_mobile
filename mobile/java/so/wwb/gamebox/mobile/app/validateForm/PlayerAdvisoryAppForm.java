@@ -19,7 +19,7 @@ public class PlayerAdvisoryAppForm implements IForm {
 
     @Comment("发送标题")
     @NotBlank(message = "发送标题不得为空")
-    @Length(min = 4, max = 100, message = "operation.advisoryMessage.title.length")
+    @Length(min = 4, max = 100, message = "发送长度需要在4和100之间")
     public String getResult_advisoryTitle() {
         return result_advisoryTitle;
     }
@@ -30,7 +30,7 @@ public class PlayerAdvisoryAppForm implements IForm {
 
     @Comment("发送内容")
     @NotBlank(message = "发送内容不得为空")
-    @Length(min = 10, max = 20000, message = "operation.advisoryMessage.content.length")
+    @Length(min = 10, max = 20000, message = "发送内容长度需要在10和20000之间")
     public String getResult_advisoryContent() {
         return result_advisoryContent;
     }
