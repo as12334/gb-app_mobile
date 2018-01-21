@@ -147,17 +147,23 @@ public class BaseMineController {
         List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
         Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
         for (UserBankcard userBankcard : userBankcards) {
-            int length = userBankcard.getBankcardNumber().length();
-            bankcardNumMap = new HashMap<>(1,1f);
+            int length = 0;
+            if (StringTool.isNotBlank(userBankcard.getBankcardNumber())) {
+                length = userBankcard.getBankcardNumber().length();
+            }
+            bankcardNumMap = new HashMap<>(1, 1f);
             if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
                 UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
                 bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
-                bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
+                    bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                }
                 userInfo.put("btc", bankcardNumMap);
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
-                bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
+                    bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                }
                 UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
                 bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
                 String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
@@ -865,7 +871,7 @@ public class BaseMineController {
         boolean isBit = bitParam != null && "true".equals(bitParam.getParamValue());
         map.put("isBit", isBit);
         map.put("isCash", isCash);
-        map.put("bankcardMap", bankcardMap);
+        map.put("bankcardMap", setUserBankCard(bankcardMap));
         boolean hasBank = true;
         if (MapTool.isEmpty(bankcardMap)) {
             hasBank = false;
@@ -882,7 +888,22 @@ public class BaseMineController {
     }
 
     /**
+     * app隐藏银行卡信息
+     *
+     * @param bankcardMap
+     * @return
+     */
+    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap) {
+        for (UserBankcard bank : bankcardMap.values()) {
+            bank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
+            bank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+        }
+        return bankcardMap;
+    }
+
+    /**
      * 获取用户银行卡信息
+     *
      * @param map
      */
     public void bankcard(Map map) {
@@ -1052,6 +1073,7 @@ public class BaseMineController {
 
     /**
      * 获取货币标志
+     *
      * @param currency
      * @return
      */
@@ -1539,6 +1561,7 @@ public class BaseMineController {
 
     /**
      * 获取站点信息未读总数
+     *
      * @param listVo
      * @return
      */

@@ -21,6 +21,8 @@ public enum AppErrorCodeEnum {
     USER_BINDING_BTC_SUCCESS(205, "用户绑定比特币成功"),
     SUBMIT_BTC_FAIL(206, "用户绑定比特币失败"),
     USER_BINDING_BANK_CARD_EXIST(207, "用户绑定银行卡号已存在"),
+    USER_BINDING_BANK_CARD_FAIL(208, "用户绑定银行卡号失败"),
+    USER_SEND_NOTICE_SITE_FAIL(209, "用户保存申请优惠失败"),
     REAL_NAME_NOT_NULL(300, "真实姓名不能为空"),
     VALIDATE_ERROR(301, "验证码输入错误"),
     REAL_NAME_ERROR(302, "真实姓名不正确"),
