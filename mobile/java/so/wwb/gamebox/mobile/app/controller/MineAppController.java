@@ -505,9 +505,9 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/submitBtc")
     @ResponseBody
     public String submitBtc(@FormModel @Valid BtcBankcardForm form, BindingResult result) {
-        //result.bankcardNumber = ""
+        AppModelVo vo = new AppModelVo();
+        vo.setVersion(APP_VERSION);
         if(result.hasErrors()) {
-            AppModelVo vo = new AppModelVo();
             vo.setMsg(result.getAllErrors().get(0).getDefaultMessage());
             vo.setCode(AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode());
             vo.setError(DEFAULT_TIME);
