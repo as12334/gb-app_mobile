@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.app.controller;
 
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import org.apache.shiro.session.SessionException;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
@@ -30,7 +29,6 @@ import org.soul.model.session.SessionKey;
 import org.soul.model.sys.po.SysDict;
 import org.soul.web.shiro.local.PassportResult;
 import org.soul.web.validation.form.annotation.FormModel;
-import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -67,7 +65,6 @@ import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
-import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
@@ -80,7 +77,6 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.agent.form.UserBankcardForm;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.Token;
@@ -93,7 +89,6 @@ import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.Serializable;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
