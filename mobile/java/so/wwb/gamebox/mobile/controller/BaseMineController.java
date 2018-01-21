@@ -147,22 +147,30 @@ public class BaseMineController {
         List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
         Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
         for (UserBankcard userBankcard : userBankcards) {
-            int length = userBankcard.getBankcardNumber().length();
+            int length = 0;
+            if (StringTool.isNotBlank(userBankcard.getBankcardNumber())) {
+                length = userBankcard.getBankcardNumber().length();
+            }
             bankcardNumMap = new HashMap<>(1, 1f);
             if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
                 UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
                 bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
-                bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
+                    bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                }
                 userInfo.put("btc", bankcardNumMap);
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
-                bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
+                    bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
+                }
                 UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
                 bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
                 String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
                 bankcardNumMap.put("bankName", bankName);
-                bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 10) {
+                    bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
+                }
                 bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
                 bankcardNumMap.put("realName", SessionManager.getUser().getRealName());  //真实姓名
                 userInfo.put("bankcard", bankcardNumMap);
