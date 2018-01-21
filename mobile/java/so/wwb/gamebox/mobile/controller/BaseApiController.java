@@ -26,10 +26,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.enums.AppResolutionEnum;
 import so.wwb.gamebox.mobile.app.enums.AppThemeEnum;
-import so.wwb.gamebox.mobile.app.model.AppRequestModelVo;
-import so.wwb.gamebox.mobile.app.model.AppSiteApiTypeRelastionVo;
-import so.wwb.gamebox.mobile.app.model.AppSiteApiTypeRelationI18n;
-import so.wwb.gamebox.mobile.app.model.AppSiteGame;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.DictEnum;
@@ -269,7 +266,7 @@ public abstract class BaseApiController extends BaseDemoController {
      * @param listVo
      * @return
      */
-    protected List<AppSiteGame> getCasinoGameByApiId(SiteGameListVo listVo, HttpServletRequest request, Map pageMap, AppRequestModelVo model) {
+    protected List<AppSiteGame> getCasinoGameByApiId(SiteGameListVo listVo, HttpServletRequest request, Map pageMap, SiteGameTag tag) {
         Integer apiId = listVo.getSearch().getApiId();
         List<AppSiteGame> siteGames = ListTool.newArrayList();
 
@@ -280,7 +277,7 @@ public abstract class BaseApiController extends BaseDemoController {
             return siteGames;
         }
 
-        listVo = getCasinoGames(listVo);
+        listVo = getCasinoGames(listVo, tag);
         Map<String, SiteGameI18n> map = getGameI18nMap(listVo);
         for (SiteGame siteGame : listVo.getResult()) {
             for (String api : map.keySet()) {
@@ -312,6 +309,28 @@ public abstract class BaseApiController extends BaseDemoController {
     }
 
     /**
+     * 获取游戏标签
+     *
+     * @return
+     */
+    protected List<AppGameTag> getGameTag() {
+        Map<String, SiteI18n> siteI18nMap = Cache.getGameTag();
+        List<AppGameTag> gameTags = ListTool.newArrayList();
+        for (String siteI18nKey : siteI18nMap.keySet()) {
+            String[] keyLocale = StringTool.split(siteI18nKey, ":");
+            if (StringTool.equalsIgnoreCase(keyLocale[1], SessionManager.getLocale().toString())
+                    && StringTool.equalsIgnoreCase(keyLocale[0], SessionManager.getSiteId().toString())) {
+                SiteI18n siteI18n = siteI18nMap.get(siteI18nKey);
+                AppGameTag appGameTag = new AppGameTag();
+                appGameTag.setKey(siteI18n.getKey());
+                appGameTag.setValue(siteI18n.getValue());
+                gameTags.add(appGameTag);
+            }
+        }
+        return gameTags;
+    }
+
+    /**
      * 获取电子游戏请求路劲
      *
      * @param siteGame
@@ -334,10 +353,16 @@ public abstract class BaseApiController extends BaseDemoController {
     /**
      * 获取电子游戏
      */
-    private SiteGameListVo getCasinoGames(SiteGameListVo listVo) {
+    private SiteGameListVo getCasinoGames(SiteGameListVo listVo, SiteGameTag tag) {
         SiteGameSo so = listVo.getSearch();
         Paging paging = listVo.getPaging();
-        Criteria gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
+        Criteria gamesCriteria;
+        if (StringTool.isBlank(tag.getTagId())) {
+            gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
+        } else {
+            gamesCriteria = getGameIdByGameTagId(so, tag);
+        }
+
         List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), gamesCriteria);
         games = getSiteGamesWhichIsNormalStatus(games);
         games = games == null ? new ArrayList<SiteGame>() : games;
@@ -352,6 +377,43 @@ public abstract class BaseApiController extends BaseDemoController {
         // 设置游戏状态
         listVo.setResult(setGameStatus(listVo, games));
         return listVo;
+    }
+
+    /**
+     * 根据GameTagId获取查询条件
+     *
+     * @param so
+     * @param tag
+     * @return
+     */
+    private Criteria getGameIdByGameTagId(SiteGameSo so, SiteGameTag tag) {
+        Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
+        List<Integer> gameIds = ListTool.newArrayList();
+        for (SiteGameTag gameTag : gameTagMap.values()) {
+            if (StringTool.equalsIgnoreCase(tag.getTagId(), gameTag.getTagId())) {
+                gameIds.add(gameTag.getGameId());
+            }
+        }
+        return getGameTagCriteria(so, gameIds);
+    }
+
+    /**
+     * 根据GameTag设置查询条件
+     */
+    private Criteria getGameTagCriteria(SiteGameSo so, List<Integer> gameIds) {
+        Criteria criteria = Criteria.add(SiteGame.PROP_API_TYPE_ID, Operator.EQ, so.getApiTypeId())
+                .addAnd(Criteria.add(SiteGame.PROP_API_ID, Operator.EQ, so.getApiId()))
+                .addAnd(Criteria.add(SiteGame.PROP_TERMINAL, Operator.EQ, SupportTerminal.PHONE.getCode()))
+                .addAnd(Criteria.add(SiteGame.PROP_STATUS, Operator.NE, GameStatusEnum.DISABLE.getCode()))
+                .addAnd(Criteria.add(SiteGame.PROP_GAME_TYPE, Operator.EQ, so.getGameType()));
+
+        if (gameIds != null && gameIds.size() == 0) {
+            criteria.addAnd(SiteGame.PROP_GAME_ID, Operator.EQ, 0);
+        } else {
+            criteria.addAnd(SiteGame.PROP_GAME_ID, Operator.IN, gameIds);
+        }
+
+        return criteria;
     }
 
     //获取API类型

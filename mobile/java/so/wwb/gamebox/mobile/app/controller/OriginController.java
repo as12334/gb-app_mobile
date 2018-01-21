@@ -3,7 +3,6 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
 import org.soul.commons.lang.DateTool;
@@ -23,6 +22,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseApiController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
@@ -57,7 +57,8 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.SPLIT_REGEX;
 
 @Controller
 @RequestMapping("/origin")
@@ -139,12 +140,13 @@ public class OriginController extends BaseApiController {
 
     @RequestMapping("/getCasinoGame")
     @ResponseBody
-    public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, AppRequestModelVo modelVo) {
+    public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
         Map<String, Object> map = MapTool.newHashMap();
         Map<String, Object> pageTotal = MapTool.newHashMap();
-        map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, modelVo));
+        map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, tag));
         map.put("page", pageTotal);
+        map.put("tag", getGameTag());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -224,14 +226,14 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.UN_LOGIN.getCode(),
                     AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
 
         if (StringTool.isBlank(activityMessageId)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
 
         Map<String, java.io.Serializable> map = new HashMap<>(4, 1f);
@@ -244,7 +246,7 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
 
         Date now = new Date();
@@ -253,7 +255,7 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
         Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
@@ -261,7 +263,7 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
@@ -301,7 +303,7 @@ public class OriginController extends BaseApiController {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.ACTIVITY_END.getCode(),
                 AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                map,APP_VERSION);
+                map, APP_VERSION);
     }
 
     /**
@@ -320,7 +322,7 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.UN_LOGIN.getCode(),
                     AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
 
         if (StringTool.isBlank(activityMessageId)) {
@@ -328,7 +330,7 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null,APP_VERSION);
+                    null, APP_VERSION);
         }
 
         Map map = new HashMap();
@@ -342,7 +344,7 @@ public class OriginController extends BaseApiController {
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
-                        map,APP_VERSION);
+                        map, APP_VERSION);
             }
             Integer playerId = SessionManagerBase.getUserId();
             PlayerActivityMessage moneyActivity = findMoneyActivity();
@@ -354,7 +356,7 @@ public class OriginController extends BaseApiController {
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
-                        map,APP_VERSION);
+                        map, APP_VERSION);
             }
             Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
             if (!id.equals(moneyActivity.getId())) {
@@ -365,7 +367,7 @@ public class OriginController extends BaseApiController {
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
-                        map,APP_VERSION);
+                        map, APP_VERSION);
             }
 
             Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
@@ -377,7 +379,7 @@ public class OriginController extends BaseApiController {
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
-                        map,APP_VERSION);
+                        map, APP_VERSION);
             }
             boolean allDayLottery = isAllDayLottery(playerId, moneyActivity.getId());
             if (allDayLottery) {//全天开奖
@@ -403,13 +405,13 @@ public class OriginController extends BaseApiController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
-                    map,APP_VERSION);
+                    map, APP_VERSION);
         }
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,APP_VERSION);
+                map, APP_VERSION);
     }
     //endregion mainIndex
 
