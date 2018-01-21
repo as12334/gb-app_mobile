@@ -316,17 +316,16 @@ public abstract class BaseApiController extends BaseDemoController {
     protected List<AppGameTag> getGameTag() {
         Map<String, SiteI18n> siteI18nMap = Cache.getGameTag();
         List<AppGameTag> gameTags = ListTool.newArrayList();
-        for (String siteI18nKey : siteI18nMap.keySet()) {
-            String[] keyLocale = StringTool.split(siteI18nKey, ":");
-            if (StringTool.equalsIgnoreCase(keyLocale[1], SessionManager.getLocale().toString())
-                    && StringTool.equalsIgnoreCase(keyLocale[0], SessionManager.getSiteId().toString())) {
-                SiteI18n siteI18n = siteI18nMap.get(siteI18nKey);
+        for (SiteI18n siteI18n : siteI18nMap.values()) {
+            if (SessionManager.getSiteId().equals(siteI18n.getSiteId())
+                    && StringTool.equalsIgnoreCase(siteI18n.getLocale().toString(), SessionManager.getLocale().toString())) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(siteI18n.getKey());
                 appGameTag.setValue(siteI18n.getValue());
                 gameTags.add(appGameTag);
             }
         }
+
         return gameTags;
     }
 
