@@ -155,13 +155,13 @@ public class BaseMineController {
             if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
                 UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
                 bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
-                if (Integer.valueOf(userBankcard.getBankcardNumber()) != null && Integer.valueOf(userBankcard.getBankcardNumber()) > 4) {
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
                     bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
                 }
                 userInfo.put("btc", bankcardNumMap);
             } else {
                 bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
-                if (Integer.valueOf(userBankcard.getBankcardNumber()) != null && Integer.valueOf(userBankcard.getBankcardNumber()) > 4) {
+                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
                     bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
                 }
                 UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
