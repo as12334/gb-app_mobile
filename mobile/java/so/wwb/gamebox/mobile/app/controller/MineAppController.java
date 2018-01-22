@@ -181,13 +181,8 @@ public class MineAppController extends BaseMineController {
         List<FundListApp> fundListAppList = buildList(vPlayerTransactionList);
         fundRecordApp.setFundListApps(fundListAppList);
 
-        PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
-        transactionListVo.getSearch().setBeginCreateTime(listVo.getSearch().getBeginCreateTime());
-        transactionListVo.getSearch().setEndCreateTime(listVo.getSearch().getEndCreateTime());
-        transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
-        transactionListVo.getSearch().setStates(new String[]{CommonStatusEnum.SUCCESS.getCode(), CommonStatusEnum.LSSUING.getCode()});
-
-        Map map = ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
+//统计页面反水等等数据
+        Map map = getSumPlayerFunds(listVo);
 
         fundRecordApp.setSumPlayerMap(map);
         if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
@@ -240,83 +235,24 @@ public class MineAppController extends BaseMineController {
     public String getFundRecordDetails(Integer searchId) {
         AppModelVo appModelVo = new AppModelVo();
         VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
+        VPlayerTransactionVo vo = new VPlayerTransactionVo();
         RecordDetailApp recordDetailApp = new RecordDetailApp();
         if (!isLoginUser(appModelVo)) {
             return JsonTool.toJson(appModelVo);
         }
 
         if (searchId != null) {
-            VPlayerTransactionVo vo = new VPlayerTransactionVo();
             vo.getSearch().setId(Integer.valueOf(searchId));
             vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
-
-            if (vo.getResult() != null && TransactionTypeEnum.WITHDRAWALS.getCode().equals(vo.getResult().getTransactionType())) {//如果是取款
+        }
+            if (vo.getResult() != null && TransactionTypeEnum.WITHDRAWALS.getCode().equals(vo.getResult().getTransactionType())) {   //如果是取款
                 if (StringTool.isNotBlank(vo.getResult().getTransactionNo())) {
                     withdrawVo.getSearch().setId(vo.getResult().getSourceId());
                     withdrawVo = ServiceSiteTool.vPlayerWithdrawService().get(withdrawVo);
                 }
             }
 
-
-            VPlayerTransaction po = vo.getResult();
-
-
-            recordDetailApp.setId(po.getId());
-            recordDetailApp.setTransactionNo(po.getTransactionNo());
-            recordDetailApp.setCreateTime(po.getCreateTime());
-            recordDetailApp.setTransactionType(po.getTransactionType());
-            recordDetailApp.setTransactionMoney(po.getTransactionMoney());
-            recordDetailApp.setStatus(po.getStatus());
-            recordDetailApp.setFailureReason(po.getFailureReason());
-            recordDetailApp.setAdministrativeFee(po.getAdministrativeFee());
-            recordDetailApp.setDeductFavorable(po.getDeductFavorable());
-            recordDetailApp.setFundType(po.getFundType());
-            recordDetailApp.setTransactionWay(po.getTransactionWay());
-            recordDetailApp.setUsername(po.getUsername());
-            recordDetailApp.setPayerBankcard(po.getPayerBankcard());
-            recordDetailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
-            recordDetailApp.setRechargeAmount(po.getRechargeAmount());
-            recordDetailApp.setRechargeAddress(po.getRechargeAddress());
-            recordDetailApp.setRealName(SessionManager.getUser().getRealName());
-
-            Map<String, Object> map = po.get_describe();//取json对象里面的值
-
-            if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_into")) {//表示外面的钱转入我的钱包
-                Integer apiId = (Integer) map.get("API");
-                recordDetailApp.setTransferOut(CacheBase.getSiteApiName(String.valueOf(apiId)));
-                recordDetailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
-            }
-            if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_out")) {//从我的钱包转出外面
-                recordDetailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
-                Integer apiId = (Integer) map.get("API");
-                recordDetailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
-            }
-
-            recordDetailApp.setPoundage((Double) map.get("poundage"));  //手续费
-
-
-            String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
-            recordDetailApp.setStatusName(statusName);
-
-            if (StringTool.equalsIgnoreCase("deposit", recordDetailApp.getTransactionType())) { //存款
-                recordDetailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + recordDetailApp.getTransactionWay()));
-
-            }
-            if (StringTool.equalsIgnoreCase("withdrawals", recordDetailApp.getTransactionType())) {//取款
-
-                recordDetailApp.setBankCode((String) map.get("bankCode"));
-                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + recordDetailApp.getBankCode());
-                recordDetailApp.setBankCodeName(bankName);
-                recordDetailApp.setDeductFavorable(withdrawVo.getResult().getDeductFavorable());//扣除优惠
-                recordDetailApp.setPoundage(withdrawVo.getResult().getCounterFee());  //手续费
-                recordDetailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
-                recordDetailApp.setRechargeTotalAmount(withdrawVo.getResult().getWithdrawActualAmount());  //实际到账
-            }
-            recordDetailApp.setBitAmount((String) map.get("bitAmount"));
-
-
-            appModelVo = CommonApp.buildAppModelVo(recordDetailApp);
-        }
+        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),

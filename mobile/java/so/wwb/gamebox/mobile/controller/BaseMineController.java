@@ -53,6 +53,7 @@ import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
+import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
@@ -65,6 +66,7 @@ import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankCardTool;
@@ -154,6 +156,20 @@ public class BaseMineController {
 
         }
         return myPromoApps;
+    }
+
+    protected Map getSumPlayerFunds(VPlayerTransactionListVo listVo) {
+        if (listVo != null) {
+            PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
+            transactionListVo.getSearch().setBeginCreateTime(listVo.getSearch().getBeginCreateTime());
+            transactionListVo.getSearch().setEndCreateTime(listVo.getSearch().getEndCreateTime());
+            transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
+            transactionListVo.getSearch().setStates(new String[]{CommonStatusEnum.SUCCESS.getCode(), CommonStatusEnum.LSSUING.getCode()});
+
+            return ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
+        }
+
+        return null;
     }
 
 
@@ -523,6 +539,66 @@ public class BaseMineController {
             fundListAppList.add(app);
         }
         return fundListAppList;
+    }
+
+    /**
+     *
+     */
+    protected RecordDetailApp buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo) {
+
+        VPlayerTransaction po = vo.getResult();
+
+        detailApp.setId(po.getId());
+        detailApp.setTransactionNo(po.getTransactionNo());
+        detailApp.setCreateTime(po.getCreateTime());
+        detailApp.setTransactionType(po.getTransactionType());
+        detailApp.setTransactionMoney(po.getTransactionMoney());
+        detailApp.setStatus(po.getStatus());
+        detailApp.setFailureReason(po.getFailureReason());
+        detailApp.setAdministrativeFee(po.getAdministrativeFee());
+        detailApp.setDeductFavorable(po.getDeductFavorable());
+        detailApp.setFundType(po.getFundType());
+        detailApp.setTransactionWay(po.getTransactionWay());
+        detailApp.setUsername(po.getUsername());
+        detailApp.setPayerBankcard(po.getPayerBankcard());
+        detailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
+        detailApp.setRechargeAmount(po.getRechargeAmount());
+        detailApp.setRechargeAddress(po.getRechargeAddress());
+        detailApp.setRealName(SessionManager.getUser().getRealName());
+
+        Map<String, Object> map = po.get_describe(); //取json对象里面的值
+
+        if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_into")) { //表示外面的钱转入我的钱包
+            Integer apiId = (Integer) map.get("API");
+            detailApp.setTransferOut(CacheBase.getSiteApiName(String.valueOf(apiId)));
+            detailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
+        }
+        if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_out")) { //从我的钱包转出外面
+            detailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
+            Integer apiId = (Integer) map.get("API");
+            detailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
+        }
+
+        detailApp.setPoundage((Double) map.get("poundage")); //手续费
+        String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
+        detailApp.setStatusName(statusName);
+
+        if (StringTool.equalsIgnoreCase("deposit", detailApp.getTransactionType())) { //存款
+            detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay()));
+        }
+
+        if (StringTool.equalsIgnoreCase("withdrawals", detailApp.getTransactionType())) { //取款
+            detailApp.setBankCode((String) map.get("bankCode"));
+            String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
+            detailApp.setBankCodeName(bankName);
+            detailApp.setDeductFavorable(withdrawVo.getResult().getDeductFavorable());//扣除优惠
+            detailApp.setPoundage(withdrawVo.getResult().getCounterFee());  //手续费
+            detailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
+            detailApp.setRechargeTotalAmount(withdrawVo.getResult().getWithdrawActualAmount());  //实际到账
+        }
+        detailApp.setBitAmount((String) map.get("bitAmount"));
+
+        return detailApp;
     }
 
 
