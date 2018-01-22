@@ -86,148 +86,6 @@ public class BaseMineController {
     private static final String GAME_NOTICE_LINK = "/mineOrigin/getGameNoticeDetail.html";
     private static final String SITE_SYSTEM_NOTICE = "/mineOrigin/getSiteSysNoticeDetail.html";
 
-    /**
-     * 获取我的个人数据
-     */
-    protected void getMineLinkInfo(Map<String, Object> userInfo, HttpServletRequest request) {
-        SysUser sysUser = SessionManager.getUser();
-        Integer userId = SessionManager.getUserId();
-        userInfo.put("autoPay", SessionManagerCommon.isAutoPay());
-        userInfo.put("isBit", ParamTool.isBit());//是否存在比特币
-        userInfo.put("isCash", ParamTool.isCash());//是否存在银行卡
-        try {
-            //总资产
-            PlayerApiListVo playerApiListVo = new PlayerApiListVo();
-            playerApiListVo.getSearch().setPlayerId(userId);
-            playerApiListVo.setApis(Cache.getApi());
-            playerApiListVo.setSiteApis(Cache.getSiteApi());
-            double totalAssets = ServiceSiteTool.playerApiService().queryPlayerAssets(playerApiListVo);
-            userInfo.put("totalAssets", totalAssets);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-        }
-        //钱包余额
-        userInfo.put("walletBalance", getWalletBalance(userId));
-
-        //正在处理中取款金额
-        PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
-        playerWithdrawVo.getSearch().setPlayerId(userId);
-        userInfo.put("withdrawAmount", ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
-
-        //正在处理中转账金额(额度转换)
-        PlayerTransferVo playerTransferVo = new PlayerTransferVo();
-        playerTransferVo.getSearch().setUserId(userId);
-        userInfo.put("transferAmount", ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo));
-
-        //计算近7日收益（优惠金额）
-        VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
-        vPreferentialRecodeListVo.getSearch().setUserId(userId);
-        vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vPreferentialRecodeListVo.getSearch().setEndTime(SessionManager.getDate().getNow());
-        vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
-        vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
-        vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
-        userInfo.put("preferentialAmount", ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
-
-        //银行卡信息
-        List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
-        Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
-        for (UserBankcard userBankcard : userBankcards) {
-            int length = 0;
-            if (StringTool.isNotBlank(userBankcard.getBankcardNumber())) {
-                length = userBankcard.getBankcardNumber().length();
-            }
-            bankcardNumMap = new HashMap<>(1, 1f);
-            if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
-                UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
-                bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
-                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
-                    bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-                }
-                userInfo.put("btc", bankcardNumMap);
-            } else {
-                bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
-                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
-                    bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-                }
-                UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
-                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
-                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
-                bankcardNumMap.put("bankName", bankName);
-                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 10) {
-                    bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
-                }
-                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
-                bankcardNumMap.put("realName", SessionManager.getUser().getRealName());  //真实姓名
-                userInfo.put("bankcard", bankcardNumMap);
-            }
-        }
-
-        //推荐好友,昨日收益
-        PlayerRecommendAwardListVo playerRecommendAwardListVo = new PlayerRecommendAwardListVo();
-        playerRecommendAwardListVo.getSearch().setUserId(userId);
-        playerRecommendAwardListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), RECOMMEND_DAYS));
-        playerRecommendAwardListVo.getSearch().setEndTime(SessionManager.getDate().getToday());
-        userInfo.put("recomdAmount", ServiceSiteTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
-
-        //系统消息-未读数量
-        VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
-        Long number = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
-        VPlayerAdvisoryListVo listVo = new VPlayerAdvisoryListVo();
-        listVo.setSearch(null);
-        listVo.getSearch().setSearchType("player");
-        listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
-        listVo.getSearch().setPlayerDelete(false);
-        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
-        Integer advisoryUnReadCount = 0;
-        String tag = "";
-        //所有咨询数据
-        for (VPlayerAdvisory obj : listVo.getResult()) {
-            //查询回复表每一条在已读表是否存在
-            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
-            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
-            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
-                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
-                readVo.setResult(new PlayerAdvisoryRead());
-                readVo.getSearch().setUserId(SessionManager.getUserId());
-                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
-                //不存在未读+1，标记已读咨询Id
-                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
-                    advisoryUnReadCount++;
-                    tag += replay.getPlayerAdvisoryId().toString() + ",";
-                }
-            }
-        }
-        //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String[] tags = tag.split(SPLIT_REGEX);
-        for (VPlayerAdvisory vo : listVo.getResult()) {
-            for (int i = 0; i < tags.length; i++) {
-                if (tags[i] != "") {
-                    VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
-                    pa.getSearch().setId(Integer.valueOf(tags[i]));
-                    VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
-                    if (vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())) {
-                        vo.setIsRead(false);
-                    }
-                }
-            }
-        }
-        userInfo.put("unReadCount", number + advisoryUnReadCount);
-        //用户个人信息
-        userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
-        userInfo.put("avatarUrl", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
-        //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
-        if (sysUser.getLastLoginTime() != null) {
-            userInfo.put("lastLoginTime", LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        } else if (sysUser.getLoginTime() != null) {
-            userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        }
-        userInfo.put("currency", getCurrencySign());
-        userInfo.put("realName", StringTool.overlayName(sysUser.getRealName()));
-    }
 
     protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
         PlayerApiListVo listVo = new PlayerApiListVo();
@@ -382,22 +240,6 @@ public class BaseMineController {
         }
     }
 
-    protected void getAppUserInfo(HttpServletRequest request, SysUser user, UserInfoApp userInfoApp) {
-        PlayerApiListVo listVo = initPlayerApiListVo(user.getId());
-        VUserPlayer player = getVPlayer(user.getId());
-        // API 余额
-        userInfoApp.setApis(getSiteApis(listVo, request, false));
-        if (player != null) {
-            userInfoApp.setCurrSign(player.getCurrencySign());
-            userInfoApp.setUsername(StringTool.overlayName(player.getUsername()));
-            // 钱包余额
-            Double balance = player.getWalletBalance();
-            userInfoApp.setBalance(formatCurrency(balance == null ? 0.0d : balance));
-        }
-        // 总资产
-        userInfoApp.setAssets(queryPlayerAssets(listVo, user.getId()));
-    }
-
     /**
      * 查询玩家总资产
      */
@@ -466,19 +308,6 @@ public class BaseMineController {
         return siteApis;
     }
 
-    protected Double getWalletBalance(Integer userId) {
-        UserPlayerVo userPlayerVo = new UserPlayerVo();
-        userPlayerVo.getSearch().setId(userId);
-        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
-        UserPlayer player = userPlayerVo.getResult();
-        if (player == null) {
-            return 0.0d;
-        } else {
-            Double balance = player.getWalletBalance();
-            return balance == null ? 0.0d : balance;
-        }
-    }
-
     private String getCurrencySign() {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());
         if (sysCurrency != null) {
@@ -487,35 +316,6 @@ public class BaseMineController {
         return "";
     }
 
-    /**
-     * 判断银行卡是否存在
-     *
-     * @param vo
-     * @return
-     */
-    protected boolean checkCardIsExistsByUserId(UserBankcardVo vo) {
-        String bankcardNumber = vo.getResult().getBankcardNumber();
-        if (StringTool.isBlank(vo.getUserType())) {
-            //用户类型为空，不能判断银行卡是否存在，所以判断为不能添加
-            LOG.info("保存银行卡{0}时，用户类型为空，不能判断银行卡是否存在，所以判断为不能添加", bankcardNumber);
-            return true;
-        }
-        vo.getSearch().setBankcardNumber(bankcardNumber);
-        vo.getSearch().setUserType(vo.getUserType());
-        UserBankcard isExists = ServiceSiteTool.userBankcardService().cardIsExists(vo);
-        if (isExists != null && isExists.getIsDefault() && !isExists.getUserId().equals(Integer.valueOf(SessionManagerBase.getUserId()))) {
-            return true;
-        }
-        return false;
-    }
-
-    protected Integer getAgentId() {
-        Integer agentId = SessionManagerBase.getUserId();
-        if (UserTypeEnum.AGENT_SUB.getCode().equals(SessionManagerBase.getUser().getUserType())) {
-            agentId = SessionManagerBase.getUser().getOwnerId();
-        }
-        return agentId;
-    }
 
     /**
      * 获取用户银行卡信息
@@ -527,85 +327,7 @@ public class BaseMineController {
         map.put("bankListVo", BankHelper.getBankListVo());
     }
 
-    protected BettingDetailsApp buildBettingDetail(PlayerGameOrderVo playerGameOrderVo) {
-        PlayerGameOrder gameOrder = playerGameOrderVo.getResult();
-        BettingDetailsApp detailsApp = new BettingDetailsApp();
-        if (gameOrder == null) {
-            return detailsApp;
-        }
-        detailsApp.setUserName(SessionManager.getUserName());
-        detailsApp.setTerminal(gameOrder.getTerminal());
-        detailsApp.setBetId(gameOrder.getBetId());
-        detailsApp.setApiId(gameOrder.getApiId());
-        detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
-        detailsApp.setApiTypeId(gameOrder.getApiTypeId());
-        detailsApp.setBetTime(gameOrder.getBetTime());
-        detailsApp.setSingleAmount(gameOrder.getSingleAmount());
-        detailsApp.setOrderState(gameOrder.getOrderState());
-        detailsApp.setEffectiveTradeAmount(gameOrder.getEffectiveTradeAmount());
-        detailsApp.setPayoutTime(gameOrder.getPayoutTime());
-        detailsApp.setProfitAmount(gameOrder.getProfitAmount());
-        detailsApp.setContributionAmount(gameOrder.getContributionAmount());
-        detailsApp.setBetDetail(gameOrder.getBetDetail());
-        detailsApp.setResultArray(playerGameOrderVo.getResultArray());
 
-        detailsApp.setApiName(CacheBase.getSiteApiName(String.valueOf(gameOrder.getApiId())));
-        detailsApp.setGameName(CacheBase.getGameName(String.valueOf(gameOrder.getGameId())));
-        if (gameOrder.getGameId() != 0) {
-            detailsApp.setGameId(String.valueOf(gameOrder.getGameId()));
-        }
-        if (gameOrder.getApiTypeId() == 1) {
-            detailsApp.setApiTypeName("真人");
-        }
-        if (gameOrder.getApiTypeId() == 2) {
-            detailsApp.setApiTypeName("电子");
-        }
-        if (gameOrder.getApiTypeId() == 3) {
-            detailsApp.setApiTypeName("体育");
-        }
-        if (gameOrder.getApiTypeId() == 4) {
-            detailsApp.setApiTypeName("彩票");
-        }
-        if (gameOrder.getApiTypeId() != 1 && gameOrder.getApiTypeId() != 2 && gameOrder.getApiTypeId() != 3 && gameOrder.getApiTypeId() != 4) {
-            detailsApp.setApiTypeName("其他");
-        }
-        List<Map> list = detailsApp.getResultArray();
-        if (CollectionTool.isEmpty(list)) {
-            return detailsApp;
-        }
-        for (Map li : list) {
-
-            String playType = LocaleTool.tranMessage(Module.COMMON, "playType." + li.get("playType"));
-            detailsApp.setGameType(playType);
-
-            String betTypeName = LocaleTool.tranMessage(Module.COMMON, "betTypeCode." + li.get("betTypeCode"));
-            detailsApp.setBetTypeName(betTypeName);
-
-            String oddsTypeName = LocaleTool.tranMessage(Module.COMMON, "oddsType." + li.get("oddsType"));
-            detailsApp.setOddsTypeName(oddsTypeName);
-
-
-        }
-        return detailsApp;
-    }
-
-    /**
-     * 获取银行列表
-     *
-     * @return
-     */
-    public List<Map> bankList() {
-        BankListVo bankListVo = BankHelper.getBankListVo();
-        List<Map> maps = new ArrayList<>();
-        Map map;
-        for (Bank bank : bankListVo.getResult()) {
-            map = new HashMap();
-            map.put("value", bank.getBankName());
-            map.put("text", bank.getBankShortName());
-            maps.add(map);
-        }
-        return maps;
-    }
 
     protected VUserPlayer getVPlayer(Integer userId) {
         VUserPlayerVo vo = new VUserPlayerVo();
