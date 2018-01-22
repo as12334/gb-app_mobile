@@ -642,6 +642,13 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/deleteAdvisoryMessage")
     @ResponseBody
     public String deleteAdvisoryMessage(String ids) {
+        if (StringTool.isBlank(ids)) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null, APP_VERSION);
+        }
+
         String[] id = ids.split(",");
         PlayerAdvisoryVo vo = new PlayerAdvisoryVo();
         for (String messageId : id) {
@@ -688,6 +695,13 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getSelectAdvisoryMessageIds(String ids) {
         String[] id = ids.split(",");
+        if (StringTool.isBlank(ids)) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null, APP_VERSION);
+        }
+
         for (String messageId : id) {
             //当前回复表Id
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
@@ -804,8 +818,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/addNoticeSite")
     @ResponseBody
     public String addNoticeSite(@FormModel @Valid PlayerAdvisoryAppForm form, BindingResult result, String code) {
-        AppModelVo appModelVo = new AppModelVo();
-        appModelVo.setVersion(APP_VERSION);
 
         if (result.hasErrors()) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
