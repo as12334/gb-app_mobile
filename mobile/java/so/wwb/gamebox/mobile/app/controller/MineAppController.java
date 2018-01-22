@@ -324,8 +324,8 @@ public class MineAppController extends BaseMineController {
         map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
         map.put("list", myPromoApps);
 
-        vo = CommonApp.buildAppModelVo(map);
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),map, APP_VERSION);
 
     }
 
@@ -379,36 +379,6 @@ public class MineAppController extends BaseMineController {
                 APP_VERSION);
     }
 
-    /**
-     * 跳转和获取用户银行卡信息
-     *
-     * @return
-     */
-    @RequestMapping("/addCard")
-    @ResponseBody
-    public String addCard() {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
-
-        UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);
-        AppModelVo appModelVo = new AppModelVo();
-        if (userBankcard == null) {
-            //获取银行列表
-            appModelVo.setCode(AppErrorCodeEnum.USER_ADD_BANK_CARD.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.USER_ADD_BANK_CARD.getMsg());
-            appModelVo.setData(bankList());
-        } else {
-            appModelVo.setCode(AppErrorCodeEnum.SHOW_BANK_CARD_INFO.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.SHOW_BANK_CARD_INFO.getMsg());
-            appModelVo.setData(userBankcard);
-        }
-        return JsonTool.toJson(appModelVo);
-    }
-
 
     /**
      * 提交银行卡信息
@@ -418,14 +388,12 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping("/submitBankCard")
     @ResponseBody
-    public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {//  result_bankcardNumber  UserBankcardVo vo
+    public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {
         AppModelVo appModelVo = new AppModelVo();
 
         if (result.hasErrors()) {
-            appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BANK_CARD_FAIL.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BANK_CARD_FAIL.getMsg() + ": " + result.getAllErrors().get(0).getDefaultMessage());
-            appModelVo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(appModelVo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(), null, APP_VERSION);//当出现验证信息没有过的时候一律提示参数有误
         }
 
         UserBankcardVo vo = new UserBankcardVo();
@@ -439,63 +407,35 @@ public class MineAppController extends BaseMineController {
         vo.getResult().setBankDeposit(form.getResult_bankDeposit());
         vo.getResult().setUserId(SessionManager.getUserId());
         if (checkCardIsExistsByUserId(vo)) {
-            appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg());
-            appModelVo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(appModelVo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
+                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(),null, APP_VERSION);
         }
         if (StringTool.isBlank(SessionManager.getUser().getRealName()) && StringTool.isBlank(vo.getResult().getBankcardMasterName())) {
-            appModelVo.setCode(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg());
-            appModelVo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(appModelVo);
-        }
 
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg(), null, APP_VERSION);
+        }
 
         if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
             vo.getResult().setBankcardMasterName(SessionManager.getUser().getRealName());
         }
         vo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(vo);
         SessionManagerCommon.refreshUser();
+
+        Map<String, String> map = MapTool.newHashMap();
         if (vo.isSuccess()) {
-            Map<String, String> map = MapTool.newHashMap();
             map.put("realName", vo.getResult().getBankcardMasterName());
             map.put("bankName", vo.getResult().getBankName());
             map.put("bankCardNumber", vo.getResult().getBankcardNumber());
             map.put("bankDeposit", vo.getResult().getBankDeposit());
 
-            appModelVo = CommonApp.buildAppModelVo(map);
         }
-        return JsonTool.toJson(appModelVo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
 
-    /**
-     * 跳转和获取用户比特币信息，（暂时废弃）
-     *
-     * @return
-     */
-    @RequestMapping("/addBtc")
-    @ResponseBody
-    public String addBtc() {
-        AppModelVo vo = new AppModelVo();
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
-
-        UserBankcard userBankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);
-
-        if (userBankcard == null) {
-            vo.setCode(AppErrorCodeEnum.USER_ADD_BTC.getCode());
-            vo.setMsg(AppErrorCodeEnum.USER_ADD_BTC.getMsg());
-        } else {
-            vo = CommonApp.buildAppModelVo(userBankcard);
-            vo.setMsg("展示比特币信息");
-
-        }
-
-        return JsonTool.toJson(vo);
-    }
 
     /**
      * 提交比特币信息
@@ -505,30 +445,29 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/submitBtc")
     @ResponseBody
     public String submitBtc(@FormModel @Valid BtcBankcardForm form, BindingResult result) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if(result.hasErrors()) {
-            vo.setMsg(result.getAllErrors().get(0).getDefaultMessage());
-            vo.setCode(AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode());
-            vo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(vo);
 
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null, APP_VERSION);
         }
         String bankcardNumber = form.getResult_bankcardNumber();
         /*比特币*/
         final String BITCOIN = "bitcoin";
         UserBankcardVo bankcardVo = new UserBankcardVo();
-        bankcardVo.setResult(new UserBankcard()); //暂时写死，为了测试接口是否成功
+        bankcardVo.setResult(new UserBankcard());
         bankcardVo.getResult().setBankcardNumber(bankcardNumber);
         bankcardVo.getResult().setUserId(SessionManager.getUserId());
         bankcardVo.setUserType(SessionManagerCommon.getUserType().getCode());
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(AppConstant.APP_VERSION);
         if (checkCardIsExistsByUserId(bankcardVo)) {
-            AppErrorCodeEnum.HAS_BTC.getCode();
-            appModelVo.setCode(AppErrorCodeEnum.HAS_BTC.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.HAS_BTC.getMsg());
-            return JsonTool.toJson(appModelVo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.HAS_BTC.getCode(),
+                    AppErrorCodeEnum.HAS_BTC.getMsg(),
+                    null, APP_VERSION);
         }
 
         UserBankcard bankcard = bankcardVo.getResult();
@@ -537,17 +476,19 @@ public class MineAppController extends BaseMineController {
         bankcard.setBankName(BITCOIN);
         bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
         if (!bankcardVo.isSuccess()) {
-            appModelVo.setCode(AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.SUBMIT_BTC_FAIL.getMsg());
-            appModelVo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(appModelVo);
+
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode(),
+                    AppErrorCodeEnum.SUBMIT_BTC_FAIL.getMsg(),
+                    null, APP_VERSION);
         }
-        appModelVo.setCode(AppErrorCodeEnum.USER_BINDING_BTC_SUCCESS.getCode());
-        appModelVo.setMsg(AppErrorCodeEnum.USER_BINDING_BTC_SUCCESS.getMsg());
         Map<String, String> map = MapTool.newHashMap();
         map.put("btcNumber", bankcardVo.getResult().getBankcardNumber());
-        appModelVo.setData(map);
-        return JsonTool.toJson(appModelVo);
+
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
 
@@ -600,8 +541,10 @@ public class MineAppController extends BaseMineController {
         fundRecordApp.setTotalCount(listVo.getPaging().getTotalCount());
         fundRecordApp.setCurrency(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
 
-        vo = CommonApp.buildAppModelVo(fundRecordApp);
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                fundRecordApp, APP_VERSION);
     }
 
 
@@ -620,8 +563,11 @@ public class MineAppController extends BaseMineController {
 
         recordApp = buildDictCommonTransactionType(map, recordApp);
         map = recordApp.getTransactionMap();
-        AppModelVo modelVo = CommonApp.buildAppModelVo(map);
-        return JsonTool.toJson(modelVo);
+
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
     /**
@@ -634,8 +580,8 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getFundRecordDetails(Integer searchId) {
         AppModelVo appModelVo = new AppModelVo();
-        appModelVo.setVersion(APP_VERSION);
         VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
+        RecordDetailApp recordDetailApp = new RecordDetailApp();
         if (!isLoginUser(appModelVo)) {
             return JsonTool.toJson(appModelVo);
         }
@@ -655,7 +601,7 @@ public class MineAppController extends BaseMineController {
 
             VPlayerTransaction po = vo.getResult();
 
-            RecordDetailApp recordDetailApp = new RecordDetailApp();
+
             recordDetailApp.setId(po.getId());
             recordDetailApp.setTransactionNo(po.getTransactionNo());
             recordDetailApp.setCreateTime(po.getCreateTime());
@@ -713,7 +659,10 @@ public class MineAppController extends BaseMineController {
             appModelVo = CommonApp.buildAppModelVo(recordDetailApp);
         }
 
-        return JsonTool.toJson(appModelVo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                recordDetailApp, APP_VERSION);
     }
 
     /**
@@ -751,10 +700,10 @@ public class MineAppController extends BaseMineController {
         bettingDataApp.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
         bettingDataApp.setMaxDate(SessionManager.getDate().getNow());
 
-
-        vo = CommonApp.buildAppModelVo(bettingDataApp);
-        return JsonTool.toJson(vo);
-
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                bettingDataApp, APP_VERSION);
     }
 
     /**
@@ -793,8 +742,10 @@ public class MineAppController extends BaseMineController {
             map.put("captcha_value", "/captcha/feedback.html");
         }
 
-        vo = CommonApp.buildAppModelVo(map);
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
     /**
@@ -830,10 +781,11 @@ public class MineAppController extends BaseMineController {
             messageAppList.add(messageApp);
 
         }
-        AppModelVo vo = CommonApp.buildAppModelVo(messageAppList);
 
-
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                messageAppList, APP_VERSION);
     }
 
     /**
@@ -875,8 +827,10 @@ public class MineAppController extends BaseMineController {
         map.put("msg", StringTool.isNotBlank(vo.getOkMsg()) ? vo.getOkMsg() : vo.getErrMsg());
         map.put("state", Boolean.valueOf(vo.isSuccess()));
 
-        AppModelVo appModelVo = CommonApp.buildAppModelVo(map);
-        return JsonTool.toJson(appModelVo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
     /**
@@ -917,8 +871,10 @@ public class MineAppController extends BaseMineController {
         HashMap map = new HashMap(1, 1f);
 
         map.put("state", true);
-        AppModelVo appModelVo = CommonApp.buildAppModelVo(map);
-        return JsonTool.toJson(appModelVo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
     /**
@@ -934,7 +890,6 @@ public class MineAppController extends BaseMineController {
         VPlayerAdvisoryReplyListVo listVo = new VPlayerAdvisoryReplyListVo();
         VPlayerAdvisoryListVo vPlayerAdvisoryListVo = new VPlayerAdvisoryListVo();
         AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
-        AppModelVo appModelVo = new AppModelVo();
         listVo.getPaging().setPageSize(60);
         vPlayerAdvisoryListVo.getSearch().setId(id);
 
@@ -988,9 +943,10 @@ public class MineAppController extends BaseMineController {
             detailApp.setReplyContent(advisory.getReplyContent());
 
         }
-        appModelVo = CommonApp.buildAppModelVo(detailApp);
-
-        return JsonTool.toJson(appModelVo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                detailApp, APP_VERSION);
     }
 
     /**
@@ -1002,15 +958,15 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping("/addNoticeSite")
     @ResponseBody
-    public String addNoticeSite(@FormModel @Valid PlayerAdvisoryAppForm form, BindingResult result, String code) {//PlayerAdvisoryVo playerAdvisoryVo,
+    public String addNoticeSite(@FormModel @Valid PlayerAdvisoryAppForm form, BindingResult result, String code) {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(APP_VERSION);
 
         if (result.hasErrors()) {
-            appModelVo.setCode(AppErrorCodeEnum.USER_SEND_NOTICE_SITE_FAIL.getCode());
-            appModelVo.setMsg(AppErrorCodeEnum.USER_SEND_NOTICE_SITE_FAIL.getMsg() + ": " + result.getAllErrors().get(0).getDefaultMessage());
-            appModelVo.setError(DEFAULT_TIME);
-            return JsonTool.toJson(appModelVo);
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null, APP_VERSION);
         }
 
         PlayerAdvisoryVo playerAdvisoryVo = new PlayerAdvisoryVo();
@@ -1037,16 +993,16 @@ public class MineAppController extends BaseMineController {
             map.put("isOpenCaptcha", true);
             map.put("captcha_value", "/captcha/feedback.html");
             if (!StringTool.isNotBlank(code)) {
-                appModelVo.setCode(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode());
-                appModelVo.setMsg(AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg());
-                appModelVo.setError(DEFAULT_TIME);
-                return JsonTool.toJson(appModelVo);
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
+                        AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg(),
+                        null, APP_VERSION);
             }
             if (!checkFeedCode(code)) {
-                appModelVo.setCode(AppErrorCodeEnum.VALIDATE_ERROR.getCode());
-                appModelVo.setMsg(AppErrorCodeEnum.VALIDATE_ERROR.getMsg());
-                appModelVo.setError(DEFAULT_TIME);
-                return JsonTool.toJson(appModelVo);
+                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                        AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
+                        AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
+                        null, APP_VERSION);
             }
 
         }
@@ -1071,8 +1027,11 @@ public class MineAppController extends BaseMineController {
         map.put("msg", StringTool.isNotBlank(playerAdvisoryVo.getOkMsg()) ? playerAdvisoryVo.getOkMsg() : playerAdvisoryVo.getErrMsg());
         map.put("state", Boolean.valueOf(playerAdvisoryVo.isSuccess()));
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        appModelVo = CommonApp.buildAppModelVo(map);
-        return JsonTool.toJson(appModelVo);
+
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
 
