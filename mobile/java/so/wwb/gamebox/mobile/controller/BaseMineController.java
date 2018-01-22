@@ -15,6 +15,7 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
+import org.soul.commons.security.CryptoTool;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
@@ -113,6 +114,49 @@ public class BaseMineController {
         infoApp.setUsername(player.getUsername());
         return infoApp;
     }
+
+    /**
+     * 组装数据 我的优惠
+     * @param recodeList
+     * @return
+     */
+    protected List<MyPromoApp> buildingMyPromoApp(List<VPreferentialRecode> recodeList) {
+        Integer userId = SessionManager.getUser().getId();
+        List<MyPromoApp> myPromoApps = ListTool.newArrayList();
+        for (VPreferentialRecode recode : recodeList) {
+            MyPromoApp promoApp = new MyPromoApp();
+
+            if (userId != null) {
+                promoApp.setId(recode.getId());
+            }
+            promoApp.setApplyTime(recode.getApplyTime());
+            if (recode.getPreferentialAudit() != null && recode.getPreferentialAudit() != 0) {
+                promoApp.setPreferentialAuditName("倍稽核");  // 倍稽核
+            } else {
+                promoApp.setPreferentialAuditName("免稽核");
+            }
+            promoApp.setPreferentialAudit(recode.getPreferentialAudit());
+            promoApp.setActivityName(recode.getActivityName());
+            promoApp.setPreferentialValue(recode.getPreferentialValue());
+            promoApp.setUserId(userId);
+            promoApp.setCheckState(recode.getCheckState());
+            String checkState = recode.getCheckState();
+            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equalsIgnoreCase("2", checkState)
+                    || StringTool.equalsIgnoreCase("4", checkState)) {
+                promoApp.setCheckStateName("已发放");
+            } else if (StringTool.equalsIgnoreCase("1", checkState)) {
+                promoApp.setCheckStateName("待审核");
+            } else if (StringTool.equalsIgnoreCase("0", checkState)) {
+                promoApp.setCheckStateName("进行中");
+            }
+            promoApp.setCheckState(recode.getCheckState());
+            myPromoApps.add(promoApp);
+
+        }
+        return myPromoApps;
+    }
+
+
 
     /**
      * 一键回收
@@ -380,7 +424,11 @@ public class BaseMineController {
         List<BettingInfoApp> bettingInfoAppList = new ArrayList<>();
         for (PlayerGameOrder order : list) {
             BettingInfoApp infoApp = new BettingInfoApp();
-            infoApp.setId(order.getId());
+
+            PlayerActivityMessage message = new PlayerActivityMessage();
+            message.setId(order.getId());
+
+            infoApp.setId(message.getSearchId());//加密后的id
             infoApp.setApiId(order.getApiId());
             infoApp.setGameId(order.getGameId());
             infoApp.setTerminal(order.getTerminal());
@@ -390,10 +438,8 @@ public class BaseMineController {
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
 
-            PlayerActivityMessage message = new PlayerActivityMessage();
-//            message.setSearchId(String.valueOf(order.getId()));
-            message.setId(order.getId());
-            infoApp.setUrl("/fund/betting/gameRecordDetail.html?searchId=" + message.getSearchId());
+//解密后的id
+            infoApp.setUrl("/fund/betting/gameRecordDetail.html?search.id=" + Integer.valueOf(CryptoTool.aesDecrypt(message.getSearchId(), "PlayerActivityMessageListVo")));
 
             String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
             infoApp.setApiName(apiName);
