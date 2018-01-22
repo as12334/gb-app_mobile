@@ -18,7 +18,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.TARGET_REGEX;
 
 @Controller
-@RequestMapping("/withdraw")
+@RequestMapping("/withdrawOrigin")
 public class WithdrawAppController extends BaseWithDrawController {
 
     /**
