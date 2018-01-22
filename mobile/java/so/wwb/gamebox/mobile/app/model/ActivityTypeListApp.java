@@ -9,6 +9,15 @@ public class ActivityTypeListApp {
 
     private String url; // 对应的具体的详情 h5链接
     private int id;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getId() {
         return id;

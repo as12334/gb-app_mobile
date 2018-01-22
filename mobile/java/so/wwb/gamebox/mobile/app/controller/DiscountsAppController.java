@@ -136,6 +136,7 @@ public class DiscountsAppController {
             activityApp.setId(message.getId());
             activityApp.setPhoto(message.getActivityAffiliated());
             activityApp.setUrl(ACTIVITY_DETAIL_URL + "?search.id=" + message.getId());
+            activityApp.setName(message.getActivityName());
             messages.add(activityApp);
         }
         map.put("list", messages);
