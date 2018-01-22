@@ -34,6 +34,7 @@ public enum AppErrorCodeEnum {
     SYSTEM_VALIDATE_NOT_NULL(308, "验证码不能为空"),
     UPDATE_PASSWORD_FAIL(309, "修改密码失败"),
     PARAM_HAS_ERROR(310, "参数有误"),
+    SAFE_PASSWORD_TOO_SIMPLE(311,"密码过于简单"),
     GAME_NOT_EXIST(400, "游戏不存在"),
     UPDATE_STATUS_FAIL(401, "更新失败"),
     NOT_RECOVER(402, "非免转不能一键回收"),

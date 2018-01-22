@@ -18,6 +18,7 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criterion;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
+import org.soul.commons.validation.form.PasswordRule;
 import org.soul.model.log.audit.enums.OpMode;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.NoticeVo;
@@ -77,9 +78,7 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
-import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
@@ -169,8 +168,8 @@ public class MineAppController extends BaseMineController {
         map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
         map.put("list", myPromoApps);
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),map, APP_VERSION);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
 
     }
 
@@ -254,7 +253,7 @@ public class MineAppController extends BaseMineController {
         if (checkCardIsExistsByUserId(vo)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(),null, APP_VERSION);
+                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(), null, APP_VERSION);
         }
         if (StringTool.isBlank(SessionManager.getUser().getRealName()) && StringTool.isBlank(vo.getResult().getBankcardMasterName())) {
 
@@ -290,7 +289,7 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/submitBtc")
     @ResponseBody
     public String submitBtc(@FormModel @Valid BtcBankcardForm form, BindingResult result) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
 
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -1012,6 +1011,13 @@ public class MineAppController extends BaseMineController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.REAL_NAME_ERROR.getCode(),
                     AppErrorCodeEnum.REAL_NAME_ERROR.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
+        }
+        if (PasswordRule.isWeak(password.getPwd1())) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
                     vo.getData(),
                     APP_VERSION);
         }
