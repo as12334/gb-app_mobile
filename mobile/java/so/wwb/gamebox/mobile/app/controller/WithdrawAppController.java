@@ -4,6 +4,7 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
@@ -56,8 +57,16 @@ public class WithdrawAppController extends BaseWithDrawController {
     @RequestMapping("/submitWithdraw")
     @ResponseBody
     @Token(valid = true)
-    public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo) {
+    public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo, BindingResult result) {
         AppModelVo vo = new AppModelVo();
+
+        if(result.hasErrors()){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
 
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {

@@ -77,9 +77,7 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
-import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
@@ -169,8 +167,8 @@ public class MineAppController extends BaseMineController {
         map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
         map.put("list", myPromoApps);
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),map, APP_VERSION);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
 
     }
 
@@ -300,6 +298,7 @@ public class MineAppController extends BaseMineController {
                 }
             }
 
+
             VPlayerTransaction po = vo.getResult();
 
 
@@ -356,6 +355,8 @@ public class MineAppController extends BaseMineController {
             }
             recordDetailApp.setBitAmount((String) map.get("bitAmount"));
 
+
+            appModelVo = CommonApp.buildAppModelVo(recordDetailApp);
         }
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -410,7 +411,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping("/getNoticeSiteType")
+    @RequestMapping("/goAddNoticeSite")
     @ResponseBody
     public String goAddNoticeSite() {
         AppModelVo vo = new AppModelVo();
@@ -866,6 +867,13 @@ public class MineAppController extends BaseMineController {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.REAL_NAME_ERROR.getCode(),
                     AppErrorCodeEnum.REAL_NAME_ERROR.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
+        }
+        if (PasswordRule.isWeak(password.getPwd1())) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
                     vo.getData(),
                     APP_VERSION);
         }
@@ -1557,6 +1565,23 @@ public class MineAppController extends BaseMineController {
         return false;
     }
 
+    /**
+     * 设置我的链接地址
+     *
+     * @return
+     */
+    private List<AppMineLinkVo> setLink() {
+        List<AppMineLinkVo> links = ListTool.newArrayList();
+        for (AppMineLinkEnum linkEnum : AppMineLinkEnum.values()) {
+            AppMineLinkVo vo = new AppMineLinkVo();
+            vo.setCode(linkEnum.getCode());
+            vo.setName(linkEnum.getName());
+            vo.setLink(linkEnum.getLink());
+            links.add(vo);
+        }
+
+        return links;
+    }
 
     /**
      * 是否有登陆账号
