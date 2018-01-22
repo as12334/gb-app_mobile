@@ -163,7 +163,7 @@ public abstract class BaseApiController extends BaseDemoController {
 
         List<SiteGameI18n> gameI18ns = CollectionQueryTool.query(Cache.getSiteGameI18n().values(), Criteria.and(cGameIds, local, cName));
 
-        if (listVo.getSearch().getApiId() != null && listVo.getSearch().getApiId().intValue() == Integer.valueOf(ApiProviderEnum.PL.getCode()).intValue()) {
+        if (listVo.getSearch().getApiId() != null && StringTool.equals(listVo.getSearch().getApiId().toString(), ApiProviderEnum.PL.getCode())) {
             List<SiteGameI18n> plGames = new ArrayList<>();
             for (SiteGameI18n game : gameI18ns) {
                 if (StringTool.isNotBlank(game.getCover())) {
@@ -253,9 +253,9 @@ public abstract class BaseApiController extends BaseDemoController {
         listVo = getLotteryGames(listVo);
         Map<String, SiteGameI18n> siteGameI18n = getGameI18nMap(listVo);
         for (SiteGame siteGame : listVo.getResult()) {
-            for (String gameId : siteGameI18n.keySet()) {
-                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), gameId)) {
-                    siteGame.setCover(siteGameI18n.get(gameId).getCover());
+            for (Map.Entry<String, SiteGameI18n> entry : siteGameI18n.entrySet()) {
+                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), entry.getKey())) {
+                    siteGame.setCover(entry.getValue().getCover());
                 }
             }
         }
@@ -280,8 +280,8 @@ public abstract class BaseApiController extends BaseDemoController {
         listVo = getCasinoGames(listVo, tag);
         Map<String, SiteGameI18n> map = getGameI18nMap(listVo);
         for (SiteGame siteGame : listVo.getResult()) {
-            for (String api : map.keySet()) {
-                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), api)) {
+            for (Map.Entry<String, SiteGameI18n> entry : map.entrySet()) {
+                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), entry.getKey())) {
                     AppSiteGame casinoGame = new AppSiteGame();
                     casinoGame.setGameId(siteGame.getGameId());
                     casinoGame.setSiteId(siteGame.getSiteId());
@@ -292,7 +292,7 @@ public abstract class BaseApiController extends BaseDemoController {
                     casinoGame.setApiTypeId(siteGame.getApiTypeId());
                     casinoGame.setCode(siteGame.getCode());
                     casinoGame.setName(getSiteGameName(siteGame.getGameId().toString()));
-                    casinoGame.setCover(getImagePath(SessionManager.getDomain(request), map.get(api).getCover()));
+                    casinoGame.setCover(getImagePath(SessionManager.getDomain(request), entry.getValue().getCover()));
                     casinoGame.setSystemStatus(siteGame.getSystemStatus());
                     if (SessionManager.getUser() != null) {
                         casinoGame.setGameLink(getCasinoGameRequestUrl(siteGame));
@@ -318,7 +318,7 @@ public abstract class BaseApiController extends BaseDemoController {
         List<AppGameTag> gameTags = ListTool.newArrayList();
         for (SiteI18n siteI18n : siteI18nMap.values()) {
             if (StringTool.equalsIgnoreCase(siteI18n.getLocale().toString(), SessionManager.getLocale().toString())
-                    &&  SessionManager.getSiteId().equals(siteI18n.getSiteId())) {
+                    && SessionManager.getSiteId().equals(siteI18n.getSiteId())) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(siteI18n.getKey());
                 appGameTag.setValue(siteI18n.getValue());
@@ -512,7 +512,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Integer apiId;
         String apiName;
         for (SiteApiTypeRelationI18n siteApiTypeRelationI18n : siteApiTypeRelationI18nMap.values()) {
-            if (siteId == siteApiTypeRelationI18n.getSiteId()) {
+            if (siteId.equals(siteApiTypeRelationI18n.getSiteId())) {
                 apiTypeId = siteApiTypeRelationI18n.getApiTypeId();
                 apiId = siteApiTypeRelationI18n.getApiId();
                 if (map.get(apiTypeId) == null) {
@@ -597,21 +597,21 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
 
-        for (Integer apiType : siteApiRelation.keySet()) {
+        for (Map.Entry<Integer, List<SiteApiTypeRelationI18n>> entry : siteApiRelation.entrySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
-            vo.setApiType(apiType);
+            vo.setApiType(entry.getKey());
             for (ApiTypeEnum type : ApiTypeEnum.values()) {
-                if (type.getCode() == apiType) {
+                if (type.getCode() == entry.getKey().intValue()) {
                     vo.setApiTypeName(type.getMsg());
-                    vo.setCover(setApiLogoUrl(model, request) + "/api_type_" + apiType + ".png");
+                    vo.setCover(setApiLogoUrl(model, request) + "/api_type_" + entry.getKey() + ".png");
                 }
             }
             vo.setLevel(false);
-            if (apiType == ApiTypeEnum.LOTTERY.getCode()) {
+            if (entry.getKey().intValue() == ApiTypeEnum.LOTTERY.getCode()) {
                 vo.setLevel(true);
             }
             //获取游戏集合
-            vo.setSiteApis(setAppApiRelationI18n(siteApiRelation.get(apiType), request, model));
+            vo.setSiteApis(setAppApiRelationI18n(entry.getValue(), request, model));
             vo.setLocale(SessionManager.getLocale().toString());
             appList.add(vo);
         }
@@ -711,12 +711,12 @@ public abstract class BaseApiController extends BaseDemoController {
             appI18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png"); //api图片路劲
 
             if (SessionManager.getUser() != null && i18n.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()) {
-                if (i18n.getApiId().equals(ApiProviderEnum.BSG.getCode())) {
+                if (i18n.getApiId() != null && StringTool.equals(i18n.getApiId().toString(), ApiProviderEnum.BSG.getCode())) {
                     appI18n.setGameLink("/game/apiGames.html?apiId=" + i18n.getApiId() + "&apiTypeId=" + i18n.getApiTypeId());
-                } else if (SessionManager.isAutoPay() && i18n.getApiTypeId() != ApiTypeEnum.CASINO.getCode()) {
+                } else if (SessionManager.isAutoPay() && i18n.getApiTypeId() != null && i18n.getApiTypeId().intValue() != ApiTypeEnum.CASINO.getCode()) {
                     String gameUrl = "/origin/getGameLink.html?apiId=" + appI18n.getApiId() + "&apiTypeId=" + appI18n.getApiTypeId();
                     appI18n.setGameLink(gameUrl);
-                } else if (i18n.getApiTypeId().equals(ApiTypeEnum.CASINO.getCode())) {
+                } else if (i18n.getApiTypeId() != null && i18n.getApiTypeId().intValue() == ApiTypeEnum.CASINO.getCode()) {
                     appI18n.setGameLink("/origin/getCasinoGame.html?search.apiId=" + i18n.getApiId() + "&search.apiTypeId=" + i18n.getApiTypeId());
                 } else {
                     appI18n.setGameLink("/api/detail.html?apiId=" + i18n.getApiId() + "&apiTypeId=" + i18n.getApiTypeId());
@@ -786,6 +786,16 @@ public abstract class BaseApiController extends BaseDemoController {
         return CollectionTool.toEntityMap(getGameI18n(listVo), SiteGameI18n.PROP_GAME_ID, String.class);
     }
 
+    /**
+     * 获取游戏注册或登录地址
+     *
+     * @param request
+     * @param apiId
+     * @param apiTypeId
+     * @param gameCode
+     * @param model
+     * @return
+     */
     protected AppSiteApiTypeRelationI18n goGameUrl(HttpServletRequest request, Integer apiId, String apiTypeId, String gameCode, AppRequestModelVo model) {
         AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
         PlayerApiAccountVo playerApiAccountVo = new PlayerApiAccountVo();
@@ -808,9 +818,9 @@ public abstract class BaseApiController extends BaseDemoController {
         if (demoModel != null) {
             //平台试玩免转不可用 //纯彩票试玩免转不可用 //模拟账号免转可用
             playerApiAccountVo.setTrial(true);
-            if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel) && (
-                    apiId == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                            apiId == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+            if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)
+                    && apiId != null
+                    && (StringTool.equals(apiId.toString(), ApiProviderEnum.PL.getCode()) || StringTool.equals(apiId.toString(), ApiProviderEnum.DWT.getCode()))) {
                 playerApiAccountVo.setTrial(false);
             }
         }
@@ -836,18 +846,28 @@ public abstract class BaseApiController extends BaseDemoController {
         return appI18n;
     }
 
+    /**
+     * 获取游戏地址后
+     * 根据安卓和ios构建游戏地址路径
+     *
+     * @param url
+     * @param model
+     * @param apiId
+     * @return
+     */
     private String buildGameUrl(String url, AppRequestModelVo model, Integer apiId) {
         if (StringTool.isBlank(url)) {
             return url;
         }
         if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
-            if (apiId.equals(ApiProviderEnum.PL.getCode())) {
+            if (apiId != null && StringTool.equals(apiId.toString(), ApiProviderEnum.PL.getCode())) {
                 url = url + "?ad=" + apiId;
             }
         }
 
         if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
-            if (apiId.equals(ApiProviderEnum.PL.getCode())
+            if (apiId != null
+                    && StringTool.equals(apiId.toString(), ApiProviderEnum.PL.getCode())
                     && url.indexOf("/mainIndex") == -1
                     && url.indexOf("/lottery/") == -1) {
                 url = url + "mainIndex.html?ad=22";
@@ -880,9 +900,9 @@ public abstract class BaseApiController extends BaseDemoController {
                 //纯彩票试玩免转不可用
                 playerApiAccountVo.setTrial(true);
                 //Integer apiId = playerApiAccountVo.getApiId();
-                if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel) && (
-                        playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                                playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+                if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)
+                        && (StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.PL.getCode())
+                        || StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.DWT.getCode()))) {
                     //模拟账号免转可用
                     playerApiAccountVo.setTrial(false);
                 }
@@ -1024,14 +1044,14 @@ public abstract class BaseApiController extends BaseDemoController {
         }
         //checkMockAccount已经验证
         if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModel)) {
-            if (playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.PL.getCode())
-                    || playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.DWT.getCode())) {
+            if (playerApiAccountVo.getApiId() != null && (StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.PL.getCode())
+                    || StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.DWT.getCode()))) {
                 return true;
             }
         }
         //彩票试玩，如果是龙头彩票，就可以玩
         if (DemoModelEnum.MODEL_4_LOTTERY.equals(demoModel)) {
-            if (playerApiAccountVo.getApiId() == Integer.valueOf(ApiProviderEnum.PL.getCode())) {
+            if (playerApiAccountVo.getApiId() != null && StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.PL.getCode())) {
                 return true;
             }
         }
@@ -1107,8 +1127,9 @@ public abstract class BaseApiController extends BaseDemoController {
         if (demoModelEnum != null) {
             //模拟账号只能登录自主彩票及自主体育
             if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(demoModelEnum)) {
-                if (playerApiAccountVo.getApiId() != Integer.valueOf(ApiProviderEnum.PL.getCode())
-                        && playerApiAccountVo.getApiId() != Integer.valueOf(ApiProviderEnum.DWT.getCode())) {
+                if (playerApiAccountVo.getApiId() != null
+                        && !StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.PL.getCode())
+                        && !StringTool.equals(playerApiAccountVo.getApiId().toString(), ApiProviderEnum.DWT.getCode())) {
                     return false;
                 }
             }
