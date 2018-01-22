@@ -146,12 +146,25 @@ public class OriginController extends BaseApiController {
         Map<String, Object> pageTotal = MapTool.newHashMap();
         map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, tag));
         map.put("page", pageTotal);
-        map.put("tag", getGameTag());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
+                APP_VERSION);
+    }
+
+    /**
+     * 获取游戏分类
+     * @return
+     */
+    @RequestMapping("/getGameTag")
+    @ResponseBody
+    public String getGameTags() {
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getGameTag(),
                 APP_VERSION);
     }
 
