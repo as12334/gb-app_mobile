@@ -408,7 +408,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping("/goAddNoticeSite")
+    @RequestMapping("/getNoticeSiteType")
     @ResponseBody
     public String goAddNoticeSite() {
         AppModelVo vo = new AppModelVo();
