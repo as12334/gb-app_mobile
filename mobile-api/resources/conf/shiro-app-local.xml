@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+	<!--单点登录过滤器-->
+	<bean id="login" class="so.wwb.gamebox.web.shiro.local.filter.LocalLoginFilter">
+		<property name="loginUrl" value="/passport/login.html"/>
+		<property name="passportDelegate" ref="passportDelegate"/>
+		<property name="baseWebConf" ref="baseWebConf"></property>
+		<property name="authorizationRefresher" ref="authorizationRefresher"/>
+	</bean>
+
+</beans>
