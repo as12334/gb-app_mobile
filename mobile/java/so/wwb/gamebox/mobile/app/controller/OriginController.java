@@ -172,12 +172,6 @@ public class OriginController extends BaseApiController {
     @RequestMapping("getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
-        if (SessionManager.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.UN_LOGIN.getCode(),
-                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null, APP_VERSION);
-        }
         if (siteGame.getApiId() == null) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
@@ -236,13 +230,6 @@ public class OriginController extends BaseApiController {
     @RequestMapping("/countDrawTimes")
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
-        if (SessionManagerCommon.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.UN_LOGIN.getCode(),
-                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null, APP_VERSION);
-        }
-
         if (StringTool.isBlank(activityMessageId)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
@@ -329,14 +316,6 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     @Token(valid = true)
     public String getPacket(String activityMessageId) {
-        if (SessionManager.getUser() == null) {
-
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.UN_LOGIN.getCode(),
-                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null, APP_VERSION);
-        }
-
         if (StringTool.isBlank(activityMessageId)) {
 
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
