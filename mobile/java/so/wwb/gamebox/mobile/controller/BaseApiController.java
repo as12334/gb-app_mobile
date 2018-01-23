@@ -32,6 +32,7 @@ import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
@@ -317,7 +318,7 @@ public abstract class BaseApiController extends BaseDemoController {
     protected List<AppGameTag> getGameTag() {
         Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
         List<String> tags = new ArrayList<>();
-        Map<String, SiteI18n> siteI18n = Cache.getSiteI18n(SiteI18nEnum.MASTER_GAME_TAG, SessionManager.getSiteId());
+        Map<String, SiteI18n> siteI18n = Cache.getSiteI18n(SiteI18nEnum.MASTER_GAME_TAG, Const.BOSS_DATASOURCE_ID);
         List<AppGameTag> gameTags = ListTool.newArrayList();
         for (SiteGameTag tag : siteGameTag.values()) {
             if (!tags.contains(tag.getTagId())) {
