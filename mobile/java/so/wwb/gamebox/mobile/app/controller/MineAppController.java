@@ -543,14 +543,7 @@ public class MineAppController extends BaseMineController {
         if (vPlayerAdvisoryList.size() == 1) {
             VPlayerAdvisory advisory = vPlayerAdvisoryList.get(0);
 
-            detailApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
-            detailApp.setAdvisoryContent(advisory.getAdvisoryContent());
-            detailApp.setQuestionType(advisory.getQuestionType());
-            detailApp.setAdvisoryTime(LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone()));
-            detailApp.setReplyTime(LocaleDateTool.formatDate(advisory.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-            detailApp.setReplyTitle(advisory.getReplyTitle());
-            detailApp.setReplyContent(advisory.getReplyContent());
-
+            detailApp = buildingAdvisoryMessageDetailApp(detailApp, advisory);
         }
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
