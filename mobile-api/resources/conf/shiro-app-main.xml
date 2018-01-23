@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-4.1.xsd"
+	   default-autowire="byName">
+
+	<import resource="classpath*:conf/shiro-base.xml"/>
+	<import resource="classpath*:conf/shiro-common.xml"/>
+	<import resource="classpath*:conf/shiro-base-local.xml"/>
+	<import resource="classpath*:conf/shiro-app-local.xml"/>
+
+	<util:list id="passportListeners">
+		<ref bean="passportListener"/>
+		<ref bean="userInfoListener"/>
+	</util:list>
+
+	<bean id="passportDelegate" class="so.wwb.gamebox.web.shiro.common.delegate.PassportDelegate">
+		<property name="passportListeners" ref="passportListeners"/>
+	</bean>
+
+	<!--登录后:获取用户信息-->
+	<bean id="userInfoListener" class="so.wwb.gamebox.mobile.session.listener.UserInfoListener"/>
+
+	<bean id="authc4NativeFilter" class="so.wwb.gamebox.mobile.session.Authc4NativeFilter"/>
+
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.soul.web.shiro.common.spring.CustomShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="successUrl" value="/index.html"  />
+		<property name="loginUrl" value="/passport/login.html"/>
+		<property name="unauthorizedUrl" value="/errors/403.html"></property>
+		<property name="filters">
+			<map>
+				<entry key="kickout" value-ref="kickoutFilter"></entry>
+				<entry key="login" value-ref="login"></entry>
+				<entry key="autho" value-ref="authoFilter"></entry>
+				<!--<entry key="authc" value-ref="authcFilter"></entry>--> <!--change use authc4NativeFilter-->
+				<entry key="authc" value-ref="authc4NativeFilter"></entry>
+				<entry key="captcha" value-ref="captcha"></entry>
+				<entry key="subsys" value-ref="subsysCodeFilter"></entry>
+				<entry key="access" value-ref="accessFilter"></entry>
+			</map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/origin/getCarouse.html = anon
+				/origin/getAnnouncement.html = anon
+				/origin/getSiteApiRelation.html = anon
+				/origin/getFloat.html = anon
+				/origin/getCasinoGame.html = anon
+				/origin/getGameTag.html = anon
+				/discountsOrigin/*.html = anon
+				/** = subsys,kickout,authc,access,autho
+			</value>
+		</property>
+	</bean>
+</beans>
