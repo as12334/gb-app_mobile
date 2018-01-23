@@ -115,7 +115,7 @@ public class DownLoadController {
             playerVo = ServiceSiteTool.vUserPlayerService().get(playerVo);
             domainVo.getSearch().setRankId(playerVo.getResult().getRankId());
         }
-
-        return "";
+        String downloadDomain = ServiceSiteTool.playerRankAppDomainService().fetchAppDownloadDomain(domainVo);
+        return downloadDomain;
     }
 }
