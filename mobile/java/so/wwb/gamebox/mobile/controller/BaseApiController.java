@@ -31,6 +31,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
@@ -314,15 +315,22 @@ public abstract class BaseApiController extends BaseDemoController {
      * @return
      */
     protected List<AppGameTag> getGameTag() {
-        Map<String, SiteI18n> siteI18nMap = Cache.getGameTag();
+        Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
+        List<String> tags = new ArrayList<>();
+        Map<String, SiteI18n> siteI18n = Cache.getSiteI18n(SiteI18nEnum.MASTER_GAME_TAG, SessionManager.getSiteId());
         List<AppGameTag> gameTags = ListTool.newArrayList();
-        for (SiteI18n siteI18n : siteI18nMap.values()) {
-            if (StringTool.equalsIgnoreCase(siteI18n.getLocale().toString(), SessionManager.getLocale().toString())
-                    && SessionManager.getSiteId().equals(siteI18n.getSiteId())) {
-                AppGameTag appGameTag = new AppGameTag();
-                appGameTag.setKey(siteI18n.getKey());
-                appGameTag.setValue(siteI18n.getValue());
-                gameTags.add(appGameTag);
+        for (SiteGameTag tag : siteGameTag.values()) {
+            if (!tags.contains(tag.getTagId())) {
+                for (SiteI18n site : siteI18n.values()) {
+                    if (StringTool.equalsIgnoreCase(tag.getTagId(), site.getKey())
+                            && StringTool.equalsIgnoreCase(site.getLocale().toString(), SessionManager.getLocale().toString())) {
+                        AppGameTag appGameTag = new AppGameTag();
+                        appGameTag.setKey(site.getKey());
+                        appGameTag.setValue(site.getValue());
+                        gameTags.add(appGameTag);
+                    }
+                }
+                tags.add(tag.getTagId());
             }
         }
 
