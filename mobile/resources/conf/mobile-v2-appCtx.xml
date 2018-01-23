@@ -10,7 +10,7 @@
 	<import resource="classpath*:/conf/web-common.xml"/>
 	<import resource="classpath*:/conf/web-cache.xml"/>
 	<import resource="classpath:/conf/shiro-app-main.xml"/>
-	<import resource="classpath*:/conf/lottery-mobile-dubbo-consumer.xml"/>
+	<import resource="classpath*:/conf/web-custom-dubbo-consumer.xml"/>
 
 	<import resource="classpath*:conf/notify-bean-aop.xml"/>
 	<import resource="classpath*:conf/notify-bean-mvc.xml"/>

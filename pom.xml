@@ -17,5 +17,6 @@
         <module>../base/monitor/monitor-iservice</module>
         <module>../base/monitor/monitor-model</module>
         <module>mobile</module>
+        <module>mobile-api</module>
     </modules>
 </project>
