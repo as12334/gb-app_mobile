@@ -503,8 +503,12 @@ public class IndexController extends BaseApiController {
     private void getAndroidInfo(Model model, HttpServletRequest request, String code) {
         AppUpdate androidApp = Cache.getAppUpdate(AppTypeEnum.ANDROID.getCode());
         if (androidApp != null) {
+            String appDomain = fetchAppDownloadDomain(request);
+            if(StringTool.isBlank(appDomain)){
+                appDomain = ParamTool.appDmain(request.getServerName());
+            }
             String versionName = androidApp.getVersionName();
-            String url = String.format("https://%s%s%s/app_%s_%s.apk", ParamTool.appDmain(request.getServerName()), androidApp.getAppUrl(),
+            String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, androidApp.getAppUrl(),
                     versionName, code, versionName);
             model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
             model.addAttribute("androidUrl", url);

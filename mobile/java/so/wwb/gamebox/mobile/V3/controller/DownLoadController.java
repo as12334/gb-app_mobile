@@ -2,12 +2,14 @@ package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
+import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.qrcode.QrcodeDisTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
@@ -17,7 +19,11 @@ import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
+import so.wwb.gamebox.model.master.operation.vo.PlayerRankAppDomainVo;
+import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -71,8 +77,12 @@ public class DownLoadController {
         androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
         AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
         if (androidApp != null) {
+            String appDomain = fetchAppDownloadDomain(request);
+            if(StringTool.isBlank(appDomain)){
+                appDomain = ParamTool.appDmain(request.getServerName());
+            }
             String versionName = androidApp.getVersionName();
-            String url = String.format("https://%s%s%s/app_%s_%s.apk", ParamTool.appDmain(request.getServerName()), androidApp.getAppUrl(),
+            String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, androidApp.getAppUrl(),
                     versionName, code, versionName);
             model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
             model.addAttribute("androidUrl", url);
@@ -95,5 +105,17 @@ public class DownLoadController {
         }
     }
 
+    protected String fetchAppDownloadDomain(ServletRequest request){
+        PlayerRankAppDomainVo domainVo = new PlayerRankAppDomainVo();
+        domainVo.setServerName(request.getServerName());
+        Integer playerId = SessionManagerCommon.getUser().getId();
+        if(playerId!=null){
+            VUserPlayerVo playerVo = new VUserPlayerVo();
+            playerVo.getSearch().setId(playerId);
+            playerVo = ServiceSiteTool.vUserPlayerService().get(playerVo);
+            domainVo.getSearch().setRankId(playerVo.getResult().getRankId());
+        }
 
+        return "";
+    }
 }
