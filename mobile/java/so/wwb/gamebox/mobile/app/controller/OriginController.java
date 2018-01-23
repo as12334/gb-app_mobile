@@ -156,6 +156,7 @@ public class OriginController extends BaseApiController {
 
     /**
      * 获取游戏分类
+     *
      * @return
      */
     @RequestMapping("/getGameTag")
@@ -255,7 +256,7 @@ public class OriginController extends BaseApiController {
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
 
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
-            LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId.toString());
+            LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId);
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
@@ -328,8 +329,6 @@ public class OriginController extends BaseApiController {
     @ResponseBody
     @Token(valid = true)
     public String getPacket(String activityMessageId) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
         if (SessionManager.getUser() == null) {
 
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
@@ -919,14 +918,10 @@ public class OriginController extends BaseApiController {
      */
     private CttFloatPic queryMoneyActivityFloat() {
         Map<String, CttFloatPic> floatPicMap = Cache.getFloatPic();
-        Iterator<String> iter = floatPicMap.keySet().iterator();
         CttFloatPic tempFloatPic = null;
-        while (iter.hasNext()) {
-            String key = iter.next();
-            CttFloatPic cttFloatPic = floatPicMap.get(key);
+        for (CttFloatPic cttFloatPic : floatPicMap.values()) {
             if (CttPicTypeEnum.PROMO.getCode().equals(cttFloatPic.getPicType()) && cttFloatPic.getStatus()) {
                 tempFloatPic = cttFloatPic;
-                break;
             }
         }
         return tempFloatPic;
@@ -940,41 +935,27 @@ public class OriginController extends BaseApiController {
     private PlayerActivityMessage findMoneyActivity() {
         Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
         String lang = SessionManagerBase.getLocale().toString();
-        Iterator<String> iter = activityMessages.keySet().iterator();
         Date justNow = new Date();
         PlayerActivityMessage playerActivityMessage = null;
-        while (iter.hasNext()) {
-            String key = iter.next();
-            if (key.endsWith(lang)) {
-                playerActivityMessage = activityMessages.get(key);
-                Date startTime = playerActivityMessage.getStartTime();
-                Date endTime = playerActivityMessage.getEndTime();
-                if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
-                    //不是红包活动继续
-                    continue;
-                }
-                if (playerActivityMessage.getIsDeleted()) {
-                    continue;
-                }
-                if (!playerActivityMessage.getIsDisplay()) {
-                    continue;
-                }
-                if (startTime.before(justNow) && justNow.before(endTime)) {
-                    return playerActivityMessage;
-                }
+        for (Map.Entry<String, PlayerActivityMessage> entry : activityMessages.entrySet()) {
+            if (entry.getKey().endsWith(lang)
+                    && entry.getValue().getStartTime().before(justNow)
+                    && justNow.before(entry.getValue().getEndTime())
+                    && ActivityTypeEnum.MONEY.getCode().equals(entry.getValue().getCode())
+                    && !entry.getValue().getIsDeleted()
+                    && entry.getValue().getIsDisplay()) {
 
+                playerActivityMessage = entry.getValue();
+                break;
             }
         }
-        return null;
+        return playerActivityMessage;
     }
 
     private CttFloatPicItem queryMoneyFloatPic(CttFloatPic cttFloatPic) {
         CttFloatPicItem item = null;
         Map<String, CttFloatPicItem> floatPicItemMap = Cache.getFloatPicItem();
-        Iterator<String> iter = floatPicItemMap.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            CttFloatPicItem cttFloatPicItem = floatPicItemMap.get(key);
+        for (CttFloatPicItem cttFloatPicItem : floatPicItemMap.values()){
             if (cttFloatPicItem.getFloatPicId().equals(cttFloatPic.getId())) {
                 item = cttFloatPicItem;
                 break;
