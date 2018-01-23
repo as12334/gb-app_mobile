@@ -8,6 +8,7 @@ import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateFormat;
 import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
@@ -678,6 +679,19 @@ public class BaseMineController {
             sysNotice.setContent(sysAnnounce.getContent());
         }
         return sysNotice;
+    }
+
+    protected AdvisoryMessageDetailApp buildingAdvisoryMessageDetailApp(AdvisoryMessageDetailApp detailApp, VPlayerAdvisory advisory) {
+
+        detailApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
+        detailApp.setAdvisoryContent(advisory.getAdvisoryContent());
+        detailApp.setQuestionType(advisory.getQuestionType());
+        detailApp.setAdvisoryTime(LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+        detailApp.setReplyTime(LocaleDateTool.formatDate(advisory.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+        detailApp.setReplyTitle(advisory.getReplyTitle());
+        detailApp.setReplyContent(advisory.getReplyContent());
+
+        return detailApp;
     }
 
     /**
