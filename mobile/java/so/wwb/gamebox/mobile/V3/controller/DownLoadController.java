@@ -22,6 +22,7 @@ import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerRankAppDomainVo;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/downLoad")
-public class DownLoadController {
+public class DownLoadController extends BaseDemoController{
 
     private static final Log LOG = LogFactory.getLog(DownLoadController.class);
 
@@ -105,17 +106,8 @@ public class DownLoadController {
         }
     }
 
-    protected String fetchAppDownloadDomain(ServletRequest request){
-        PlayerRankAppDomainVo domainVo = new PlayerRankAppDomainVo();
-        domainVo.setServerName(request.getServerName());
-        Integer playerId = SessionManagerCommon.getUser().getId();
-        if(playerId!=null){
-            VUserPlayerVo playerVo = new VUserPlayerVo();
-            playerVo.getSearch().setId(playerId);
-            playerVo = ServiceSiteTool.vUserPlayerService().get(playerVo);
-            domainVo.getSearch().setRankId(playerVo.getResult().getRankId());
-        }
-        String downloadDomain = ServiceSiteTool.playerRankAppDomainService().fetchAppDownloadDomain(domainVo);
-        return downloadDomain;
+    @Override
+    protected String getDemoIndex() {
+        return null;
     }
 }
