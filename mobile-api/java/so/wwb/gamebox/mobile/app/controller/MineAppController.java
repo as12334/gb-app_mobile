@@ -92,7 +92,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
  * Created by ed on 17-12-31.
  */
 @Controller
-@RequestMapping("/1.1/mineOrigin")
+@RequestMapping("/mineOrigin")
 public class MineAppController extends BaseMineController {
     private static final String SAFE_PASSWORD_VALIDATE_CODE_URL = "/captcha/securityPwd.html";
     private Log LOG = LogFactory.getLog(MineAppController.class);
