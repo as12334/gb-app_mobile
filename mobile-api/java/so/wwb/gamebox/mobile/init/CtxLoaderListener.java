@@ -11,5 +11,6 @@ public class CtxLoaderListener extends CommonCtxLoaderListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         super.contextInitialized(event);
+        PassportContextPath="";
     }
 }
