@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.shiro.local.filter.LocalLoginFilter;
 
 import javax.servlet.ServletRequest;
@@ -30,6 +31,7 @@ class LoginController {
     private static final String LOGIN_URI = "/passport/login";
 
     @RequestMapping(value = "/commonLogin")
+    @Token(generate = true)
     public String commonLogin(Model model, HttpServletRequest request) {
         //如果已经登录
         SysUser sysUser = SessionManager.getUser();
