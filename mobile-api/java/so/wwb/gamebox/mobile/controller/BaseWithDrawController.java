@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.app.controller;
+package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
