@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
-import so.wwb.gamebox.mobile.controller.BaseApiController;
+import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
@@ -62,7 +62,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.SPLIT_REGEX;
 
 @Controller
 @RequestMapping("/origin")
-public class OriginController extends BaseApiController {
+public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
@@ -981,10 +981,5 @@ public class OriginController extends BaseApiController {
             }
         }
         return item;
-    }
-
-    @Override
-    protected String getDemoIndex() {
-        return null;
     }
 }
