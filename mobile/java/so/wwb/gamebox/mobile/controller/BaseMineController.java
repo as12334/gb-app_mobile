@@ -7,6 +7,7 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
+import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.DateFormat;
 import org.soul.commons.locale.DateQuickPicker;
@@ -502,20 +503,16 @@ public class BaseMineController {
         return playerTransactionListVo;
     }
 
-    protected FundRecordApp buildDictCommonTransactionType(Map map, FundRecordApp fundRecordApp) {
-        Set entries = map.entrySet();
-        Map<String, String> transactionMap = MapTool.newHashMap();
-        if (entries != null) {
-            Iterator iterator = entries.iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String key = (String) entry.getKey();
-                String transactionTypeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + key);
-                transactionMap.put(key, transactionTypeName);
-            }
-            fundRecordApp.setTransactionMap(transactionMap);
+    protected FundRecordApp buildDictCommonTransactionType(Map<String, Object> map, FundRecordApp fundRecordApp) {
+        if (map == null) {
+            return fundRecordApp;
         }
-
+        Map<String, String> transactionMap = new HashMap<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
+        for (String key : map.keySet()) {
+            transactionMap.put(key, i18n.get(key));
+        }
+        fundRecordApp.setTransactionMap(transactionMap);
         return fundRecordApp;
     }
 
