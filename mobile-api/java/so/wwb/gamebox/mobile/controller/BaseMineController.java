@@ -7,6 +7,7 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
+import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.DateFormat;
 import org.soul.commons.locale.DateQuickPicker;
@@ -26,7 +27,6 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
-import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
@@ -37,40 +37,31 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
-import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
-import so.wwb.gamebox.model.company.site.po.SiteApi;
-import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
-import so.wwb.gamebox.model.company.vo.BankListVo;
+import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
-import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
-import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
+import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
-import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
-import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
-import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
-import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
-import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
+import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
-import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -80,6 +71,7 @@ import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+import static so.wwb.gamebox.model.CacheBase.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -120,6 +112,7 @@ public class BaseMineController {
 
     /**
      * 组装数据 我的优惠
+     *
      * @param recodeList
      * @return
      */
@@ -434,12 +427,14 @@ public class BaseMineController {
 
     protected List<BettingInfoApp> buildBetting(List<PlayerGameOrder> list) {
         List<BettingInfoApp> bettingInfoAppList = new ArrayList<>();
+        Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap = getSiteApiTypeRelationMap(CommonContext.get().getSiteId());
+        Map<String, SiteGameI18n> map = getSiteGameI18n();
+
         for (PlayerGameOrder order : list) {
             BettingInfoApp infoApp = new BettingInfoApp();
 
             PlayerActivityMessage message = new PlayerActivityMessage();
             message.setId(order.getId());
-
             infoApp.setId(message.getSearchId());//加密后的id
             infoApp.setApiId(order.getApiId());
             infoApp.setGameId(order.getGameId());
@@ -453,26 +448,71 @@ public class BaseMineController {
 //解密后的id
             infoApp.setUrl("/fund/betting/gameRecordDetail.html?search.id=" + Integer.valueOf(CryptoTool.aesDecrypt(message.getSearchId(), "PlayerActivityMessageListVo")));
 
-            String apiName = CacheBase.getSiteApiName(String.valueOf(order.getApiId()));
+            String apiName = getApiMap(siteApiTypeRelationMap, String.valueOf(order.getApiId()));
             infoApp.setApiName(apiName);
 
-            String gameName = CacheBase.getSiteGameName(String.valueOf(order.getGameId()));
+            String gameName = getGameName(map, String.valueOf(order.getGameId()));
             infoApp.setGameName(gameName);
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
     }
 
+    private String getApiMap(Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap, String apiId) {
+        if (siteApiTypeRelationMap == null) {
+            return "";
+        }
+        SiteApiTypeRelation tempRelation = getSiteApiTypeRelationByApiId(apiId);
+        Map<String, SiteApiTypeRelationI18n> relationI18nMap = siteApiTypeRelationMap.get(tempRelation.getApiTypeId().toString());
+        return relationI18nMap.get(apiId).getName();
+    }
+
+    private String getGameName(Map<String, SiteGameI18n> map, String gameId) {
+        if (map.isEmpty() || map == null) {
+            return null;
+        }
+        if (map.get(gameId) != null) {
+            return map.get(gameId).getName();
+        }
+        return null;
+    }
+
+
+
+    private static SiteApiTypeRelation getSiteApiTypeRelationByApiId(String apiId) {
+        Map<String, List<SiteApiTypeRelation>> siteApiTypeRelation = getSiteApiTypeRelation();
+        Iterator<String> relationIter = siteApiTypeRelation.keySet().iterator();
+        int count = 0;
+        SiteApiTypeRelation tempRelation = null;
+        while (relationIter.hasNext()) {
+            String apiTypeId = relationIter.next();
+            List<SiteApiTypeRelation> relationList = siteApiTypeRelation.get(apiTypeId);
+            for (SiteApiTypeRelation relation : relationList) {
+                if (Integer.valueOf(apiId).equals(relation.getApiId())) {
+                    tempRelation = relation;
+                    count++;
+                }
+            }
+        }
+        if (count == 1 && tempRelation != null) {
+            return tempRelation;
+        }
+        return null;
+    }
+
+
+
     protected void initQueryDate(VPlayerTransactionListVo listVo) {
 
         listVo.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
-        if (listVo.getSearch().getBeginCreateTime() == null) {
-            listVo.getSearch().setBeginCreateTime(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
-        } else if (listVo.getSearch().getBeginCreateTime().before(listVo.getMinDate())) {
-            listVo.getSearch().setBeginCreateTime(listVo.getMinDate());
+        VPlayerTransactionSo vPlayerTransactionSo = listVo.getSearch();
+        if (vPlayerTransactionSo.getBeginCreateTime() == null) {
+            vPlayerTransactionSo.setBeginCreateTime(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
+        } else if (vPlayerTransactionSo.getBeginCreateTime().before(listVo.getMinDate())) {
+            vPlayerTransactionSo.setBeginCreateTime(listVo.getMinDate());
         }
-        if (listVo.getSearch().getEndCreateTime() == null) {
-            listVo.getSearch().setEndCreateTime(SessionManager.getDate().getNow());
+        if (vPlayerTransactionSo.getEndCreateTime() == null) {
+            vPlayerTransactionSo.setEndCreateTime(SessionManager.getDate().getNow());
         }
     }
 
@@ -495,35 +535,28 @@ public class BaseMineController {
         return playerTransactionListVo;
     }
 
-    protected FundRecordApp buildDictCommonTransactionType(Map map, FundRecordApp fundRecordApp) {
-        Set entries = map.entrySet();
-        Map<String, String> transactionMap = MapTool.newHashMap();
-        if (entries != null) {
-            Iterator iterator = entries.iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String key = (String) entry.getKey();
-                String transactionTypeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + key);
-                transactionMap.put(key, transactionTypeName);
-            }
-            fundRecordApp.setTransactionMap(transactionMap);
+    protected FundRecordApp buildDictCommonTransactionType(Map<String, Object> map, FundRecordApp fundRecordApp) {
+        if (map == null) {
+            return fundRecordApp;
         }
-
+        Map<String, String> transactionMap = new HashMap<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
+        for (String key : map.keySet()) {
+            transactionMap.put(key, i18n.get(key));
+        }
+        fundRecordApp.setTransactionMap(transactionMap);
         return fundRecordApp;
     }
 
     protected List<FundListApp> buildList(List<VPlayerTransaction> list) {
         List<FundListApp> fundListAppList = ListTool.newArrayList();
-
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
+        Map<String, String> i18nStatus = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_STATUS);
         for (VPlayerTransaction vplayer : list) {
             FundListApp app = new FundListApp();
-            String typeName = LocaleTool.tranMessage(Module.COMMON, "transaction_type." + vplayer.getTransactionType());
+            String typeName = i18n.get(vplayer.getTransactionType());
             app.setTransaction_typeName(typeName);
-
-
-            String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + vplayer.getStatus());
-            app.setStatusName(statusName);
-
+            app.setStatusName(i18nStatus.get(vplayer.getStatus()));
             app.setId(vplayer.getId());
             app.setCreateTime(vplayer.getCreateDate());
             app.setTransactionMoney(vplayer.getTransactionMoney());
@@ -561,12 +594,12 @@ public class BaseMineController {
 
         Map<String, Object> map = po.get_describe(); //取json对象里面的值
 
-        if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_into")) { //表示外面的钱转入我的钱包
+        if (StringTool.equals(po.getFundType(), FundTypeEnum.TRANSFER_INTO.getCode())) { //表示外面的钱转入我的钱包
             Integer apiId = (Integer) map.get("API");
             detailApp.setTransferOut(CacheBase.getSiteApiName(String.valueOf(apiId)));
             detailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
         }
-        if (StringTool.equalsIgnoreCase(po.getFundType(), "transfer_out")) { //从我的钱包转出外面
+        if (StringTool.equals(po.getFundType(), FundTypeEnum.TRANSFER_OUT.getCode())) { //从我的钱包转出外面
             detailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
             Integer apiId = (Integer) map.get("API");
             detailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
@@ -576,11 +609,11 @@ public class BaseMineController {
         String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
         detailApp.setStatusName(statusName);
 
-        if (StringTool.equalsIgnoreCase("deposit", detailApp.getTransactionType())) { //存款
+        if (StringTool.equals(detailApp.getTransactionType(), "deposit")) { //存款
             detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay()));
         }
 
-        if (StringTool.equalsIgnoreCase("withdrawals", detailApp.getTransactionType())) { //取款
+        if (StringTool.equals(detailApp.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //取款
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
@@ -607,7 +640,6 @@ public class BaseMineController {
             //正在转账中金额
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
-//            model.addAttribute("transferSum", playerTransferService().queryProcessAmount(playerTransferVo));
             fundRecordApp.setTransferSum(getPlayerTransferService().queryProcessAmount(playerTransferVo));
         }
     }

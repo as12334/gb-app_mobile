@@ -44,6 +44,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.validateForm.PlayerAdvisoryAppForm;
+
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
@@ -63,7 +64,7 @@ import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
-import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
+import so.wwb.gamebox.model.master.operation.so.VPreferentialRecodeSo;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
@@ -92,7 +93,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
  * Created by ed on 17-12-31.
  */
 @Controller
-@RequestMapping("/1.1/mineOrigin")
+@RequestMapping("/mineOrigin")
 public class MineAppController extends BaseMineController {
     private static final String SAFE_PASSWORD_VALIDATE_CODE_URL = "/captcha/securityPwd.html";
     private Log LOG = LogFactory.getLog(MineAppController.class);
@@ -108,26 +109,18 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getMyPromo")
     @ResponseBody
     public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo) {
-        AppModelVo vo = new AppModelVo();
 
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
-        if (vPreferentialRecodeListVo == null) {
-            vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
-        }
+        VPreferentialRecodeSo so = vPreferentialRecodeListVo.getSearch();
 
-
-        vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
-        vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
+        so.setActivityVersion(SessionManager.getLocale().toString());
+        so.setUserId(SessionManager.getUserId());
+        so.setCurrentDate(SessionManager.getDate().getNow());
 
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        List<VPreferentialRecode> vPreferentialRecodeList = vPreferentialRecodeListVo.getResult();
 
         Map<String, Object> map = MapTool.newHashMap();
-        map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
-        map.put("list", buildingMyPromoApp(vPreferentialRecodeList));
+        map.put("totalCount", ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo).getPaging().getTotalCount()); // 总数
+        map.put("list", buildingMyPromoApp(vPreferentialRecodeListVo.getResult()));
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
@@ -160,11 +153,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getFundRecord")
     @ResponseBody
     public String getFundRecord(VPlayerTransactionListVo listVo) {
-        AppModelVo vo = new AppModelVo();
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
 
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
@@ -182,9 +170,7 @@ public class MineAppController extends BaseMineController {
         fundRecordApp.setFundListApps(fundListAppList);
 
 //统计页面反水等等数据
-        Map map = getSumPlayerFunds(listVo);
-
-        fundRecordApp.setSumPlayerMap(map);
+        fundRecordApp.setSumPlayerMap(getSumPlayerFunds(listVo));
         if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
             fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
             fundRecordApp.setMaxDate(SessionManager.getDate().getNow());
@@ -215,12 +201,11 @@ public class MineAppController extends BaseMineController {
         Map map = listVo.getDictCommonTransactionType();
 
         recordApp = buildDictCommonTransactionType(map, recordApp);
-        map = recordApp.getTransactionMap();
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map, APP_VERSION);
+                recordApp.getTransactionMap(), APP_VERSION);
     }
 
     /**
@@ -232,18 +217,13 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getFundRecordDetails")
     @ResponseBody
     public String getFundRecordDetails(Integer searchId) {
-        AppModelVo appModelVo = new AppModelVo();
-        VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
         VPlayerTransactionVo vo = new VPlayerTransactionVo();
-        RecordDetailApp recordDetailApp = new RecordDetailApp();
-        if (!isLoginUser(appModelVo)) {
-            return JsonTool.toJson(appModelVo);
-        }
-
         if (searchId != null) {
             vo.getSearch().setId(Integer.valueOf(searchId));
             vo = ServiceSiteTool.vPlayerTransactionService().get(vo);
         }
+
+        VPlayerWithdrawVo withdrawVo = new VPlayerWithdrawVo();
             if (vo.getResult() != null && TransactionTypeEnum.WITHDRAWALS.getCode().equals(vo.getResult().getTransactionType())) {   //如果是取款
                 if (StringTool.isNotBlank(vo.getResult().getTransactionNo())) {
                     withdrawVo.getSearch().setId(vo.getResult().getSourceId());
@@ -251,6 +231,7 @@ public class MineAppController extends BaseMineController {
                 }
             }
 
+        RecordDetailApp recordDetailApp = new RecordDetailApp();
         recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -268,13 +249,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getBettingList")
     @ResponseBody
     public String getBettingList(PlayerGameOrderListVo listVo) {
-
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
 
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
@@ -308,11 +282,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getNoticeSiteType")
     @ResponseBody
     public String goAddNoticeSite() {
-        AppModelVo vo = new AppModelVo();
-
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
 
         Map<String, SysDict> advisoryType = DictTool.get(DictEnum.ADVISORY_TYPE);
         Iterator<String> iter = advisoryType.keySet().iterator();
@@ -331,7 +300,7 @@ public class MineAppController extends BaseMineController {
         Map<String, Object> map = MapTool.newHashMap();
         map.put("advisoryTypeList", advisoryTypeList);
         map.put("isOpenCaptcha", false);
-        if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= 3) {
+        if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= SEND_MSG_CAPTCHA_COUNT) {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
             map.put("captcha_value", "/captcha/feedback.html");
         }
@@ -352,10 +321,6 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
 
-        if (listVo == null) {
-            listVo = new VPlayerAdvisoryListVo();
-        }
-
 
         //提问内容+未读数量
         Map<String, Object> map = MapTool.newHashMap();
@@ -373,7 +338,6 @@ public class MineAppController extends BaseMineController {
             messageApp.setId(advisory.getId());
             messageApp.setRead(advisory.getIsRead() == null ? true : advisory.getIsRead());
             messageAppList.add(messageApp);
-
         }
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -391,12 +355,6 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/deleteAdvisoryMessage")
     @ResponseBody
     public String deleteAdvisoryMessage(String ids) {
-        if (StringTool.isBlank(ids)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
-                    null, APP_VERSION);
-        }
 
         String[] id = ids.split(",");
         PlayerAdvisoryVo vo = new PlayerAdvisoryVo();
@@ -443,14 +401,8 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getSelectAdvisoryMessageIds")
     @ResponseBody
     public String getSelectAdvisoryMessageIds(String ids) {
-        String[] id = ids.split(",");
-        if (StringTool.isBlank(ids)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
-                    null, APP_VERSION);
-        }
 
+        String[] id = ids.split(",");
         for (String messageId : id) {
             //当前回复表Id
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
@@ -496,9 +448,8 @@ public class MineAppController extends BaseMineController {
     public String advisoryMessageDetail(Integer id) {
         //当前咨询信息
         VPlayerAdvisoryReplyListVo listVo = new VPlayerAdvisoryReplyListVo();
-        VPlayerAdvisoryListVo vPlayerAdvisoryListVo = new VPlayerAdvisoryListVo();
-        AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
         listVo.getPaging().setPageSize(60);
+        VPlayerAdvisoryListVo vPlayerAdvisoryListVo = new VPlayerAdvisoryListVo();
         vPlayerAdvisoryListVo.getSearch().setId(id);
 
         List<VPlayerAdvisory> vPlayerAdvisoryList = ServiceSiteTool.vPlayerAdvisoryService().searchVPlayerAdvisoryReply(vPlayerAdvisoryListVo);
@@ -539,6 +490,7 @@ public class MineAppController extends BaseMineController {
             }
         }
 
+        AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
         if (vPlayerAdvisoryList.size() == 1) {
             VPlayerAdvisory advisory = vPlayerAdvisoryList.get(0);
 
