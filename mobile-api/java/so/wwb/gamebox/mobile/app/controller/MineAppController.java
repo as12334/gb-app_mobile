@@ -564,7 +564,7 @@ public class MineAppController extends BaseMineController {
             //发送消息数量
             Integer sendMessageCount = SessionManager.getSendMessageCount() == null ? 0 : SessionManager.getSendMessageCount();
             SessionManager.setsSendMessageCount(sendMessageCount + 1);
-            if (SessionManager.getSendMessageCount() >= 3) {
+            if (SessionManager.getSendMessageCount() >= SEND_MSG_CAPTCHA_COUNT) {
                 map.put("isOpenCaptcha", true);
             }
             //生成任务提醒
