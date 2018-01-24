@@ -448,7 +448,7 @@ public class BaseMineController {
 //解密后的id
             infoApp.setUrl("/fund/betting/gameRecordDetail.html?search.id=" + Integer.valueOf(CryptoTool.aesDecrypt(message.getSearchId(), "PlayerActivityMessageListVo")));
 
-            String apiName = getApiMap(siteApiTypeRelationMap, String.valueOf(order.getApiId()));
+            String apiName = getApiName(siteApiTypeRelationMap, String.valueOf(order.getApiId()));
             infoApp.setApiName(apiName);
 
             String gameName = getGameName(map, String.valueOf(order.getGameId()));
@@ -458,7 +458,7 @@ public class BaseMineController {
         return bettingInfoAppList;
     }
 
-    private String getApiMap(Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap, String apiId) {
+    private String getApiName(Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap, String apiId) {
         if (siteApiTypeRelationMap == null) {
             return "";
         }

@@ -51,10 +51,6 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping("/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
-        AppModelVo vo = new AppModelVo();
-        if (!isLoginUser(vo)) {
-            return JsonTool.toJson(vo);
-        }
 
         UserInfoApp userApp = new UserInfoApp();
         SysUser user = SessionManager.getUser();
@@ -68,9 +64,11 @@ public class UserInfoAppController extends BaseUserInfoController {
         map.put("user", userInfoMap);
         map.put("bankList", bankList());
         map.put("userApi", userApp);
-        vo = CommonApp.buildAppModelVo(map);
 
-        return JsonTool.toJson(vo);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
     /**
