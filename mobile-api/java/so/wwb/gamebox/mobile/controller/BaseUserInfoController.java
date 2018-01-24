@@ -130,6 +130,7 @@ public class BaseUserInfoController {
                 bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
                 String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
                 bankcardNumMap.put("bankName", bankName);
+                bankcardNumMap.put("bankUrl", "");
                 if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 10) {
                     bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
                 }
