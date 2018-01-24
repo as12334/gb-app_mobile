@@ -6,6 +6,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
@@ -28,7 +29,7 @@ public class WithdrawAppController extends BaseWithDrawController {
      *
      * @return
      */
-    @RequestMapping("/getWithDraw")
+    @RequestMapping(value = "/getWithDraw", method = RequestMethod.POST)
     @ResponseBody
     public String getWithDraw() {
         AppModelVo vo = new AppModelVo();
@@ -55,7 +56,7 @@ public class WithdrawAppController extends BaseWithDrawController {
     /**
      * 提交取款
      */
-    @RequestMapping("/submitWithdraw")
+    @RequestMapping(value = "/submitWithdraw", method = RequestMethod.POST)
     @ResponseBody
     @Token(valid = true)
     public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo, BindingResult result) {

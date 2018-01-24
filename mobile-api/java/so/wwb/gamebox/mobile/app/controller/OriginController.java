@@ -45,7 +45,6 @@ public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
-
     /**
      * 请求首页，查询轮播图，公告，游戏类，红包活动
      *
