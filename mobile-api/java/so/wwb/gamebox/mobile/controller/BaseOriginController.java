@@ -375,9 +375,8 @@ public abstract class BaseOriginController {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
 
+        //组装游戏类型集合
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
-
         for (SiteApiType api : siteApiTypes) {
             List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
             for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
@@ -388,6 +387,8 @@ public abstract class BaseOriginController {
             }
         }
 
+        //过滤游戏数据提供给原生
+        List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
         for (Map.Entry<Integer, List<SiteApiTypeRelationI18n>> entry : siteApiRelation.entrySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
             vo.setApiType(entry.getKey());
@@ -419,13 +420,14 @@ public abstract class BaseOriginController {
      * @return
      */
     private List<AppSiteGame> setAppSiteGame(SiteApiTypeRelationI18n relationI8n, AppSiteApiTypeRelationI18n i18n, HttpServletRequest request, AppRequestModelVo model) {
-        List<AppSiteGame> games = ListTool.newArrayList();
-
+        //获取彩票类游戏
         SiteGameListVo siteGameListVo = new SiteGameListVo();
         siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
         siteGameListVo.getSearch().setApiTypeId(relationI8n.getApiTypeId());
         List<SiteGame> lotteryGame = getLotteryGame(siteGameListVo);
 
+        //组装彩票类游戏
+        List<AppSiteGame> games = ListTool.newArrayList();
         for (SiteGame siteGame : lotteryGame) {
             AppSiteGame app = new AppSiteGame();
             app.setGameId(siteGame.getGameId());

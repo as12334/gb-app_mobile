@@ -11,6 +11,7 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
@@ -44,7 +45,15 @@ public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
-    @RequestMapping("/mainIndex")
+
+    /**
+     * 请求首页，查询轮播图，公告，游戏类，红包活动
+     *
+     * @param request
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/mainIndex", method = RequestMethod.POST)
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = MapTool.newHashMap();
@@ -60,7 +69,13 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
 
-    @RequestMapping("/getCarouse")
+    /**
+     * 查询轮播图
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getCarouse", method = RequestMethod.POST)
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
         //轮播图
@@ -74,7 +89,12 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
 
-    @RequestMapping("/getAnnouncement")
+    /**
+     * 查询公告
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getAnnouncement", method = RequestMethod.POST)
     @ResponseBody
     public String getAnnounce() {
         //公告
@@ -88,7 +108,14 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
 
-    @RequestMapping("/getSiteApiRelation")
+    /**
+     * 查询游戏类
+     *
+     * @param request
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/getSiteApiRelation", method = RequestMethod.POST)
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
@@ -102,7 +129,13 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
 
-    @RequestMapping("/getFloat")
+    /**
+     * 查询红包活动图
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getFloat", method = RequestMethod.POST)
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
         //浮动图
@@ -116,7 +149,15 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
 
-    @RequestMapping("/getCasinoGame")
+    /**
+     * 获取电子游戏
+     *
+     * @param listVo
+     * @param request
+     * @param tag
+     * @return
+     */
+    @RequestMapping(value = "/getCasinoGame", method = RequestMethod.POST)
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
@@ -137,7 +178,7 @@ public class OriginController extends BaseOriginController {
      *
      * @return
      */
-    @RequestMapping("/getGameTag")
+    @RequestMapping(value = "/getGameTag", method = RequestMethod.POST)
     @ResponseBody
     public String getGameTags() {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -147,7 +188,15 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
 
-    @RequestMapping("getGameLink")
+    /**
+     * 获取登录或注册游戏链接地址
+     *
+     * @param siteGame
+     * @param request
+     * @param modelVo
+     * @return
+     */
+    @RequestMapping(value = "getGameLink", method = RequestMethod.POST)
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (SessionManager.getUser() == null) {
