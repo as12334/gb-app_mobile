@@ -68,6 +68,41 @@
     </div>
 </div>
 </body>
+<div id="middlePopover" class="mui-popover origin-player-dialog notice-popover-wrap">
+    <div class="mui-popup mui-popup-in">
+        <div class="mui-popup-inner">
+            <div class="mui-popup-title">
+                <span class="pop-title">消息公告</span>
+                <a href="#bottomPopover" class="mui-btn mui-btn-link mui-pull-right pop-close"><span class="mui-icon mui-icon-closeempty verify-cancel"></span></a>
+            </div>
+            <div class="cont-text">
+                <div class="popup-scroll">
+                    <div class="bs-component">
+                        <div class="alert alert-dismissible alert-danger">本次升级，加强了账户的安全防护体系，请验证真实姓名，验证通过后即可成功登陆。</div>
+                    </div>
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <gb:token />
+                            <label class="col-12-3 control-label">您的真实姓名：</label>
+                            <div class="col-12-8">
+                                <input type="text" class="form-control" name="result.realName" id="result_realName" placeholder="请输入您的真实姓名">
+                                <input type="hidden" name="needRealName" value="yes">
+                                <input type="hidden" name="result.playerAccount" id="result_playerAccount">
+                                <input type="hidden" name="search.playerAccount" id="search_playerAccount">
+                                <input type="hidden" name="tempPass" id="tempPass">
+                                <input type="hidden" name="newPassword" id="newPassword">
+                                <input type="hidden" name="passLevel" value="20">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <button type="button" class="mui-btn confirm-btn verify-name">确定</button>
+            <button type="button" class="mui-btn verify-cancel">取消</button>
+        </div>
+    </div>
+
+</div>
 <%@ include file="/include/include.base.js.common.jsp" %>
 <script type="text/javascript" src="${root}/mobile/message_<%=SessionManagerCommon.getLocale().toString()%>.js?v=${rcVersion}"></script>
 <script>
