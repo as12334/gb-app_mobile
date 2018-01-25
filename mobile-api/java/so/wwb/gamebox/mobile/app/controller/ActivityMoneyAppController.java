@@ -13,6 +13,7 @@ import org.soul.commons.security.CryptoTool;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
@@ -54,7 +55,7 @@ public class ActivityMoneyAppController {
     /**
      * 剩余次数,是否能抽红包
      */
-    @RequestMapping("/countDrawTimes")
+    @RequestMapping(value = "/countDrawTimes", method = RequestMethod.POST)
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
         if (SessionManagerCommon.getUser() == null) {
@@ -146,7 +147,7 @@ public class ActivityMoneyAppController {
      *
      * @return
      */
-    @RequestMapping("/getPacket")
+    @RequestMapping(value = "/getPacket", method = RequestMethod.POST)
     @ResponseBody
     @Token(valid = true)
     public String getPacket(String activityMessageId) {

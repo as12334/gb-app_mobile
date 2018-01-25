@@ -2,16 +2,15 @@ package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.app.common.CommonApp;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
@@ -48,7 +47,7 @@ public class UserInfoAppController extends BaseUserInfoController {
      * @param request
      * @return
      */
-    @RequestMapping("/getUserInfo")
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
 
@@ -76,10 +75,10 @@ public class UserInfoAppController extends BaseUserInfoController {
      *
      * @return
      */
-    @RequestMapping("/submitBtc")
+    @RequestMapping(value = "/submitBtc", method = RequestMethod.POST)
     @ResponseBody
     public String submitBtc(@FormModel @Valid BtcBankcardForm form, BindingResult result) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
 
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -132,7 +131,7 @@ public class UserInfoAppController extends BaseUserInfoController {
      * @param result
      * @return
      */
-    @RequestMapping("/submitBankCard")
+    @RequestMapping(value = "/submitBankCard", method = RequestMethod.POST)
     @ResponseBody
     public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {
 
@@ -154,7 +153,7 @@ public class UserInfoAppController extends BaseUserInfoController {
         if (checkCardIsExistsByUserId(vo)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(),null, APP_VERSION);
+                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(), null, APP_VERSION);
         }
         if (StringTool.isBlank(SessionManager.getUser().getRealName()) && StringTool.isBlank(vo.getResult().getBankcardMasterName())) {
 
@@ -179,22 +178,6 @@ public class UserInfoAppController extends BaseUserInfoController {
         }
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
-    }
-
-
-    /**
-     * 是否有登陆账号
-     */
-    public boolean isLoginUser(AppModelVo appVo) {
-        if (SessionManager.getUser() == null) {
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-            appVo.setData(null);
-
-            return false;
-        }
-        return true;
     }
 
     /**
