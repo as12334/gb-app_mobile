@@ -32,8 +32,8 @@ public class WithdrawAppController extends BaseWithDrawController {
     @RequestMapping(value = "/getWithDraw", method = RequestMethod.POST)
     @ResponseBody
     public String getWithDraw() {
+        //判断是否达到取款要求
         AppModelVo vo = new AppModelVo();
-
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
@@ -60,9 +60,7 @@ public class WithdrawAppController extends BaseWithDrawController {
     @ResponseBody
     @Token(valid = true)
     public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo, BindingResult result) {
-        AppModelVo vo = new AppModelVo();
-
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
@@ -70,6 +68,8 @@ public class WithdrawAppController extends BaseWithDrawController {
                     APP_VERSION);
         }
 
+        //判断取款是否达到要求
+        AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMsg())) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
@@ -82,7 +82,6 @@ public class WithdrawAppController extends BaseWithDrawController {
         //是否有取款银行卡
         Map map = MapTool.newHashMap();
         if (!hasBank(map)) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.NO_BANK.getCode(),
                     AppErrorCodeEnum.NO_BANK.getMsg(),
@@ -91,19 +90,16 @@ public class WithdrawAppController extends BaseWithDrawController {
         }
         //是否符合取款金额设置
         if (isInvalidAmount(playerVo, map)) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.WITHDRAW_BETWEEN_MIN_MAX.getCode(),
                     map.get("msg").toString(),
                     null,
                     APP_VERSION);
         }
-
         //取款
         map = addWithdraw(request, playerVo);
         //成功
         if (map.get("state") != null && MapTool.getBoolean(map, "state")) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
