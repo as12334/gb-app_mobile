@@ -474,6 +474,10 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     public String downloadApp(Model model, HttpServletRequest request) {
+
+        if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
+            return "redirect:/login/commonLogin.html";
+        }
         getAppPath(model, request);
         return "/app/Index";
     }
