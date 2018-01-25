@@ -34,7 +34,8 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.*;
+import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -50,7 +51,10 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.model.CacheBase.getSiteGameName;
@@ -199,6 +203,7 @@ public abstract class BaseOriginController {
 
     /**
      * 获取Api的电子游戏
+     *
      * @param listVo
      * @return
      */
@@ -550,7 +555,7 @@ public abstract class BaseOriginController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.parseInt(ApiProviderEnum.AG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
+                i18n.setGameLink("/mobile-api/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
                 i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
                 fishSiteApis.add(i18n);
             }
@@ -562,7 +567,7 @@ public abstract class BaseOriginController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.parseInt(ApiProviderEnum.GG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
+                i18n.setGameLink("/mobile-api/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
                 i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
                 fishSiteApis.add(i18n);
             }
