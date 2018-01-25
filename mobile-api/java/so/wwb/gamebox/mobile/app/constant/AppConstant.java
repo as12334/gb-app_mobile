@@ -48,4 +48,6 @@ public interface AppConstant {
     String IS_READ = "12"; //站点中心是否标志为已读信息
 
     int SEND_MSG_CAPTCHA_COUNT = 3; // 我的消息 申请优惠发送消息次数
+
+    String COMMON_PAYBANK_PHOTO = "/common/pay_bank/"; //银行字样 的图片
 }
