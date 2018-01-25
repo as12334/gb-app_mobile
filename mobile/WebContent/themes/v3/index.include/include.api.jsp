@@ -20,10 +20,13 @@
             <c:when test="${apiType.apiTypeId == 4}">
                 <c:set var="type" value="lottery"/>
             </c:when>
+            <c:when test="${apiType.apiTypeId == 5}">
+                <c:set var="type" value="Chess"/>
+            </c:when>
         </c:choose>
         <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}" data-list="${type}">
             <c:choose>
-                <c:when test="${apiType.apiTypeId==2}">
+                <c:when test="${apiType.apiTypeId==2 || apiType.apiTypeId==5}">
                     <c:forEach var="i18n" items="${apiType.apiTypeRelations}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                             <a data-rel='{"target":"${root}/game/getGameByApiId.html?search.apiId=${i18n.apiId}&search.apiTypeId=${i18n.apiTypeId}","opType":"href"}'>
