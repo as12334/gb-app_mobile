@@ -77,9 +77,9 @@ import static so.wwb.gamebox.model.CacheBase.*;
  * Created by ed on 17-12-31.
  */
 public class BaseMineController {
-    private static final String SYSTEM_NOTICE_LINK = "/mineOrigin/getSysNoticeDetail.html";
-    private static final String GAME_NOTICE_LINK = "/mineOrigin/getGameNoticeDetail.html";
-    private static final String SITE_SYSTEM_NOTICE = "/mineOrigin/getSiteSysNoticeDetail.html";
+    private static final String SYSTEM_NOTICE_LINK = "/mobile-api/mineOrigin/getSysNoticeDetail.html";
+    private static final String GAME_NOTICE_LINK = "/mobile-api/mineOrigin/getGameNoticeDetail.html";
+    private static final String SITE_SYSTEM_NOTICE = "/mobile-api/mineOrigin/getSiteSysNoticeDetail.html";
     private Log LOG = LogFactory.getLog(BaseMineController.class);
     private IPlayerTransferService playerTransferService;
 

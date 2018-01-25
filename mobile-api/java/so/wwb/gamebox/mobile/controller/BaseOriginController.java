@@ -464,7 +464,7 @@ public abstract class BaseOriginController {
      */
     private String setApiLogoUrl(AppRequestModelVo model, HttpServletRequest request) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/../app");
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
         if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append("/android/themes");
         }

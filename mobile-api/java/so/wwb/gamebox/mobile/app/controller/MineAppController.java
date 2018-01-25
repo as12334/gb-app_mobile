@@ -1085,6 +1085,13 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
+        if(SessionManager.getUser() == null){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getMsg(),
+                    PassportResult.SUCCESS,
+                    APP_VERSION);
+        }
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();
         Integer entranceId = passportDelegate.getEntranceType(contextPath, uri);
