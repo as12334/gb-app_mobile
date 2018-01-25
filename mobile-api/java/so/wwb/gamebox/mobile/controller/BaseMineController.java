@@ -616,7 +616,7 @@ public class BaseMineController {
             detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay()));
         }
 
-        if (StringTool.equals(detailApp.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //取款
+        if (StringTool.equals(detailApp.getTransactionType(), TransactionTypeEnum.WITHDRAWALS.getCode())) { //取款
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
