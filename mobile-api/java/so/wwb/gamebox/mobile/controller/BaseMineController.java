@@ -429,7 +429,7 @@ public class BaseMineController {
         List<BettingInfoApp> bettingInfoAppList = new ArrayList<>();
         Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap = getSiteApiTypeRelationMap(CommonContext.get().getSiteId());
         Map<String, SiteGameI18n> map = getSiteGameI18n();
-
+        Map<String, SiteApiI18n> siteApiI18nMap = getSiteApiI18n();
         for (PlayerGameOrder order : list) {
             BettingInfoApp infoApp = new BettingInfoApp();
 
@@ -448,7 +448,7 @@ public class BaseMineController {
 //解密后的id
             infoApp.setUrl("/fund/betting/gameRecordDetail.html?search.id=" + Integer.valueOf(CryptoTool.aesDecrypt(message.getSearchId(), "PlayerActivityMessageListVo")));
 
-            String apiName = getApiName(siteApiTypeRelationMap, String.valueOf(order.getApiId()));
+            String apiName = getApiName(siteApiTypeRelationMap, String.valueOf(order.getApiId()), siteApiI18nMap);
             infoApp.setApiName(apiName);
 
             String gameName = getGameName(map, String.valueOf(order.getGameId()));
@@ -458,11 +458,14 @@ public class BaseMineController {
         return bettingInfoAppList;
     }
 
-    private String getApiName(Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap, String apiId) {
+    private String getApiName(Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap, String apiId, Map<String, SiteApiI18n> siteApiI18nMap) {
         if (siteApiTypeRelationMap == null) {
             return "";
         }
         SiteApiTypeRelation tempRelation = getSiteApiTypeRelationByApiId(apiId);
+        if (tempRelation == null) {
+            return siteApiI18nMap.get(apiId.toString()).getName();
+        }
         Map<String, SiteApiTypeRelationI18n> relationI18nMap = siteApiTypeRelationMap.get(tempRelation.getApiTypeId().toString());
         return relationI18nMap.get(apiId).getName();
     }
