@@ -89,8 +89,8 @@
 <script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>
 <script>
     curl(['site/game/Game', 'site/game/Live', 'site/game/Casino', 'site/game/Sport', 'site/game/Lottery',
-        'site/common/Assets', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
-            function (Game, Live, Casino, Sport, Lottery, Assets, Menu, Footer, Dynamic) {
+        'site/common/Assets', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation',"site/game/Chess"],
+            function (Game, Live, Casino, Sport, Lottery, Assets, Menu, Footer, Dynamic,Chess) {
                 game = new Game();
                 game.live = new Live();
                 game.casino = new Casino();
@@ -100,6 +100,7 @@
                 game.menu = new Menu();
                 game.footer = new Footer();
                 game.dynamic = new Dynamic();
+                game.chess = new Chess();
             });
 </script>
 </html>
