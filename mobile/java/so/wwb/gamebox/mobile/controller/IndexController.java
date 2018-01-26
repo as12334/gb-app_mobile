@@ -77,10 +77,11 @@ public class IndexController extends BaseApiController {
                 typeId = ApiTypeEnum.LIVE_DEALER.getCode();
             }
         }
-        if (typeId == 5)
+        if (typeId == -1){
             model.addAttribute("channel", "activity");
-        else
+        }else{
             model.addAttribute("channel", "game");
+        }
         model.addAttribute("apiTypeId", typeId);
         model.addAttribute("apiTypes", apiTypes);
         model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
