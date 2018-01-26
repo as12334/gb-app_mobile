@@ -65,6 +65,7 @@ public class GameController extends BaseApiController {
                 break;
             case 5:
                 redirectUrl += "/Chess";
+                break;
         }
         model.addAttribute("command", getSiteApiTypeRelationList(apiType));
         return redirectUrl;
