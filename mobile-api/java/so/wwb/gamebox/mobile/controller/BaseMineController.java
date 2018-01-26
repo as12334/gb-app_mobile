@@ -139,13 +139,15 @@ public class BaseMineController {
             promoApp.setUserId(userId);
             promoApp.setCheckState(recode.getCheckState());
             String checkState = recode.getCheckState();
-            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equalsIgnoreCase("2", checkState)
-                    || StringTool.equalsIgnoreCase("4", checkState)) {
+            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equals("2", checkState)
+                    || StringTool.equals("4", checkState)) {
                 promoApp.setCheckStateName("已发放");
-            } else if (StringTool.equalsIgnoreCase("1", checkState)) {
+            } else if (StringTool.equals("1", checkState)) {
                 promoApp.setCheckStateName("待审核");
-            } else if (StringTool.equalsIgnoreCase("0", checkState)) {
+            } else if (StringTool.equals("0", checkState)) {
                 promoApp.setCheckStateName("进行中");
+            } else {
+                promoApp.setCheckStateName("未通过");
             }
             promoApp.setCheckState(recode.getCheckState());
             myPromoApps.add(promoApp);
