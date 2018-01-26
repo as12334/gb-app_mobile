@@ -1111,6 +1111,21 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 获取分享好友相关信息
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getUserPlayerRecommend", method = RequestMethod.POST)
+    @ResponseBody
+    public String getUserPlayerRecommend(HttpServletRequest request){
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getPlayerRecommend(request),
+                APP_VERSION);
+    }
+
+    /**
      * 验证吗remote验证
      *
      * @param code

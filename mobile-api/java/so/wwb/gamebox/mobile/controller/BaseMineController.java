@@ -17,6 +17,7 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
+import org.soul.commons.security.Base36;
 import org.soul.commons.security.CryptoTool;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
@@ -58,6 +59,7 @@ import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -481,7 +483,6 @@ public class BaseMineController {
     }
 
 
-
     private static SiteApiTypeRelation getSiteApiTypeRelationByApiId(String apiId) {
         Map<String, List<SiteApiTypeRelation>> siteApiTypeRelation = getSiteApiTypeRelation();
         Iterator<String> relationIter = siteApiTypeRelation.keySet().iterator();
@@ -502,7 +503,6 @@ public class BaseMineController {
         }
         return null;
     }
-
 
 
     protected void initQueryDate(VPlayerTransactionListVo listVo) {
@@ -913,6 +913,40 @@ public class BaseMineController {
         }
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
+        return map;
+    }
+
+    /**
+     * 获取玩家推荐信息
+     */
+    protected Map<String, Object> getPlayerRecommend(HttpServletRequest request) {
+        UserPlayerVo userPlayerVo = new UserPlayerVo();
+        userPlayerVo.getSearch().setId(SessionManager.getUserId());
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
+        Map<String, Object> map = new HashMap<>(7, 1f);
+        if (userPlayerVo.getResult() != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("/register.html?c=");
+            String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
+            sb.append(Base36.encryptIgnoreCase(invitationCode));
+            //分享码
+            map.put("code", sb.toString());
+            LOG.info("玩家邀请码:[" + userPlayerVo.getResult().getRegistCode() + "][" + SessionManager.getUserId().toString() + "]" + Base36.encryptIgnoreCase(invitationCode));
+        }
+        //如果这个参数有值，表示有单次推荐奖励
+        map.put("theWay", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_THEWAY).getParamValue());
+        //满足存款条件后谁获利：1 表示双方获取奖励 2表示你将会得到 其他表示你推荐的好友会获取到
+        map.put("reward", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD).getParamValue());
+        //将会获取到的金额值
+        map.put("money", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_MONEY).getParamValue());
+        //有红利奖励显示分享红利标志，没有不显示
+        map.put("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getParamValue());
+
+        //查询推荐人数 获取奖励 红利
+        PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
+        playerVo.getSearch().setUserId(SessionManager.getUserId());
+        map.put("sign", getCurrencySign());
+        map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         return map;
     }
 
