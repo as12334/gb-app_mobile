@@ -1,12 +1,14 @@
 package so.wwb.gamebox.mobile.app.model;
 
+import java.util.Date;
+
 /**
  * Created by legend on 18-1-10.
  */
 public class FundListApp {
 
     private Integer id;
-    private String createTime;
+    private Date createTime;
     private Double transactionMoney;
 
     private String transactionType;
@@ -63,11 +65,11 @@ public class FundListApp {
         this.status = status;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 }

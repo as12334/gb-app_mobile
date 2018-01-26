@@ -63,6 +63,8 @@ public class GameController extends BaseApiController {
             case 4:
                 redirectUrl += "/Lottery";
                 break;
+            case 5:
+                redirectUrl += "/Chess";
         }
         model.addAttribute("command", getSiteApiTypeRelationList(apiType));
         return redirectUrl;
@@ -146,9 +148,11 @@ public class GameController extends BaseApiController {
         if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.CASINO.getCode() == listVo.getSearch().getApiTypeId()) {
             paging.setPageSize(CASINO_PAGE_SIZE);
             redirectUrl = String.format(redirectUrl, "Casino");
-        } else { // 彩票
+        } else if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.LOTTERY.getCode() == listVo.getSearch().getApiTypeId()){ // 彩票
             paging.setPageSize(LOTTERY_PAGE_SIZE);
             redirectUrl = String.format(redirectUrl, "Lottery");
+        } else if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.CHESS.getCode() == listVo.getSearch().getApiTypeId()){
+            redirectUrl = String.format(redirectUrl, "Chess");
         }
         return redirectUrl;
     }

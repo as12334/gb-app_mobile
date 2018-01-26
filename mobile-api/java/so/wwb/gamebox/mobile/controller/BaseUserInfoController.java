@@ -11,6 +11,7 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
@@ -48,12 +49,11 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.PROMO_RECORD_DAYS;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.RECOMMEND_DAYS;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.SPLIT_REGEX;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 /**
  * Created by legend on 18-1-22.
@@ -130,6 +130,7 @@ public class BaseUserInfoController {
                 bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
                 String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
                 bankcardNumMap.put("bankName", bankName);
+                bankcardNumMap.put("bankUrl", setBankPictureUrl(request, bankcard));
                 if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 10) {
                     bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
                 }
@@ -203,6 +204,15 @@ public class BaseUserInfoController {
         }
         userInfo.put("currency", getCurrencySign());
         userInfo.put("realName", StringTool.overlayName(sysUser.getRealName()));
+    }
+
+    private String setBankPictureUrl (HttpServletRequest request, UserBankcard bankcard) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(COMMON_PAYBANK_PHOTO);
+        sb.append(bankcard.getBankName());
+        sb.append(".png");
+        return sb.toString();
     }
 
 

@@ -34,7 +34,8 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.*;
+import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -50,7 +51,10 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.model.CacheBase.getSiteGameName;
@@ -199,6 +203,7 @@ public abstract class BaseOriginController {
 
     /**
      * 获取Api的电子游戏
+     *
      * @param listVo
      * @return
      */
@@ -375,9 +380,8 @@ public abstract class BaseOriginController {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
         List<SiteApiType> siteApiTypes = getApiTypes();
 
+        //组装游戏类型集合
         Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
-
         for (SiteApiType api : siteApiTypes) {
             List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
             for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
@@ -388,6 +392,8 @@ public abstract class BaseOriginController {
             }
         }
 
+        //过滤游戏数据提供给原生
+        List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
         for (Map.Entry<Integer, List<SiteApiTypeRelationI18n>> entry : siteApiRelation.entrySet()) {
             AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
             vo.setApiType(entry.getKey());
@@ -419,13 +425,14 @@ public abstract class BaseOriginController {
      * @return
      */
     private List<AppSiteGame> setAppSiteGame(SiteApiTypeRelationI18n relationI8n, AppSiteApiTypeRelationI18n i18n, HttpServletRequest request, AppRequestModelVo model) {
-        List<AppSiteGame> games = ListTool.newArrayList();
-
+        //获取彩票类游戏
         SiteGameListVo siteGameListVo = new SiteGameListVo();
         siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
         siteGameListVo.getSearch().setApiTypeId(relationI8n.getApiTypeId());
         List<SiteGame> lotteryGame = getLotteryGame(siteGameListVo);
 
+        //组装彩票类游戏
+        List<AppSiteGame> games = ListTool.newArrayList();
         for (SiteGame siteGame : lotteryGame) {
             AppSiteGame app = new AppSiteGame();
             app.setGameId(siteGame.getGameId());
@@ -462,7 +469,7 @@ public abstract class BaseOriginController {
      */
     private String setApiLogoUrl(AppRequestModelVo model, HttpServletRequest request) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/../app");
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
         if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append("/android/themes");
         }
@@ -548,7 +555,7 @@ public abstract class BaseOriginController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.parseInt(ApiProviderEnum.AG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
+                i18n.setGameLink("/mobile-api/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
                 i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
                 fishSiteApis.add(i18n);
             }
@@ -560,7 +567,7 @@ public abstract class BaseOriginController {
                 i18n.setSiteId(SessionManager.getSiteId());
                 i18n.setApiId(Integer.parseInt(ApiProviderEnum.GG.getCode()));
                 i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
+                i18n.setGameLink("/mobile-api/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
                 i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
                 fishSiteApis.add(i18n);
             }
