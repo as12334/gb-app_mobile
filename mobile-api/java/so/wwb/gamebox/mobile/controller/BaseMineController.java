@@ -561,7 +561,7 @@ public class BaseMineController {
             app.setTransaction_typeName(typeName);
             app.setStatusName(i18nStatus.get(vplayer.getStatus()));
             app.setId(vplayer.getId());
-            app.setCreateTime(vplayer.getCreateDate());
+            app.setCreateTime(vplayer.getCreateTime());
             app.setTransactionMoney(vplayer.getTransactionMoney());
             app.setTransactionType(vplayer.getTransactionType());
             app.setStatus(vplayer.getStatus());
