@@ -86,6 +86,10 @@ public class GameController extends BaseApiController {
         List<SiteApiTypeRelation> delList = new ArrayList<>();
         Map<String, Api> apiMap = Cache.getApi();
         Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
+        //typeRelationMap获取的apiType为空时会出现空指针
+        if(typeRelationList == null){
+            typeRelationList = new ArrayList<>();
+        }
         for (SiteApiTypeRelation r : typeRelationList) {
             Api api = apiMap.get(String.valueOf(r.getApiId()));
             SiteApi siteApi = siteApiMap.get(String.valueOf(r.getApiId()));
