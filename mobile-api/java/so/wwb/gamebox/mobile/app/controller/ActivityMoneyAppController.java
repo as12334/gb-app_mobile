@@ -137,8 +137,8 @@ public class ActivityMoneyAppController {
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
     }
 
