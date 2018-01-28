@@ -1141,6 +1141,35 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 验证安全密码
+     * @param password
+     * @return
+     */
+    @RequestMapping(value = "/checkSafePassword")
+    @ResponseBody
+    public String checkSafePassword(SecurityPassword password){
+        if(StringTool.isBlank(password.getOriginPwd())){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (!verifyOriginPwd(password)) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
+    }
+
+    /**
      * 验证吗remote验证
      *
      * @param code
