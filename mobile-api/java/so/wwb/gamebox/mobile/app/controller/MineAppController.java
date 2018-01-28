@@ -101,7 +101,7 @@ public class MineAppController extends BaseMineController {
      * @param vPreferentialRecodeListVo
      * @return
      */
-    @RequestMapping(value = "/getMyPromo", method = RequestMethod.POST)
+    @RequestMapping(value = "/getMyPromo")
     @ResponseBody
     public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo) {
 
@@ -703,6 +703,7 @@ public class MineAppController extends BaseMineController {
                     vo.getData(),
                     APP_VERSION);
         }
+        //验证密码复杂
         if (PasswordRule.isWeak(password.getPwd1())) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
@@ -1122,6 +1123,35 @@ public class MineAppController extends BaseMineController {
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getPlayerRecommend(request),
+                APP_VERSION);
+    }
+
+    /**
+     * 验证安全密码是否正确
+     * @param password
+     * @return
+     */
+    @RequestMapping(value = "/checkSafePassword")
+    @ResponseBody
+    public String checkSafePassword(SecurityPassword password){
+        if(StringTool.isBlank(password.getOriginPwd())){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (!verifyOriginPwd(password)){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
                 APP_VERSION);
     }
 
