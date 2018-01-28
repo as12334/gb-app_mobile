@@ -52,7 +52,7 @@ public class OriginController extends BaseOriginController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/mainIndex", method = RequestMethod.POST)
+    @RequestMapping(value = "/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = MapTool.newHashMap();
@@ -74,7 +74,7 @@ public class OriginController extends BaseOriginController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getCarouse", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCarouse")
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
         //轮播图
@@ -93,7 +93,7 @@ public class OriginController extends BaseOriginController {
      *
      * @return
      */
-    @RequestMapping(value = "/getAnnouncement", method = RequestMethod.POST)
+    @RequestMapping(value = "/getAnnouncement")
     @ResponseBody
     public String getAnnounce() {
         //公告
@@ -114,7 +114,7 @@ public class OriginController extends BaseOriginController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/getSiteApiRelation", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSiteApiRelation")
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
@@ -134,7 +134,7 @@ public class OriginController extends BaseOriginController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getFloat", method = RequestMethod.POST)
+    @RequestMapping(value = "/getFloat")
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
         //浮动图
@@ -156,7 +156,7 @@ public class OriginController extends BaseOriginController {
      * @param tag
      * @return
      */
-    @RequestMapping(value = "/getCasinoGame", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCasinoGame")
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
@@ -177,7 +177,7 @@ public class OriginController extends BaseOriginController {
      *
      * @return
      */
-    @RequestMapping(value = "/getGameTag", method = RequestMethod.POST)
+    @RequestMapping(value = "/getGameTag")
     @ResponseBody
     public String getGameTags() {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -195,7 +195,7 @@ public class OriginController extends BaseOriginController {
      * @param modelVo
      * @return
      */
-    @RequestMapping(value = "getGameLink", method = RequestMethod.POST)
+    @RequestMapping(value = "getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (SessionManager.getUser() == null) {

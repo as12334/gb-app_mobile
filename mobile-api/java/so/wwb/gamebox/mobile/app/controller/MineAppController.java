@@ -129,7 +129,7 @@ public class MineAppController extends BaseMineController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/refresh", method = RequestMethod.POST)
+    @RequestMapping(value = "/refresh")
     @ResponseBody
     public String refresh(HttpServletRequest request) {
         UserInfoApp userInfo = appRefresh(request);
@@ -147,7 +147,7 @@ public class MineAppController extends BaseMineController {
      * @param listVo
      * @return
      */
-    @RequestMapping(value = "/getFundRecord", method = RequestMethod.POST)
+    @RequestMapping(value = "/getFundRecord")
     @ResponseBody
     public String getFundRecord(VPlayerTransactionListVo listVo) {
 
@@ -189,7 +189,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getTransactionType", method = RequestMethod.POST)
+    @RequestMapping(value = "/getTransactionType")
     @ResponseBody
     public String getTransactionType() {
         VPlayerTransactionListVo listVo = new VPlayerTransactionListVo();
@@ -211,7 +211,7 @@ public class MineAppController extends BaseMineController {
      * @param searchId
      * @return
      */
-    @RequestMapping(value = "/getFundRecordDetails", method = RequestMethod.POST)
+    @RequestMapping(value = "/getFundRecordDetails")
     @ResponseBody
     public String getFundRecordDetails(Integer searchId) {
         VPlayerTransactionVo vo = new VPlayerTransactionVo();
@@ -243,7 +243,7 @@ public class MineAppController extends BaseMineController {
      * @param listVo
      * @return
      */
-    @RequestMapping(value = "/getBettingList", method = RequestMethod.POST)
+    @RequestMapping(value = "/getBettingList")
     @ResponseBody
     public String getBettingList(PlayerGameOrderListVo listVo) {
 
@@ -276,7 +276,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getNoticeSiteType", method = RequestMethod.POST)
+    @RequestMapping(value = "/getNoticeSiteType")
     @ResponseBody
     public String goAddNoticeSite() {
 
@@ -588,7 +588,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/initSafePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/initSafePassword")
     @ResponseBody
     public String initSafePassword() {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -844,7 +844,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getSysNotice", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSysNotice")
     @ResponseBody
     public String getSysNotice(VSystemAnnouncementListVo vListVo) {
         Map map = getSystemNotice(vListVo);
@@ -861,7 +861,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getSysNoticeDetail", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSysNoticeDetail")
     @ResponseBody
     public String getSysNoticeDetail(VSystemAnnouncementListVo vListVo) {
         if (vListVo.getSearch().getId() == null) {
@@ -885,7 +885,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getGameNotice", method = RequestMethod.POST)
+    @RequestMapping(value = "/getGameNotice")
     @ResponseBody
     public String getGameNotice(VSystemAnnouncementListVo listVo) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -900,7 +900,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getGameNoticeDetail", method = RequestMethod.POST)
+    @RequestMapping(value = "/getGameNoticeDetail")
     @ResponseBody
     public String getGameNoticeDetail(VSystemAnnouncementListVo listVo) {
         if (listVo.getSearch().getId() == null) {
@@ -922,7 +922,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getSiteSysNotice", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSiteSysNotice")
     @ResponseBody
     public String getSiteSysNotice(VNoticeReceivedTextListVo listVo) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -937,7 +937,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/setSiteSysNoticeStatus", method = RequestMethod.POST)
+    @RequestMapping(value = "/setSiteSysNoticeStatus")
     @ResponseBody
     public String setSiteSysNoticeStatus(NoticeReceiveVo noticeReceiveVo, String ids) {
         if (StringTool.isBlank(ids)) {
@@ -1017,7 +1017,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getSiteSysNoticeDetail", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSiteSysNoticeDetail")
     @ResponseBody
     public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo, NoticeReceiveVo noticeReceiveVo, HttpServletRequest request) {
         if (noticeReceiveVo.getSearch().getId() == null) {
@@ -1040,7 +1040,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/getUnReadCount", method = RequestMethod.POST)
+    @RequestMapping(value = "/getUnReadCount")
     @ResponseBody
     public String getUnReadCount(VPlayerAdvisoryListVo listVo) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -1055,7 +1055,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/recovery", method = RequestMethod.POST)
+    @RequestMapping(value = "/recovery")
     @ResponseBody
     public String recovery(HttpServletRequest request) {
         if (!SessionManagerCommon.isAutoPay()) {
@@ -1086,7 +1086,7 @@ public class MineAppController extends BaseMineController {
      *
      * @return
      */
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout")
     @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         if(SessionManager.getUser() == null){
@@ -1119,7 +1119,7 @@ public class MineAppController extends BaseMineController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getUserPlayerRecommend", method = RequestMethod.POST)
+    @RequestMapping(value = "/getUserPlayerRecommend")
     @ResponseBody
     public String getUserPlayerRecommend(HttpServletRequest request){
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,

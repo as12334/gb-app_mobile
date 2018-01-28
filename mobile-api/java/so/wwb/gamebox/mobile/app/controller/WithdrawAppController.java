@@ -29,7 +29,7 @@ public class WithdrawAppController extends BaseWithDrawController {
      *
      * @return
      */
-    @RequestMapping(value = "/getWithDraw", method = RequestMethod.POST)
+    @RequestMapping(value = "/getWithDraw")
     @ResponseBody
     public String getWithDraw() {
         //判断是否达到取款要求

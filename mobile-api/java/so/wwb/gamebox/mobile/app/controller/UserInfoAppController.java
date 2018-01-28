@@ -47,7 +47,7 @@ public class UserInfoAppController extends BaseUserInfoController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
 
