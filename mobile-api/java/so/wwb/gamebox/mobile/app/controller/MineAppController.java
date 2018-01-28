@@ -80,6 +80,8 @@ import so.wwb.gamebox.web.shiro.common.filter.KickoutFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
@@ -327,8 +329,9 @@ public class MineAppController extends BaseMineController {
             AdvisoryMessageApp messageApp = new AdvisoryMessageApp();
             messageApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
             messageApp.setAdvisoryContent(advisory.getAdvisoryContent());
+
             String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone());
-            messageApp.setAdvisoryTime(time);
+            messageApp.setAdvisoryTime(Timestamp.valueOf(time).getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
             messageApp.setRead(advisory.getIsRead() == null ? true : advisory.getIsRead());
