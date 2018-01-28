@@ -55,7 +55,7 @@ public class ActivityMoneyAppController {
     /**
      * 剩余次数,是否能抽红包
      */
-    @RequestMapping(value = "/countDrawTimes", method = RequestMethod.POST)
+    @RequestMapping(value = "/countDrawTimes")
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
         if (SessionManagerCommon.getUser() == null) {
@@ -147,7 +147,7 @@ public class ActivityMoneyAppController {
      *
      * @return
      */
-    @RequestMapping(value = "/getPacket", method = RequestMethod.POST)
+    @RequestMapping(value = "/getPacket")
     @ResponseBody
     @Token(valid = true)
     public String getPacket(String activityMessageId) {
