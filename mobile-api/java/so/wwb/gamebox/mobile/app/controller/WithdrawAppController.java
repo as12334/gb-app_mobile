@@ -31,7 +31,7 @@ public class WithdrawAppController extends BaseWithDrawController {
      */
     @RequestMapping(value = "/getWithDraw")
     @ResponseBody
-    public String getWithDraw() {
+    public String getWithDraw(HttpServletRequest request) {
         //判断是否达到取款要求
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
@@ -44,7 +44,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         }
 
         Map<String, Object> map = MapTool.newHashMap();
-        withdraw(map);
+        withdraw(map, request);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
