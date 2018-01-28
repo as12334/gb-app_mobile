@@ -337,11 +337,14 @@ public class MineAppController extends BaseMineController {
             messageApp.setRead(advisory.getIsRead() == null ? true : advisory.getIsRead());
             messageAppList.add(messageApp);
         }
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("total", listVo.getPaging().getTotalCount());
+        dataMap.put("dataList", messageAppList);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                messageAppList, APP_VERSION);
+                dataMap, APP_VERSION);
     }
 
     /**
