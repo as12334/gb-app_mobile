@@ -78,7 +78,7 @@
             <div class="cont-text">
                 <div class="popup-scroll">
                     <div class="bs-component">
-                        <div class="alert alert-dismissible alert-danger">${views.passport_auto['本次升级，加强了账户的安全防护体系，请验证真实姓名，验证通过后即可成功登陆。']}</div>
+                        <div class="alert alert-dismissible alert-danger">${views.passport_auto['本次升级，加强了账户的安全防护体系，请验证真实姓名，验证通过后即可成功登陆']}</div>
                     </div>
                     <form class="form-horizontal">
                         <div class="form-group">
