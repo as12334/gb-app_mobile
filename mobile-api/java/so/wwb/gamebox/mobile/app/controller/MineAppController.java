@@ -462,6 +462,8 @@ public class MineAppController extends BaseMineController {
             }
         });
 
+        List<AdvisoryMessageDetailApp> detailAppList = new ArrayList<>();
+
         for (VPlayerAdvisory obj : vPlayerAdvisoryList) {
             //回复标题和内容
             listVo.getSearch().setPlayerAdvisoryId(obj.getId());
@@ -481,6 +483,11 @@ public class MineAppController extends BaseMineController {
                     , new Criterion(PlayerAdvisoryRead.PROP_PLAYER_ADVISORY_ID, Operator.EQ, readVo.getSearch().getPlayerAdvisoryId())});
             ServiceSiteTool.playerAdvisoryReadService().batchDeleteCriteria(readVo);
 
+            AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
+            detailApp = buildingAdvisoryMessageDetailApp(detailApp, obj);
+
+            detailAppList.add(detailApp);
+
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo parVo = new PlayerAdvisoryReadVo();
                 parVo.setResult(new PlayerAdvisoryRead());
@@ -491,16 +498,10 @@ public class MineAppController extends BaseMineController {
             }
         }
 
-        AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
-        if (vPlayerAdvisoryList.size() == 1) {
-            VPlayerAdvisory advisory = vPlayerAdvisoryList.get(0);
-
-            detailApp = buildingAdvisoryMessageDetailApp(detailApp, advisory);
-        }
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                detailApp, APP_VERSION);
+                detailAppList, APP_VERSION);
     }
 
     /**
