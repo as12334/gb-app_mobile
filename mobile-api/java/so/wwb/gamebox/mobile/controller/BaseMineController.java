@@ -69,6 +69,7 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
@@ -712,10 +713,8 @@ public class BaseMineController {
         detailApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
         detailApp.setAdvisoryContent(advisory.getAdvisoryContent());
         detailApp.setQuestionType(advisory.getQuestionType());
-        detailApp.setAdvisoryTime(LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        detailApp.setReplyTime(LocaleDateTool.formatDate(advisory.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        detailApp.setReplyTitle(advisory.getReplyTitle());
-        detailApp.setReplyContent(advisory.getReplyContent());
+        String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone());
+        detailApp.setAdvisoryTime(Timestamp.valueOf(time).getTime());
 
         return detailApp;
     }
