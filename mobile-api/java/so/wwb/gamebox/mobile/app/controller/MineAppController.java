@@ -103,7 +103,7 @@ public class MineAppController extends BaseMineController {
      * @param vPreferentialRecodeListVo
      * @return
      */
-    @RequestMapping(value = "/getMyPromo", method = RequestMethod.POST)
+    @RequestMapping(value = "/getMyPromo")
     @ResponseBody
     public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo) {
 
