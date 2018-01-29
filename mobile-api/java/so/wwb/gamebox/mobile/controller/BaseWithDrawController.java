@@ -202,7 +202,7 @@ public class BaseWithDrawController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("actualWithdraw", actualWithdraw);
-        result.put("deductFavorable", favorableSum > 0 ? -favorableSum : favorableSum);
+        result.put("deductFavorable", auditMap.get("favorableSum"));
         result.put("transactionNo", auditMap.get("transactionNo"));
         result.put("administrativeFee", depositSum);
         result.put("withdrawAmount", withdrawAmount);
