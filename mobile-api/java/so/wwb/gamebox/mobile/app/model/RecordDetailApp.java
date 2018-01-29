@@ -30,6 +30,8 @@ public class RecordDetailApp {
     private String bankCode; //取款 银行code
     private String bankCodeName; // 银行名称
 
+    private String withDrwalsRemark; // 取款描述
+
     private String bitAmount; //比特币
     /**
      * 账号
@@ -255,5 +257,13 @@ public class RecordDetailApp {
 
     public void setBankCodeName(String bankCodeName) {
         this.bankCodeName = bankCodeName;
+    }
+
+    public String getWithDrwalsRemark() {
+        return withDrwalsRemark;
+    }
+
+    public void setWithDrwalsRemark(String withDrwalsRemark) {
+        this.withDrwalsRemark = withDrwalsRemark;
     }
 }
