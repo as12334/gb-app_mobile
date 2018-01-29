@@ -38,7 +38,7 @@ public enum AppErrorCodeEnum {
     GAME_NOT_EXIST(400, "游戏不存在"),
     UPDATE_STATUS_FAIL(401, "更新失败"),
     NOT_RECOVER(402, "非免转不能一键回收"),
-
+    SYSTEM_READ(403,"消息已读"),
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
