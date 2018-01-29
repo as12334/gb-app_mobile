@@ -17,7 +17,7 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.mobile.app.model.AppUserBankCard;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -74,7 +74,7 @@ public class BaseWithDrawController {
         //获取稽核相关
         map.put("auditMap", getAuditMap());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        hasBank(map);
+        hasBank(map, request);
         //player
         UserPlayer player = getPlayer();
         double totalBalance = 0;
@@ -85,17 +85,16 @@ public class BaseWithDrawController {
         map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
-        UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
-        map.put("bankUrl", setBankPictureUrl(request, bankcard));
     }
 
     /**
      * 设置银行卡图片
+     *
      * @param request
      * @param bankcard
      * @return
      */
-    private String setBankPictureUrl (HttpServletRequest request, UserBankcard bankcard) {
+    private String setBankPictureUrl(HttpServletRequest request, UserBankcard bankcard) {
         StringBuilder sb = new StringBuilder();
         sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
         sb.append(COMMON_PAYBANK_PHOTO);
@@ -125,7 +124,7 @@ public class BaseWithDrawController {
      * @param map
      * @return
      */
-    public boolean hasBank(Map map) {
+    public boolean hasBank(Map map, HttpServletRequest request) {
         // 是否设置收款账号
         Map<String, UserBankcard> bankcardMap = BankHelper.getUserBankcards();
         SysParam cashParam = ParamTool.getSysParam(SiteParamEnum.SETTING_WITHDRAW_TYPE_IS_CASH);
@@ -134,7 +133,7 @@ public class BaseWithDrawController {
         boolean isBit = bitParam != null && "true".equals(bitParam.getParamValue());
         map.put("isBit", isBit);
         map.put("isCash", isCash);
-        map.put("bankcardMap", setUserBankCard(bankcardMap));
+        map.put("bankcardMap", setUserBankCard(bankcardMap, request));
         boolean hasBank = true;
         if (MapTool.isEmpty(bankcardMap)) {
             hasBank = false;
@@ -203,7 +202,7 @@ public class BaseWithDrawController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("actualWithdraw", actualWithdraw);
-        result.put("deductFavorable", auditMap.get("favorableSum"));
+        result.put("deductFavorable", favorableSum > 0 ? -favorableSum : favorableSum);
         result.put("transactionNo", auditMap.get("transactionNo"));
         result.put("administrativeFee", depositSum);
         result.put("withdrawAmount", withdrawAmount);
@@ -225,12 +224,28 @@ public class BaseWithDrawController {
      * @param bankcardMap
      * @return
      */
-    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap) {
-        for (UserBankcard bank : bankcardMap.values()) {
-            bank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
-            bank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap, HttpServletRequest request) {
+        Map<String, AppUserBankCard> appMap = new HashMap<>();
+        for (Map.Entry<String, UserBankcard> userMap : bankcardMap.entrySet()) {
+            UserBankcard bank = userMap.getValue();
+            AppUserBankCard appBank = new AppUserBankCard();
+            appBank.setId(bank.getId());
+            appBank.setUserId(bank.getUserId());
+            appBank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
+            appBank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+            appBank.setCreateTime(bank.getCreateTime());
+            appBank.setUseCount(bank.getUseCount());
+            appBank.setUseStauts(bank.getUseStauts());
+            appBank.setDefault(bank.getIsDefault());
+            appBank.setBankName(bank.getBankName());
+            appBank.setBankDeposit(bank.getBankDeposit());
+            appBank.setCustomBankName(bank.getCustomBankName());
+            appBank.setType(bank.getType());
+            appBank.setBankUrl(setBankPictureUrl(request, bank));
+            appMap.put(userMap.getKey(), appBank);
         }
-        return bankcardMap;
+
+        return appMap;
     }
 
     /**
