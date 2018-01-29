@@ -55,6 +55,7 @@ import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
+import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
@@ -626,6 +627,12 @@ public class BaseMineController {
             detailApp.setPoundage(withdrawVo.getResult().getCounterFee());  //手续费
             detailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
             detailApp.setRechargeTotalAmount(withdrawVo.getResult().getWithdrawActualAmount());  //实际到账
+            String bankNo = String.valueOf(map.get("bankNo"));
+            detailApp.setWithDrwalsRemark(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length()));  //取款描述
+        }
+        if (StringTool.equalsIgnoreCase(detailApp.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
+            detailApp.setWithDrwalsRemark(String.valueOf(map.get(SessionManager.getLocale().toString())));  //优惠和取款描述
+
         }
         detailApp.setBitAmount((String) map.get("bitAmount"));
 
