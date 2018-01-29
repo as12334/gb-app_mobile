@@ -16,6 +16,7 @@ import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.app.model.AppUserBankCard;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -205,11 +206,27 @@ public class BaseWithDrawController {
      * @return
      */
     private Map setUserBankCard(Map<String, UserBankcard> bankcardMap) {
-        for (UserBankcard bank : bankcardMap.values()) {
-            bank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
-            bank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+        Map<String,AppUserBankCard> appMap = new HashMap<>();
+        for(Map.Entry<String,UserBankcard> userMap : bankcardMap.entrySet()){
+            UserBankcard bank = userMap.getValue();
+            AppUserBankCard appBank = new AppUserBankCard();
+            appBank.setId(bank.getId());
+            appBank.setUserId(bank.getUserId());
+            appBank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
+            appBank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+            appBank.setCreateTime(bank.getCreateTime());
+            appBank.setUseCount(bank.getUseCount());
+            appBank.setUseStauts(bank.getUseStauts());
+            appBank.setDefault(bank.getIsDefault());
+            appBank.setBankName(bank.getBankName());
+            appBank.setBankDeposit(bank.getBankDeposit());
+            appBank.setCustomBankName(bank.getCustomBankName());
+            appBank.setType(bank.getType());
+            appBank.setBankUrl(null);
+            appMap.put(userMap.getKey(),appBank);
         }
-        return bankcardMap;
+
+        return appMap;
     }
 
     /**
