@@ -629,6 +629,9 @@ public class BaseMineController {
             detailApp.setRechargeTotalAmount(withdrawVo.getResult().getWithdrawActualAmount());  //实际到账
             String bankNo = String.valueOf(map.get("bankNo"));
             detailApp.setWithDrwalsRemark(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length()));  //取款描述
+        }
+        if (StringTool.equalsIgnoreCase(detailApp.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
+            detailApp.setWithDrwalsRemark(String.valueOf(map.get(SessionManager.getLocale().toString())));  //优惠和取款描述
 
         }
         detailApp.setBitAmount((String) map.get("bitAmount"));

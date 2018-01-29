@@ -30,7 +30,7 @@ public class RecordDetailApp {
     private String bankCode; //取款 银行code
     private String bankCodeName; // 银行名称
 
-    private String withDrwalsRemark; // 取款描述
+    private String withDrwalsRemark; // 取款 和优惠描述
 
     private String bitAmount; //比特币
     /**
