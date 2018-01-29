@@ -13,9 +13,11 @@ import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -50,9 +52,11 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.COMMON_PAYBANK_PHOTO;
 
 /**
  * Created by ed on 18-1-21.
@@ -66,7 +70,7 @@ public class BaseWithDrawController {
     /**
      * 取款
      */
-    protected void withdraw(Map map) {
+    protected void withdraw(Map map, HttpServletRequest request) {
         //获取稽核相关
         map.put("auditMap", getAuditMap());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
@@ -81,6 +85,23 @@ public class BaseWithDrawController {
         map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
+        UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
+        map.put("bankUrl", setBankPictureUrl(request, bankcard));
+    }
+
+    /**
+     * 设置银行卡图片
+     * @param request
+     * @param bankcard
+     * @return
+     */
+    private String setBankPictureUrl (HttpServletRequest request, UserBankcard bankcard) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(COMMON_PAYBANK_PHOTO);
+        sb.append(bankcard.getBankName());
+        sb.append(".png");
+        return sb.toString();
     }
 
     /**
@@ -182,7 +203,7 @@ public class BaseWithDrawController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("actualWithdraw", actualWithdraw);
-        result.put("deductFavorable", favorableSum > 0 ? -favorableSum : favorableSum);
+        result.put("deductFavorable", auditMap.get("favorableSum"));
         result.put("transactionNo", auditMap.get("transactionNo"));
         result.put("administrativeFee", depositSum);
         result.put("withdrawAmount", withdrawAmount);

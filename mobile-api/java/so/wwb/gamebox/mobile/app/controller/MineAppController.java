@@ -486,8 +486,7 @@ public class MineAppController extends BaseMineController {
             AdvisoryMessageDetailApp detailApp = new AdvisoryMessageDetailApp();
             detailApp = buildingAdvisoryMessageDetailApp(detailApp, obj);
 
-            detailAppList.add(detailApp);
-
+            List<AdvisoryMessageReplyListApp> replyList = new ArrayList<>();
             for (PlayerAdvisoryReply replay : parListVo.getResult()) {
                 PlayerAdvisoryReadVo parVo = new PlayerAdvisoryReadVo();
                 parVo.setResult(new PlayerAdvisoryRead());
@@ -495,7 +494,16 @@ public class MineAppController extends BaseMineController {
                 parVo.getResult().setPlayerAdvisoryReplyId(replay.getId());
                 parVo.getResult().setPlayerAdvisoryId(obj.getId());
                 ServiceSiteTool.playerAdvisoryReadService().insert(parVo);
+
+                AdvisoryMessageReplyListApp replyApp = new AdvisoryMessageReplyListApp();
+                replyApp.setReplyTitle(replay.getReplyTitle());
+                replyApp.setReplyContent(replay.getReplyContent());
+                String time = LocaleDateTool.formatDate(replay.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone());
+                replyApp.setReplyTime(Timestamp.valueOf(time).getTime());
+                replyList.add(replyApp);
             }
+            detailApp.setReplyList(replyList);
+            detailAppList.add(detailApp);
         }
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
