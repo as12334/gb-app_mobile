@@ -13,6 +13,7 @@ import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
@@ -51,9 +52,11 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.COMMON_PAYBANK_PHOTO;
 
 /**
  * Created by ed on 18-1-21.
@@ -67,11 +70,11 @@ public class BaseWithDrawController {
     /**
      * 取款
      */
-    protected void withdraw(Map map) {
+    protected void withdraw(Map map, HttpServletRequest request) {
         //获取稽核相关
         map.put("auditMap", getAuditMap());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        hasBank(map);
+        hasBank(map, request);
         //player
         UserPlayer player = getPlayer();
         double totalBalance = 0;
@@ -82,6 +85,22 @@ public class BaseWithDrawController {
         map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
+    }
+
+    /**
+     * 设置银行卡图片
+     *
+     * @param request
+     * @param bankcard
+     * @return
+     */
+    private String setBankPictureUrl(HttpServletRequest request, UserBankcard bankcard) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(COMMON_PAYBANK_PHOTO);
+        sb.append(bankcard.getBankName());
+        sb.append(".png");
+        return sb.toString();
     }
 
     /**
@@ -105,7 +124,7 @@ public class BaseWithDrawController {
      * @param map
      * @return
      */
-    public boolean hasBank(Map map) {
+    public boolean hasBank(Map map, HttpServletRequest request) {
         // 是否设置收款账号
         Map<String, UserBankcard> bankcardMap = BankHelper.getUserBankcards();
         SysParam cashParam = ParamTool.getSysParam(SiteParamEnum.SETTING_WITHDRAW_TYPE_IS_CASH);
@@ -114,7 +133,7 @@ public class BaseWithDrawController {
         boolean isBit = bitParam != null && "true".equals(bitParam.getParamValue());
         map.put("isBit", isBit);
         map.put("isCash", isCash);
-        map.put("bankcardMap", setUserBankCard(bankcardMap));
+        map.put("bankcardMap", setUserBankCard(bankcardMap, request));
         boolean hasBank = true;
         if (MapTool.isEmpty(bankcardMap)) {
             hasBank = false;
@@ -205,9 +224,9 @@ public class BaseWithDrawController {
      * @param bankcardMap
      * @return
      */
-    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap) {
-        Map<String,AppUserBankCard> appMap = new HashMap<>();
-        for(Map.Entry<String,UserBankcard> userMap : bankcardMap.entrySet()){
+    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap, HttpServletRequest request) {
+        Map<String, AppUserBankCard> appMap = new HashMap<>();
+        for (Map.Entry<String, UserBankcard> userMap : bankcardMap.entrySet()) {
             UserBankcard bank = userMap.getValue();
             AppUserBankCard appBank = new AppUserBankCard();
             appBank.setId(bank.getId());
@@ -222,8 +241,8 @@ public class BaseWithDrawController {
             appBank.setBankDeposit(bank.getBankDeposit());
             appBank.setCustomBankName(bank.getCustomBankName());
             appBank.setType(bank.getType());
-            appBank.setBankUrl(null);
-            appMap.put(userMap.getKey(),appBank);
+            appBank.setBankUrl(setBankPictureUrl(request, bank));
+            appMap.put(userMap.getKey(), appBank);
         }
 
         return appMap;
