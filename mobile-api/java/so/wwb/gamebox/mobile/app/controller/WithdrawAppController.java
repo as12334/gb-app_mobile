@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.controller.BaseWithDrawController;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.player.vo.PlayerTransactionVo;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
@@ -121,6 +124,13 @@ public class WithdrawAppController extends BaseWithDrawController {
      * @return
      */
     private AppModelVo withDraw(AppModelVo vo) {
+        SysUser user = SessionManager.getUser();
+        if (StringTool.isBlank(user.getPermissionPwd())) {
+            vo.setCode(AppErrorCodeEnum.NOT_SET_SAFE_PASSWORD.getCode());
+            vo.setMsg(AppErrorCodeEnum.NOT_SET_SAFE_PASSWORD.getMsg());
+            vo.setError(AppErrorCodeEnum.FAIL_COED);
+            return vo;
+        }
         //是否已存在取款订单
         if (hasOrder()) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getCode());
@@ -143,7 +153,7 @@ public class WithdrawAppController extends BaseWithDrawController {
             return vo;
         }
         //余额是否充足
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>();
         if (isBalanceAdequate(map)) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getCode());
             vo.setMsg(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));

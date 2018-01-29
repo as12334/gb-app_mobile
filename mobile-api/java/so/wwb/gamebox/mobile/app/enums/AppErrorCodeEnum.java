@@ -39,6 +39,7 @@ public enum AppErrorCodeEnum {
     UPDATE_STATUS_FAIL(401, "更新失败"),
     NOT_RECOVER(402, "非免转不能一键回收"),
     SYSTEM_READ(403,"消息已读"),
+    NOT_SET_SAFE_PASSWORD(404,"未设置安全密码"),
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
