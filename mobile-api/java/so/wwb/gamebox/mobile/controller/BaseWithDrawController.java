@@ -17,6 +17,7 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.app.model.AppPlayerRank;
 import so.wwb.gamebox.mobile.app.model.AppUserBankCard;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -87,6 +88,19 @@ public class BaseWithDrawController {
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
         map.put("isSafePassword", isSafePassword());
+        map.put("rank",getPlayerRank());
+    }
+
+    /**
+     * 获取玩家层级取款金额最大小值
+     * @return
+     */
+    private AppPlayerRank getPlayerRank(){
+        PlayerRank rank = getRank();
+        AppPlayerRank appRank = new AppPlayerRank();
+        appRank.setWithdrawMinNum(rank.getWithdrawMinNum());
+        appRank.setWithdrawMaxNum(rank.getWithdrawMaxNum());
+        return appRank;
     }
 
     /**

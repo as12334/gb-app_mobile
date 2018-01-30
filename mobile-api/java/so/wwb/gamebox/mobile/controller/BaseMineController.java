@@ -248,8 +248,8 @@ public class BaseMineController {
         //模拟账号且是自主api可用,其他试玩模式下不支持转账
         if (SessionManagerCommon.getDemoModelEnum() != null) {
             if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(SessionManagerCommon.getDemoModelEnum()) && (
-                    apiId == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                            apiId == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+                    apiId.equals(Integer.valueOf(ApiProviderEnum.PL.getCode())) ||
+                            apiId.equals(Integer.valueOf(ApiProviderEnum.DWT.getCode())))) {
             } else {
                 return getMsg(false, MessageI18nConst.RECOVERY_DEMO_UNSUPPORTED, Module.FUND_TRANSFER.getCode());
             }
@@ -479,7 +479,7 @@ public class BaseMineController {
     }
 
     private String getGameName(Map<String, SiteGameI18n> map, String gameId) {
-        if (map.isEmpty() || map == null) {
+        if (MapTool.isEmpty(map)) {
             return null;
         }
         if (map.get(gameId) != null) {
@@ -908,7 +908,6 @@ public class BaseMineController {
      * @return
      */
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
-        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
@@ -938,6 +937,7 @@ public class BaseMineController {
                 }
             }
         }
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
         return map;
