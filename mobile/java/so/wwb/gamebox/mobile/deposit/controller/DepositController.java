@@ -10,11 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.TerminalEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
+import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -288,13 +286,15 @@ public class DepositController extends BaseCommonDepositController {
     }
 
     private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap, String rechargeType, String scanType) {
-        if (payAccounts.size() > 0) {
+        deleteMaintainChannel(payAccounts);
+        if (CollectionTool.isNotEmpty(payAccounts)) {
             payAccountMap.put(rechargeType, scanType);
         }
     }
 
     private void online(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
-        if (payAccounts.size() > 0) {
+        deleteMaintainChannel(payAccounts);
+        if (CollectionTool.isNotEmpty(payAccounts)) {
             payAccountMap.put(RechargeTypeEnum.ONLINE_DEPOSIT.getCode(), "onlinepay");
         }
     }
@@ -371,6 +371,27 @@ public class DepositController extends BaseCommonDepositController {
             return rechargeUrlParam.getParamValue();
         } else {
             return "";
+        }
+    }
+
+    /**
+     * 去除维护中收款账户
+     *
+     * @param payAccounts
+     */
+    private void deleteMaintainChannel(List<PayAccount> payAccounts) {
+        if(CollectionTool.isEmpty(payAccounts)) {
+            return;
+        }
+        Map<String, Bank> bankMap = CacheBase.getBank();
+        Bank bank;
+        Iterator<PayAccount> accountIterator = payAccounts.iterator();
+        while (accountIterator.hasNext()) {
+            PayAccount payAccount = accountIterator.next();
+            bank = bankMap.get(payAccount.getBankCode());
+            if (bank == null || (bank.getIsUse() != null && !bank.getIsUse())) {
+                accountIterator.remove();
+            }
         }
     }
 }
