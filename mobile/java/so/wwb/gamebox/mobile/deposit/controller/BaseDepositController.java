@@ -12,6 +12,7 @@ import org.soul.model.session.SessionKey;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.common.MessageI18nConst;
@@ -108,7 +109,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         vActivityMessageVo.setDepositAmount(rechargeAmount);
         vActivityMessageVo.setRankId(userPlayer.getRankId());
         vActivityMessageVo.setLocal(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceSiteTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
+        vActivityMessageVo = ServiceActivityTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
         if(CollectionTool.isEmpty(vActivityMessages)) {
             return new ArrayList<>();

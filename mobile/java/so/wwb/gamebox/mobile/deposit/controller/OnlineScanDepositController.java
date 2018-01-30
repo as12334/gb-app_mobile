@@ -87,8 +87,8 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
         model.addAttribute("currency", getCurrencySign());
         model.addAttribute("username", SessionManager.getUserName());
         //验证规则
-        boolean isRandomAmount = payAccountForScan.getRandomAmount() == null ? false : payAccountForScan.getRandomAmount();
-        model.addAttribute("validateRule", JsRuleCreator.create(isRandomAmount?OnlineScanDeposit2Form.class:OnlineScanDepositForm.class));
+        boolean isRandomAmount = payAccountForScan == null || payAccountForScan.getRandomAmount() == null || !payAccountForScan.getRandomAmount() ? false : payAccountForScan.getRandomAmount();
+        model.addAttribute("validateRule", JsRuleCreator.create(isRandomAmount ? OnlineScanDeposit2Form.class : OnlineScanDepositForm.class));
         model.addAttribute("rank", rank);
         model.addAttribute("command", new PayAccountVo());
         return "/deposit/ScanCode";
@@ -103,6 +103,7 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
 
     /**
      * 开启随机额度时提交方法
+     *
      * @param playerRechargeVo
      * @param form
      * @param result
