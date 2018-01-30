@@ -13,7 +13,7 @@
         <span class="mui-icon icon-home"></span>
         <span class="mui-tab-label">${views.themes_auto['首页']}</span>
     </a>
-    <a data-rel='{"target":"loadCustomer","opType","function" }' class="mui-tab-item">
+    <a data-rel='{"target":"loadCustomer","opType":"function" }' class="mui-tab-item">
         <span class="mui-icon icon-service"></span>
         <span class="mui-tab-label">${views.themes_auto['客服']}</span>
     </a>

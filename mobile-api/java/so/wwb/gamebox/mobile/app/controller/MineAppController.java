@@ -965,15 +965,7 @@ public class MineAppController extends BaseMineController {
             list.add(Integer.valueOf(id));
         }
         noticeReceiveVo.setIds(list);
-
-        boolean b = ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
-        if (!b) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.SYSTEM_READ.getCode(),
-                    AppErrorCodeEnum.SYSTEM_READ.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
+        ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),

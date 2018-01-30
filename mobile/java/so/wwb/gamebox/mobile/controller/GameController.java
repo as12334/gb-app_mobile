@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
@@ -13,11 +14,13 @@ import org.soul.commons.query.sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
@@ -26,10 +29,7 @@ import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 游戏Controller
@@ -87,7 +87,7 @@ public class GameController extends BaseApiController {
         Map<String, Api> apiMap = Cache.getApi();
         Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
         //typeRelationMap获取的apiType为空时会出现空指针
-        if(typeRelationList == null){
+        if (typeRelationList == null) {
             typeRelationList = new ArrayList<>();
         }
         for (SiteApiTypeRelation r : typeRelationList) {
@@ -144,6 +144,39 @@ public class GameController extends BaseApiController {
     }
 
     /**
+     * 获取api游戏维护时间
+     * @param apiId
+     * @return
+     */
+    @RequestMapping("/getApiMaintain")
+    @ResponseBody
+    public Map getApiGameStatus(Integer apiId) {
+        if(apiId == null){
+            return new HashMap();
+        }
+
+        Map<String,Object> map = new HashMap<>(3,1f);
+        Map<String,Api> apiMap = Cache.getApi();
+        Map<String,ApiI18n> apiI18nMap = Cache.getApiI18n();
+        for (Api api:apiMap.values()){
+            if(api.getId().equals(apiId)){
+                map.put("maintainStartTime",api.getMaintainStartTime());
+                map.put("maintainEndTime",api.getMaintainEndTime());
+                break;
+            }
+        }
+        for (ApiI18n apiI18n : apiI18nMap.values()){
+            if(StringTool.equals(apiI18n.getLocale(),SessionManager.getLocale().toString())
+                    && apiI18n.getApiId().equals(apiId)){
+                map.put("gameName",apiI18n.getName());
+                break;
+            }
+        }
+
+        return map;
+    }
+
+    /**
      * 根据API-TYPE跳转不同的页面
      * 顺带设置每种Type每页显示数量
      */
@@ -153,10 +186,10 @@ public class GameController extends BaseApiController {
         if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.CASINO.getCode() == listVo.getSearch().getApiTypeId()) {
             paging.setPageSize(CASINO_PAGE_SIZE);
             redirectUrl = String.format(redirectUrl, "Casino");
-        } else if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.LOTTERY.getCode() == listVo.getSearch().getApiTypeId()){ // 彩票
+        } else if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.LOTTERY.getCode() == listVo.getSearch().getApiTypeId()) { // 彩票
             paging.setPageSize(LOTTERY_PAGE_SIZE);
             redirectUrl = String.format(redirectUrl, "Lottery");
-        } else if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.CHESS.getCode() == listVo.getSearch().getApiTypeId()){
+        } else if (listVo.getSearch().getApiTypeId() != null && ApiTypeEnum.CHESS.getCode() == listVo.getSearch().getApiTypeId()) {
             redirectUrl = String.format(redirectUrl, "Chess");
         }
         return redirectUrl;

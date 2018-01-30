@@ -18,6 +18,7 @@ import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.model.AppUserBankCard;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -85,6 +86,20 @@ public class BaseWithDrawController {
         map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
+        map.put("isSafePassword", isSafePassword());
+    }
+
+    /**
+     * 判断用户是否存在安全码
+     *
+     * @return
+     */
+    protected boolean isSafePassword() {
+        SysUser user = SessionManager.getUser();
+        if (StringTool.isBlank(user.getPermissionPwd())) {
+            return false;
+        }
+        return true;
     }
 
     /**
