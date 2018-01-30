@@ -3,15 +3,19 @@ package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.controller.BaseWithDrawController;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.player.vo.PlayerTransactionVo;
+import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +64,7 @@ public class WithdrawAppController extends BaseWithDrawController {
     @RequestMapping(value = "/submitWithdraw", method = RequestMethod.POST)
     @ResponseBody
     @Token(valid = true)
-    public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo, BindingResult result) {
+    public String submitWithdraw(HttpServletRequest request, PlayerTransactionVo playerVo, BindingResult result,SecurityPassword password) {
         if (result.hasErrors()) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -76,6 +80,29 @@ public class WithdrawAppController extends BaseWithDrawController {
                     null,
                     APP_VERSION);
         }
+        if(StringTool.isBlank(password.getOriginPwd())){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (!verifyOriginPwd(password)) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //是否有取款银行卡
+        Map map = MapTool.newHashMap();
+        if (!hasBank(map, request)) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.NO_BANK.getCode(),
+                    AppErrorCodeEnum.NO_BANK.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
         //判断取款是否达到要求
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
@@ -84,16 +111,6 @@ public class WithdrawAppController extends BaseWithDrawController {
                     vo.getCode(),
                     vo.getMsg(),
                     vo.getData(),
-                    APP_VERSION);
-        }
-
-        //是否有取款银行卡
-        Map map = MapTool.newHashMap();
-        if (!hasBank(map, request)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.NO_BANK.getCode(),
-                    AppErrorCodeEnum.NO_BANK.getMsg(),
-                    null,
                     APP_VERSION);
         }
         //是否符合取款金额设置
@@ -120,6 +137,14 @@ public class WithdrawAppController extends BaseWithDrawController {
                 AppErrorCodeEnum.WITHDRAW_FAIL.getMsg(),
                 map,
                 APP_VERSION);
+    }
+
+    /**
+     * 验证原密码
+     */
+    private boolean verifyOriginPwd(SecurityPassword password) {
+        SysUser user = SessionManager.getUser();
+        return StringTool.equals(AuthTool.md5SysUserPermission(password.getOriginPwd(), user.getUsername()), user.getPermissionPwd());
     }
 
     /**
