@@ -2,7 +2,9 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
@@ -145,30 +147,31 @@ public class GameController extends BaseApiController {
 
     /**
      * 获取api游戏维护时间
+     *
      * @param apiId
      * @return
      */
     @RequestMapping("/getApiMaintain")
     @ResponseBody
     public Map getApiGameStatus(Integer apiId) {
-        if(apiId == null){
+        if (apiId == null) {
             return new HashMap();
         }
 
-        Map<String,Object> map = new HashMap<>(3,1f);
-        Map<String,Api> apiMap = Cache.getApi();
-        Map<String,ApiI18n> apiI18nMap = Cache.getApiI18n();
-        for (Api api:apiMap.values()){
-            if(api.getId().equals(apiId)){
-                map.put("maintainStartTime",api.getMaintainStartTime());
-                map.put("maintainEndTime",api.getMaintainEndTime());
+        Map<String, Object> map = new HashMap<>(3, 1f);
+        Map<String, Api> apiMap = Cache.getApi();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        for (Api api : apiMap.values()) {
+            if (api.getId().equals(apiId)) {
+                map.put("maintainStartTime", LocaleDateTool.formatDate(api.getMaintainStartTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+                map.put("maintainEndTime", LocaleDateTool.formatDate(api.getMaintainEndTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
                 break;
             }
         }
-        for (ApiI18n apiI18n : apiI18nMap.values()){
-            if(StringTool.equals(apiI18n.getLocale(),SessionManager.getLocale().toString())
-                    && apiI18n.getApiId().equals(apiId)){
-                map.put("gameName",apiI18n.getName());
+        for (ApiI18n apiI18n : apiI18nMap.values()) {
+            if (StringTool.equals(apiI18n.getLocale(), SessionManager.getLocale().toString())
+                    && apiI18n.getApiId().equals(apiId)) {
+                map.put("gameName", apiI18n.getName());
                 break;
             }
         }
