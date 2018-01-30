@@ -889,7 +889,6 @@ public class BaseMineController {
      * @return
      */
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
-        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
@@ -919,6 +918,7 @@ public class BaseMineController {
                 }
             }
         }
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
         return map;
