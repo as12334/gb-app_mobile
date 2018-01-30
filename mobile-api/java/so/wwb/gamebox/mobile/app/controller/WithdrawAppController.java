@@ -69,7 +69,7 @@ public class WithdrawAppController extends BaseWithDrawController {
                     APP_VERSION);
         }
         //判断用户是否存在安全码
-        if (isSafePassword()) {
+        if (!isSafePassword()) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.NOT_SET_SAFE_PASSWORD.getCode(),
                     AppErrorCodeEnum.NOT_SET_SAFE_PASSWORD.getMsg(),
