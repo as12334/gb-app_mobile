@@ -9,8 +9,8 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.ActivityTypeApp;
@@ -126,7 +126,7 @@ public class DiscountsAppController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             listVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        listVo = ServiceSiteTool.vActivityMessageService().getActivityList(listVo);
+        listVo = ServiceActivityTool.vActivityMessageService().getActivityList(listVo);
         listVo = setDefaultImages(listVo, request);
 
         //转换接口所需数据

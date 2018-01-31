@@ -262,8 +262,8 @@ public class MineAppController extends BaseMineController {
         bettingDataApp.setList(buildBetting(gameOrderList));
 
         //设置默认时间
-        bettingDataApp.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
-        bettingDataApp.setMaxDate(SessionManager.getDate().getNow());
+        bettingDataApp.setMinDate(listVo.getSearch().getBeginBetTime());
+        bettingDataApp.setMaxDate(listVo.getSearch().getEndBetTime());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -965,15 +965,7 @@ public class MineAppController extends BaseMineController {
             list.add(Integer.valueOf(id));
         }
         noticeReceiveVo.setIds(list);
-
-        boolean b = ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
-        if (!b) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.SYSTEM_READ.getCode(),
-                    AppErrorCodeEnum.SYSTEM_READ.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
+        ServiceTool.noticeService().markSiteMsg(noticeReceiveVo);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),

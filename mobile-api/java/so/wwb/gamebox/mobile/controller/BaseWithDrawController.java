@@ -17,7 +17,9 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.app.model.AppPlayerRank;
 import so.wwb.gamebox.mobile.app.model.AppUserBankCard;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -85,6 +87,33 @@ public class BaseWithDrawController {
         map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
+        map.put("isSafePassword", isSafePassword());
+        map.put("rank",getPlayerRank());
+    }
+
+    /**
+     * 获取玩家层级取款金额最大小值
+     * @return
+     */
+    private AppPlayerRank getPlayerRank(){
+        PlayerRank rank = getRank();
+        AppPlayerRank appRank = new AppPlayerRank();
+        appRank.setWithdrawMinNum(rank.getWithdrawMinNum());
+        appRank.setWithdrawMaxNum(rank.getWithdrawMaxNum());
+        return appRank;
+    }
+
+    /**
+     * 判断用户是否存在安全码
+     *
+     * @return
+     */
+    protected boolean isSafePassword() {
+        SysUser user = SessionManager.getUser();
+        if (StringTool.isBlank(user.getPermissionPwd())) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -202,7 +231,7 @@ public class BaseWithDrawController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("actualWithdraw", actualWithdraw);
-        result.put("deductFavorable", favorableSum > 0 ? -favorableSum : favorableSum);
+        result.put("deductFavorable", auditMap.get("favorableSum"));
         result.put("transactionNo", auditMap.get("transactionNo"));
         result.put("administrativeFee", depositSum);
         result.put("withdrawAmount", withdrawAmount);
