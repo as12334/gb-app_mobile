@@ -74,18 +74,8 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <%--<c:if test="${not empty payAccount.remark}">
-                                                <div class="front-end">
-                                                    <pre stype="white-space: normal;">${payAccount.remark}</pre>                                                </div>
-                                            </c:if>--%>
                                         </div>
                                     </div>
-                                        <%--<div class="wechat-code">
-                                            <p class="m-b-0"><img id="qrCodeUrl" src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" style="width: 135px;height: 135px;"></p>
-                                            <p>
-                                                <button type="button" id="saveImage" url="${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}" class="btn mui-btn mui-btn-primary">${views.deposit_auto['保存到手机']}</button>
-                                            </p>
-                                        </div>--%>
                                     <input type="hidden" id="imgQrCodeUrl" value="${payAccount.qrCodeUrl}">
                                     <c:if test="${not empty payAccount.qrCodeUrl}">
                                         <div class="wechat-code">
@@ -108,6 +98,14 @@
 
                             <div class="mui-row">
                                 <div class="mui-input-group mine-form m-t-sm">
+                                    <c:if test="${payAccount.bankCode eq 'alipay'}">
+                                        <div class="mui-input-row">
+                                            <label for="result.payerName">您的支付户名</label>
+                                            <div class="ct">
+                                                <input type="text" id="result.payerName" name="result.payerName" placeholder="请填写存款时使用的真实姓名">
+                                            </div>
+                                        </div>
+                                    </c:if>
                                     <div class="mui-input-row">
                                         <c:set value="${views.deposit_auto['您的支付账号']}" var="n"></c:set>
                                         <c:set value="${views.deposit_auto['请输入账号']}" var="m"></c:set>
@@ -158,16 +156,6 @@
                                     </div>
                                         <%--存款金额--%>
                                     <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
-                                    <c:if test="${payAccount.bankCode eq 'alipay'}">
-                                        <div class="mui-row m-l-sm">
-                                            <div class="gb-form-notice">
-                                                <p><img src="${resRoot}/images/ico-notice.png" height="12px;" alt="">
-                                                    “支付宝”转账到“支付宝”，请填写昵称；
-                                                    <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;“支付宝”转账到“银行卡”，请填写真实姓名；
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </c:if>
                                     <div class="mui-input-row">
                                         <label>${views.deposit_auto['订单号后5位']}
                                             <span class="small">${views.deposit_auto['非必填']}</span>

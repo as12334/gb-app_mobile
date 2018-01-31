@@ -21,6 +21,7 @@ import javax.validation.constraints.Pattern;
 public class CompanyElectronicDepositForm implements IForm {
     private String result_payerBankcard;
     private String result_bankOrder;
+    private String result_payerName;
 //    private String $code;
 
     @Comment("存款账号")
@@ -43,6 +44,16 @@ public class CompanyElectronicDepositForm implements IForm {
 
     public void setResult_bankOrder(String result_bankOrder) {
         this.result_bankOrder = result_bankOrder;
+    }
+
+    @Comment("支付户名")
+    @Depends(property = "result.rechargeType", operator = {Operator.EQ}, value = {RechargeTypeEnum.RECHARGE_TYPE_ALIPAY_FAST})
+    public String getResult_payerName() {
+        return result_payerName;
+    }
+
+    public void setResult_payerName(String result_payerName) {
+        this.result_payerName = result_payerName;
     }
 
 //    @Comment("验证码")
