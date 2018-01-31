@@ -560,10 +560,11 @@ public class MineAppController extends BaseMineController {
                         null, APP_VERSION);
             }
             if (!checkFeedCode(code)) {
+                String sessionCode = SessionManagerCommon.getCaptcha(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix());
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
                         AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
-                        null, APP_VERSION);
+                        sessionCode, APP_VERSION);
             }
 
         }

@@ -134,6 +134,7 @@ public class SignUpForm implements IForm {
 
     @Depends(message = "Register.qq.notBlank", operator = Operator.IN, value = "301", property = "$requiredJson")
     @Pattern(regexp = FormValidRegExps.QQ, message = "Register.qq.format")
+    @Remote(message = "Register.qq.exist", checkClass = SignUpController.class, checkMethod = "checkQqExist")
     public String getQq_contactValue() {
         return qq_contactValue;
     }
@@ -144,6 +145,7 @@ public class SignUpForm implements IForm {
 
     @Depends(message = "Register.phone.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"110", ""}, property = {"$requiredJson", "$checkPhone"}, andOr = AndOr.OR)
     @Pattern(regexp = FormValidRegExps.NUMBER_PHONE, message = "Register.phone.format")
+    @Remote(message = "Register.phone.exist", checkClass = SignUpController.class, checkMethod = "checkPhoneExist")
     public String getPhone_contactValue() {
         return phone_contactValue;
     }
@@ -154,6 +156,7 @@ public class SignUpForm implements IForm {
 
     @Pattern(regexp = FormValidRegExps.EMAIL, message = "Register.email.format")
     @Depends(message = "Register.email.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"201", ""}, property = {"$requiredJson", "$checkEmail"}, andOr = AndOr.OR)
+    @Remote(message = "Register.mail.exist", checkClass = SignUpController.class, checkMethod = "checkMailExist")
     public String getEmail_contactValue() {
         return email_contactValue;
     }
@@ -164,6 +167,7 @@ public class SignUpForm implements IForm {
 
     @Depends(message = "Register.weixin.notBlank", operator = Operator.IN, value = "304", property = "$requiredJson")
     @Length(min = 2, max = 20, message = "Register.weixin.format")
+    @Remote(message = "Register.weixin.exist", checkClass = SignUpController.class, checkMethod = "checkWeixinExist")
     public String getWeixin_contactValue() {
         return weixin_contactValue;
     }
@@ -183,6 +187,7 @@ public class SignUpForm implements IForm {
 
     @Depends(message = "Register.realname.notBlank", operator = Operator.IN, value = "realName", property = "$requiredJson")
     @Pattern(regexp = FormValidRegExps.NAME_D, message = "Register.realname.format")
+    @Remote(message = "Register.realName.exist", checkMethod = "checkRealNameExist", checkClass = SignUpController.class)
     public String getSysUser_realName() {
         return sysUser_realName;
     }
