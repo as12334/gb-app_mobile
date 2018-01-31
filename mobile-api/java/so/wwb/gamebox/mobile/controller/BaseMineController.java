@@ -163,9 +163,10 @@ public class BaseMineController {
     protected Map getSumPlayerFunds(VPlayerTransactionListVo listVo) {
         if (listVo != null) {
             PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
+            transactionListVo.getSearch().setPlayerId(listVo.getSearch().getPlayerId());
             transactionListVo.getSearch().setBeginCreateTime(listVo.getSearch().getBeginCreateTime());
             transactionListVo.getSearch().setEndCreateTime(listVo.getSearch().getEndCreateTime());
-            transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
+//            transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
             transactionListVo.getSearch().setStates(new String[]{CommonStatusEnum.SUCCESS.getCode(), CommonStatusEnum.LSSUING.getCode()});
 
             return ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
