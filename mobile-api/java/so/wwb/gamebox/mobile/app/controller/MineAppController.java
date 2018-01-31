@@ -81,7 +81,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
@@ -299,7 +298,7 @@ public class MineAppController extends BaseMineController {
         map.put("isOpenCaptcha", false);
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= SEND_MSG_CAPTCHA_COUNT) {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
-            map.put("captcha_value", "/captcha/feedback.html");
+            map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
         }
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -552,7 +551,7 @@ public class MineAppController extends BaseMineController {
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= 3) {
 
             map.put("isOpenCaptcha", true);
-            map.put("captcha_value", "/captcha/feedback.html");
+            map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
             if (!StringTool.isNotBlank(code)) {
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
@@ -576,6 +575,7 @@ public class MineAppController extends BaseMineController {
             SessionManager.setsSendMessageCount(sendMessageCount + 1);
             if (SessionManager.getSendMessageCount() >= SEND_MSG_CAPTCHA_COUNT) {
                 map.put("isOpenCaptcha", true);
+                map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
             }
             //生成任务提醒
             UserTaskReminderVo userTaskReminderVo = new UserTaskReminderVo();
@@ -1092,7 +1092,7 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/logout")
     @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        if(SessionManager.getUser() == null){
+        if (SessionManager.getUser() == null) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -1119,12 +1119,13 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 获取分享好友相关信息
+     *
      * @param request
      * @return
      */
     @RequestMapping(value = "/getUserPlayerRecommend")
     @ResponseBody
-    public String getUserPlayerRecommend(HttpServletRequest request){
+    public String getUserPlayerRecommend(HttpServletRequest request) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -1134,13 +1135,14 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 验证安全密码
+     *
      * @param password
      * @return
      */
     @RequestMapping(value = "/checkSafePassword")
     @ResponseBody
-    public String checkSafePassword(SecurityPassword password){
-        if(StringTool.isBlank(password.getOriginPwd())){
+    public String checkSafePassword(SecurityPassword password) {
+        if (StringTool.isBlank(password.getOriginPwd())) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
                     AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
