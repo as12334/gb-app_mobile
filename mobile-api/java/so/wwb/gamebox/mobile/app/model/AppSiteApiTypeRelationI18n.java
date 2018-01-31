@@ -11,10 +11,9 @@ public class AppSiteApiTypeRelationI18n {
     public static final String PROP_SITE_ID = "siteId";
     public static final String PROP_API_ID = "apiId";
     public static final String PROP_API_TYPE_ID = "apiTypeId";
+    public static final String PROP_ORDER_NUM = "orderNum";
 
     private String name;
-    private String local;
-    private Integer siteId;
     private Integer apiId;
     private Integer apiTypeId;
     private String cover;
@@ -22,6 +21,15 @@ public class AppSiteApiTypeRelationI18n {
     private boolean isAutoPay;
     private String gameMsg;
     private List<AppSiteGame> gameList;
+    private Integer orderNum;
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
 
     public String getGameMsg() {
         return gameMsg;
@@ -69,22 +77,6 @@ public class AppSiteApiTypeRelationI18n {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLocal() {
-        return local;
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
-    }
-
-    public Integer getSiteId() {
-        return siteId;
-    }
-
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
     }
 
     public Integer getApiId() {

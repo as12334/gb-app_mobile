@@ -11,7 +11,6 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
@@ -45,6 +44,7 @@ public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
+
     /**
      * 请求首页，查询轮播图，公告，游戏类，红包活动
      *
@@ -58,7 +58,7 @@ public class OriginController extends BaseOriginController {
         Map<String, Object> map = MapTool.newHashMap();
         map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
+        map.put("siteApiRelation", getApiTypeGame(model,request));
         map.put("activity", getMoneyActivityFloat(request));
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -118,13 +118,10 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
-        Map<String, Object> map = MapTool.newHashMap();
-        map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
-
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,
+                getApiTypeGame(model,request),
                 APP_VERSION);
     }
 
