@@ -14,7 +14,7 @@
                         <c:when test="${at.apiTypeId == 2}">${views.game_auto['电子']}</c:when>
                         <c:when test="${at.apiTypeId == 3}">${views.game_auto['体育']}</c:when>
                         <c:when test="${at.apiTypeId == 4}">${views.game_auto['彩票']}</c:when>
-                        <c:when test="${at.apiTypeId == 5}">棋牌</c:when>
+                        <c:when test="${at.apiTypeId == 5}">${views.game_auto['棋牌']}</c:when>
                     </c:choose>
                 </a>
             </c:forEach>
