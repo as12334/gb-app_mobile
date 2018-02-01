@@ -9,7 +9,6 @@ public class AppSiteApiTypeRelastionVo {
     private Integer apiType;
     private List<AppSiteApiTypeRelationI18n> siteApis;
     private String apiTypeName;
-    private String locale;
     private String cover;
     private boolean level;
 
@@ -27,14 +26,6 @@ public class AppSiteApiTypeRelastionVo {
 
     public void setCover(String cover) {
         this.cover = cover;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
     }
 
     public String getApiTypeName() {
