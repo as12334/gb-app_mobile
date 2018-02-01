@@ -159,26 +159,29 @@ public class WithdrawAppController extends BaseWithDrawController {
     public String withdrawFee(@RequestParam("withdrawAmount") String withdrawAmount) {
         if (!NumberTool.isNumber(withdrawAmount)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.WITHDRAW_FAIL.getCode(),
-                    AppErrorCodeEnum.WITHDRAW_FAIL.getMsg(),
+                    AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getCode(),
+                    AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getMsg(),
                     null,
                     APP_VERSION);
         }
 
         PlayerRank playerRank = getRank();
         if (playerRank == null) {
-            return null;
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
         }
 
         Map<String, Object> map = new HashMap<>();
-
         double amount = Double.valueOf(withdrawAmount);
         Integer withdrawMinNum = playerRank.getWithdrawMinNum();
         Integer withdrawMaxNum = playerRank.getWithdrawMaxNum();
         if (withdrawMinNum != null && withdrawMaxNum != null) {
             if (!(playerRank.getWithdrawMinNum() <= amount && playerRank.getWithdrawMaxNum() >= amount)) {
-                map.put("legalNum", LocaleTool.tranMessage(Module.FUND, "withdraw.apply.amont.renge", withdrawMinNum, withdrawMaxNum));
-                return "";
+                String msg = LocaleTool.tranMessage(Module.FUND, "withdraw.apply.amont.renge", withdrawMinNum, withdrawMaxNum);
+                map.put("msg", msg);
             }
         }
         // 手续费
@@ -187,17 +190,16 @@ public class WithdrawAppController extends BaseWithDrawController {
         Double administrativeFee = MapTool.getDouble(auditMap, "administrativeFee");
         Double deductFavorable = MapTool.getDouble(auditMap, "deductFavorable");
         double result = amount - poundage - administrativeFee - deductFavorable;
-        if (amount <= poundage) {
-            map.put("amountTooSmall", "true");
-        } else {
-            map.put("amountTooSmall", "false");
-        }
 
-        // 实际取款金额
-        map.put("actualWithdraw", CurrencyTool.formatCurrency(result));
-        map.put("actualLess0", result <= 0);
-        map.put("poundage", CurrencyTool.formatCurrency(poundage));
-        return "";
+        map.put("deductFavorable", deductFavorable);//扣除优惠
+        map.put("actualWithdraw", CurrencyTool.formatCurrency(result));// 实际取款金额
+        map.put("administrativeFee", administrativeFee);//行政费
+        map.put("counterFee", CurrencyTool.formatCurrency(poundage));//手续费
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
 
     /**
