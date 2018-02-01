@@ -2,18 +2,24 @@ package so.wwb.gamebox.mobile.app.controller;
 
 
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.math.NumberTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.controller.BaseWithDrawController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.vo.PlayerTransactionVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.common.token.Token;
@@ -140,6 +146,58 @@ public class WithdrawAppController extends BaseWithDrawController {
                 AppErrorCodeEnum.WITHDRAW_FAIL.getMsg(),
                 tokenMap,
                 APP_VERSION);
+    }
+
+    /**
+     * 计算取款各种费用
+     *
+     * @param withdrawAmount 存款金额
+     * @return map
+     */
+    @RequestMapping("/withdrawFee")
+    @ResponseBody
+    public String withdrawFee(@RequestParam("withdrawAmount") String withdrawAmount) {
+        if (!NumberTool.isNumber(withdrawAmount)) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.WITHDRAW_FAIL.getCode(),
+                    AppErrorCodeEnum.WITHDRAW_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+
+        PlayerRank playerRank = getRank();
+        if (playerRank == null) {
+            return null;
+        }
+
+        Map<String, Object> map = new HashMap<>();
+
+        double amount = Double.valueOf(withdrawAmount);
+        Integer withdrawMinNum = playerRank.getWithdrawMinNum();
+        Integer withdrawMaxNum = playerRank.getWithdrawMaxNum();
+        if (withdrawMinNum != null && withdrawMaxNum != null) {
+            if (!(playerRank.getWithdrawMinNum() <= amount && playerRank.getWithdrawMaxNum() >= amount)) {
+                map.put("legalNum", LocaleTool.tranMessage(Module.FUND, "withdraw.apply.amont.renge", withdrawMinNum, withdrawMaxNum));
+                return "";
+            }
+        }
+        // 手续费
+        Double poundage = getPoundage(amount, playerRank);
+        Map auditMap = getAuditMap();
+        Double administrativeFee = MapTool.getDouble(auditMap, "administrativeFee");
+        Double deductFavorable = MapTool.getDouble(auditMap, "deductFavorable");
+        double result = amount - poundage - administrativeFee - deductFavorable;
+        if (amount <= poundage) {
+            map.put("amountTooSmall", "true");
+        } else {
+            map.put("amountTooSmall", "false");
+        }
+
+        // 实际取款金额
+        map.put("actualWithdraw", CurrencyTool.formatCurrency(result));
+        map.put("actualLess0", result <= 0);
+        map.put("poundage", CurrencyTool.formatCurrency(poundage));
+        return "";
     }
 
     /**
