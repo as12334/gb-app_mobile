@@ -12,7 +12,7 @@
     </header>
     <!--滚动区域-->
     <div class="mui-content mui-scroll-wrapper mui-fullscreen" ${os eq 'android'?'style="padding-top:0!important"':''}>
-        <div>
+        <div class="mui-scroll">
             <div class="gb-fullpage">
                 <div class="form-wrap">
                     <form id="regForm" class="mui-input-group">
