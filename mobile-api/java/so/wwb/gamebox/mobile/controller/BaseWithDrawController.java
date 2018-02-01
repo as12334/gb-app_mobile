@@ -691,7 +691,7 @@ public class BaseWithDrawController {
      *
      * @return 层级信息
      */
-    private PlayerRank getRank() {
+    protected PlayerRank getRank() {
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setId(SessionManagerCommon.getUserId());
         return ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
