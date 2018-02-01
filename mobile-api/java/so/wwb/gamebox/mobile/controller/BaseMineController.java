@@ -139,6 +139,9 @@ public class BaseMineController {
             }
             promoApp.setPreferentialAudit(recode.getPreferentialAudit());
             promoApp.setActivityName(recode.getActivityName());
+            if (StringTool.isBlank(recode.getActivityName())) { //如果名称为空那么就是 人工存取优惠 展示“系统优惠”
+                promoApp.setActivityName("系统优惠");
+            }
             promoApp.setPreferentialValue(recode.getPreferentialValue());
             promoApp.setUserId(userId);
             promoApp.setCheckState(recode.getCheckState());
