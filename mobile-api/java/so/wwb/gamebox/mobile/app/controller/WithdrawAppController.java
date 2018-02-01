@@ -192,9 +192,9 @@ public class WithdrawAppController extends BaseWithDrawController {
         double result = amount - poundage - administrativeFee - deductFavorable;
 
         map.put("deductFavorable", deductFavorable);//扣除优惠
-        map.put("actualWithdraw", CurrencyTool.formatCurrency(result));// 实际取款金额
+        map.put("actualWithdraw", result);// 实际取款金额
         map.put("administrativeFee", administrativeFee);//行政费
-        map.put("counterFee", CurrencyTool.formatCurrency(poundage));//手续费
+        map.put("counterFee", poundage);//手续费
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
