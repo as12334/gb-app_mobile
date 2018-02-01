@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.app.controller;
 
-import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
