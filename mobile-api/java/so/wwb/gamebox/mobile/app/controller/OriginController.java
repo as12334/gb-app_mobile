@@ -27,6 +27,7 @@ import so.wwb.gamebox.model.master.content.po.CttFloatPic;
 import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.cache.Cache;
@@ -56,9 +57,9 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = MapTool.newHashMap();
-        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getApiTypeGame(model,request));
+        map.put("siteApiRelation", getApiTypeGame(model, request));
         map.put("activity", getMoneyActivityFloat(request));
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -77,10 +78,9 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/getCarouse")
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
-        //轮播图
+        //轮播图和弹窗广告
         Map<String, Object> map = MapTool.newHashMap();
-        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
-
+        getBannerAndPhoneDialog(map, request);
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -121,7 +121,7 @@ public class OriginController extends BaseOriginController {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                getApiTypeGame(model,request),
+                getApiTypeGame(model, request),
                 APP_VERSION);
     }
 
@@ -254,43 +254,56 @@ public class OriginController extends BaseOriginController {
     }
     //endregion mainIndex
 
+
     /**
-     * 查询Banner
+     * 获取轮播图和手机弹窗广告
+     *
+     * @param map
+     * @param request
      */
-    protected List<Map> getCarouselApp(HttpServletRequest request, String type) {
-        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
-        List<Map> resultList = ListTool.newArrayList();
+    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request) {
+        Map<String, Map> carouselMap = (Map) Cache.getSiteCarousel();
+        if (MapTool.isEmpty(carouselMap)) {
+            return;
+        }
         String webSite = ServletTool.getDomainFullAddress(request);
-        if (carousels != null) {
-            for (Map m : carousels.values()) {
-                if ((StringTool.equalsIgnoreCase(type, m.get("type").toString()))
-                        && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
-                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
-                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
-                    String link = String.valueOf(m.get("link"));
-                    if (StringTool.isNotBlank(link)) {
-                        if (link.contains("${website}")) {
-                            link = link.replace("${website}", webSite);
-                        }
+        List<Map> phoneDialog = new ArrayList<>();
+        List<Map> carousels = new ArrayList<>();
+        String phoneDialogType = CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode();
+        String bannerType = CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode();
+        Date date = new Date();
+        String local = SessionManager.getLocale().toString();
+        for (Map m : carouselMap.values()) {
+            if ((StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local))
+                    && (((Date) m.get("start_time")).before(date) && ((Date) m.get("end_time")).after(date))
+                    && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                String link = MapTool.getString(m, "link");
+                if (StringTool.isNotBlank(link)) {
+                    if (link.contains("${website}")) {
+                        link = link.replace("${website}", webSite);
                     }
-                    m.put("link", link);
-                    String cover = m.get("cover").toString();
-                    cover = getImagePath(SessionManager.getDomain(request), cover);
-                    m.put("cover", cover);
-                    m.put("link", link);
-                    resultList.add(m);
+                }
+                m.put("link", link);
+                String cover = m.get("cover") == null ? "" : m.get("cover").toString();
+                cover = getImagePath(SessionManager.getDomain(request), cover);
+                m.put("cover", cover);
+                if (phoneDialogType.equals(m.get("type"))) {
+                    phoneDialog.add(m);
+                } else if (bannerType.equals(m.get("type"))) {
+                    carousels.add(m);
                 }
             }
         }
+        //手机弹窗广告
+        map.put("phoneDialog", phoneDialog);
         //没数据默认banner图
-        if (resultList.size() <= 0) {
-            Map defaultMap = MapTool.newHashMap();
+        if (carousels.size() <= 0) {
+            Map defaultMap = new HashMap();
             String coverUrl = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/images/ban-01.jpg";
             defaultMap.put("cover", coverUrl);
-            resultList.add(defaultMap);
+            carousels.add(defaultMap);
         }
-
-        return resultList;
+        map.put("banner", carousels);
     }
 
     /**
