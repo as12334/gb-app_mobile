@@ -174,34 +174,6 @@ public abstract class BaseOriginController {
     }
 
     /**
-     * 获取彩票游戏
-     */
-    private SiteGameListVo getLotteryGames(SiteGameListVo listVo) {
-        SiteGameSo so = listVo.getSearch();
-        Criteria gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
-        List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), gamesCriteria);
-        games = getSiteGamesWhichIsNormalStatus(games);
-        games = games == null ? new ArrayList<SiteGame>() : games;
-
-        // 设置游戏状态
-        listVo.setResult(setGameStatus(listVo, games));
-        return listVo;
-    }
-
-    private List<SiteGame> getLotteryGame(SiteGameListVo listVo) {
-        listVo = getLotteryGames(listVo);
-        Map<String, SiteGameI18n> siteGameI18n = getGameI18nMap(listVo);
-        for (SiteGame siteGame : listVo.getResult()) {
-            for (Map.Entry<String, SiteGameI18n> entry : siteGameI18n.entrySet()) {
-                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), entry.getKey())) {
-                    siteGame.setCover(entry.getValue().getCover());
-                }
-            }
-        }
-        return listVo.getResult();
-    }
-
-    /**
      * 获取Api的电子游戏
      *
      * @param listVo
@@ -657,105 +629,14 @@ public abstract class BaseOriginController {
             if (siteApi.getApiId() != null && StringTool.equals(siteApi.getApiId().toString(), ApiProviderEnum.BSG.getCode())) {
                 return "/game/apiGames.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
             } else if (SessionManager.isAutoPay() && siteApi.getApiTypeId() != null && siteApi.getApiTypeId().intValue() != ApiTypeEnum.CASINO.getCode()) {
-                return "/origin/getGameLink.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
+                return "/mobile-api/origin/getGameLink.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
             } else if (siteApi.getApiTypeId() != null && siteApi.getApiTypeId().intValue() == ApiTypeEnum.CASINO.getCode()) {
-                return "/origin/getCasinoGame.html?search.apiId=" + siteApi.getApiId() + "&search.apiTypeId=" + siteApi.getApiTypeId();
+                return "/mobile-api/origin/getCasinoGame.html?search.apiId=" + siteApi.getApiId() + "&search.apiTypeId=" + siteApi.getApiTypeId();
             } else {
                 return "/api/detail.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
             }
         }
         return "";
-    }
-
-    /**
-     * 获取游戏类集合
-     *
-     * @param request
-     * @param model
-     * @return
-     */
-    protected List<AppSiteApiTypeRelastionVo> getSiteApiRelationI18n(HttpServletRequest request, AppRequestModelVo model) {
-        Map<String, SiteApiTypeRelationI18n> siteApiTypeRelactionI18n = Cache.getSiteApiTypeRelactionI18n(SessionManager.getSiteId());
-        List<SiteApiType> siteApiTypes = getApiTypes();
-
-        //组装游戏类型集合
-        Map<Integer, List<SiteApiTypeRelationI18n>> siteApiRelation = MapTool.newHashMap();
-        for (SiteApiType api : siteApiTypes) {
-            List<SiteApiTypeRelationI18n> i18ns = ListTool.newArrayList();
-            for (SiteApiTypeRelationI18n relationI18n : siteApiTypeRelactionI18n.values()) {
-                if (relationI18n.getApiTypeId().equals(api.getApiTypeId())) {
-                    i18ns.add(relationI18n);
-                    siteApiRelation.put(api.getApiTypeId(), i18ns);
-                }
-            }
-        }
-
-        //过滤游戏数据提供给原生
-        List<AppSiteApiTypeRelastionVo> appList = new ArrayList<>();
-        for (Map.Entry<Integer, List<SiteApiTypeRelationI18n>> entry : siteApiRelation.entrySet()) {
-            AppSiteApiTypeRelastionVo vo = new AppSiteApiTypeRelastionVo();
-            vo.setApiType(entry.getKey());
-            for (ApiTypeEnum type : ApiTypeEnum.values()) {
-                if (type.getCode() == entry.getKey().intValue()) {
-                    vo.setApiTypeName(type.getMsg());
-                    vo.setCover(setApiLogoUrl(model, request) + "/api_type_" + entry.getKey() + ".png");
-                }
-            }
-            vo.setLevel(false);
-            if (entry.getKey().intValue() == ApiTypeEnum.LOTTERY.getCode()) {
-                vo.setLevel(true);
-            }
-            //获取游戏集合
-            vo.setSiteApis(setAppApiRelationI18n(entry.getValue(), request, model));
-            appList.add(vo);
-        }
-
-        //构造捕鱼游戏
-        appList.add(setFishGame(siteApiTypeRelactionI18n.values(), request, model));
-
-        return appList;
-    }
-
-    /**
-     * 转换彩票
-     *
-     * @return
-     */
-    private List<AppSiteGame> setAppSiteGame(SiteApiTypeRelationI18n relationI8n, AppSiteApiTypeRelationI18n i18n, HttpServletRequest request, AppRequestModelVo model) {
-        //获取彩票类游戏
-        SiteGameListVo siteGameListVo = new SiteGameListVo();
-        siteGameListVo.getSearch().setApiId(relationI8n.getApiId());
-        siteGameListVo.getSearch().setApiTypeId(relationI8n.getApiTypeId());
-        List<SiteGame> lotteryGame = getLotteryGame(siteGameListVo);
-
-        //组装彩票类游戏
-        List<AppSiteGame> games = ListTool.newArrayList();
-        for (SiteGame siteGame : lotteryGame) {
-            AppSiteGame app = new AppSiteGame();
-            app.setGameId(siteGame.getGameId());
-            app.setSiteId(siteGame.getSiteId());
-            app.setApiId(siteGame.getApiId());
-            app.setGameType(siteGame.getGameType());
-            app.setOrderNum(siteGame.getOrderNum());
-            app.setStatus(siteGame.getStatus());
-            app.setApiTypeId(siteGame.getApiTypeId());
-            app.setCode(siteGame.getCode());
-            app.setName(getSiteGameName(siteGame.getGameId().toString()));
-            app.setCover(getImagePath(SessionManager.getDomain(request), siteGame.getCover()));
-            app.setSystemStatus(siteGame.getSystemStatus());
-
-            if (SessionManager.getUser() != null) {
-                if (SessionManager.isAutoPay()) {
-                    app.setGameLink(getCasinoGameRequestUrl(siteGame));
-                } else {
-                    app.setGameLink("/api/detail.html?apiId=" + siteGame.getApiId() + "&apiTypeId=" + siteGame.getApiTypeId());
-                }
-                app.setAutoPay(SessionManager.isAutoPay());
-            }
-            games.add(app);
-        }
-        i18n.setGameList(games);
-        return games;
     }
 
     /**
@@ -786,85 +667,6 @@ public abstract class BaseOriginController {
         }
 
         return sb.toString();
-    }
-
-    /**
-     * 转换游戏类
-     *
-     * @param siteApis
-     * @return
-     */
-    private List<AppSiteApiTypeRelationI18n> setAppApiRelationI18n(List<SiteApiTypeRelationI18n> siteApis, HttpServletRequest request, AppRequestModelVo model) {
-        List<AppSiteApiTypeRelationI18n> appSites = ListTool.newArrayList();
-        for (SiteApiTypeRelationI18n i18n : siteApis) {
-            AppSiteApiTypeRelationI18n appI18n = new AppSiteApiTypeRelationI18n();
-            appI18n.setApiId(i18n.getApiId());
-            appI18n.setApiTypeId(i18n.getApiTypeId());
-            appI18n.setName(i18n.getName());
-            appI18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png"); //api图片路劲
-
-            if (SessionManager.getUser() != null && i18n.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()) {
-                if (i18n.getApiId() != null && StringTool.equals(i18n.getApiId().toString(), ApiProviderEnum.BSG.getCode())) {
-                    appI18n.setGameLink("/game/apiGames.html?apiId=" + i18n.getApiId() + "&apiTypeId=" + i18n.getApiTypeId());
-                } else if (SessionManager.isAutoPay() && i18n.getApiTypeId() != null && i18n.getApiTypeId().intValue() != ApiTypeEnum.CASINO.getCode()) {
-                    String gameUrl = "/origin/getGameLink.html?apiId=" + appI18n.getApiId() + "&apiTypeId=" + appI18n.getApiTypeId();
-                    appI18n.setGameLink(gameUrl);
-                } else if (i18n.getApiTypeId() != null && i18n.getApiTypeId().intValue() == ApiTypeEnum.CASINO.getCode()) {
-                    appI18n.setGameLink("/origin/getCasinoGame.html?search.apiId=" + i18n.getApiId() + "&search.apiTypeId=" + i18n.getApiTypeId());
-                } else {
-                    appI18n.setGameLink("/api/detail.html?apiId=" + i18n.getApiId() + "&apiTypeId=" + i18n.getApiTypeId());
-                }
-                appI18n.setAutoPay(SessionManager.isAutoPay());
-            }
-
-            //彩票类游戏
-            if (i18n.getApiTypeId() == ApiTypeEnum.LOTTERY.getCode()) {
-                setAppSiteGame(i18n, appI18n, request, model);
-            }
-            appSites.add(appI18n);
-        }
-
-        return appSites;
-    }
-
-    /**
-     * 构造捕鱼游戏
-     *
-     * @return
-     */
-    private AppSiteApiTypeRelastionVo setFishGame(Collection<SiteApiTypeRelationI18n> i18ns, HttpServletRequest request, AppRequestModelVo model) {
-        AppSiteApiTypeRelastionVo fishVo = new AppSiteApiTypeRelastionVo();
-        fishVo.setApiType(-1);
-        String gameType = LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode());
-        fishVo.setApiTypeName(gameType);
-        fishVo.setCover(setApiLogoUrl(model, request) + "/fish.png");
-        List<AppSiteApiTypeRelationI18n> fishSiteApis = ListTool.newArrayList();
-
-        for (SiteApiTypeRelationI18n relationI18n : i18ns) {
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
-                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.AG.getCode())) {
-                AppSiteApiTypeRelationI18n i18n = new AppSiteApiTypeRelationI18n();
-                i18n.setName(ApiProviderEnum.AG.getTrans());
-                i18n.setApiId(Integer.parseInt(ApiProviderEnum.AG.getCode()));
-                i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/mobile-api/origin/getCasinoGame.html?search.apiId=9&search.apiTypeId=2&search.gameType=Fish");
-                i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
-                fishSiteApis.add(i18n);
-            }
-            if (relationI18n.getApiTypeId() == ApiTypeEnum.CASINO.getCode()
-                    && StringTool.equalsIgnoreCase(relationI18n.getApiId().toString(), ApiProviderEnum.GG.getCode())) {
-                AppSiteApiTypeRelationI18n i18n = new AppSiteApiTypeRelationI18n();
-                i18n.setName(ApiProviderEnum.GG.getTrans());
-                i18n.setApiId(Integer.parseInt(ApiProviderEnum.GG.getCode()));
-                i18n.setApiTypeId(ApiTypeEnum.CASINO.getCode());
-                i18n.setGameLink("/mobile-api/origin/getCasinoGame.html?search.apiId=28&search.apiTypeId=2");
-                i18n.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + i18n.getApiId() + ".png");
-                fishSiteApis.add(i18n);
-            }
-        }
-        fishVo.setSiteApis(fishSiteApis);
-
-        return fishVo;
     }
 
     /**
