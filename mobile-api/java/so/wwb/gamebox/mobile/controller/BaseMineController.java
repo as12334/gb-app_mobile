@@ -139,6 +139,9 @@ public class BaseMineController {
             }
             promoApp.setPreferentialAudit(recode.getPreferentialAudit());
             promoApp.setActivityName(recode.getActivityName());
+            if (StringTool.isBlank(recode.getActivityName())) { //如果名称为空那么就是 人工存取优惠 展示“系统优惠”
+                promoApp.setActivityName("系统优惠");
+            }
             promoApp.setPreferentialValue(recode.getPreferentialValue());
             promoApp.setUserId(userId);
             promoApp.setCheckState(recode.getCheckState());
@@ -562,14 +565,28 @@ public class BaseMineController {
         List<FundListApp> fundListAppList = ListTool.newArrayList();
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
         Map<String, String> i18nStatus = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_STATUS);
+
+
+
         for (VPlayerTransaction vplayer : list) {
+            Map map = vplayer.get_describe();
+
             FundListApp app = new FundListApp();
             String typeName = i18n.get(vplayer.getTransactionType());
             app.setTransaction_typeName(typeName);
             app.setStatusName(i18nStatus.get(vplayer.getStatus()));
             app.setId(vplayer.getId());
             app.setCreateTime(vplayer.getCreateTime());
-            app.setTransactionMoney(vplayer.getTransactionMoney());
+
+            if (vplayer.getTransactionMoney() != 0) {
+                app.setTransactionMoney(CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }
+            if ((int)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() != 0 && StringTool.isBlank((String)map.get("bankCode"))) {//针对于比特币存款
+                app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+            }
+
+
+
             app.setTransactionType(vplayer.getTransactionType());
             app.setStatus(vplayer.getStatus());
             fundListAppList.add(app);

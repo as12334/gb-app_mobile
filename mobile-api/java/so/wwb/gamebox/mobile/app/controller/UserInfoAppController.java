@@ -150,7 +150,7 @@ public class UserInfoAppController extends BaseUserInfoController {
         vo.getResult().setBankcardNumber(form.getResult_bankcardNumber());
         vo.getResult().setBankDeposit(form.getResult_bankDeposit());
         vo.getResult().setUserId(SessionManager.getUserId());
-        if (checkCardIsExistsByUserId(vo)) {
+        if (checkCardIsExistsByUserId(vo)) {           //当银行卡号重复时，提示信息为银行卡号已存在
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
                     AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(), null, APP_VERSION);
