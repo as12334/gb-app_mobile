@@ -60,6 +60,7 @@ public class OriginController extends BaseOriginController {
         map.put("announcement", getAnnouncement());
         map.put("siteApiRelation", getApiTypeGame(model, request));
         map.put("activity", getMoneyActivityFloat(request));
+        map.put("language",SessionManager.getLocale().toString());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
