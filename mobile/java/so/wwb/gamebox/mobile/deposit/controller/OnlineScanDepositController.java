@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDeposit2Form;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.validation.Valid;
@@ -78,6 +80,18 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
             case UNIONPAY:
                 payAccountForScan = getScanPay(rank, PayAccountAccountType.UNION_PAY.getCode(), RechargeTypeEnum.UNION_PAY_SCAN.getCode());
                 scanPay = RechargeTypeEnum.UNION_PAY_SCAN.getCode();
+                break;
+            case BankCodeEnum.CODE_WECHAT_MICROPAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.WECHAT_MICROPAY.getCode(), RechargeTypeEnum.WECHATPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.WECHATPAY_SCAN.getCode();
+                break;
+            case BankCodeEnum.CODE_ALIPAY_MICROPAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.ALIPAY_MICROPAY.getCode(), RechargeTypeEnum.ALIPAY_SCAN.getCode());
+                scanPay = RechargeTypeEnum.ALIPAY_SCAN.getCode();
+                break;
+            case BankCodeEnum.CODE_QQ_MICROPAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.QQ_MICROPAY.getCode(), RechargeTypeEnum.QQWALLET_SCAN.getCode());
+                scanPay = RechargeTypeEnum.QQWALLET_SCAN.getCode();
                 break;
             default:
                 break;

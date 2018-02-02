@@ -374,7 +374,6 @@ public class PromoController {
         String classifyKey = request.getParameter("classify");
         if (activities != null) {
             for (PlayerActivityMessage m : activities.values()) {
-
                 /*过滤玩家注册时间在注册送活动开始时间之前的*/
                 if (SessionManager.getUser() != null && StringTool.equals(m.getCode(), ActivityTypeEnum.REGIST_SEND.getCode()) &&
                         SessionManager.getUser().getCreateTime().before(m.getStartTime())) continue;
@@ -383,7 +382,6 @@ public class PromoController {
                         && (StringTool.equals(m.getStates(), ActivityStateEnum.PROCESSING.getCode()) || StringTool.equals(m.getStates(), ActivityStateEnum.NOTSTARTED.getCode()))) {
                    /*过滤前端活动筛选*/
                     if (StringTool.isBlank(classifyKey) || StringTool.equals(classifyKey, m.getActivityClassifyKey())) {
-
                         resultIdList.add(m.getSearchId());
                     }
                 }
