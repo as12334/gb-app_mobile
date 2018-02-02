@@ -42,26 +42,21 @@ public class WithdrawAppController extends BaseWithDrawController {
      */
     @RequestMapping(value = "/getWithDraw")
     @ResponseBody
-    public String getWithDraw(HttpServletRequest request) {
+    public AppModelVo getWithDraw(HttpServletRequest request) {
         //判断是否达到取款要求
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMessage())) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    vo.getCode(),
-                    vo.getMessage(),
-                    vo.getData(),
-                    APP_VERSION);
+            return vo;
         }
 
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>();
         withdraw(map, request);
-
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,
-                APP_VERSION);
+        vo.setData(map);
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMessage(AppErrorCodeEnum.SUCCESS.getMsg());
+        vo.setVersion(APP_VERSION);
+        return vo;
     }
 
     /**
