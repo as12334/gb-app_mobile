@@ -92,8 +92,8 @@ public class WithdrawAppController extends BaseWithDrawController {
         }
         if (!verifyOriginPwd(password)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
-                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
