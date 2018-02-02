@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.passport.form.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
@@ -103,6 +104,7 @@ public class SignUpController extends BaseDemoController {
      * @return
      */
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String signUp(Model model, HttpServletRequest request) {
         getRegisterData(model, request);
         model.addAttribute("rule", JsRuleCreator.create(SignUpForm.class, "result"));
