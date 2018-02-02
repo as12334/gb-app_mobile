@@ -581,9 +581,14 @@ public class BaseMineController {
             if (vplayer.getTransactionMoney() != 0) {
                 app.setTransactionMoney(CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
             }
-            if ((int)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() != 0 && StringTool.isBlank((String)map.get("bankCode"))) {//针对于比特币存款
-                app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+
+            if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
+                if ((int)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() != 0 && StringTool.isBlank((String)map.get("bankCode"))) {
+                    app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+                }
+
             }
+
 
 
 
