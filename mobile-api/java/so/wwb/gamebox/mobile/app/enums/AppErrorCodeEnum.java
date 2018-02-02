@@ -46,10 +46,10 @@ public enum AppErrorCodeEnum {
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
-    private int code;
+    private Integer code;
     private String msg;
 
-    AppErrorCodeEnum(int code, String msg) {
+    AppErrorCodeEnum(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
@@ -58,7 +58,7 @@ public enum AppErrorCodeEnum {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 
