@@ -34,7 +34,7 @@
                     <input type="hidden" value="true" name="isAuthCode"/>
                     <div class="mui-input-row">
                         <label for="result.payerBankcard">授权码</label>
-                        <input type="text" placeholder="获取授权码，参考下方教程" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off"/>
+                        <input type="text" placeholder="" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off"/>
                     </div>
                 </c:if>
                 <%@include file="./ChooseAmount.jsp"%>
