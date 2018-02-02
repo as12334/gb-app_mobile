@@ -32,6 +32,19 @@
         <url-pattern>/health/check.html</url-pattern>
     </filter-mapping>
     <!--HealthCheck  结束-->
+
+    <!--Mobile default use ajax request-->
+    <filter>
+        <filter-name>mobileServletFilter</filter-name>
+        <filter-class>so.wwb.gamebox.mobile.app.filter.MobileServletFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>mobileServletFilter</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+
     <filter>
         <filter-name>dubboClientFilter</filter-name>
         <filter-class>so.wwb.gamebox.web.filter.DubboClientFilter</filter-class>
