@@ -31,7 +31,6 @@ public class UserBankcardAppForm implements IForm {
     @NotBlank(message = "player_auto.请输入10")
     @Length(min = 10,max = 25)
     @Pattern(message = "player_auto.银行卡格式错误",regexp = RegExpConstants.BANK)
-    @Remote(message = "player_auto.已存在相同银行卡号",checkMethod = "checkBankcardIsExist",checkClass = UserBankcardController.class, additionalProperties = {"result.id","result.bankName","result.userId","userType"})
     @Comment("银行卡号")
     public String getResult_bankcardNumber() {
         return result_bankcardNumber;

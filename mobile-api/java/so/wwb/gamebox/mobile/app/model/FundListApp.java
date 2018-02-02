@@ -9,7 +9,7 @@ public class FundListApp {
 
     private Integer id;
     private Date createTime;
-    private Double transactionMoney;
+    private String transactionMoney;
 
     private String transactionType;
     private String transaction_typeName;
@@ -25,11 +25,11 @@ public class FundListApp {
         this.id = id;
     }
 
-    public Double getTransactionMoney() {
+    public String getTransactionMoney() {
         return transactionMoney;
     }
 
-    public void setTransactionMoney(Double transactionMoney) {
+    public void setTransactionMoney(String transactionMoney) {
         this.transactionMoney = transactionMoney;
     }
 

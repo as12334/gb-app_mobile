@@ -3,9 +3,12 @@ package so.wwb.gamebox.mobile.app.enums;
 public enum AppErrorCodeEnum {
     SUCCESS(0, "请求成功"),
     UN_LOGIN(1, "您还未登录,请重新登录"),
+    USER_LOCK(5,"您的账号已被系统冻结，请联系客服处理"),
+    USER_INFO_NOT_EXIST(8,"用户不存在"),
     PASSWORD_ERROR(11, "密码输入错误"),
     PASSWORD_SAME(16, "新密码不能和旧密码相同"),
     SYSTEM_INFO_NOT_EXIST(17, "信息不存在"),
+    WITHDRAW_AMOUNT_ERROR(22,"请输入正确的提现金额"),
     WITHDRAW_IS_FULL(24, "今日提现次数已达上限"),
     ACTIVITY_END(31, "该活动不存在或已结束"),
     WITHDRAW_HAS_ORDER(100, "取款订单已存在"),

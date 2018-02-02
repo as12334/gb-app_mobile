@@ -139,6 +139,9 @@ public class BaseMineController {
             }
             promoApp.setPreferentialAudit(recode.getPreferentialAudit());
             promoApp.setActivityName(recode.getActivityName());
+            if (StringTool.isBlank(recode.getActivityName())) { //如果名称为空那么就是 人工存取优惠 展示“系统优惠”
+                promoApp.setActivityName("系统优惠");
+            }
             promoApp.setPreferentialValue(recode.getPreferentialValue());
             promoApp.setUserId(userId);
             promoApp.setCheckState(recode.getCheckState());
@@ -562,14 +565,28 @@ public class BaseMineController {
         List<FundListApp> fundListAppList = ListTool.newArrayList();
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
         Map<String, String> i18nStatus = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_STATUS);
+
+
+
         for (VPlayerTransaction vplayer : list) {
+            Map map = vplayer.get_describe();
+
             FundListApp app = new FundListApp();
             String typeName = i18n.get(vplayer.getTransactionType());
             app.setTransaction_typeName(typeName);
             app.setStatusName(i18nStatus.get(vplayer.getStatus()));
             app.setId(vplayer.getId());
             app.setCreateTime(vplayer.getCreateTime());
-            app.setTransactionMoney(vplayer.getTransactionMoney());
+
+            if (vplayer.getTransactionMoney() != 0) {
+                app.setTransactionMoney(CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }
+            if ((int)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() != 0 && StringTool.isBlank((String)map.get("bankCode"))) {//针对于比特币存款
+                app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+            }
+
+
+
             app.setTransactionType(vplayer.getTransactionType());
             app.setStatus(vplayer.getStatus());
             fundListAppList.add(app);
@@ -609,7 +626,7 @@ public class BaseMineController {
 
         detailApp.setStatusName(statusName);
 
-        if (StringTool.equals(detailApp.getTransactionType(), "deposit")) { //存款
+        if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //存款
             detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay())); //描述
             detailApp.setRechargeAmount(moneyType +" " + CurrencyTool.formatCurrency(po.getRechargeAmount()));  //存款金额
             detailApp.setPoundage(moneyType + " " + CurrencyTool.formatCurrency((Number) map.get("poundage"))); //手续费
@@ -617,7 +634,7 @@ public class BaseMineController {
             detailApp.setStatusName(statusName); //状态
         }
 
-        if (StringTool.equals(detailApp.getTransactionType(), TransactionTypeEnum.WITHDRAWALS.getCode())) { //取款
+        if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.WITHDRAWALS.getCode())) { //取款
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
@@ -633,20 +650,20 @@ public class BaseMineController {
             detailApp.setStatusName(statusName); //状态
         }
 
-        if (StringTool.equalsIgnoreCase(detailApp.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
+        if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
             detailApp.setTransactionWayName(String.valueOf(map.get(SessionManager.getLocale().toString()))); //描述
             detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
             detailApp.setStatusName(statusName); //状态
         }
 
-        if (StringTool.equalsIgnoreCase(detailApp.getTransactionType(), TransactionTypeEnum.BACKWATER.getCode())) {  //返水
+        if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.BACKWATER.getCode())) {  //返水
             String dateStr = LocaleDateTool.formatDate((Date) map.get("date"), new DateFormat().getYEARMONTH(), SessionManagerCommon.getTimeZone());
             detailApp.setTransactionWayName(dateStr.replace("-", "年") +"月" + map.get("period") +"期");//描述
             detailApp.setDeductFavorable(moneyType + CurrencyTool.formatCurrency(po.getDeductFavorable()));  //金额
             detailApp.setStatusName(statusName); //状态
         }
 
-        if (StringTool.equalsIgnoreCase(detailApp.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
+        if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
             if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer)map.get("rewardType") == 2) {//描述
                 detailApp.setTransactionWayName("好友" + " " + map.get("username"));
             }else if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer)map.get("rewardType") == 3) {

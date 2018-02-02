@@ -81,7 +81,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
@@ -299,7 +298,7 @@ public class MineAppController extends BaseMineController {
         map.put("isOpenCaptcha", false);
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= SEND_MSG_CAPTCHA_COUNT) {
             map.put("isOpenCaptcha", true);  //如果次数大于等于三次则页面出现验证码,同时给出验证码url
-            map.put("captcha_value", "/captcha/feedback.html");
+            map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
         }
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -552,7 +551,7 @@ public class MineAppController extends BaseMineController {
         if (SessionManager.getSendMessageCount() != null && SessionManager.getSendMessageCount() >= 3) {
 
             map.put("isOpenCaptcha", true);
-            map.put("captcha_value", "/captcha/feedback.html");
+            map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
             if (!StringTool.isNotBlank(code)) {
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
@@ -576,6 +575,7 @@ public class MineAppController extends BaseMineController {
             SessionManager.setsSendMessageCount(sendMessageCount + 1);
             if (SessionManager.getSendMessageCount() >= SEND_MSG_CAPTCHA_COUNT) {
                 map.put("isOpenCaptcha", true);
+                map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
             }
             //生成任务提醒
             UserTaskReminderVo userTaskReminderVo = new UserTaskReminderVo();
@@ -621,7 +621,7 @@ public class MineAppController extends BaseMineController {
         }
 
         map.put("hasPermissionPwd", true);
-        if (isLock(user)) {//如果冻结
+        if (isLock()) {//如果冻结
             map.put("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
             map.put("lockTime", formatLockTime(user.getSecpwdFreezeStartTime()));
             vo.setData(map);
@@ -711,7 +711,6 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         if (!verifyRealName(password)) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.REAL_NAME_ERROR.getCode(),
                     AppErrorCodeEnum.REAL_NAME_ERROR.getMsg(),
@@ -767,8 +766,15 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/updateLoginPassword", method = RequestMethod.POST)
     @ResponseBody
     public String updateLoginPassword(UpdatePasswordVo updatePasswordVo, String code) {
+        //用户是否被冻结
+        if(isLock()){
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.USER_LOCK.getCode(),
+                    AppErrorCodeEnum.USER_LOCK.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
         if (StringTool.isBlank(updatePasswordVo.getPassword())) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PASSWORD_NOT_NULL.getCode(),
                     AppErrorCodeEnum.PASSWORD_NOT_NULL.getMsg(),
@@ -776,7 +782,6 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         if (StringTool.isBlank(updatePasswordVo.getNewPassword())) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getCode(),
                     AppErrorCodeEnum.NEW_PASSWORD_NOT_NULL.getMsg(),
@@ -786,18 +791,17 @@ public class MineAppController extends BaseMineController {
         //密码相同验证新密码不能和旧密码一样
         String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), SessionManager.getUserName());
         if (StringTool.equalsIgnoreCase(newPwd, SessionManager.getUser().getPassword())) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PASSWORD_SAME.getCode(),
                     AppErrorCodeEnum.PASSWORD_SAME.getMsg(),
                     null,
                     APP_VERSION);
         }
+        //2次错误以上需要验证码
         SysUser curUser = SessionManagerCommon.getUser();
         int errorTimes = curUser.getLoginErrorTimes() == null ? -1 : curUser.getLoginErrorTimes();
         if (errorTimes >= TWO) {
             if (StringTool.isBlank(code)) {
-
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
                         AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg(),
@@ -805,7 +809,6 @@ public class MineAppController extends BaseMineController {
                         APP_VERSION);
             }
             if (!checkCode(code)) {
-
                 return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                         AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
                         AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
@@ -817,7 +820,6 @@ public class MineAppController extends BaseMineController {
         String oldPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getPassword(), SessionManager.getUserName());
         if (!StringTool.equalsIgnoreCase(oldPwd, SessionManager.getUser().getPassword())) {
             Map map = setPwdErrorTimes(errorTimes);
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.PASSWORD_ERROR.getCode(),
                     AppErrorCodeEnum.PASSWORD_ERROR.getMsg(),
@@ -834,7 +836,6 @@ public class MineAppController extends BaseMineController {
         sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL);
         boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();
         if (!success) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode(),
                     AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getMsg(),
@@ -1092,7 +1093,7 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/logout")
     @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        if(SessionManager.getUser() == null){
+        if (SessionManager.getUser() == null) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -1119,12 +1120,13 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 获取分享好友相关信息
+     *
      * @param request
      * @return
      */
     @RequestMapping(value = "/getUserPlayerRecommend")
     @ResponseBody
-    public String getUserPlayerRecommend(HttpServletRequest request){
+    public String getUserPlayerRecommend(HttpServletRequest request) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -1134,13 +1136,14 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 验证安全密码
+     *
      * @param password
      * @return
      */
     @RequestMapping(value = "/checkSafePassword")
     @ResponseBody
-    public String checkSafePassword(SecurityPassword password){
-        if(StringTool.isBlank(password.getOriginPwd())){
+    public String checkSafePassword(SecurityPassword password) {
+        if (StringTool.isBlank(password.getOriginPwd())) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
                     AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
@@ -1441,15 +1444,17 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
-     * 是否锁定
+     * 当前用户是否被冻结
+     * @return
      */
-    private boolean isLock(SysUser user) {
-        Date now = SessionManager.getDate().getNow();
-        if (user != null) {
-            if (user.getSecpwdFreezeEndTime() == null) {
+    private boolean isLock() {
+        SysUser curUser = SessionManagerCommon.getUser();
+        Date now = DateQuickPicker.getInstance().getNow();
+        if (curUser != null) {
+            if (curUser.getFreezeEndTime() == null) {
                 return false;
             }
-            if (now.before(user.getSecpwdFreezeEndTime())) {
+            if (now.before(curUser.getFreezeEndTime())) {
                 return true;
             }
         }
