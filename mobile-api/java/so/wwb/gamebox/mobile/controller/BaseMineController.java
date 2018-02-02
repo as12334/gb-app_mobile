@@ -566,8 +566,6 @@ public class BaseMineController {
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
         Map<String, String> i18nStatus = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_STATUS);
 
-
-
         for (VPlayerTransaction vplayer : list) {
             Map map = vplayer.get_describe();
 
@@ -579,18 +577,14 @@ public class BaseMineController {
             app.setCreateTime(vplayer.getCreateTime());
 
             if (vplayer.getTransactionMoney() != 0) {
-                app.setTransactionMoney(CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+                app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
             }
 
             if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
-                if ((int)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() != 0 && StringTool.isBlank((String)map.get("bankCode"))) {
+                if ((Double)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() == 0 && StringTool.isNotBlank((String)map.get("bankCode"))) {
                     app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
                 }
-
             }
-
-
-
 
             app.setTransactionType(vplayer.getTransactionType());
             app.setStatus(vplayer.getStatus());
