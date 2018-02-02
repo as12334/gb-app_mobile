@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class AppModelVo implements Serializable{
 
-    private Integer code;
+    private String code;
     private String message;
     private Object data;
     private String version;
@@ -17,13 +17,13 @@ public class AppModelVo implements Serializable{
 
     }
 
-    public AppModelVo(Integer code, String message) {
+    public AppModelVo(String code, String message) {
         this.code = code;
         this.message = message;
         this.version = AppConstant.APP_VERSION;
     }
 
-    public AppModelVo(Integer code, String message,Object data, String version) {
+    public AppModelVo(String code, String message,Object data, String version) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -38,7 +38,7 @@ public class AppModelVo implements Serializable{
      * @param data
      * @param version
      */
-    public AppModelVo(Integer error, Integer code, String message, Object data, String version) {
+    public AppModelVo(Integer error, String code, String message, Object data, String version) {
         this.code = code;
         this.message = message;
         this.data = data;
@@ -47,7 +47,7 @@ public class AppModelVo implements Serializable{
 
 
     @JsonIgnore
-    public static String getAppModeVoJson(Integer code, String message, Object data, String version) {
+    public static String getAppModeVoJson(String code, String message, Object data, String version) {
         return JsonTool.toJson(new AppModelVo(code, message, data, version));
     }
 
@@ -58,11 +58,11 @@ public class AppModelVo implements Serializable{
      * @param data
      * @param
      * @see #getAppModeVoJson(AppModelVo)
-     * @see #AppModelVo(Integer, String)
-     * @see #getAppModeVoJson(Integer, String, Object, String)
+     * @see #AppModelVo(String, String)
+     * @see #getAppModeVoJson(String, String, Object, String)
      */
     @JsonIgnore
-    public static String getAppModeVoJson(Integer error, Integer code, String msg, Object data, String version) {
+    public static String getAppModeVoJson(Integer error, String code, String msg, Object data, String version) {
         return JsonTool.toJson(new AppModelVo(error, code, msg, data, version));
     }
 
@@ -70,11 +70,11 @@ public class AppModelVo implements Serializable{
         return JsonTool.toJson(appModelVo);
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
