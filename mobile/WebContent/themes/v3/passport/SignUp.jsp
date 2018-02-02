@@ -4,12 +4,18 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+<%--<head>
     <title>${views.passport_auto['注册']}</title>
     <%@ include file="/themes/default/include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.dtpicker.css"/>
+</head>--%>
+<head>
+    <title>${views.passport_auto['注册']}</title>
+    <%@ include file="../include/include.head.jsp" %>
+    <link rel="stylesheet" href="../../mobile-v3/themes/mui.picker.css" />
+    <link rel="stylesheet" href="../../mobile-v3/themes/mui.dtpicker.css" />
 </head>
 
 <%@ include file="/themes/common/passport/passport.signup.jsp" %>
