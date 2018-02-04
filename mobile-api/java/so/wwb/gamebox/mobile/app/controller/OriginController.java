@@ -46,6 +46,18 @@ public class OriginController extends BaseOriginController {
     //region mainIndex
 
     /**
+     * 获取当前时区
+     * @return
+     */
+    @RequestMapping(value = "/getTimeZone")
+    @ResponseBody
+    public String getTimeZone() {
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
+    }
+
+
+    /**
      * 请求首页，查询轮播图，公告，游戏类，红包活动
      *
      * @param request

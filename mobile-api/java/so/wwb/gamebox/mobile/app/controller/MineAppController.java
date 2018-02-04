@@ -95,17 +95,6 @@ public class MineAppController extends BaseMineController {
     @Autowired(required = false)
     private IPassportDelegate passportDelegate;
 
-    /**
-     * 获取当前时区
-     * @return
-     */
-    @RequestMapping(value = "/getTimeZone")
-    @ResponseBody
-    public String getTimeZone() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
-    }
-
 
     /**
      * 　我的优惠记录
