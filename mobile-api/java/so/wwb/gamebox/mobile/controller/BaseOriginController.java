@@ -257,7 +257,7 @@ public abstract class BaseOriginController {
      */
     private String getCasinoGameRequestUrl(SiteGame siteGame) {
         StringBuilder sb = new StringBuilder();
-        sb.append("/origin/getGameLink.html")
+        sb.append("/mobile-api/origin/getGameLink.html")
                 .append("?apiId=").append(siteGame.getApiId())
                 .append("&apiTypeId=").append(siteGame.getApiTypeId());
         if (siteGame.getGameId() != null) {

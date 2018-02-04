@@ -7,6 +7,7 @@
     <%@ include file="/include/include.js.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
+    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css"/>
     <title>${views.deposit_auto['存款']}</title>
 </head>
 
@@ -28,8 +29,5 @@
         <%@ include file="/themes/common/deposit/deposit.deposit.jsp" %>
     </c:otherwise>
 </c:choose>
-
-
-
 </html>
 <%@ include file="/include/include.footer.jsp" %>

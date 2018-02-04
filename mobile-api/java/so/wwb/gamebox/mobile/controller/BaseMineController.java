@@ -722,7 +722,7 @@ public class BaseMineController {
         for (VSystemAnnouncement sysAnnounce : vListVo.getResult()) {
             AppSystemNotice sysNotice = new AppSystemNotice();
             sysNotice.setSearchId(vListVo.getSearchId(sysAnnounce.getId()));
-            sysNotice.setContent(sysAnnounce.getShortContentText50().replace("<p>","").replace("</p>",""));
+            sysNotice.setContent(sysAnnounce.getShortContentText50().replace("&nbsp;",""));
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
             sysNotice.setLink(SYSTEM_NOTICE_LINK + "?searchId=" + vListVo.getSearchId(sysAnnounce.getId()));
             sysNotices.add(sysNotice);
@@ -748,7 +748,7 @@ public class BaseMineController {
         for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()) {
             sysNotice.setTitle(sysAnnounce.getTitle());
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
-            sysNotice.setContent(sysAnnounce.getContent().replace("<p>","").replace("</p>",""));
+            sysNotice.setContent(sysAnnounce.getContent());
         }
         return sysNotice;
     }
@@ -788,8 +788,8 @@ public class BaseMineController {
                 if (siteApi.getApiId().equals(sysAnnounce.getApiId())) {
                     AppGameNotice gameNotice = new AppGameNotice();
                     gameNotice.setId(listVo.getSearchId(sysAnnounce.getId()));
-                    gameNotice.setTitle(sysAnnounce.getShortTitle80());
-                    gameNotice.setContext(sysAnnounce.getShortContentText80().replace("<p>","").replace("</p>",""));
+                    gameNotice.setTitle(sysAnnounce.getShortTitle80().replace("&nbsp;",""));
+                    gameNotice.setContext(sysAnnounce.getShortContentText80().replace("&nbsp;",""));
                     gameNotice.setLink(GAME_NOTICE_LINK + "?searchId=" + listVo.getSearchId(sysAnnounce.getId()));
 
                     //游戏拼接
@@ -836,7 +836,7 @@ public class BaseMineController {
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
         AppGameNotice gameNotice = new AppGameNotice();
         for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()) {
-            gameNotice.setContext(sysAnnounce.getContent().replace("<p>","").replace("</p>",""));
+            gameNotice.setContext(sysAnnounce.getContent());
             gameNotice.setPublishTime(sysAnnounce.getPublishTime());
         }
         return gameNotice;
