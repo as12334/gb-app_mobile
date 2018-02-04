@@ -29,6 +29,7 @@
                         </p>
                    <%-- </div>--%>
                 </div>
+                <%@include file="./ChooseAmount.jsp"%>
                 <c:set var="accountType" value="${payAccountForScan.accountType}"/>
                 <c:if test="${accountType eq '10' || accountType eq '11' || accountType eq '12'}">
                     <input type="hidden" value="true" name="isAuthCode"/>
@@ -36,8 +37,8 @@
                         <label for="result.payerBankcard">授权码</label>
                         <input type="text" placeholder="" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off"/>
                     </div>
+                    <p class="depositHelp" accountType="${accountType}">获取授权码教程<span>?</span></p>
                 </c:if>
-                <%@include file="./ChooseAmount.jsp"%>
                 <!--随机额度提示-->
                 <c:if test="${payAccountForScan.randomAmount eq true}">
                     <div class="gb-form-notice" id="randomAmountMsg">
