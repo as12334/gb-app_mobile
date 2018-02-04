@@ -30,6 +30,7 @@ public enum AppErrorCodeEnum {
     VALIDATE_ERROR("1301", "验证码输入错误"),
     REAL_NAME_ERROR("1302", "真实姓名不正确"),
     ORIGIN_SAFE_PASSWORD_ERROR("1303", "原始密码有误"),
+    SAFE_PASSWORD_ERROR("1303","安全密码有误"),
     UPDATE_REAL_NAME_FAIL("1304", "真实姓名修改失败"),
     SAFE_PASSWORD_NOT_NULL("1305", "安全密码不能为空"),
     NEW_PASSWORD_NOT_NULL("1306", "新密码不能为空"),
