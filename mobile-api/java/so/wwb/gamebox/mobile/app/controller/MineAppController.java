@@ -40,7 +40,6 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.validateForm.PlayerAdvisoryAppForm;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
@@ -95,6 +94,18 @@ public class MineAppController extends BaseMineController {
     private Log LOG = LogFactory.getLog(MineAppController.class);
     @Autowired(required = false)
     private IPassportDelegate passportDelegate;
+
+    /**
+     * 获取当前时区
+     * @return
+     */
+    @RequestMapping(value = "/getTimeZone")
+    @ResponseBody
+    public String getTimeZone() {
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
+    }
+
 
     /**
      * 　我的优惠记录
@@ -788,15 +799,6 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
-        //密码相同验证新密码不能和旧密码一样
-        String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), SessionManager.getUserName());
-        if (StringTool.equalsIgnoreCase(newPwd, SessionManager.getUser().getPassword())) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.PASSWORD_SAME.getCode(),
-                    AppErrorCodeEnum.PASSWORD_SAME.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
         //2次错误以上需要验证码
         SysUser curUser = SessionManagerCommon.getUser();
         int errorTimes = curUser.getLoginErrorTimes() == null ? -1 : curUser.getLoginErrorTimes();
@@ -824,6 +826,15 @@ public class MineAppController extends BaseMineController {
                     AppErrorCodeEnum.PASSWORD_ERROR.getCode(),
                     AppErrorCodeEnum.PASSWORD_ERROR.getMsg(),
                     map,
+                    APP_VERSION);
+        }
+        //密码相同验证新密码不能和旧密码一样
+        String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), SessionManager.getUserName());
+        if (StringTool.equalsIgnoreCase(newPwd, SessionManager.getUser().getPassword())) {
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                    AppErrorCodeEnum.PASSWORD_SAME.getCode(),
+                    AppErrorCodeEnum.PASSWORD_SAME.getMsg(),
+                    null,
                     APP_VERSION);
         }
 
@@ -1459,39 +1470,6 @@ public class MineAppController extends BaseMineController {
             }
         }
         return false;
-    }
-
-    /**
-     * 设置我的链接地址
-     *
-     * @return
-     */
-    private List<AppMineLinkVo> setLink() {
-        List<AppMineLinkVo> links = ListTool.newArrayList();
-        for (AppMineLinkEnum linkEnum : AppMineLinkEnum.values()) {
-            AppMineLinkVo vo = new AppMineLinkVo();
-            vo.setCode(linkEnum.getCode());
-            vo.setName(linkEnum.getName());
-            vo.setLink(linkEnum.getLink());
-            links.add(vo);
-        }
-
-        return links;
-    }
-
-    /**
-     * 是否有登陆账号
-     */
-    public boolean isLoginUser(AppModelVo appVo) {
-        if (SessionManager.getUser() == null) {
-            appVo.setMsg(AppErrorCodeEnum.UN_LOGIN.getMsg());
-            appVo.setCode(AppErrorCodeEnum.UN_LOGIN.getCode());
-            appVo.setError(1);
-            appVo.setData(null);
-
-            return false;
-        }
-        return true;
     }
 
     private VPlayerAdvisoryListVo unReadCount(VPlayerAdvisoryListVo listVo, Map map) {

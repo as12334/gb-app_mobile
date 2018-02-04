@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.app.controller;
 
 
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.math.NumberTool;
@@ -43,26 +42,21 @@ public class WithdrawAppController extends BaseWithDrawController {
      */
     @RequestMapping(value = "/getWithDraw")
     @ResponseBody
-    public String getWithDraw(HttpServletRequest request) {
+    public AppModelVo getWithDraw(HttpServletRequest request) {
         //判断是否达到取款要求
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
-        if (StringTool.isNotBlank(vo.getMsg())) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    vo.getCode(),
-                    vo.getMsg(),
-                    vo.getData(),
-                    APP_VERSION);
+        if (StringTool.isNotBlank(vo.getMessage())) {
+            return vo;
         }
 
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>();
         withdraw(map, request);
-
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,
-                APP_VERSION);
+        vo.setData(map);
+        vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
+        vo.setMessage(AppErrorCodeEnum.SUCCESS.getMsg());
+        vo.setVersion(APP_VERSION);
+        return vo;
     }
 
     /**
@@ -98,8 +92,8 @@ public class WithdrawAppController extends BaseWithDrawController {
         }
         if (!verifyOriginPwd(password)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
-                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
@@ -115,10 +109,10 @@ public class WithdrawAppController extends BaseWithDrawController {
         //判断取款是否达到要求
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
-        if (StringTool.isNotBlank(vo.getMsg())) {
+        if (StringTool.isNotBlank(vo.getMessage())) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     vo.getCode(),
-                    vo.getMsg(),
+                    vo.getMessage(),
                     tokenMap,
                     APP_VERSION);
         }
@@ -220,30 +214,26 @@ public class WithdrawAppController extends BaseWithDrawController {
         //是否已存在取款订单
         if (hasOrder()) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getCode());
-            vo.setMsg(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getMsg());
-            vo.setError(AppErrorCodeEnum.FAIL_COED);
+            vo.setMessage(AppErrorCodeEnum.WITHDRAW_HAS_ORDER.getMsg());
             return vo;
         }
         //是否被冻结
         if (hasFreeze()) {
             vo.setCode(AppErrorCodeEnum.USER_HAS_FREEZE.getCode());
-            vo.setMsg(AppErrorCodeEnum.USER_HAS_FREEZE.getMsg());
-            vo.setError(AppErrorCodeEnum.FAIL_COED);
+            vo.setMessage(AppErrorCodeEnum.USER_HAS_FREEZE.getMsg());
             return vo;
         }
         //今日取款是否达到上限
         if (isFull()) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_IS_FULL.getCode());
-            vo.setMsg(AppErrorCodeEnum.WITHDRAW_IS_FULL.getMsg());
-            vo.setError(AppErrorCodeEnum.FAIL_COED);
+            vo.setMessage(AppErrorCodeEnum.WITHDRAW_IS_FULL.getMsg());
             return vo;
         }
         //余额是否充足
         Map<String, Object> map = new HashMap<>();
         if (isBalanceAdequate(map)) {
             vo.setCode(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getCode());
-            vo.setMsg(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
-            vo.setError(AppErrorCodeEnum.FAIL_COED);
+            vo.setMessage(AppErrorCodeEnum.WITHDRAW_MIN_AMOUNT.getMsg().replace(TARGET_REGEX, map.get("withdrawMinNum").toString()));
             return vo;
         }
 
