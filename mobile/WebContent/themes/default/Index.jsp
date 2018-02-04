@@ -123,6 +123,7 @@
                             </div>
                         </div>
                     </div>
+                    <input value="${isShowQrCode}" type="hidden" id="isShowQrCode" /><%--获取是否开启二维码开关--%>
                     <!--底部导航-->
                     <div class="mui-row bottom-nav">
                         <ul class="mui-list-inline">
