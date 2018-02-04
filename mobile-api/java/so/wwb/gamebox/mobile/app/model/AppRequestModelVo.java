@@ -12,6 +12,26 @@ public class AppRequestModelVo {
     private String theme;
     /*分辨率*/
     private String resolution;
+    /*是否原生(原生涉及H5页面跳转)*/
+    private boolean is_native;
+    /*语言*/
+    private String locale;
+
+    public boolean isIs_native() {
+        return is_native;
+    }
+
+    public void setIs_native(boolean is_native) {
+        this.is_native = is_native;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
 
     public String getTerminal() {
         return terminal;

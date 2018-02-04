@@ -30,8 +30,12 @@
                                                 <c:if test="${p.key eq 'online_deposit'}">
                                                     <li key="${p.key}"><a data-online="/wallet/deposit/online/index.html" class="${fn:length(views.deposit[p.key])>5?'long':''}"><i class="pay ${payAccountMap.get(p.key)}"></i><span><div class="text-two-line">${views.deposit[p.key]}</div></span></a></li>
                                                 </c:if>
-                                                <c:if test="${p.key eq 'wechatpay_scan' || p.key eq 'alipay_scan'||p.key eq 'qqwallet_scan'|| p.key eq 'jdpay_scan' || p.key eq 'bdwallet_san' || p.key eq 'union_pay_scan'}">
-                                                    <li key="${p.key}"><a data-scan="/wallet/deposit/online/scan/scanCode/${p.value}.html" class="${fn:length(views.deposit[p.key])>5?'long':''}"><i class="pay ${payAccountMap.get(p.key)}"></i><span><div class="text-two-line">${views.deposit[p.key]}</div></span></a></li>
+                                                <c:if test="${p.key eq 'scanPay'}">
+                                                    <c:forEach items="${p.value}" var="s">
+                                                        <c:set var="bankCode" value="${s.key}"/>
+                                                        <c:set var="bankName" value="${views.deposit[bankCode]}"/>
+                                                        <li key="${bankCode}"><a data-scan="/wallet/deposit/online/scan/scanCode/${bankCode}.html" class="${fn:length(bankName)>5?'long':''}"><i class="pay ${s.key}"></i><span><div class="text-two-line">${bankName}</div></span></a></li>
+                                                    </c:forEach>
                                                 </c:if>
 
                                                 <c:if test="${p.key eq 'company_deposit'}">

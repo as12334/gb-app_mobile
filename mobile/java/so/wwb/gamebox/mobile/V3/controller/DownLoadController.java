@@ -13,6 +13,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
@@ -38,6 +39,10 @@ public class DownLoadController extends BaseDemoController{
     @RequestMapping("/downLoad")
     @Upgrade(upgrade = true)
     public String downLoad(Model model,HttpServletRequest request) {
+
+        if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
+            return "redirect:/login/commonLogin.html";
+        }
         getAppPath(model,request);
         return "/download/DownLoad";
     }

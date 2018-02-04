@@ -1,6 +1,7 @@
 package so.wwb.gamebox.mobile.app.model;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by legend on 18-1-15.
@@ -11,13 +12,10 @@ public class AdvisoryMessageDetailApp {
     private String advisoryContent; //　咨询内容
 
     private String questionType;  //问题类型player.question_type(提问,追问)
-    private String advisoryTime; // 提问  时间
+    private Long advisoryTime; // 提问  时间
 
+    private List<AdvisoryMessageReplyListApp> replyList; // 回复的一个循环列表
 
-    private String replyTime; //回复时间
-
-    private String replyTitle; //回复标题
-    private String replyContent; //回复内容
 
     public String getAdvisoryTitle() {
         return advisoryTitle;
@@ -43,35 +41,19 @@ public class AdvisoryMessageDetailApp {
         this.questionType = questionType;
     }
 
-    public String getAdvisoryTime() {
+    public Long getAdvisoryTime() {
         return advisoryTime;
     }
 
-    public void setAdvisoryTime(String advisoryTime) {
+    public void setAdvisoryTime(Long advisoryTime) {
         this.advisoryTime = advisoryTime;
     }
 
-    public String getReplyTime() {
-        return replyTime;
+    public List<AdvisoryMessageReplyListApp> getReplyList() {
+        return replyList;
     }
 
-    public void setReplyTime(String replyTime) {
-        this.replyTime = replyTime;
-    }
-
-    public String getReplyTitle() {
-        return replyTitle;
-    }
-
-    public void setReplyTitle(String replyTitle) {
-        this.replyTitle = replyTitle;
-    }
-
-    public String getReplyContent() {
-        return replyContent;
-    }
-
-    public void setReplyContent(String replyContent) {
-        this.replyContent = replyContent;
+    public void setReplyList(List<AdvisoryMessageReplyListApp> replyList) {
+        this.replyList = replyList;
     }
 }

@@ -77,10 +77,11 @@ public class IndexController extends BaseApiController {
                 typeId = ApiTypeEnum.LIVE_DEALER.getCode();
             }
         }
-        if (typeId == 5)
+        if (typeId == -1){
             model.addAttribute("channel", "activity");
-        else
+        }else{
             model.addAttribute("channel", "game");
+        }
         model.addAttribute("apiTypeId", typeId);
         model.addAttribute("apiTypes", apiTypes);
         model.addAttribute("carousels", getCarousel(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
@@ -474,6 +475,10 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     public String downloadApp(Model model, HttpServletRequest request) {
+
+        if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
+            return "redirect:/login/commonLogin.html";
+        }
         getAppPath(model, request);
         return "/app/Index";
     }

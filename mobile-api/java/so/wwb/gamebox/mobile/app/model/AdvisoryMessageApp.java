@@ -12,7 +12,7 @@ public class AdvisoryMessageApp {
     private String advisoryTitle; //标题
     private String advisoryContent; //　内容
 
-    private String advisoryTime; // 时间
+    private long advisoryTime; // 时间
 
     private String replyTitle; // 回复标题
 
@@ -34,11 +34,11 @@ public class AdvisoryMessageApp {
         this.advisoryContent = advisoryContent;
     }
 
-    public String getAdvisoryTime() {
+    public long getAdvisoryTime() {
         return advisoryTime;
     }
 
-    public void setAdvisoryTime(String advisoryTime) {
+    public void setAdvisoryTime(long advisoryTime) {
         this.advisoryTime = advisoryTime;
     }
 

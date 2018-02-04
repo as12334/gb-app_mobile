@@ -72,18 +72,18 @@
     <div class="mui-popup mui-popup-in">
         <div class="mui-popup-inner">
             <div class="mui-popup-title">
-                <span class="pop-title">消息公告</span>
+                <span class="pop-title">${views.passport_auto['提示消息']}</span>
                 <a href="#bottomPopover" class="mui-btn mui-btn-link mui-pull-right pop-close"><span class="mui-icon mui-icon-closeempty verify-cancel"></span></a>
             </div>
             <div class="cont-text">
                 <div class="popup-scroll">
                     <div class="bs-component">
-                        <div class="alert alert-dismissible alert-danger">本次升级，加强了账户的安全防护体系，请验证真实姓名，验证通过后即可成功登陆。</div>
+                        <div class="alert alert-dismissible alert-danger">${views.passport_auto['本次升级，加强了账户的安全防护体系，请验证真实姓名，验证通过后即可成功登陆']}</div>
                     </div>
                     <form class="form-horizontal">
                         <div class="form-group">
                             <gb:token />
-                            <label class="col-12-3 control-label">您的真实姓名：</label>
+                            <label class="col-12-3 control-label">${views.passport_auto['您的真实姓名：']}</label>
                             <div class="col-12-8">
                                 <input type="text" class="form-control" name="result.realName" id="result_realName" placeholder="请输入您的真实姓名">
                                 <input type="hidden" name="needRealName" value="yes">
@@ -97,8 +97,8 @@
                     </form>
                 </div>
             </div>
-            <button type="button" class="mui-btn confirm-btn verify-name">确定</button>
-            <button type="button" class="mui-btn verify-cancel">取消</button>
+            <button type="button" class="mui-btn confirm-btn verify-name">${views.passport_auto['确定']}</button>
+            <button type="button" class="mui-btn verify-cancel">${views.passport_auto['取消']}</button>
         </div>
     </div>
 

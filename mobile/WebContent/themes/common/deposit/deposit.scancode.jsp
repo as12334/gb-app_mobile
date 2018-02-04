@@ -16,7 +16,7 @@
             <input type="hidden" name="account" value="${command.getSearchId(payAccountForScan.id)}"/>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
-                    <label>${views.deposit_auto['金额']}</label>
+                    <label for="result.rechargeAmount">${views.deposit_auto['金额']}</label>
                     <%--<div class="ct">--%>
                         <p class="text-gray-light">
                             <c:if test="${payAccountForScan.randomAmount eq true}">
@@ -29,13 +29,14 @@
                         </p>
                    <%-- </div>--%>
                 </div>
-               <%-- <c:if test="${payAccountForScan.randomAmount eq true}">
-                    <div class="mui-input-row" id="randomAmountMsg">
-                        <marquee scrollamount="5" direction="left" >
-                            <input style="width: 550px" type="randomAmountMsg"  name="randomAmountMsg" value="${views.deposit_auto['随机额度提示']}" disabled/>
-                        </marquee>
+                <c:set var="accountType" value="${payAccountForScan.accountType}"/>
+                <c:if test="${accountType eq '10' || accountType eq '11' || accountType eq '12'}">
+                    <input type="hidden" value="true" name="isAuthCode"/>
+                    <div class="mui-input-row">
+                        <label for="result.payerBankcard">授权码</label>
+                        <input type="text" placeholder="" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off"/>
                     </div>
-                </c:if>--%>
+                </c:if>
                 <%@include file="./ChooseAmount.jsp"%>
                 <!--随机额度提示-->
                 <c:if test="${payAccountForScan.randomAmount eq true}">

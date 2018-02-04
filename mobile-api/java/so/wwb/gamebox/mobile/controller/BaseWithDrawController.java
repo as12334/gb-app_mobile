@@ -13,9 +13,13 @@ import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.app.model.AppPlayerRank;
+import so.wwb.gamebox.mobile.app.model.AppUserBankCard;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -50,9 +54,11 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.COMMON_PAYBANK_PHOTO;
 
 /**
  * Created by ed on 18-1-21.
@@ -66,11 +72,11 @@ public class BaseWithDrawController {
     /**
      * 取款
      */
-    protected void withdraw(Map map) {
+    protected void withdraw(Map map, HttpServletRequest request) {
         //获取稽核相关
         map.put("auditMap", getAuditMap());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        hasBank(map);
+        hasBank(map, request);
         //player
         UserPlayer player = getPlayer();
         double totalBalance = 0;
@@ -81,6 +87,49 @@ public class BaseWithDrawController {
         map.put("totalBalance", player.getWalletBalance() + totalBalance);
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
+        map.put("isSafePassword", isSafePassword());
+        map.put("rank",getPlayerRank());
+    }
+
+    /**
+     * 获取玩家层级取款金额最大小值
+     * @return
+     */
+    private AppPlayerRank getPlayerRank(){
+        PlayerRank rank = getRank();
+        AppPlayerRank appRank = new AppPlayerRank();
+        appRank.setWithdrawMinNum(rank.getWithdrawMinNum());
+        appRank.setWithdrawMaxNum(rank.getWithdrawMaxNum());
+        return appRank;
+    }
+
+    /**
+     * 判断用户是否存在安全码
+     *
+     * @return
+     */
+    protected boolean isSafePassword() {
+        SysUser user = SessionManager.getUser();
+        if (StringTool.isBlank(user.getPermissionPwd())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 设置银行卡图片
+     *
+     * @param request
+     * @param bankcard
+     * @return
+     */
+    private String setBankPictureUrl(HttpServletRequest request, UserBankcard bankcard) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(COMMON_PAYBANK_PHOTO);
+        sb.append(bankcard.getBankName());
+        sb.append(".png");
+        return sb.toString();
     }
 
     /**
@@ -104,7 +153,7 @@ public class BaseWithDrawController {
      * @param map
      * @return
      */
-    public boolean hasBank(Map map) {
+    public boolean hasBank(Map map, HttpServletRequest request) {
         // 是否设置收款账号
         Map<String, UserBankcard> bankcardMap = BankHelper.getUserBankcards();
         SysParam cashParam = ParamTool.getSysParam(SiteParamEnum.SETTING_WITHDRAW_TYPE_IS_CASH);
@@ -113,7 +162,7 @@ public class BaseWithDrawController {
         boolean isBit = bitParam != null && "true".equals(bitParam.getParamValue());
         map.put("isBit", isBit);
         map.put("isCash", isCash);
-        map.put("bankcardMap", setUserBankCard(bankcardMap));
+        map.put("bankcardMap", setUserBankCard(bankcardMap, request));
         boolean hasBank = true;
         if (MapTool.isEmpty(bankcardMap)) {
             hasBank = false;
@@ -182,7 +231,7 @@ public class BaseWithDrawController {
 
         Map<String, Object> result = new HashMap<>();
         result.put("actualWithdraw", actualWithdraw);
-        result.put("deductFavorable", favorableSum > 0 ? -favorableSum : favorableSum);
+        result.put("deductFavorable", auditMap.get("favorableSum"));
         result.put("transactionNo", auditMap.get("transactionNo"));
         result.put("administrativeFee", depositSum);
         result.put("withdrawAmount", withdrawAmount);
@@ -204,12 +253,28 @@ public class BaseWithDrawController {
      * @param bankcardMap
      * @return
      */
-    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap) {
-        for (UserBankcard bank : bankcardMap.values()) {
-            bank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
-            bank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+    private Map setUserBankCard(Map<String, UserBankcard> bankcardMap, HttpServletRequest request) {
+        Map<String, AppUserBankCard> appMap = new HashMap<>();
+        for (Map.Entry<String, UserBankcard> userMap : bankcardMap.entrySet()) {
+            UserBankcard bank = userMap.getValue();
+            AppUserBankCard appBank = new AppUserBankCard();
+            appBank.setId(bank.getId());
+            appBank.setUserId(bank.getUserId());
+            appBank.setBankcardMasterName(StringTool.overlayName(bank.getBankcardMasterName()));
+            appBank.setBankcardNumber(BankCardTool.overlayBankcard(bank.getBankcardNumber()));
+            appBank.setCreateTime(bank.getCreateTime());
+            appBank.setUseCount(bank.getUseCount());
+            appBank.setUseStauts(bank.getUseStauts());
+            appBank.setDefault(bank.getIsDefault());
+            appBank.setBankName(bank.getBankName());
+            appBank.setBankDeposit(bank.getBankDeposit());
+            appBank.setCustomBankName(bank.getCustomBankName());
+            appBank.setType(bank.getType());
+            appBank.setBankUrl(setBankPictureUrl(request, bank));
+            appMap.put(userMap.getKey(), appBank);
         }
-        return bankcardMap;
+
+        return appMap;
     }
 
     /**
@@ -626,7 +691,7 @@ public class BaseWithDrawController {
      *
      * @return 层级信息
      */
-    private PlayerRank getRank() {
+    protected PlayerRank getRank() {
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setId(SessionManagerCommon.getUserId());
         return ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
