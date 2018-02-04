@@ -671,7 +671,9 @@ public class BaseMineController {
             detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
             detailApp.setStatusName(statusName); //状态
         }
-        detailApp.setBitAmount((String) map.get("bitAmount"));
+        if (map.get("bitAmount") != null) {
+            detailApp.setBitAmount(String.valueOf(map.get("bitAmount")));
+        }
 
         return detailApp;
     }
