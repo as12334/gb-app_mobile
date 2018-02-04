@@ -658,7 +658,7 @@ public class BaseMineController {
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.BACKWATER.getCode())) {  //返水
             String dateStr = LocaleDateTool.formatDate((Date) map.get("date"), new DateFormat().getYEARMONTH(), SessionManagerCommon.getTimeZone());
             detailApp.setTransactionWayName(dateStr.replace("-", "年") +"月" + map.get("period") +"期");//描述
-            detailApp.setDeductFavorable(moneyType + CurrencyTool.formatCurrency(po.getDeductFavorable()));  //金额
+            detailApp.setDeductFavorable(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
         }
 
