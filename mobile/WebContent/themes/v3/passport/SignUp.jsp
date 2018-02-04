@@ -1,6 +1,6 @@
 <%--@elvariable id="field" type="java.util.List<so.wwb.gamebox.model.master.setting.po.FieldSort>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
 <!DOCTYPE html>
 <html>
 
@@ -14,11 +14,12 @@
 <head>
     <title>${views.passport_auto['注册']}</title>
     <%@ include file="../include/include.head.jsp" %>
-    <link rel="stylesheet" href="../../mobile-v3/themes/mui.picker.css" />
-    <link rel="stylesheet" href="../../mobile-v3/themes/mui.dtpicker.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css" />
 </head>
 
-<%@ include file="/themes/common/passport/passport.signup.jsp" %>
+<%@ include file="passport.signup.jsp" %>
 
 </html>
+
 <%@ include file="/include/include.footer.jsp" %>
