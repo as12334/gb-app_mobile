@@ -630,7 +630,11 @@ public class BaseMineController {
             detailApp.setRechargeAmount(moneyType +" " + CurrencyTool.formatCurrency(po.getRechargeAmount()));  //存款金额
             detailApp.setPoundage(moneyType + " " + CurrencyTool.formatCurrency((Number) map.get("poundage"))); //手续费
             detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getRechargeTotalAmount())); //实际到账
+            detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //真实姓名
             detailApp.setStatusName(statusName); //状态
+            if (map.get("customBankName") != null && "其他方式".equals(map.get("customBankName"))) {
+                detailApp.setBankCodeName(String.valueOf(map.get("customBankName")));
+            }
         }
 
         if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.WITHDRAWALS.getCode())) { //取款
