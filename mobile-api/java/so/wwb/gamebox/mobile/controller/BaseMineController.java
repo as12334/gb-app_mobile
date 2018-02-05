@@ -28,6 +28,7 @@ import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
@@ -73,6 +74,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
@@ -596,7 +598,7 @@ public class BaseMineController {
     /**
      *
      */
-    protected RecordDetailApp buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo) {
+    protected RecordDetailApp buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo, HttpServletRequest request) {
 
         VPlayerTransaction po = vo.getResult();
 
@@ -630,7 +632,18 @@ public class BaseMineController {
             detailApp.setRechargeAmount(moneyType +" " + CurrencyTool.formatCurrency(po.getRechargeAmount()));  //存款金额
             detailApp.setPoundage(moneyType + " " + CurrencyTool.formatCurrency((Number) map.get("poundage"))); //手续费
             detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getRechargeTotalAmount())); //实际到账
+            detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //真实姓名
             detailApp.setStatusName(statusName); //状态
+
+            if (map.get("bankCode") != null) {
+                detailApp.setBankCode(String.valueOf(map.get("bankCode")));  //银行卡code icbc
+                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + map.get("bankCode")); //将ICBC转换工商银行
+                detailApp.setBankCodeName(bankName);
+                detailApp.setBankUrl(setBankPictureUrl(request, po));
+            }
+            if (map.get("customBankName") != null && "其他方式".equals(map.get("customBankName"))) {
+                detailApp.setBankCodeName(String.valueOf(map.get("customBankName")));
+            }
         }
 
         if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.WITHDRAWALS.getCode())) { //取款
@@ -676,6 +689,18 @@ public class BaseMineController {
         }
 
         return detailApp;
+    }
+
+
+    private String setBankPictureUrl (HttpServletRequest request, VPlayerTransaction po) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(COMMON_PAYBANK_PHOTO);
+
+        Map map = po.get_describe();
+        sb.append(map.get("bankCode"));
+        sb.append(".png");
+        return sb.toString();
     }
 
     /**

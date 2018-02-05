@@ -31,6 +31,8 @@ public class RecordDetailApp {
     private String bankCode; //取款 银行code
     private String bankCodeName; // 银行名称
 
+    private String bankUrl; //银行的图片的链接地址
+
     private String withDrwalsRemark; // 取款 和优惠描述
 
     private String bitAmount; //比特币
@@ -274,5 +276,13 @@ public class RecordDetailApp {
 
     public void setWithdrawMoney(String withdrawMoney) {
         this.withdrawMoney = withdrawMoney;
+    }
+
+    public String getBankUrl() {
+        return bankUrl;
+    }
+
+    public void setBankUrl(String bankUrl) {
+        this.bankUrl = bankUrl;
     }
 }
