@@ -33,6 +33,8 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                 SysParam param = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
                 if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {
                     modelAndView.setViewName("/themes/lottery" + url);
+                } else if(isNative(request)){ //app原生走mobile-v3 H5
+                    modelAndView.setViewName("/themes/v3" + url);
                 } else {
                     boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
                     if (isMobileUpgrade && handler instanceof HandlerMethod && isAppUpdate(request)) {
@@ -50,6 +52,22 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
             }
         }
         super.postHandle(request, response, handler, modelAndView);
+    }
+
+    /**
+     * 是否是app原生 如果是原生直接走H5
+     * @param request
+     * @return
+     */
+    private boolean isNative(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        if(StringTool.isBlank(userAgent)) {
+            return false;
+        }
+        if(userAgent.contains("is_native")) {
+            return true;
+        }
+        return false;
     }
 
     /**
