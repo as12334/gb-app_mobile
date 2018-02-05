@@ -64,7 +64,12 @@ import static so.wwb.gamebox.model.CacheBase.getSiteGameName;
 public abstract class BaseOriginController {
     private Log LOG = LogFactory.getLog(BaseOriginController.class);
     private String TRANSFERS_URL = "/transfer/index.html";
-    private String CASINO_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=2&search.gameType=Fish";
+    private String FISH_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=2&search.gameType=Fish";
+    private String API_DETAIL_LINK = "/api/detail.html?apiId=%d&apiTypeId=%d";
+    private String API_GAME_LINK = "/game/apiGames.html?apiId=%d&apiTypeId=%d";
+    private String AUTO_GAME_LINK = "/mobile-api/origin/getGameLink.html?apiId=%d&apiTypeId=%d";
+    private String CASINO_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=%d";
+    private String TRANSFER_LINK = "/transfer/index.html?apiId=%d&apiTypeId=%d";
 
     /**
      * 设置查询条件
@@ -257,9 +262,7 @@ public abstract class BaseOriginController {
      */
     private String getCasinoGameRequestUrl(SiteGame siteGame) {
         StringBuilder sb = new StringBuilder();
-        sb.append("/mobile-api/origin/getGameLink.html")
-                .append("?apiId=").append(siteGame.getApiId())
-                .append("&apiTypeId=").append(siteGame.getApiTypeId());
+        sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
         if (siteGame.getGameId() != null) {
             sb.append("&gameId=").append(siteGame.getGameId());
         }
@@ -424,7 +427,7 @@ public abstract class BaseOriginController {
                 apiTypeRelation.setOrderNum(siteGame.getOrderNum());
                 AppSiteApiTypeRelationI18n appApi = changeApiTypeRelationI18nModelToApp(apiTypeRelation, model, request, null);
                 appApi.setCover(String.format(API_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString(), apiId, siteGame.getCode()));
-                appApi.setGameLink(String.format(CASINO_GAME_LINK, apiId));
+                appApi.setGameLink(String.format(FISH_GAME_LINK, apiId));
                 appApis.add(appApi);
             }
         }
@@ -461,7 +464,7 @@ public abstract class BaseOriginController {
             if (SessionManager.isAutoPay()) {
                 appSiteGame.setGameLink(getCasinoGameRequestUrl(siteGame));
             } else {
-                appSiteGame.setGameLink("/api/detail.html?apiId=" + siteGame.getApiId() + "&apiTypeId=" + siteGame.getApiTypeId());
+                appSiteGame.setGameLink(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
             }
         }
         appSiteGame.setAutoPay(SessionManager.isAutoPay());
@@ -613,13 +616,13 @@ public abstract class BaseOriginController {
     private String getAutoPayGameLink(SiteApiTypeRelation siteApi) {
         if (SessionManager.getUser() != null && siteApi.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()) {
             if (siteApi.getApiId() != null && StringTool.equals(siteApi.getApiId().toString(), ApiProviderEnum.BSG.getCode())) {
-                return "/game/apiGames.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
+                return String.format(API_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
             } else if (SessionManager.isAutoPay() && siteApi.getApiTypeId() != null && siteApi.getApiTypeId().intValue() != ApiTypeEnum.CASINO.getCode()) {
-                return "/mobile-api/origin/getGameLink.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
+                return String.format(AUTO_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
             } else if (siteApi.getApiTypeId() != null && siteApi.getApiTypeId().intValue() == ApiTypeEnum.CASINO.getCode()) {
-                return "/mobile-api/origin/getCasinoGame.html?search.apiId=" + siteApi.getApiId() + "&search.apiTypeId=" + siteApi.getApiTypeId();
+                return String.format(CASINO_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
             } else {
-                return "/api/detail.html?apiId=" + siteApi.getApiId() + "&apiTypeId=" + siteApi.getApiTypeId();
+                return String.format(API_DETAIL_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
             }
         }
         return "";
@@ -809,9 +812,7 @@ public abstract class BaseOriginController {
             domain.insert(0, "http://");
         }
 
-        String transferUrl = domain + "/transfer/index.html"
-                + "?apiId=" + apiId
-                + "&apiTypeId=" + playerApiAccountVo.getApiTypeId();
+        String transferUrl = domain + String.format(TRANSFER_LINK, apiId, playerApiAccountVo.getApiTypeId());
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
         playerApiAccountVo.setLobbyUrl(domain.toString());
