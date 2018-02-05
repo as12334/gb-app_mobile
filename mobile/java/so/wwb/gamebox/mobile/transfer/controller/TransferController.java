@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.transfer.form.PlayerTransferForm;
 import so.wwb.gamebox.mobile.wallet.controller.WalletBaseController;
@@ -73,6 +74,7 @@ public class TransferController extends WalletBaseController {
 
     @Override
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     protected String index(Model model) {
         //玩家信息
         model.addAttribute("player", getPlayer());
