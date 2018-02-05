@@ -13,8 +13,8 @@ import org.soul.commons.security.CryptoTool;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
@@ -55,7 +55,7 @@ public class ActivityMoneyAppController {
     /**
      * 剩余次数,是否能抽红包
      */
-    @RequestMapping(value = "/countDrawTimes", method = RequestMethod.POST)
+    @RequestMapping(value = "/countDrawTimes")
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
         if (SessionManagerCommon.getUser() == null) {
@@ -78,7 +78,7 @@ public class ActivityMoneyAppController {
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
 
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
-            LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId.toString());
+            LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId);
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
@@ -112,7 +112,7 @@ public class ActivityMoneyAppController {
             map.put("isEnd", "false");
             map.put("drawTimes", count);
         } else {
-            ActivityOpenPeriod period = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
+            ActivityOpenPeriod period = ServiceActivityTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
             if (period != null) {//开奖时间到
                 int count = countAll(moneyActivity, playerId);
                 map.put("isEnd", "false");
@@ -125,7 +125,7 @@ public class ActivityMoneyAppController {
         }
         //如果还有次数，看下是否还有奖品。如果没有次数，直接显示没有次数
         if (MapTool.getInteger(map, "drawTimes") > 0) {
-            boolean hasLotteryAwards = ServiceSiteTool.activityMoneyAwardsRulesService().hasLotteryAwards(awardsRulesVo);
+            boolean hasLotteryAwards = ServiceActivityTool.activityMoneyAwardsRulesService().hasLotteryAwards(awardsRulesVo);
             if (!hasLotteryAwards) {
                 map.put("isEnd", "true");
                 map.put("drawTimes", -5);
@@ -137,8 +137,8 @@ public class ActivityMoneyAppController {
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
     }
 
@@ -147,22 +147,11 @@ public class ActivityMoneyAppController {
      *
      * @return
      */
-    @RequestMapping(value = "/getPacket", method = RequestMethod.POST)
+    @RequestMapping(value = "/getPacket")
     @ResponseBody
     @Token(valid = true)
     public String getPacket(String activityMessageId) {
-        AppModelVo vo = new AppModelVo();
-        vo.setVersion(APP_VERSION);
-        if (SessionManager.getUser() == null) {
-
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.UN_LOGIN.getCode(),
-                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null, APP_VERSION);
-        }
-
         if (StringTool.isBlank(activityMessageId)) {
-
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
@@ -315,7 +304,7 @@ public class ActivityMoneyAppController {
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
         awardsRulesVo.getSearch().setActivityMessageId(activityMessageId);
-        boolean allDayLottery = ServiceSiteTool.activityMoneyAwardsRulesService().isAllDayLottery(awardsRulesVo);
+        boolean allDayLottery = ServiceActivityTool.activityMoneyAwardsRulesService().isAllDayLottery(awardsRulesVo);
         return allDayLottery;
     }
 
@@ -327,7 +316,7 @@ public class ActivityMoneyAppController {
      * @return
      */
     private Integer countAll(PlayerActivityMessage moneyActivity, Integer playerId) {
-        LOG.info("[玩家-{0}计算红包次数]准备计算可抽奖次数", playerId.toString());
+        LOG.info("[玩家-{0}计算红包次数]准备计算可抽奖次数", playerId);
         List<Map> moneyCounts = findCountByPlayerId(moneyActivity, playerId);
         int count = 0;
         if (CollectionTool.isNotEmpty(moneyCounts)) {
@@ -335,11 +324,11 @@ public class ActivityMoneyAppController {
                 count += MapTool.getInteger(mc, "remain_win_count");
             }
         }
-        LOG.info("[玩家-{0}计算红包次数]查询到玩家内定红包可抽取次数为：{1}", playerId.toString(), count);
+        LOG.info("[玩家-{0}计算红包次数]查询到玩家内定红包可抽取次数为：{1}", playerId, count);
         Integer integer = queryPlayerBetCountByRules(moneyActivity);
-        LOG.info("[玩家-{0}计算红包次数]按条件计算玩家的可抽取次数为：{1}", playerId.toString(), integer);
+        LOG.info("[玩家-{0}计算红包次数]按条件计算玩家的可抽取次数为：{1}", playerId, integer);
         count += integer;
-        LOG.info("[玩家-{0}计算红包次数]玩家总的可抽奖次数为：{1}", playerId.toString(), count);
+        LOG.info("[玩家-{0}计算红包次数]玩家总的可抽奖次数为：{1}", playerId, count);
         return count;
     }
 
@@ -354,12 +343,12 @@ public class ActivityMoneyAppController {
         Date today = new Date();
         String realDate = DateTool.formatDate(today, CommonContext.get().getTimeZone(), DateTool.yyyy_MM_dd_HH_mm_ss);
         today = DateTool.parseDate(realDate, DateTool.yyyy_MM_dd_HH_mm_ss);
-        ActivityOpenPeriod nextOpenPeriod = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriodByActivityId(awardsRulesVo);
-        LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段为:{1}", awardsRulesVo.getPlayerId().toString(), nextOpenPeriod == null ? "空" : nextOpenPeriod.getStartTime(today));
+        ActivityOpenPeriod nextOpenPeriod = ServiceActivityTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriodByActivityId(awardsRulesVo);
+        LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段为:{1}", awardsRulesVo.getPlayerId(), nextOpenPeriod == null ? "空" : nextOpenPeriod.getStartTime(today));
         Date nextStartTime = null;
         if (nextOpenPeriod != null) {
             nextStartTime = nextOpenPeriod.getStartTime(today);
-            LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段是否为今天:{1}", awardsRulesVo.getPlayerId().toString(), nextOpenPeriod.isCurrentDay());
+            LOG.info("[玩家-{0}获取下次抽次时间]下个开奖时段是否为今天:{1}", awardsRulesVo.getPlayerId(), nextOpenPeriod.isCurrentDay());
             if (!nextOpenPeriod.isCurrentDay()) {
                 Date tomorrow = DateQuickPicker.getInstance().getTomorrow();
                 String tomorrowFormat = DateTool.formatDate(tomorrow, CommonContext.get().getTimeZone(), DateTool.yyyyMMddHHmmss);
@@ -382,7 +371,7 @@ public class ActivityMoneyAppController {
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
         awardsRulesVo.getSearch().setActivityMessageId(moneyActivity.getId());
-        ActivityOpenPeriod period = ServiceSiteTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
+        ActivityOpenPeriod period = ServiceActivityTool.activityMoneyAwardsRulesService().queryMoneyOpenPeriod(awardsRulesVo);
         if (period != null) {//开奖时间到
             List<Map> moneyCounts = findCountByPlayerId(moneyActivity, playerId);
             if (CollectionTool.isEmpty(moneyCounts)) {//没有内定次数
@@ -427,7 +416,7 @@ public class ActivityMoneyAppController {
         ActivityMoneyDefaultWinPlayerListVo playerListVo = new ActivityMoneyDefaultWinPlayerListVo();
         playerListVo.getSearch().setActivityMessageId(moneyActivity.getId());
         playerListVo.getSearch().setPlayerId(playerId);
-        List<Map> maps = ServiceSiteTool.activityMoneyDefaultWinPlayerService().queryMoneyCountByPlayerId(playerListVo);
+        List<Map> maps = ServiceActivityTool.activityMoneyDefaultWinPlayerService().queryMoneyCountByPlayerId(playerListVo);
         return maps;
     }
 
@@ -448,7 +437,7 @@ public class ActivityMoneyAppController {
         awardsRulesVo.getSearch().setStartTime(DateQuickPicker.getInstance().getToday());
         awardsRulesVo.getSearch().setEndTime(DateQuickPicker.getInstance().getTomorrow());
         awardsRulesVo.setActivityMessage(moneyActivity);
-        Integer integer = ServiceSiteTool.activityMoneyAwardsRulesService().queryPlayerBetCount(awardsRulesVo);
+        Integer integer = ServiceActivityTool.activityMoneyAwardsRulesService().queryPlayerBetCount(awardsRulesVo);
         return integer;
     }
 
@@ -475,7 +464,7 @@ public class ActivityMoneyAppController {
                 activityMoneyAwardsRulesVo.getSearch().setEndTime(DateQuickPicker.getInstance().getTomorrow());
             }
             activityMoneyAwardsRulesVo._setDataSourceId(SessionManagerBase.getSiteId());
-            activityMoneyAwardsRulesVo = ServiceSiteTool.activityMoneyAwardsRulesService().lotteryByTime(activityMoneyAwardsRulesVo);
+            activityMoneyAwardsRulesVo = ServiceActivityTool.activityMoneyAwardsRulesService().lotteryByTime(activityMoneyAwardsRulesVo);
             ActivityMoneyAwardsRules lottery = activityMoneyAwardsRulesVo.getResult();
             if (lottery == null || lottery.getId() == null) {
                 map.put("gameNum", -5);
@@ -623,7 +612,7 @@ public class ActivityMoneyAppController {
         winPlayerVo.setActivityPlayerApply(activityPlayerApply);
         ActivityPlayerPreferential activityPlayerPreferential = buildPlayerPreferential(moneyActivity, rules_id);
         winPlayerVo.setPreferential(activityPlayerPreferential);
-        winPlayerVo = ServiceSiteTool.activityMoneyAwardsRulesService().reducePlayerCount(winPlayerVo);
+        winPlayerVo = ServiceActivityTool.activityMoneyAwardsRulesService().reducePlayerCount(winPlayerVo);
         return winPlayerVo;
     }
 
@@ -645,7 +634,7 @@ public class ActivityMoneyAppController {
         rulesVo.getSearch().setEndTime(DateQuickPicker.getInstance().getTomorrow());
         rulesVo.setPlayerId(SessionManagerCommon.getUserId());
         rulesVo.setMoneyOpenPeriod(openPeriod);
-        Boolean hasCount = ServiceSiteTool.activityMoneyAwardsRulesService().hasCountByAward(rulesVo);
+        Boolean hasCount = ServiceActivityTool.activityMoneyAwardsRulesService().hasCountByAward(rulesVo);
         LOG.info("[玩家-{0}拆红包]奖项是否有剩余：{1}", SessionManagerBase.getUserId().toString(), hasCount);
         return hasCount;
     }
@@ -681,7 +670,7 @@ public class ActivityMoneyAppController {
     private ActivityMoneyAwardsRules findMoneyRules(Integer id) {
         ActivityMoneyAwardsRulesVo rulesVo = new ActivityMoneyAwardsRulesVo();
         rulesVo.getSearch().setId(id);
-        rulesVo = ServiceSiteTool.activityMoneyAwardsRulesService().get(rulesVo);
+        rulesVo = ServiceActivityTool.activityMoneyAwardsRulesService().get(rulesVo);
         return rulesVo.getResult();
     }
 

@@ -4,6 +4,7 @@ import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -17,6 +18,7 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
+import org.soul.commons.security.Base36;
 import org.soul.commons.security.CryptoTool;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
@@ -54,19 +56,23 @@ import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
+import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.SupportLocale;
 import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
@@ -77,9 +83,9 @@ import static so.wwb.gamebox.model.CacheBase.*;
  * Created by ed on 17-12-31.
  */
 public class BaseMineController {
-    private static final String SYSTEM_NOTICE_LINK = "/mineOrigin/getSysNoticeDetail.html";
-    private static final String GAME_NOTICE_LINK = "/mineOrigin/getGameNoticeDetail.html";
-    private static final String SITE_SYSTEM_NOTICE = "/mineOrigin/getSiteSysNoticeDetail.html";
+    private static final String SYSTEM_NOTICE_LINK = "/mobile-api/mineOrigin/getSysNoticeDetail.html";
+    private static final String GAME_NOTICE_LINK = "/mobile-api/mineOrigin/getGameNoticeDetail.html";
+    private static final String SITE_SYSTEM_NOTICE = "/mobile-api/mineOrigin/getSiteSysNoticeDetail.html";
     private Log LOG = LogFactory.getLog(BaseMineController.class);
     private IPlayerTransferService playerTransferService;
 
@@ -133,17 +139,22 @@ public class BaseMineController {
             }
             promoApp.setPreferentialAudit(recode.getPreferentialAudit());
             promoApp.setActivityName(recode.getActivityName());
+            if (StringTool.isBlank(recode.getActivityName())) { //如果名称为空那么就是 人工存取优惠 展示“系统优惠”
+                promoApp.setActivityName("系统优惠");
+            }
             promoApp.setPreferentialValue(recode.getPreferentialValue());
             promoApp.setUserId(userId);
             promoApp.setCheckState(recode.getCheckState());
             String checkState = recode.getCheckState();
-            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equalsIgnoreCase("2", checkState)
-                    || StringTool.equalsIgnoreCase("4", checkState)) {
+            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equals("2", checkState)
+                    || StringTool.equals("4", checkState)) {
                 promoApp.setCheckStateName("已发放");
-            } else if (StringTool.equalsIgnoreCase("1", checkState)) {
+            } else if (StringTool.equals("1", checkState)) {
                 promoApp.setCheckStateName("待审核");
-            } else if (StringTool.equalsIgnoreCase("0", checkState)) {
+            } else if (StringTool.equals("0", checkState)) {
                 promoApp.setCheckStateName("进行中");
+            } else {
+                promoApp.setCheckStateName("未通过");
             }
             promoApp.setCheckState(recode.getCheckState());
             myPromoApps.add(promoApp);
@@ -155,9 +166,10 @@ public class BaseMineController {
     protected Map getSumPlayerFunds(VPlayerTransactionListVo listVo) {
         if (listVo != null) {
             PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
+            transactionListVo.getSearch().setPlayerId(listVo.getSearch().getPlayerId());
             transactionListVo.getSearch().setBeginCreateTime(listVo.getSearch().getBeginCreateTime());
             transactionListVo.getSearch().setEndCreateTime(listVo.getSearch().getEndCreateTime());
-            transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
+//            transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
             transactionListVo.getSearch().setStates(new String[]{CommonStatusEnum.SUCCESS.getCode(), CommonStatusEnum.LSSUING.getCode()});
 
             return ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
@@ -240,8 +252,8 @@ public class BaseMineController {
         //模拟账号且是自主api可用,其他试玩模式下不支持转账
         if (SessionManagerCommon.getDemoModelEnum() != null) {
             if (DemoModelEnum.MODEL_4_MOCK_ACCOUNT.equals(SessionManagerCommon.getDemoModelEnum()) && (
-                    apiId == Integer.valueOf(ApiProviderEnum.PL.getCode()) ||
-                            apiId == Integer.valueOf(ApiProviderEnum.DWT.getCode()))) {
+                    apiId.equals(Integer.valueOf(ApiProviderEnum.PL.getCode())) ||
+                            apiId.equals(Integer.valueOf(ApiProviderEnum.DWT.getCode())))) {
             } else {
                 return getMsg(false, MessageI18nConst.RECOVERY_DEMO_UNSUPPORTED, Module.FUND_TRANSFER.getCode());
             }
@@ -471,7 +483,7 @@ public class BaseMineController {
     }
 
     private String getGameName(Map<String, SiteGameI18n> map, String gameId) {
-        if (map.isEmpty() || map == null) {
+        if (MapTool.isEmpty(map)) {
             return null;
         }
         if (map.get(gameId) != null) {
@@ -479,7 +491,6 @@ public class BaseMineController {
         }
         return null;
     }
-
 
 
     private static SiteApiTypeRelation getSiteApiTypeRelationByApiId(String apiId) {
@@ -502,7 +513,6 @@ public class BaseMineController {
         }
         return null;
     }
-
 
 
     protected void initQueryDate(VPlayerTransactionListVo listVo) {
@@ -555,14 +565,27 @@ public class BaseMineController {
         List<FundListApp> fundListAppList = ListTool.newArrayList();
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
         Map<String, String> i18nStatus = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_STATUS);
+
         for (VPlayerTransaction vplayer : list) {
+            Map map = vplayer.get_describe();
+
             FundListApp app = new FundListApp();
             String typeName = i18n.get(vplayer.getTransactionType());
             app.setTransaction_typeName(typeName);
             app.setStatusName(i18nStatus.get(vplayer.getStatus()));
             app.setId(vplayer.getId());
-            app.setCreateTime(vplayer.getCreateDate());
-            app.setTransactionMoney(vplayer.getTransactionMoney());
+            app.setCreateTime(vplayer.getCreateTime());
+
+            if (vplayer.getTransactionMoney() != 0) {
+                app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }
+
+            if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
+                if ((Double)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() == 0 && StringTool.isNotBlank((String)map.get("bankCode"))) {
+                    app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+                }
+            }
+
             app.setTransactionType(vplayer.getTransactionType());
             app.setStatus(vplayer.getStatus());
             fundListAppList.add(app);
@@ -577,55 +600,80 @@ public class BaseMineController {
 
         VPlayerTransaction po = vo.getResult();
 
-        detailApp.setId(po.getId());
-        detailApp.setTransactionNo(po.getTransactionNo());
-        detailApp.setCreateTime(po.getCreateTime());
-        detailApp.setTransactionType(po.getTransactionType());
-        detailApp.setTransactionMoney(po.getTransactionMoney());
-        detailApp.setStatus(po.getStatus());
-        detailApp.setFailureReason(po.getFailureReason());
-        detailApp.setAdministrativeFee(po.getAdministrativeFee());
-        detailApp.setDeductFavorable(po.getDeductFavorable());
-        detailApp.setFundType(po.getFundType());
-        detailApp.setTransactionWay(po.getTransactionWay());
-        detailApp.setUsername(po.getUsername());
-        detailApp.setPayerBankcard(po.getPayerBankcard());
-        detailApp.setRechargeTotalAmount(po.getRechargeTotalAmount());
-        detailApp.setRechargeAmount(po.getRechargeAmount());
-        detailApp.setRechargeAddress(po.getRechargeAddress());
-        detailApp.setRealName(SessionManager.getUser().getRealName());
+        detailApp.setTransactionNo(po.getTransactionNo());  //交易号
+        detailApp.setCreateTime(po.getCreateTime());  //创建时间
 
         Map<String, Object> map = po.get_describe(); //取json对象里面的值
+        String moneyType = SupportLocale.querySiteCurrencySignBySiteId();
+        String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
 
         if (StringTool.equals(po.getFundType(), FundTypeEnum.TRANSFER_INTO.getCode())) { //表示外面的钱转入我的钱包
             Integer apiId = (Integer) map.get("API");
             detailApp.setTransferOut(CacheBase.getSiteApiName(String.valueOf(apiId)));
             detailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
+            detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
+            detailApp.setStatusName(statusName); //状态
         }
         if (StringTool.equals(po.getFundType(), FundTypeEnum.TRANSFER_OUT.getCode())) { //从我的钱包转出外面
             detailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
             Integer apiId = (Integer) map.get("API");
+            detailApp.setTransactionMoney(po.getTransactionMoney()); //金额
             detailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
+            detailApp.setStatusName(statusName); //状态
         }
 
-        detailApp.setPoundage((Double) map.get("poundage")); //手续费
-        String statusName = LocaleTool.tranMessage(Module.COMMON, "status." + po.getStatus());
+
         detailApp.setStatusName(statusName);
 
-        if (StringTool.equals(detailApp.getTransactionType(), "deposit")) { //存款
-            detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay()));
+        if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //存款
+            detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay())); //描述
+            detailApp.setRechargeAmount(moneyType +" " + CurrencyTool.formatCurrency(po.getRechargeAmount()));  //存款金额
+            detailApp.setPoundage(moneyType + " " + CurrencyTool.formatCurrency((Number) map.get("poundage"))); //手续费
+            detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getRechargeTotalAmount())); //实际到账
+            detailApp.setStatusName(statusName); //状态
         }
 
-        if (StringTool.equals(detailApp.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //取款
+        if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.WITHDRAWALS.getCode())) { //取款
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
-            detailApp.setDeductFavorable(withdrawVo.getResult().getDeductFavorable());//扣除优惠
-            detailApp.setPoundage(withdrawVo.getResult().getCounterFee());  //手续费
             detailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
-            detailApp.setRechargeTotalAmount(withdrawVo.getResult().getWithdrawActualAmount());  //实际到账
+            detailApp.setRechargeTotalAmount(moneyType +" " + CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
+            String bankNo = String.valueOf(map.get("bankNo"));
+            detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
+
+            detailApp.setRealName(SessionManager.getUser().getRealName()); //姓名
+            detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
+            detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
+            detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney())); //实际到账
+            detailApp.setStatusName(statusName); //状态
         }
-        detailApp.setBitAmount((String) map.get("bitAmount"));
+
+        if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
+            detailApp.setTransactionWayName(String.valueOf(map.get(SessionManager.getLocale().toString()))); //描述
+            detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
+            detailApp.setStatusName(statusName); //状态
+        }
+
+        if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.BACKWATER.getCode())) {  //返水
+            String dateStr = LocaleDateTool.formatDate((Date) map.get("date"), new DateFormat().getYEARMONTH(), SessionManagerCommon.getTimeZone());
+            detailApp.setTransactionWayName(dateStr.replace("-", "年") +"月" + map.get("period") +"期");//描述
+            detailApp.setDeductFavorable(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
+            detailApp.setStatusName(statusName); //状态
+        }
+
+        if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
+            if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer)map.get("rewardType") == 2) {//描述
+                detailApp.setTransactionWayName("好友" + " " + map.get("username"));
+            }else if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer)map.get("rewardType") == 3) {
+                detailApp.setTransactionWayName("被" + "推荐" + map.get("username") + "好友"); //描述
+            }
+            detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
+            detailApp.setStatusName(statusName); //状态
+        }
+        if (map.get("bitAmount") != null) {
+            detailApp.setBitAmount(String.valueOf(map.get("bitAmount")));
+        }
 
         return detailApp;
     }
@@ -674,7 +722,7 @@ public class BaseMineController {
         for (VSystemAnnouncement sysAnnounce : vListVo.getResult()) {
             AppSystemNotice sysNotice = new AppSystemNotice();
             sysNotice.setSearchId(vListVo.getSearchId(sysAnnounce.getId()));
-            sysNotice.setContent(sysAnnounce.getShortContentText50());
+            sysNotice.setContent(sysAnnounce.getShortContentText50().replace("&nbsp;",""));
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
             sysNotice.setLink(SYSTEM_NOTICE_LINK + "?searchId=" + vListVo.getSearchId(sysAnnounce.getId()));
             sysNotices.add(sysNotice);
@@ -710,10 +758,8 @@ public class BaseMineController {
         detailApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
         detailApp.setAdvisoryContent(advisory.getAdvisoryContent());
         detailApp.setQuestionType(advisory.getQuestionType());
-        detailApp.setAdvisoryTime(LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        detailApp.setReplyTime(LocaleDateTool.formatDate(advisory.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        detailApp.setReplyTitle(advisory.getReplyTitle());
-        detailApp.setReplyContent(advisory.getReplyContent());
+        String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone());
+        detailApp.setAdvisoryTime(Timestamp.valueOf(time).getTime());
 
         return detailApp;
     }
@@ -742,8 +788,8 @@ public class BaseMineController {
                 if (siteApi.getApiId().equals(sysAnnounce.getApiId())) {
                     AppGameNotice gameNotice = new AppGameNotice();
                     gameNotice.setId(listVo.getSearchId(sysAnnounce.getId()));
-                    gameNotice.setTitle(sysAnnounce.getShortTitle80());
-                    gameNotice.setContext(sysAnnounce.getShortContentText80());
+                    gameNotice.setTitle(sysAnnounce.getShortTitle80().replace("&nbsp;",""));
+                    gameNotice.setContext(sysAnnounce.getShortContentText80().replace("&nbsp;",""));
                     gameNotice.setLink(GAME_NOTICE_LINK + "?searchId=" + listVo.getSearchId(sysAnnounce.getId()));
 
                     //游戏拼接
@@ -881,7 +927,6 @@ public class BaseMineController {
      * @return
      */
     protected Map unReadCount(VPlayerAdvisoryListVo listVo) {
-        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
         long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
@@ -911,8 +956,43 @@ public class BaseMineController {
                 }
             }
         }
+        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
+        return map;
+    }
+
+    /**
+     * 获取玩家推荐信息
+     */
+    protected Map<String, Object> getPlayerRecommend(HttpServletRequest request) {
+        UserPlayerVo userPlayerVo = new UserPlayerVo();
+        userPlayerVo.getSearch().setId(SessionManager.getUserId());
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
+        Map<String, Object> map = new HashMap<>(7, 1f);
+        if (userPlayerVo.getResult() != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("/register.html?c=");
+            String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
+            sb.append(Base36.encryptIgnoreCase(invitationCode));
+            //分享码
+            map.put("code", sb.toString());
+            LOG.info("玩家邀请码:[" + userPlayerVo.getResult().getRegistCode() + "][" + SessionManager.getUserId().toString() + "]" + Base36.encryptIgnoreCase(invitationCode));
+        }
+        //如果这个参数有值，表示有单次推荐奖励
+        map.put("theWay", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_THEWAY).getParamValue());
+        //满足存款条件后谁获利：1 表示双方获取奖励 2表示你将会得到 其他表示你推荐的好友会获取到
+        map.put("reward", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD).getParamValue());
+        //将会获取到的金额值
+        map.put("money", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_MONEY).getParamValue());
+        //有红利奖励显示分享红利标志，没有不显示
+        map.put("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getParamValue());
+
+        //查询推荐人数 获取奖励 红利
+        PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
+        playerVo.getSearch().setUserId(SessionManager.getUserId());
+        map.put("sign", getCurrencySign());
+        map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         return map;
     }
 

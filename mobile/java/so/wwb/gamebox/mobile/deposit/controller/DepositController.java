@@ -10,11 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.TerminalEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
+import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -72,7 +70,6 @@ public class DepositController extends BaseCommonDepositController {
      */
     @RequestMapping("/index")
     public String index(Model model) {
-
         //网银存款,柜员机/柜台存款
         PlayerRank rank = getRank();
         boolean isMultipleAccount = rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
@@ -96,14 +93,8 @@ public class DepositController extends BaseCommonDepositController {
         if (CollectionTool.isEmpty(payAccounts) && payAccounts.size() <= 0) {
             return payAccountMap;
         }
-
         List<PayAccount> onlinePayAccount = new ArrayList<>(0);
-        List<PayAccount> scanPayAccountForWechat = new ArrayList<>(0);
-        List<PayAccount> scanPayAccountForAlipay = new ArrayList<>(0);
-        List<PayAccount> scanPayAccountForQQwallet = new ArrayList<>(0);
-        List<PayAccount> scanPayAccountForJD = new ArrayList<>(0);
-        List<PayAccount> scanPayAccountForBD = new ArrayList<>(0);
-        List<PayAccount> scanPayAccountForUnionpay = new ArrayList<>(0);
+        List<PayAccount> scanPayAccount = new ArrayList<>();
         List<PayAccount> electronicPayAccount = new ArrayList<>(0);
         List<PayAccount> companyPayAccount = new ArrayList<>(0);
         List<PayAccount> bitcoinPayAccount = new ArrayList<>(0);
@@ -113,18 +104,8 @@ public class DepositController extends BaseCommonDepositController {
             if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(type)) {
                 if (PayAccountAccountType.THIRTY.getCode().equals(accountType)) { //1-9 PayAccountAccountType 类对应
                     onlinePayAccount.add(payAccount);
-                } else if (PayAccountAccountType.WECHAT.getCode().equals(accountType)) {
-                    scanPayAccountForWechat.add(payAccount);
-                } else if (PayAccountAccountType.ALIPAY.getCode().equals(accountType)) {
-                    scanPayAccountForAlipay.add(payAccount);
-                } else if (PayAccountAccountType.QQWALLET.getCode().equals(accountType)) {
-                    scanPayAccountForQQwallet.add(payAccount);
-                } else if (PayAccountAccountType.JD_PAY.getCode().equals(accountType)) {
-                    scanPayAccountForJD.add(payAccount);
-                } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(accountType)) {
-                    scanPayAccountForBD.add(payAccount);
-                } else if (PayAccountAccountType.UNION_PAY.getCode().equals(accountType)) {
-                    scanPayAccountForUnionpay.add(payAccount);
+                } else {
+                    scanPayAccount.add(payAccount);
                 }
             } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(type)) {
                 if (PayAccountAccountType.BANKACCOUNT.getCode().equals(accountType)) {
@@ -138,18 +119,10 @@ public class DepositController extends BaseCommonDepositController {
                 }
             }
         }
-
         //线上支付
         online(onlinePayAccount, payAccountMap);
-
         //微信扫码
-        scanPay(scanPayAccountForWechat, payAccountMap, RechargeTypeEnum.WECHATPAY_SCAN.getCode(), WECHATPAY);
-        scanPay(scanPayAccountForAlipay, payAccountMap, RechargeTypeEnum.ALIPAY_SCAN.getCode(), ALIPAY);
-        scanPay(scanPayAccountForQQwallet, payAccountMap, RechargeTypeEnum.QQWALLET_SCAN.getCode(), QQWALLET);
-        scanPay(scanPayAccountForJD, payAccountMap, RechargeTypeEnum.JDPAY_SCAN.getCode(), JDWALLET);
-        scanPay(scanPayAccountForBD, payAccountMap, RechargeTypeEnum.BDWALLET_SAN.getCode(), BDWALLET);
-        scanPay(scanPayAccountForUnionpay, payAccountMap, RechargeTypeEnum.UNION_PAY_SCAN.getCode(), UNIONPAY);
-
+        payAccountMap.put("scanPay", scanPay(scanPayAccount));
         //网银存款,柜员机/柜台存款
         if (isMultipleAccount) {
             payAccountMap.put("company_deposit", getCompanyPayAccounts(companyPayAccount));
@@ -260,7 +233,7 @@ public class DepositController extends BaseCommonDepositController {
                 bankCodes.add(bankCode);
                 Map<String, Object> bankMap = new HashMap<>(3, 1f);
                 bankMap.put("value", payAccount.getId());
-                bankMap.put("bankCode",payAccount.getBankCode());
+                bankMap.put("bankCode", payAccount.getBankCode());
                 if (StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     bankMap.put("text", payAccount.getCustomBankName());
                 } else {
@@ -280,21 +253,57 @@ public class DepositController extends BaseCommonDepositController {
             bankMap = new HashMap<>(3, 1f);
             bankMap.put("text", payAccount.getAliasName());
             bankMap.put("value", payAccount.getId());
-            bankMap.put("bankCode",payAccount.getBankCode());
+            bankMap.put("bankCode", payAccount.getBankCode());
             bankList.add(bankMap);
         }
 
         return bankList;
     }
 
+    private Map<String, String> scanPay(List<PayAccount> payAccounts) {
+        deleteMaintainChannel(payAccounts);
+        if (CollectionTool.isEmpty(payAccounts)) {
+            return null;
+        }
+        Map<String, String> scanMap = new HashMap<>();
+        String payAccountType;
+        String bankCode;
+        for (PayAccount payAccount : payAccounts) {
+            payAccountType = payAccount.getAccountType();
+            if (PayAccountAccountType.WECHAT.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.FAST_WECHAT.getCode();
+            } else if (PayAccountAccountType.ALIPAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.FAST_ALIPAY.getCode();
+            } else if (PayAccountAccountType.QQWALLET.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.QQWALLET.getCode();
+            } else if (PayAccountAccountType.JD_PAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.JDWALLET.getCode();
+            } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.BDWALLET.getCode();
+            } else if (PayAccountAccountType.WECHAT_MICROPAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.WECHAT_MICROPAY.getCode();
+            } else if (PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.ALIPAY_MICROPAY.getCode();
+            } else if (PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.QQ_MICROPAY.getCode();
+            } else {
+                bankCode = BankCodeEnum.UNIONPAY.getCode();
+            }
+            scanMap.put(bankCode, bankCode);
+        }
+        return scanMap;
+    }
+
     private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap, String rechargeType, String scanType) {
-        if (payAccounts.size() > 0) {
+        deleteMaintainChannel(payAccounts);
+        if (CollectionTool.isNotEmpty(payAccounts)) {
             payAccountMap.put(rechargeType, scanType);
         }
     }
 
     private void online(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
-        if (payAccounts.size() > 0) {
+        deleteMaintainChannel(payAccounts);
+        if (CollectionTool.isNotEmpty(payAccounts)) {
             payAccountMap.put(RechargeTypeEnum.ONLINE_DEPOSIT.getCode(), "onlinepay");
         }
     }
@@ -371,6 +380,27 @@ public class DepositController extends BaseCommonDepositController {
             return rechargeUrlParam.getParamValue();
         } else {
             return "";
+        }
+    }
+
+    /**
+     * 去除维护中收款账户
+     *
+     * @param payAccounts
+     */
+    private void deleteMaintainChannel(List<PayAccount> payAccounts) {
+        if (CollectionTool.isEmpty(payAccounts)) {
+            return;
+        }
+        Map<String, Bank> bankMap = CacheBase.getBank();
+        Bank bank;
+        Iterator<PayAccount> accountIterator = payAccounts.iterator();
+        while (accountIterator.hasNext()) {
+            PayAccount payAccount = accountIterator.next();
+            bank = bankMap.get(payAccount.getBankCode());
+            if (bank == null || (bank.getIsUse() != null && !bank.getIsUse())) {
+                accountIterator.remove();
+            }
         }
     }
 }

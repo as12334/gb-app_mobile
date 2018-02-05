@@ -53,12 +53,12 @@
                                     </c:forEach>
                                 </div>
                             </div>
-                            <div id="_promo" class="mui-control-content mui-nav ${apiTypeId==5?'mui-active':''}">
+                            <div id="_promo" class="mui-control-content mui-nav ${apiTypeId==-1?'mui-active':''}">
                                 <%@include file="/include/include.loading.jsp" %>
                             </div>
-                            <div id="_agent" class="mui-control-content mui-nav ${apiTypeId==6?'mui-active':''}"></div>
-                            <div id="_about" class="mui-control-content mui-nav ${apiTypeId==7?'mui-active':''}"></div>
-                            <div id="_terms" class="mui-control-content mui-nav ${apiTypeId==8?'mui-active':''}"></div>
+                            <div id="_agent" class="mui-control-content mui-nav ${apiTypeId==-2?'mui-active':''}"></div>
+                            <div id="_about" class="mui-control-content mui-nav ${apiTypeId==-3?'mui-active':''}"></div>
+                            <div id="_terms" class="mui-control-content mui-nav ${apiTypeId==-4?'mui-active':''}"></div>
                             <div class="footer-info">
                                 <span class="_user_time"></span>
                                 <span class="site-info">Copyright © &nbsp;${siteName}&nbsp; Reserved</span>
@@ -89,8 +89,8 @@
 <script src="${resRoot}/js/mui/mui.pullToRefresh.material.js?v=${rcVersion}"></script>
 <script>
     curl(['site/game/Game', 'site/game/Live', 'site/game/Casino', 'site/game/Sport', 'site/game/Lottery',
-        'site/common/Assets', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation'],
-            function (Game, Live, Casino, Sport, Lottery, Assets, Menu, Footer, Dynamic) {
+        'site/common/Assets', 'site/common/Menu', 'site/common/Footer', 'site/common/DynamicSeparation',"site/game/Chess"],
+            function (Game, Live, Casino, Sport, Lottery, Assets, Menu, Footer, Dynamic,Chess) {
                 game = new Game();
                 game.live = new Live();
                 game.casino = new Casino();
@@ -100,6 +100,7 @@
                 game.menu = new Menu();
                 game.footer = new Footer();
                 game.dynamic = new Dynamic();
+                game.chess = new Chess();
             });
 </script>
 </html>

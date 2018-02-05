@@ -21,13 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
+import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
@@ -45,10 +48,7 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by bruce on 16-12-13.
@@ -171,7 +171,20 @@ public class BaseOnlineDepositController extends BaseDepositController {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.setSearchId(searchId);
         payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
-        return payAccountVo.getResult();
+        PayAccount payAccount = payAccountVo.getResult();
+        if (payAccount == null) {
+            return null;
+        }
+        if (!PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+            LOG.info("账号{0}已听用,故返回收款账号null", payAccount.getPayName());
+            return null;
+        }
+       /* Bank bank = Cache.getBank().get(payAccount.getBankCode());
+        if (bank == null || (bank.getIsUse() != null && !bank.getIsUse())) {
+            LOG.info("{0}渠道已关闭，故返回收款账号null", payAccount.getBankCode());
+            return null;
+        }*/
+        return payAccount;
     }
 
     private Map<String, Object> getResultMsg(boolean isSuccess, String msg, String transactionNo) {
@@ -265,6 +278,9 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (StringTool.isNotBlank(playerRechargeVo.getAccount())) {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         }
+        if (payAccount == null) {
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
+        }
         Integer max = payAccount.getSingleDepositMax();
         Integer min = payAccount.getSingleDepositMin();
         if (min == null) {
@@ -277,11 +293,6 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (rechargeAmount == null || rechargeAmount <= 0) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER,min,max));
         }
-
-        if (payAccount == null) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
-        }
-
         if (max < rechargeAmount || min > rechargeAmount) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max));
         }
@@ -337,7 +348,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         map.put("terminal", TerminalEnum.MOBILE.getCode());
         PayAccountListVo listVo = new PayAccountListVo();
         listVo.setConditions(map);
-        return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
+        return  ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
     }
 
     PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
@@ -349,4 +360,6 @@ public class BaseOnlineDepositController extends BaseDepositController {
         payAccountListVo.setRechargeType(rechargeType);
         return ServiceSiteTool.payAccountService().getOnlineScanAccount(payAccountListVo);
     }
+
+
 }

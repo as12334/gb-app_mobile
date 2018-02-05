@@ -17,6 +17,7 @@ import org.soul.commons.net.IpTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.model.ip.IpBean;
 import org.soul.model.msg.notice.vo.EmailMsgVo;
+import org.soul.model.msg.notice.vo.NoticeContactWayListVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
@@ -40,6 +41,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.RegisterConst;
+import so.wwb.gamebox.model.common.notice.enums.ContactWayType;
 import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
@@ -177,7 +179,7 @@ public class SignUpController extends BaseDemoController {
             /*介绍人要放在首位,是否是注册字段*/
             boolean registCodeField = true;
             //介绍人是否必填
-            boolean  isRequiredForRegisterCode = false;
+            boolean isRequiredForRegisterCode = false;
             Iterator<FieldSort> iter = fieldSorts.iterator();
             while (iter.hasNext()) {
                 FieldSort fieldSort = iter.next();
@@ -185,14 +187,14 @@ public class SignUpController extends BaseDemoController {
                     if (RegisterConst.REGCODE.equals(fieldSort.getName())) {
                         registCodeField = false;
                         isRequiredForRegisterCode = !FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired());
-                        model.addAttribute("isRequiredForRegisterCode",isRequiredForRegisterCode);
+                        model.addAttribute("isRequiredForRegisterCode", isRequiredForRegisterCode);
                     }
                     iter.remove();
                     continue;
                 } else {
                     if (RegisterConst.REGCODE.equals(fieldSort.getName())) {
                         isRequiredForRegisterCode = !FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired());
-                        model.addAttribute("isRequiredForRegisterCode",isRequiredForRegisterCode);
+                        model.addAttribute("isRequiredForRegisterCode", isRequiredForRegisterCode);
                     }
                 }
                 if (!FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired())) {
@@ -201,7 +203,7 @@ public class SignUpController extends BaseDemoController {
             }
             model.addAttribute("field", fieldSorts);
             model.addAttribute("requiredJson", requiredJson);
-            model.addAttribute("registCodeField",registCodeField);
+            model.addAttribute("registCodeField", registCodeField);
         }
     }
 
@@ -229,7 +231,7 @@ public class SignUpController extends BaseDemoController {
     }
 
     private String getAvailableLanguage() {
-        Map<String,SiteLanguage> languageMap = Cache.getAvailableSiteLanguage();
+        Map<String, SiteLanguage> languageMap = Cache.getAvailableSiteLanguage();
         List<SiteLanguage> languageList = new ArrayList<>(languageMap.values());
         List<Map<String, String>> mapList = new ArrayList<>(languageList.size());
             /*取字典国际化*/
@@ -240,7 +242,7 @@ public class SignUpController extends BaseDemoController {
         if (!languageList.isEmpty()) {
             for (SiteLanguage siteLanguage : languageList) {
                 String lang = StringTool.substringBefore(i18nMap.get(siteLanguage.getLanguage()).toString(), "#");
-                Map<String,String> map = new HashMap<>(2,1f);
+                Map<String, String> map = new HashMap<>(2, 1f);
                 map.put("text", lang);
                 map.put("value", siteLanguage.getLanguage());
                 mapList.add(map);
@@ -276,7 +278,7 @@ public class SignUpController extends BaseDemoController {
         Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(Module.COMMON.getCode()).get(DictEnum.COMMON_CURRENCY.getType());
         for (SiteCurrency siteCurrency : siteCurrencies) {
             if (SiteCurrencyEnum.NORMAL.getCode().equals(siteCurrency.getStatus())) {
-                map = new HashMap<>(2,1f);
+                map = new HashMap<>(2, 1f);
                 map.put("text", i18nMap.get(siteCurrency.getCode()));
                 map.put("value", siteCurrency.getCode());
                 mapList.add(map);
@@ -298,7 +300,7 @@ public class SignUpController extends BaseDemoController {
             Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(dictEnum.getModule().getCode()).get(dictEnum.getType());
             if (i18nMap != null) {
                 for (SysDict sysDict : dicts.values()) {
-                    Map<String, String> map = new HashMap<>(2,1f);
+                    Map<String, String> map = new HashMap<>(2, 1f);
                     map.put("text", i18nMap.get(sysDict.getDictCode()));
                     map.put("value", sysDict.getDictCode());
                     mapList.add(map);
@@ -338,13 +340,13 @@ public class SignUpController extends BaseDemoController {
         }
         userRegisterVo = doRegister(userRegisterVo, request);
          /*设置注册防御结果*/
-        request.setAttribute(IDefenseRs.R_ACTION_RS,true);
+        request.setAttribute(IDefenseRs.R_ACTION_RS, true);
         String messageCode = userRegisterVo.isSuccess() ? MessageI18nConst.REGISTER_SUCCESS : MessageI18nConst.REGISTER_FAIL;
         return getMessage(userRegisterVo.isSuccess(), messageCode);
     }
 
     private Map<String, Object> getMessage(boolean isSuccess, String messageCode) {
-        Map<String, Object> resultMap = new HashMap<>(2,1f);
+        Map<String, Object> resultMap = new HashMap<>(2, 1f);
         resultMap.put("state", isSuccess);
         resultMap.put("msg", LocaleTool.tranMessage(Module.REGISTER.getCode(), messageCode));
         return resultMap;
@@ -371,7 +373,7 @@ public class SignUpController extends BaseDemoController {
          /*注册防御*/
         IDefenseRs defense = (IDefenseRs) request.getAttribute(IDefenseRs.R_DEFENSE_RS);
         if (defense != null && !defense.isAvalable()) {
-            Map<String, Object> resultMap = new HashMap<>(2,1f);
+            Map<String, Object> resultMap = new HashMap<>(2, 1f);
             DefenseRs defenseRs = defense.getDefenseRs();
             resultMap.put("state", false);
             resultMap.put("msg", defenseRs.getMessage());
@@ -491,12 +493,97 @@ public class SignUpController extends BaseDemoController {
      */
     private void checkRegisterFormAgentDomain(UserRegisterVo userRegisterVo, HttpServletRequest request) {
         String domain = SessionManager.getDomain(request);
-        VSysSiteDomain sysDomain  = Cache.getSiteDomain(domain);
-        if (sysDomain != null && sysDomain.getAgentId()!=null){
+        VSysSiteDomain sysDomain = Cache.getSiteDomain(domain);
+        if (sysDomain != null && sysDomain.getAgentId() != null) {
             userRegisterVo.getSysUser().setOwnerId(sysDomain.getAgentId());
-            LOG.debug("【玩家注册】通过代理独立域名{0}－代理id{1}",domain,sysDomain.getAgentId());
+            LOG.debug("【玩家注册】通过代理独立域名{0}－代理id{1}", domain, sysDomain.getAgentId());
         }
         userRegisterVo.getSysUser().setRegisterSite(domain);
+    }
+
+    /**
+     * 判断真实姓名的唯一性
+     *
+     * @return
+     */
+    @RequestMapping(value = "/checkRealNameExist")
+    @ResponseBody
+    public String checkRealNameExist(@RequestParam("sysUser.realName") String realName) {
+        if (!ParamTool.isOnlyFiled("realName")) {
+            return "true";
+        }
+        SysUserVo sysUserVo = new SysUserVo();
+        sysUserVo.getSearch().setRealName(realName);
+        sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
+        sysUserVo.getSearch().setSubsysCode(SubSysCodeEnum.PCENTER.getCode());
+        return ServiceSiteTool.userAgentService().isExistRealName(sysUserVo);
+    }
+
+    /**
+     * 验证QQ唯一性
+     * @param qqContactValue
+     * @return
+     */
+    @RequestMapping(value = "/checkQqExist")
+    @ResponseBody
+    public String checkQqExist(@RequestParam("qq.contactValue") String qqContactValue){
+        if (!ParamTool.isOnlyFiled(ContactWayType.QQ.getCode())){
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.QQ.getCode());
+        listVo.getSearch().setContactValue(qqContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    /**
+     * 判断手机号码的唯一性
+     *
+     * @return
+     */
+    @RequestMapping(value = "/checkPhoneExist")
+    @ResponseBody
+    public String checkPhoneExist(@RequestParam("phone.contactValue") String phoneContactValue){
+        if (!ParamTool.isOnlyFiled(ContactWayType.CELLPHONE.getCode())){
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.CELLPHONE.getCode());
+        listVo.getSearch().setContactValue(phoneContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+    /**
+     * 判断邮箱的唯一性
+     *
+     * @return
+     */
+    @RequestMapping(value = "/checkMailExist")
+    @ResponseBody
+    public String checkMailExist(@RequestParam("email.contactValue") String mailContactValue){
+        if (!ParamTool.isOnlyFiled(ContactWayType.EMAIL.getCode())){
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.EMAIL.getCode());
+        listVo.getSearch().setContactValue(mailContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    /**
+     * 确认微信唯一性
+     *
+     * @return
+     */
+    @RequestMapping(value = "/checkWeixinExist")
+    @ResponseBody
+    public String checkWeixinExist(@RequestParam("weixin.contactValue") String weixinContactValue){
+        if (!ParamTool.isOnlyFiled(ContactWayType.WEIXIN.getCode())){
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.WEIXIN.getCode());
+        listVo.getSearch().setContactValue(weixinContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
     }
 
     @Override

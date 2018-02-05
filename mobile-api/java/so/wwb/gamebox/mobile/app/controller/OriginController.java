@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.app.controller;
 
-import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
@@ -11,7 +10,6 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
@@ -28,6 +26,7 @@ import so.wwb.gamebox.model.master.content.po.CttFloatPic;
 import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
+import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.cache.Cache;
@@ -45,6 +44,7 @@ public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
+
     /**
      * 请求首页，查询轮播图，公告，游戏类，红包活动
      *
@@ -52,14 +52,15 @@ public class OriginController extends BaseOriginController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/mainIndex", method = RequestMethod.POST)
+    @RequestMapping(value = "/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = MapTool.newHashMap();
-        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
+        getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
+        map.put("siteApiRelation", getApiTypeGame(model, request));
         map.put("activity", getMoneyActivityFloat(request));
+        map.put("language",SessionManager.getLocale().toString());
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -74,13 +75,12 @@ public class OriginController extends BaseOriginController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getCarouse", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCarouse")
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
-        //轮播图
+        //轮播图和弹窗广告
         Map<String, Object> map = MapTool.newHashMap();
-        map.put("banner", getCarouselApp(request, CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode()));
-
+        getBannerAndPhoneDialog(map, request);
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -93,7 +93,7 @@ public class OriginController extends BaseOriginController {
      *
      * @return
      */
-    @RequestMapping(value = "/getAnnouncement", method = RequestMethod.POST)
+    @RequestMapping(value = "/getAnnouncement")
     @ResponseBody
     public String getAnnounce() {
         //公告
@@ -114,17 +114,14 @@ public class OriginController extends BaseOriginController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/getSiteApiRelation", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSiteApiRelation")
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
-        Map<String, Object> map = MapTool.newHashMap();
-        map.put("siteApiRelation", getSiteApiRelationI18n(request, model));
-
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,
+                getApiTypeGame(model, request),
                 APP_VERSION);
     }
 
@@ -134,7 +131,7 @@ public class OriginController extends BaseOriginController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getFloat", method = RequestMethod.POST)
+    @RequestMapping(value = "/getFloat")
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
         //浮动图
@@ -156,7 +153,7 @@ public class OriginController extends BaseOriginController {
      * @param tag
      * @return
      */
-    @RequestMapping(value = "/getCasinoGame", method = RequestMethod.POST)
+    @RequestMapping(value = "/getCasinoGame")
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
@@ -177,7 +174,7 @@ public class OriginController extends BaseOriginController {
      *
      * @return
      */
-    @RequestMapping(value = "/getGameTag", method = RequestMethod.POST)
+    @RequestMapping(value = "/getGameTag")
     @ResponseBody
     public String getGameTags() {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
@@ -195,7 +192,7 @@ public class OriginController extends BaseOriginController {
      * @param modelVo
      * @return
      */
-    @RequestMapping(value = "getGameLink", method = RequestMethod.POST)
+    @RequestMapping(value = "getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (SessionManager.getUser() == null) {
@@ -257,43 +254,56 @@ public class OriginController extends BaseOriginController {
     }
     //endregion mainIndex
 
+
     /**
-     * 查询Banner
+     * 获取轮播图和手机弹窗广告
+     *
+     * @param map
+     * @param request
      */
-    protected List<Map> getCarouselApp(HttpServletRequest request, String type) {
-        Map<String, Map> carousels = (Map) Cache.getSiteCarousel();
-        List<Map> resultList = ListTool.newArrayList();
+    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request) {
+        Map<String, Map> carouselMap = (Map) Cache.getSiteCarousel();
+        if (MapTool.isEmpty(carouselMap)) {
+            return;
+        }
         String webSite = ServletTool.getDomainFullAddress(request);
-        if (carousels != null) {
-            for (Map m : carousels.values()) {
-                if ((StringTool.equalsIgnoreCase(type, m.get("type").toString()))
-                        && (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), SessionManager.getLocale().toString()))
-                        && (((Date) m.get("start_time")).before(new Date()) && ((Date) m.get("end_time")).after(new Date()))
-                        && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
-                    String link = String.valueOf(m.get("link"));
-                    if (StringTool.isNotBlank(link)) {
-                        if (link.contains("${website}")) {
-                            link = link.replace("${website}", webSite);
-                        }
+        List<Map> phoneDialog = new ArrayList<>();
+        List<Map> carousels = new ArrayList<>();
+        String phoneDialogType = CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode();
+        String bannerType = CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode();
+        Date date = new Date();
+        String local = SessionManager.getLocale().toString();
+        for (Map m : carouselMap.values()) {
+            if ((StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local))
+                    && (((Date) m.get("start_time")).before(date) && ((Date) m.get("end_time")).after(date))
+                    && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+                String link = MapTool.getString(m, "link");
+                if (StringTool.isNotBlank(link)) {
+                    if (link.contains("${website}")) {
+                        link = link.replace("${website}", webSite);
                     }
-                    m.put("link", link);
-                    String cover = m.get("cover").toString();
-                    cover = getImagePath(SessionManager.getDomain(request), cover);
-                    m.put("cover", cover);
-                    m.put("link", link);
-                    resultList.add(m);
+                }
+                m.put("link", link);
+                String cover = m.get("cover") == null ? "" : m.get("cover").toString();
+                cover = getImagePath(SessionManager.getDomain(request), cover);
+                m.put("cover", cover);
+                if (phoneDialogType.equals(m.get("type"))) {
+                    phoneDialog.add(m);
+                } else if (bannerType.equals(m.get("type"))) {
+                    carousels.add(m);
                 }
             }
         }
+        //手机弹窗广告
+        map.put("phoneDialog", phoneDialog);
         //没数据默认banner图
-        if (resultList.size() <= 0) {
-            Map defaultMap = MapTool.newHashMap();
+        if (carousels.size() <= 0) {
+            Map defaultMap = new HashMap();
             String coverUrl = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/images/ban-01.jpg";
             defaultMap.put("cover", coverUrl);
-            resultList.add(defaultMap);
+            carousels.add(defaultMap);
         }
-
-        return resultList;
+        map.put("banner", carousels);
     }
 
     /**

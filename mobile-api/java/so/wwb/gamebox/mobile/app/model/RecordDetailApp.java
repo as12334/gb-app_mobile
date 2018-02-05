@@ -10,18 +10,19 @@ public class RecordDetailApp {
     private String transactionNo;     //交易号
     private java.util.Date createTime; //创建时间
     private String transactionType;   //资金类型
-    private Double transactionMoney;   //取款金额
+    private Double transactionMoney;
+    private String withdrawMoney; //取款金额
     private String status;          //状态
     private String statusName; //状态名称
 
     private String failureReason;    //失败原因
     private Double administrativeFee;  //行政费用
-    private Double deductFavorable;    //扣除优惠
+    private String deductFavorable;    //扣除优惠
     private String fundType;         //资金类型
     private String transactionWay;   //资金类型
     private String transactionWayName; // 资金类型名称
     private String username;        //账号
-    private Double poundage;  //手续费
+    private String poundage;  //手续费
     private String poundageName; // 是否免手续费（中文汉字）
     private String realName; //真实姓名
 
@@ -29,6 +30,8 @@ public class RecordDetailApp {
     private String transferInto; //转入
     private String bankCode; //取款 银行code
     private String bankCodeName; // 银行名称
+
+    private String withDrwalsRemark; // 取款 和优惠描述
 
     private String bitAmount; //比特币
     /**
@@ -38,11 +41,11 @@ public class RecordDetailApp {
     /**
      * 实际到账金额
      */
-    private Double rechargeTotalAmount;
+    private String rechargeTotalAmount;
     /**
      * 交易金额
      */
-    private Double rechargeAmount;
+    private String rechargeAmount;
     /**
      * 交易地点
      */
@@ -113,11 +116,11 @@ public class RecordDetailApp {
         this.administrativeFee = administrativeFee;
     }
 
-    public Double getDeductFavorable() {
+    public String getDeductFavorable() {
         return deductFavorable;
     }
 
-    public void setDeductFavorable(Double deductFavorable) {
+    public void setDeductFavorable(String deductFavorable) {
         this.deductFavorable = deductFavorable;
     }
 
@@ -153,19 +156,19 @@ public class RecordDetailApp {
         this.payerBankcard = payerBankcard;
     }
 
-    public Double getRechargeTotalAmount() {
+    public String getRechargeTotalAmount() {
         return rechargeTotalAmount;
     }
 
-    public void setRechargeTotalAmount(Double rechargeTotalAmount) {
+    public void setRechargeTotalAmount(String rechargeTotalAmount) {
         this.rechargeTotalAmount = rechargeTotalAmount;
     }
 
-    public Double getRechargeAmount() {
+    public String getRechargeAmount() {
         return rechargeAmount;
     }
 
-    public void setRechargeAmount(Double rechargeAmount) {
+    public void setRechargeAmount(String rechargeAmount) {
         this.rechargeAmount = rechargeAmount;
     }
 
@@ -201,11 +204,11 @@ public class RecordDetailApp {
         this.statusName = statusName;
     }
 
-    public Double getPoundage() {
+    public String getPoundage() {
         return poundage;
     }
 
-    public void setPoundage(Double poundage) {
+    public void setPoundage(String poundage) {
         this.poundage = poundage;
     }
 
@@ -255,5 +258,21 @@ public class RecordDetailApp {
 
     public void setBankCodeName(String bankCodeName) {
         this.bankCodeName = bankCodeName;
+    }
+
+    public String getWithDrwalsRemark() {
+        return withDrwalsRemark;
+    }
+
+    public void setWithDrwalsRemark(String withDrwalsRemark) {
+        this.withDrwalsRemark = withDrwalsRemark;
+    }
+
+    public String getWithdrawMoney() {
+        return withdrawMoney;
+    }
+
+    public void setWithdrawMoney(String withdrawMoney) {
+        this.withdrawMoney = withdrawMoney;
     }
 }

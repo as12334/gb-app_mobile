@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
-
 <body class="gb-theme mine-page no-backdrop" >
 <div id="offCanvasWrapper" class="mui-draggable mui-off-canvas-wrap">
     <!-- 主页面容器 -->
@@ -30,8 +29,12 @@
                                                 <c:if test="${p.key eq 'online_deposit'}">
                                                     <li key="${p.key}"><a data-online="/wallet/deposit/online/index.html" class="${fn:length(views.deposit[p.key])>5?'long':''}"><i class="pay ${payAccountMap.get(p.key)}"></i><span><div class="text-two-line">${views.deposit[p.key]}</div></span></a></li>
                                                 </c:if>
-                                                <c:if test="${p.key eq 'wechatpay_scan' || p.key eq 'alipay_scan'||p.key eq 'qqwallet_scan'|| p.key eq 'jdpay_scan' || p.key eq 'bdwallet_san' || p.key eq 'union_pay_scan'}">
-                                                    <li key="${p.key}"><a data-scan="/wallet/deposit/online/scan/scanCode/${p.value}.html" class="${fn:length(views.deposit[p.key])>5?'long':''}"><i class="pay ${payAccountMap.get(p.key)}"></i><span><div class="text-two-line">${views.deposit[p.key]}</div></span></a></li>
+                                                <c:if test="${p.key eq 'scanPay'}">
+                                                    <c:forEach items="${p.value}" var="s">
+                                                        <c:set var="bankCode" value="${s.key}"/>
+                                                        <c:set var="bankName" value="${views.deposit[bankCode]}"/>
+                                                        <li key="${bankCode}"><a data-scan="/wallet/deposit/online/scan/scanCode/${bankCode}.html" class="${fn:length(bankName)>5?'long':''}"><i class="pay ${s.key}"></i><span><div class="text-two-line">${bankName}</div></span></a></li>
+                                                    </c:forEach>
                                                 </c:if>
 
                                                 <c:if test="${p.key eq 'company_deposit'}">
@@ -109,6 +112,43 @@
         </div>
     </div>
 </div>
+<%--微信反扫教程：--%>
+<div id="depositHelpBox10" class="depositHelpBox" style="display: none">
+    <div class="swiper-container swiper1">
+        <div class="swiper-wrapper wechat-fansao">
+            <div class="swiper-slide step-1"><img src="${resRoot}/images/wechat-step-1.png"/><div class="circle"></div></div>
+            <div class="swiper-slide step-2"><img src="${resRoot}/images/wechat-step-2.png"/><div class="circle"></div></div>
+            <div class="swiper-slide step-3"><img src="${resRoot}/images/wechat-step-3.png" /><div class="circle"></div></div>
+        </div>
+        <div class="swiper-pagination swiper-pagination-bullets"></div>
+        <div class="closeHelpBox">+</div>
+    </div>
+</div>
+<!--qq反扫教程：-->
+<div id="depositHelpBox12"  class="depositHelpBox" style="display:none;">
+    <div class="swiper-container">
+        <div class="swiper-wrapper qq-fansao" style="">
+            <div class="swiper-slide step-1"><img src="${resRoot}/images/qq-step-1.png" alt="" /><div class="circle"></div></div>
+            <div class="swiper-slide step-2"><img src="${resRoot}/images/qq-step-2.png" alt="" /><div class="circle"></div></div>
+            <div class="swiper-slide step-3"><img src="${resRoot}/images/qq-step-3.png" alt="" /><div class="circle"></div></div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="closeHelpBox">+</div>
+    </div>
+</div>
+
+<%--支付宝反扫教程：--%>
+<div id="depositHelpBox11" class="depositHelpBox" style="display:none;">
+    <div class="swiper-container">
+        <div class="swiper-wrapper alipay-fansao" style="">
+            <div class="swiper-slide step-1"><img src="${resRoot}/images/alipay-step-1.png" alt="" /><div class="circle"></div></div>
+            <div class="swiper-slide step-2"><img src="${resRoot}/images/alipay-step-2.png" alt="" /><div class="circle"></div></div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="closeHelpBox">+</div>
+    </div>
+</div>
+
 <script type="text/javascript" src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script>

@@ -9,8 +9,8 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.ActivityTypeApp;
@@ -42,7 +42,7 @@ public class DiscountsAppController {
     /**
      * 获取优惠活动类型
      */
-    @RequestMapping(value = "/getActivityType", method = RequestMethod.POST)
+    @RequestMapping(value = "/getActivityType")
     @ResponseBody
     public String getActivityType() {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypes(), APP_VERSION);
@@ -51,7 +51,7 @@ public class DiscountsAppController {
     /**
      * 获取优惠活动
      */
-    @RequestMapping(value = "/getActivityTypeList", method = RequestMethod.POST)
+    @RequestMapping(value = "/getActivityTypeList")
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, request), APP_VERSION);
@@ -60,7 +60,7 @@ public class DiscountsAppController {
     /**
      * 获取优惠活动和类型
      */
-    @RequestMapping(value = "/getActivityTypes", method = RequestMethod.POST)
+    @RequestMapping(value = "/getActivityTypes")
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
@@ -126,7 +126,7 @@ public class DiscountsAppController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             listVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        listVo = ServiceSiteTool.vActivityMessageService().getActivityList(listVo);
+        listVo = ServiceActivityTool.vActivityMessageService().getActivityList(listVo);
         listVo = setDefaultImages(listVo, request);
 
         //转换接口所需数据
