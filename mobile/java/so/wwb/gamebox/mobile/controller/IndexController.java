@@ -131,6 +131,23 @@ public class IndexController extends BaseApiController {
         return "/Index";
     }
 
+    /**
+     * 注册条款
+     * @return
+     */
+    @RequestMapping("/getRegisterRules")
+    @Upgrade(upgrade = true)
+    public String getRegisterRules(Model model, String path) {
+        if ("terms".equals(path) || "protocol".equals(path)) {
+            SiteI18n terms = Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString());
+            model.addAttribute("terms", terms);
+        }
+        return "/registe/RegisteRules";
+    }
+
+
+
+
     private void initFloatPic(Model model) {
         List<Map> floatList = new ArrayList();
         showMoneyActivityFloat(floatList);

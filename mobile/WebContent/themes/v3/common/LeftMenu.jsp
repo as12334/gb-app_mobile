@@ -32,7 +32,7 @@
                     <li class="about ${path == 'about'?'active':''}"><soul:button target="goUrl" dataHref="/mainIndex.html?path=about" isLeft="true" text="${views.themes_auto['关于我们']}" opType="function"/></li>
                     <li class="question"><soul:button target="goUrl" dataHref="/help/firstType.html" isLeft="true" text="${views.themes_auto['常见问题']}" opType="function"/></li>
                     <li class="service"><soul:button target="goTab" isLeft="true" text="${views.themes_auto['在线客服']}" skip="3" dataHref="" opType="function"/></li>
-                    <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="goUrl" dataHref="/mainIndex.html?path=terms" isLeft="true" text="${views.themes_auto['注册条款']}" opType="function"/></li>
+                    <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="goUrl" dataHref="/getRegisterRules.html?path=terms" isLeft="true" text="${views.themes_auto['注册条款']}" opType="function"/></li>
                     <li class="lang ${fn:replace(language, '_', '-')}">
                         <%--<soul:button target="lang" text="${views.themes_auto['语言']}" opType="function"/>--%>
                         <a>${views.themes_auto['语言']}</a>
