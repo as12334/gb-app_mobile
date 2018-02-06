@@ -90,7 +90,7 @@ public class TransferController extends WalletBaseController {
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
             playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
             model.addAttribute("transferPendingAmount", ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo));
-            return TRANSFER_INDEX_URL;
+            return "/transfer/TransferIndex";
 
         }
     }
