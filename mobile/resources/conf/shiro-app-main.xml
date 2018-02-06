@@ -83,6 +83,7 @@
 				/getHeadInfo.html = anon
 				/error/*.html = anon
 				/lottery/lhc/*/getZodiacMap.html = anon
+				/downLoad/downLoadShowQrcode.html = anon
 				/downLoad/downLoad.html = anon
 				/downLoad/downLoadIOS.html = anon
 				/userInfo.html = anon

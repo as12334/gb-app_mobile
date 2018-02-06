@@ -26,11 +26,6 @@
             <div class="mui-scroll">
                 <table id="api-balance">
                     <tbody>
-                        <%--异步求出需展示的api--%>
-                        <%--<tr data="${i.value.apiId}">
-                            <td>${gbFn:getApiName(i.value.apiId.toString())}</td>
-                            <td class="_money" name="money_${i.value.apiId}"></td>
-                        </tr>--%>
                     </tbody>
                 </table>
             </div>

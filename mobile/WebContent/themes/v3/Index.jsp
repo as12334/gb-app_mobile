@@ -22,6 +22,8 @@
 </div>  <!--mui-content 闭合标签-->
 <%--底部菜单--%>
 <%@include file="common/Footer.jsp"%>
+<%-- 侧滑导航根容器 --%>
+<%@include file="common/LeftMenu.jsp"%>
 <!--消息弹窗-->
 <%@include file="index.include/include.dialog.jsp"%>
 <%--红包--%>

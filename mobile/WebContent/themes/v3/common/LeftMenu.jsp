@@ -1,48 +1,52 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
-<aside id="offCanvasSide" class="mui-off-canvas-left mui-transitioning">
-    <div id="offCanvasSideScroll" class="mui-scroll-wrapper side-menu-scroll-wrapper">
-        <div class="mui-scroll">
-            <!-- 菜单具体展示内容 -->
-            <!--个人信息部分-->
-            <div class="person-info">
-                <!--登录前-->
-                <div class="un-login">
-                    <p>${views.themes_auto['欢迎观临']}</p>
-                    <button data-rel='{"target":"login","opType":"function"}' class="mui-btn mui-btn-success btn-login">${views.themes_auto['用户登录']}</button>
+<!-- 侧滑导航根容器 -->
+<div class="mui-off-canvas-wrap index-canvas-wrap">
+    <div class="mui-icon mui-icon-closeempty"></div>
+    <!-- 菜单容器 -->
+    <aside class="mui-off-canvas-left">
+        <div class="mui-scroll-wrapper side-menu-scroll-wrapper">
+            <div class="mui-scroll">
+                <!-- 菜单具体展示内容 -->
+                <!--个人信息部分-->
+                <div class="person-info">
+                    <!--登录前-->
+                    <div class="un-login">
+                        <p>${views.themes_auto['欢迎观临']}</p>
+                        <button data-rel='{"target":"${root}/login/commonLogin.html","opType":"href"}' class="mui-btn mui-btn-success btn-login">${views.themes_auto['用户登录']}</button>
+                    </div>
+                    <!--登陆后-->
+                    <div class="login" style="display: none;">
+                        <i class="icon-person"></i>
+                        <p></p>
+                        <a data-rel='{"target":"${root}/mine/index.html?channel=mine&skip=4","opType":"href"}' type="button" class="mui-btn mui-btn-success  btn-person">${views.themes_auto['个人中心']}</a>
+                    </div>
                 </div>
-                <!--登陆后-->
-                <div class="login" style="display: none;">
-                    <i class="icon-person">
-                        <img width="100%" height="100%" src="${resRoot}/images/avatar.png" id="avatarImg">
-                    </i>
-                    <p></p>
-                    <button data-rel='{"target":"goTab","opType":"function","skip":"4","dataHref":"/mine/index.html?channel=mine&skip=4","isLeft":"true"}' class="mui-btn mui-btn-success btn-person">${views.themes_auto['个人中心']}</button>
-                </div>
-            </div>
-            <!--side-nav-->
-            <div class="side-nav">
-                <ul class="mui-list-unstyled">
-                    <li class="home ${empty skip && empty path?'active':''}"><soul:button target="goTab" isLeft="true" skip="2" text="${views.themes_auto['首页']}" dataHref="/mainIndex.html" opType="function"/></li>
-                    <li class="pro ${skip == 1?'active':''}"><soul:button target="goTab" text="${views.themes_auto['优惠活动']}" isLeft="true" skip="1" dataHref="/discounts/index.html?skip=1" opType="function" cssClass=""/></li>
-                    <li class="download"><soul:button target="goUrl" dataHref="/downLoad/downLoad.html" isLeft="true" text="${views.themes_auto['下载客户端']}" opType="function"/></li>
-                    <li class="pc"><soul:button target="goPC" isLeft="true" opType="function" text="${views.themes_auto['电脑版']}"/> </li>
-                    <li class="trans"> <soul:button target="goUrl" dataHref="/transfer/index.html" isLeft="true" text="${views.themes_auto['转账']}" opType="function"/></li>
-                    <li class="deposit"><soul:button target="goTab" skip="0" isLeft="true" dataHref="/wallet/deposit/index.html" text="${views.themes_auto['账户存款']}" opType="function"/></li>
-                    <li class="about ${path == 'about'?'active':''}"><soul:button target="goUrl" dataHref="/about.html?path=about" isLeft="true" text="${views.themes_auto['关于我们']}" opType="function"/></li>
-                    <li class="question"><soul:button target="goUrl" dataHref="/help/firstType.html" isLeft="true" text="${views.themes_auto['常见问题']}" opType="function"/></li>
-                    <li class="service"><soul:button target="goTab" isLeft="true" text="${views.themes_auto['在线客服']}" skip="3" dataHref="" opType="function"/></li>
-                    <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="goUrl" dataHref="/getRegisterRules.html?path=terms" isLeft="true" text="${views.themes_auto['注册条款']}" opType="function"/></li>
-                    <li class="lang ${fn:replace(language, '_', '-')}">
-                        <%--<soul:button target="lang" text="${views.themes_auto['语言']}" opType="function"/>--%>
-                        <a>${views.themes_auto['语言']}</a>
-                    </li>
-                </ul>
-                <div class="login">
-                    <soul:button target="logout" text="${views.themes_auto['退出登录']}" opType="function" cssClass="mui-btn mui-btn-success btn-logout"></soul:button>
+                <!--side-nav-->
+                <div class="side-nav">
+                    <ul class="mui-list-unstyled">
+                        <li class="home ${empty skip && empty path?'active':''}"><a data-rel='{"target":"${root}/mainIndex.html","opType":"href"}'>首页</a></li>
+                        <li class="question"><a data-rel='{"target":"${root}/help/firstType.html","opType":"href"}'>常见问题</a></li>
+                        <li class="reg_rules ${path == 'terms'?'active':''}"><a data-rel='{"target":"${root}/getRegisterRules.html?path=terms","opType":"href"}'>注册条款</a></li>
+                        <li class="about ${path == 'about'?'active':''}"><a data-rel='{"target":"${root}/about.html?path=about","opType":"href"}'>关于我们</a></li>
+                        <li class="download"><a data-rel='{"target":"downLoadApp","opType":"function"}'>下载客户端</a></li>
+                        <li class="pc"><a data-rel='{"target":"goPC","opType":"function"}'>电脑版</a></li>
+                        <li class=" lang zh-CN">
+                            <a href="">${views.themes_auto['语言']}</a>
+                        </li>
+                    </ul>
+                    <a data-rel='{"target":"logout","opType":"function"}' type="button" class="mui-btn mui-btn-success btn-logout">${views.themes_auto['退出登录']}</a>
                 </div>
             </div>
         </div>
-    </div>
-</aside>
-<%@include file="LangMenu.jsp"%>
+        <!--语言弹窗-->
+      <%--  <ul class="lang-menu">
+            <c:set var="siteLang" value="<%=Cache.getAvailableSiteLanguage()%>"/>
+            <c:forEach var="i" items="${siteLang}">
+                <li class="${fn:replace(i.value.language, '_', '-')} ${language eq i.value.language?' current':''}">
+                    <soul:button text="" lang="${fn:replace(i.value.language, '_', '-')}" target="changeLanguage" opType="function">${dicts.common.language[i.value.language]}</soul:button>
+                </li>
+            </c:forEach>
+        </ul>--%>
+    </aside>
+</div>

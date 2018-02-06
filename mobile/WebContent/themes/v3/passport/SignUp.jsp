@@ -227,7 +227,6 @@
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/common/AppNative.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/passport/SignUp.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
