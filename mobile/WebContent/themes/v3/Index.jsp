@@ -5,29 +5,38 @@
 <head>
     <title>${siteName}</title>
     <%@include file="include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/layer.css"/>
 </head>
 
 <body>
+<!-- 主页面标题 -->
+<%@include file="common/Head.jsp"%>
+<!-- 主界面具体展示内容 -->
+<div class="mui-content home-content">
+    <!--易记域名-->
+    <section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>
+    <!--轮播和公告-->
+    <%@include file="index.include/include.banner.jsp"%>
+    <%--游戏类型--%>
+    <%@include file="index.include/include.nav.jsp"%>
+    <%@include file="index.include/include.api.jsp"%>
+</div>  <!--mui-content 闭合标签-->
 <!-- 侧滑导航根容器 -->
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
     <%@include file="common/LeftMenu.jsp" %>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-        <!-- 主页面标题 -->
-        <%@include file="common/Head.jsp"%>
         <div class="mui-content mui-scroll-wrapper" id="pullfresh">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <!--轮播和公告-->
-                <div class="_banner">
+                <%--<div class="_banner">
                     <%@include file="index.include/include.banner.jsp"%>
-                </div>
+                </div>--%>
                 <!--导航-->
-                <%@include file="index.include/include.nav.jsp"%>
+                <%--<%@include file="index.include/include.nav.jsp"%>--%>
                 <!--api九宫格-->
-                <%@include file="index.include/include.api.jsp"%>
+                <%--<%@include file="index.include/include.api.jsp"%>--%>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->
