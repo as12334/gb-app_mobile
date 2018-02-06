@@ -20,9 +20,9 @@
 
             <div class="mui-content mui-scroll-wrapper">
                 <div class="mui-scroll">
-                <div class="register-rules-wrap" data-list="rules">
-                    ${terms.value}
-                </div>
+                    <div class="register-rules-wrap" data-list="rules">
+                        ${terms.value}
+                    </div>
                 </div>
             </div>
         <!-- off-canvas backdrop -->
