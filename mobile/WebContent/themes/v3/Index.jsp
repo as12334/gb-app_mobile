@@ -20,8 +20,12 @@
     <%@include file="index.include/include.nav.jsp"%>
     <%@include file="index.include/include.api.jsp"%>
 </div>  <!--mui-content 闭合标签-->
+<%--底部菜单--%>
+<%@include file="common/Footer.jsp"%>
 <!--消息弹窗-->
 <%@include file="index.include/include.dialog.jsp"%>
+<%--红包--%>
+<%@include file="index.include/Envelope.jsp"%>
 </body>
 <%@include file="include/include.js.jsp"%>
 <script type="text/javascript" src="${resRoot}/js/Index.js"></script>
