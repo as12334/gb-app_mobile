@@ -1,7 +1,6 @@
 <%--@elvariable id="field" type="java.util.List<so.wwb.gamebox.model.master.setting.po.FieldSort>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
-
 <body>
 <!-- 主页面标题 -->
 <header class="mui-bar mui-bar-nav mui-bar-blue">
@@ -178,7 +177,6 @@
                                                         class="mui-btn-primary mui-btn-outlined"
                                                         type="button">${views.passport_auto['发送验证码']}</button>
                                             </div>
-
                                         </div>
                                     </c:if>
                                 </c:when>
@@ -187,9 +185,7 @@
                                         <c:set var="name" value="${signUpDataMap[i.name]}"/>
                                         <c:set var="key" value="signUp.${name}"/>
                                         <label>${views.register[key]}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <input type="text" name="${name}" class="mui-input-clear mui-input"
-                                               placeholder="${views.register[key]}">
-
+                                        <input type="text" name="${name}" class="mui-input-clear mui-input" placeholder="${views.register[key]}">
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -198,10 +194,8 @@
                     <div class="mui-input-row">
                         <label>${views.passport_auto['请输入验证码']}<i class="icon-star"></i></label>
                         <div class="mui-flex">
-                            <input type="text" class="mui-input-clear" placeholder="${views.passport_auto['请输入验证码']}"
-                                   maxlength="4" name="captchaCode">
-                            <img data-rel='{"target":"captchaImg","opType":"function","src":"${root}/captcha/pmregister.html"}'
-                                 src="${root}/captcha/pmregister.html" class="captcha_img"/>
+                            <input type="text" class="mui-input-clear" placeholder="${views.passport_auto['请输入验证码']}" maxlength="4" name="captchaCode">
+                            <img data-rel='{"target":"captchaImg","opType":"function","src":"${root}/captcha/pmregister.html"}' data-src="${root}/captcha/pmregister.html" class="captcha_img"/>
                         </div>
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left tk">
@@ -223,7 +217,7 @@
 <%@ include file="../include/include.js.jsp" %>
 <script src="${resComRoot}/js/jquery/plugins/jquery.validate/jquery.validate.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/jquery/jquery.validate.extend.mobile.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-<script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
+<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/passport/SignUp.js"></script>
