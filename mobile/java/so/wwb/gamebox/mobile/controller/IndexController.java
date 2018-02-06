@@ -145,6 +145,25 @@ public class IndexController extends BaseApiController {
         return "/registe/RegisteRules";
     }
 
+    /**
+     * 关于我们
+     * @return
+     */
+    @RequestMapping("/about")
+    @Upgrade(upgrade = true)
+    public String getAbout(HttpServletRequest request, String path, Model model) {
+
+        if ("about".equals(path)) {
+            CttDocumentI18nListVo listVo = initDocument("aboutUs");
+            CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
+            model.addAttribute("about", cttDocumentI18n);
+        }
+        return "/about/About";
+    }
+
 
 
 
