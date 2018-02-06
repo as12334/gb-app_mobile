@@ -151,7 +151,7 @@ public class WithdrawAppController extends BaseWithDrawController {
     @ResponseBody
     public String withdrawFee(String withdrawAmount) {
         if (StringTool.isBlank(withdrawAmount) || !NumberTool.isNumber(withdrawAmount)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(
                     AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getCode(),
                     AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getMsg(),
                     null,
@@ -160,7 +160,7 @@ public class WithdrawAppController extends BaseWithDrawController {
 
         PlayerRank playerRank = getRank();
         if (playerRank == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(
                     AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
                     null,
@@ -188,7 +188,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         map.put("actualWithdraw", result);// 实际取款金额
         map.put("administrativeFee", administrativeFee);//行政费
         map.put("counterFee", poundage);//手续费
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
