@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class AppModelVo implements Serializable{
 
+    private static final long serialVersionUID = 404144692505585980L;
     private String code;
     private String message;
     private Object data;

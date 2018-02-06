@@ -329,8 +329,7 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
             messageApp.setAdvisoryContent(advisory.getAdvisoryContent());
 
-            String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone());
-            messageApp.setAdvisoryTime(Timestamp.valueOf(time).getTime());
+            messageApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
             messageApp.setRead(advisory.getIsRead() == null ? true : advisory.getIsRead());
@@ -497,8 +496,7 @@ public class MineAppController extends BaseMineController {
                 AdvisoryMessageReplyListApp replyApp = new AdvisoryMessageReplyListApp();
                 replyApp.setReplyTitle(replay.getReplyTitle());
                 replyApp.setReplyContent(replay.getReplyContent());
-                String time = LocaleDateTool.formatDate(replay.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone());
-                replyApp.setReplyTime(Timestamp.valueOf(time).getTime());
+                replyApp.setReplyTime(replay.getReplyTime().getTime());
                 replyList.add(replyApp);
             }
             detailApp.setReplyList(replyList);
