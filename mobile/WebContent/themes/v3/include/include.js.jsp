@@ -18,5 +18,7 @@
 <script src="${resRoot}/js/mui/mui.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/jquery/jquery-2.1.1.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/jquery/plugins/jquery-eventlock/jquery-eventlock-1.0.0.js?v=${rcVersion}"></script>
+<script src="${resComRoot}/js/jquery/plugins/jquery.validate/jquery.validate.min.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/jquery/jquery.validate.extend.mobile.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/AppNative.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/Common.js?v=${rcVersion}"></script>
