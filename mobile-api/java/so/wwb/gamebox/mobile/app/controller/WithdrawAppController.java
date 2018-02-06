@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
@@ -150,8 +149,8 @@ public class WithdrawAppController extends BaseWithDrawController {
      */
     @RequestMapping("/withdrawFee")
     @ResponseBody
-    public String withdrawFee(@RequestParam("withdrawAmount") String withdrawAmount) {
-        if (!NumberTool.isNumber(withdrawAmount)) {
+    public String withdrawFee(String withdrawAmount) {
+        if (StringTool.isBlank(withdrawAmount) || !NumberTool.isNumber(withdrawAmount)) {
             return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
                     AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getCode(),
                     AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getMsg(),
