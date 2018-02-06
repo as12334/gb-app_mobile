@@ -29,7 +29,7 @@
                     <li class="pc"><soul:button target="goPC" isLeft="true" opType="function" text="${views.themes_auto['电脑版']}"/> </li>
                     <li class="trans"> <soul:button target="goUrl" dataHref="/transfer/index.html" isLeft="true" text="${views.themes_auto['转账']}" opType="function"/></li>
                     <li class="deposit"><soul:button target="goTab" skip="0" isLeft="true" dataHref="/wallet/deposit/index.html" text="${views.themes_auto['账户存款']}" opType="function"/></li>
-                    <li class="about ${path == 'about'?'active':''}"><soul:button target="goUrl" dataHref="/mainIndex.html?path=about" isLeft="true" text="${views.themes_auto['关于我们']}" opType="function"/></li>
+                    <li class="about ${path == 'about'?'active':''}"><soul:button target="goUrl" dataHref="/about.html?path=about" isLeft="true" text="${views.themes_auto['关于我们']}" opType="function"/></li>
                     <li class="question"><soul:button target="goUrl" dataHref="/help/firstType.html" isLeft="true" text="${views.themes_auto['常见问题']}" opType="function"/></li>
                     <li class="service"><soul:button target="goTab" isLeft="true" text="${views.themes_auto['在线客服']}" skip="3" dataHref="" opType="function"/></li>
                     <li class="reg_rules ${path == 'terms'?'active':''}"><soul:button target="goUrl" dataHref="/getRegisterRules.html?path=terms" isLeft="true" text="${views.themes_auto['注册条款']}" opType="function"/></li>
