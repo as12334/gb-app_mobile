@@ -16,7 +16,7 @@ public class RecordDetailApp {
     private String statusName; //状态名称
 
     private String failureReason;    //失败原因
-    private Double administrativeFee;  //行政费用
+    private String administrativeFee;  //行政费用
     private String deductFavorable;    //扣除优惠
     private String fundType;         //资金类型
     private String transactionWay;   //资金类型
@@ -110,11 +110,11 @@ public class RecordDetailApp {
         this.failureReason = failureReason;
     }
 
-    public Double getAdministrativeFee() {
+    public String getAdministrativeFee() {
         return administrativeFee;
     }
 
-    public void setAdministrativeFee(Double administrativeFee) {
+    public void setAdministrativeFee(String administrativeFee) {
         this.administrativeFee = administrativeFee;
     }
 

@@ -650,15 +650,23 @@ public class BaseMineController {
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
-            detailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
-            detailApp.setRechargeTotalAmount(moneyType +" " + CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
+
             String bankNo = String.valueOf(map.get("bankNo"));
-            detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
+            if (StringTool.isBlank(bankName)) {
+                detailApp.setTransactionWayName(" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
+            }else {
+                detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
+            }
+            if (withdrawVo.getResult().getDeductFavorable() != null && withdrawVo.getResult().getDeductFavorable() > 0) {
+
+                detailApp.setDeductFavorable(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getDeductFavorable()));//扣除优惠
+                detailApp.setAdministrativeFee(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getAdministrativeFee())); //行政费用
+                detailApp.setRechargeTotalAmount(moneyType +" " + "-"+CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
+            }
 
             detailApp.setRealName(SessionManager.getUser().getRealName()); //姓名
             detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
             detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
-            detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney())); //实际到账
             detailApp.setStatusName(statusName); //状态
         }
 
