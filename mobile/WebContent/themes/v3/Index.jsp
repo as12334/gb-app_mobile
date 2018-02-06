@@ -16,8 +16,9 @@
     <section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>
     <!--轮播和公告-->
     <%@include file="index.include/include.banner.jsp"%>
-    <%--公告--%>
-
+    <%--游戏类型--%>
+    <%@include file="index.include/include.nav.jsp"%>
+    <%@include file="index.include/include.api.jsp"%>
 </div>  <!--mui-content 闭合标签-->
 <!-- 侧滑导航根容器 -->
 <div class="mui-off-canvas-wrap mui-draggable">
@@ -33,9 +34,9 @@
                     <%@include file="index.include/include.banner.jsp"%>
                 </div>--%>
                 <!--导航-->
-                <%@include file="index.include/include.nav.jsp"%>
+                <%--<%@include file="index.include/include.nav.jsp"%>--%>
                 <!--api九宫格-->
-                <%@include file="index.include/include.api.jsp"%>
+                <%--<%@include file="index.include/include.api.jsp"%>--%>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
         <!--footer-->

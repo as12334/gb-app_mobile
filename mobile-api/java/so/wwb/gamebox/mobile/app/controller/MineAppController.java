@@ -95,17 +95,6 @@ public class MineAppController extends BaseMineController {
     @Autowired(required = false)
     private IPassportDelegate passportDelegate;
 
-    /**
-     * 获取当前时区
-     * @return
-     */
-    @RequestMapping(value = "/getTimeZone")
-    @ResponseBody
-    public String getTimeZone() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
-    }
-
 
     /**
      * 　我的优惠记录
@@ -223,7 +212,7 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/getFundRecordDetails")
     @ResponseBody
-    public String getFundRecordDetails(Integer searchId) {
+    public String getFundRecordDetails(Integer searchId, HttpServletRequest request) {
         VPlayerTransactionVo vo = new VPlayerTransactionVo();
         if (searchId != null) {
             vo.getSearch().setId(Integer.valueOf(searchId));
@@ -239,7 +228,7 @@ public class MineAppController extends BaseMineController {
         }
 
         RecordDetailApp recordDetailApp = new RecordDetailApp();
-        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo);
+        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo, request);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -340,8 +329,7 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
             messageApp.setAdvisoryContent(advisory.getAdvisoryContent());
 
-            String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManagerCommon.getTimeZone());
-            messageApp.setAdvisoryTime(Timestamp.valueOf(time).getTime());
+            messageApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
             messageApp.setRead(advisory.getIsRead() == null ? true : advisory.getIsRead());
@@ -508,8 +496,7 @@ public class MineAppController extends BaseMineController {
                 AdvisoryMessageReplyListApp replyApp = new AdvisoryMessageReplyListApp();
                 replyApp.setReplyTitle(replay.getReplyTitle());
                 replyApp.setReplyContent(replay.getReplyContent());
-                String time = LocaleDateTool.formatDate(replay.getReplyTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone());
-                replyApp.setReplyTime(Timestamp.valueOf(time).getTime());
+                replyApp.setReplyTime(replay.getReplyTime().getTime());
                 replyList.add(replyApp);
             }
             detailApp.setReplyList(replyList);
