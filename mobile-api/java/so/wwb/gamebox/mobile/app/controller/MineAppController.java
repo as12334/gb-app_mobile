@@ -212,7 +212,7 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/getFundRecordDetails")
     @ResponseBody
-    public String getFundRecordDetails(Integer searchId) {
+    public String getFundRecordDetails(Integer searchId, HttpServletRequest request) {
         VPlayerTransactionVo vo = new VPlayerTransactionVo();
         if (searchId != null) {
             vo.getSearch().setId(Integer.valueOf(searchId));
@@ -228,7 +228,7 @@ public class MineAppController extends BaseMineController {
         }
 
         RecordDetailApp recordDetailApp = new RecordDetailApp();
-        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo);
+        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo, request);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
