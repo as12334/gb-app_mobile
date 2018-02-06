@@ -25,7 +25,10 @@ public class RecordDetailApp {
     private String poundage;  //手续费
     private String poundageName; // 是否免手续费（中文汉字）
     private String realName; //真实姓名
+    private Long returnTime; //交易时间
+    private String bitcoinAdress;
 
+    private String txId; // 比特币的txid
     private String transferOut; // 转出
     private String transferInto; //转入
     private String bankCode; //取款 银行code
@@ -284,5 +287,29 @@ public class RecordDetailApp {
 
     public void setBankUrl(String bankUrl) {
         this.bankUrl = bankUrl;
+    }
+
+    public Long getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Long returnTime) {
+        this.returnTime = returnTime;
+    }
+
+    public String getTxId() {
+        return txId;
+    }
+
+    public void setTxId(String txId) {
+        this.txId = txId;
+    }
+
+    public String getBitcoinAdress() {
+        return bitcoinAdress;
+    }
+
+    public void setBitcoinAdress(String bitcoinAdress) {
+        this.bitcoinAdress = bitcoinAdress;
     }
 }

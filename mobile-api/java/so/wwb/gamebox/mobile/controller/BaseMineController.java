@@ -48,6 +48,7 @@ import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
@@ -72,6 +73,7 @@ import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
@@ -628,12 +630,21 @@ public class BaseMineController {
         detailApp.setStatusName(statusName);
 
         if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //存款
-            detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay())); //描述
             detailApp.setRechargeAmount(moneyType +" " + CurrencyTool.formatCurrency(po.getRechargeAmount()));  //存款金额
             detailApp.setPoundage(moneyType + " " + CurrencyTool.formatCurrency((Number) map.get("poundage"))); //手续费
             detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getRechargeTotalAmount())); //实际到账
             detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //真实姓名
             detailApp.setStatusName(statusName); //状态
+            if (map.get("returnTime") != null) {
+                detailApp.setReturnTime(((Date) map.get("returnTime")).getTime()); //交易时间
+            }
+            if (StringTool.equals(po.getFundType(), DepositWayEnum.BITCOIN_FAST.getCode())) {//如果存款类型是比特币支付
+                detailApp.setTransactionWayName("比特币支付");
+                detailApp.setTxId(String.valueOf(map.get("bankOrder")));
+                detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
+                detailApp.setRechargeAmount("Ƀ" + map.get("bitAmount"));
+            }
+
 
             if (map.get("bankCode") != null) {
                 detailApp.setBankCode(String.valueOf(map.get("bankCode")));  //银行卡code icbc
