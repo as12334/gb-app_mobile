@@ -23,7 +23,7 @@
                         <c:set var="type" value="chess-and-card"/>
                     </c:when>
                 </c:choose>
-                <a class="swiper-slide ${status.index == 0 ? 'mui-active':''} item-${type}">${apiType.name}</a>
+                <a class="swiper-slide item-${type} ${status.index == 0 ? 'mui-active':''}">${apiType.name}</a>
             </c:forEach>
             <c:if test="${fn:length(fish)>0}">
                 <a class="swiper-slide item-fish">${views.themes_auto['捕鱼游戏']}</a>
