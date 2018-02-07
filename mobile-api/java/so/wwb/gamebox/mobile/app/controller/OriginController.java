@@ -11,6 +11,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
@@ -47,13 +48,13 @@ public class OriginController extends BaseOriginController {
 
     /**
      * 获取当前时区
+     *
      * @return
      */
     @RequestMapping(value = "/getTimeZone")
     @ResponseBody
     public String getTimeZone() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
     }
 
 
@@ -67,15 +68,14 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(5, 1f);
         getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
         map.put("siteApiRelation", getApiTypeGame(model, request));
         map.put("activity", getMoneyActivityFloat(request));
-        map.put("language",SessionManager.getLocale().toString());
+        map.put("language", SessionManager.getLocale().toString());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -91,10 +91,9 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
         //轮播图和弹窗广告
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(2, 1f);
         getBannerAndPhoneDialog(map, request);
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -109,11 +108,10 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getAnnounce() {
         //公告
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(1, 1f);
         map.put("announcement", getAnnouncement());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -130,8 +128,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getApiTypeGame(model, request),
                 APP_VERSION);
@@ -311,7 +308,7 @@ public class OriginController extends BaseOriginController {
         //没数据默认banner图
         if (carousels.size() <= 0) {
             Map defaultMap = new HashMap();
-            String coverUrl = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/images/ban-01.jpg";
+            String coverUrl = String.format(AppConstant.DEFAULT_BANNER_URL, MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
             defaultMap.put("cover", coverUrl);
             carousels.add(defaultMap);
         }
