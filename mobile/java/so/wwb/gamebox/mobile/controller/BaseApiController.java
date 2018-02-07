@@ -2,39 +2,34 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.enums.SupportTerminal;
-import org.soul.commons.lang.SystemTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
-import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
-import org.soul.web.session.SessionManagerBase;
 import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.common.consts.MobileConst;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.*;
+import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
+import so.wwb.gamebox.model.company.setting.po.Game;
+import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
-import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
-import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
@@ -234,71 +229,93 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
         Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
         Map<Integer, List<SiteApiTypeRelation>> apiTypeRelationGroupByType = apiTypeRelationGroupByType(siteApiTypeRelationMap, apiI18nMap, siteApiI18nMap);
-        Map<String, ApiTypeI18n> apiTypeI18nMap = CacheBase.getApiTypeI18n();
+        Map<String, SiteApiTypeI18n> siteApiTypeI18nMap = Cache.getSiteApiTypeI18n();
         for (SiteApiType siteApiType : siteApiTypes) {
-            siteApiType.setName(apiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
-            siteApiType.setApiTypeRelations(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.desc(SiteApiTypeRelation.PROP_ORDER_NUM)));
+            siteApiType.setName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            siteApiType.setApiTypeRelations(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.desc(SiteApiTypeRelation.PROP_MOBILE_ORDER_NUM)));
         }
         model.addAttribute("siteApiTypes", siteApiTypes);
+        //处理二级分类游戏数据
+        handleNavGame(model);
+    }
+
+    /**
+     * 有nav二级分类的类型
+     *
+     * @return
+     */
+    private List<Integer> getNavType() {
+        List<Integer> navType = new ArrayList<>(2);
+        navType.add(ApiTypeEnum.LOTTERY.getCode());
+        navType.add(ApiTypeEnum.CHESS.getCode());
+        return navType;
+    }
+
+    /**
+     * 处理游戏二级分类展示
+     *
+     * @param model
+     */
+    protected void handleNavGame(Model model) {
         //处理捕鱼、彩票游戏
         Map<String, SiteGame> siteGameMap = CacheBase.getSiteGame();
+        if (MapTool.isEmpty(siteGameMap)) {
+            return;
+        }
+        List<Integer> navType = getNavType();
         //捕鱼
-        Map<Integer, String> fishMap = new HashMap<>();
-        //彩票
-        Map<Integer, List<SiteGame>> lottery = new HashMap<>();
-        String fishGameType = GameTypeEnum.FISH.getCode();
-        int lotteryType = ApiTypeEnum.LOTTERY.getCode();
+        List<SiteGame> fish = new ArrayList<>();
+        //除捕鱼外的二级分类游戏数据
+        Map<Integer, Map<Integer, List<SiteGame>>> navApiGameMap = new HashMap<>();
         Integer apiId;
         Map<String, SiteGameI18n> siteGameI18nMap = CacheBase.getSiteGameI18n();
         Map<String, GameI18n> gameI18nMap = CacheBase.getGameI18n();
         Map<String, Game> gameMap = CacheBase.getGame();
         String disabled = GameStatusEnum.DISABLE.getCode();
         String maintain = GameStatusEnum.MAINTAIN.getCode();
-        String normal = GameStatusEnum.NORMAL.getCode();
         Game game;
         String mobile = GameSupportTerminalEnum.PHONE.getCode();
+        String locale = SessionManager.getLocale().toString();
+        String fishGameType = GameTypeEnum.FISH.getCode();
+        Integer apiTypeId;
+        Map<Integer, List<SiteGame>> navGameMap;
         for (SiteGame siteGame : siteGameMap.values()) {
             apiId = siteGame.getApiId();
-            if (fishGameType.equals(siteGame.getGameType()) && fishMap.get(apiId) == null && mobile.equals(siteGame.getSupportTerminal())) {
-                fishMap.put(apiId, getApiName(apiId, apiI18nMap, siteApiI18nMap));
-            } else if (lotteryType == siteGame.getApiTypeId() && mobile.equals(siteGame.getSupportTerminal())) {
-                if (lottery.get(apiId) == null) {
-                    lottery.put(apiId, new ArrayList<>());
+            game = gameMap.get(String.valueOf(siteGame.getGameId()));
+            if (game == null || disabled.equals(game.getStatus()) || disabled.equals(siteGame.getStatus()) || maintain.equals(game.getSystemStatus()) || maintain.equals(siteGame.getSystemStatus())) {
+                continue;
+            }
+            setGameNameAndCover(siteGameI18nMap, gameI18nMap, siteGame, locale);
+            apiTypeId = siteGame.getApiTypeId();
+            if (fishGameType.equals(siteGame.getGameType()) && mobile.equals(siteGame.getSupportTerminal())) {
+                fish.add(siteGame);
+            } else if (navType.contains(apiTypeId) && mobile.equals(siteGame.getSupportTerminal())) {
+                navGameMap = navApiGameMap.get(apiTypeId);
+                if (navGameMap == null) {
+                    navGameMap = new HashMap<>();
                 }
-                game = gameMap.get(String.valueOf(siteGame.getGameId()));
-                if (game == null || disabled.equals(game.getStatus()) || disabled.equals(siteGame.getStatus())) {
-                    siteGame.setStatus(disabled);
-                } else if (maintain.equals(game.getSystemStatus()) || maintain.equals(siteGame.getSystemStatus())) {
-                    siteGame.setStatus(maintain);
-                } else {
-                    siteGame.setStatus(normal);
-                    setGameNameAndCover(siteGameI18nMap, gameI18nMap, siteGame);
-                    lottery.get(apiId).add(siteGame);
+                if (navGameMap.get(apiId) == null) {
+                    navGameMap.put(apiId, new ArrayList<>());
                 }
+                navGameMap.get(apiId).add(siteGame);
             }
         }
-        model.addAttribute("fish", fishMap);
-        model.addAttribute("lottery", lottery);
+        model.addAttribute("navApiGameMap", navApiGameMap);
+        model.addAttribute("fish", fish);
     }
 
-    private void setGameNameAndCover(Map<String, SiteGameI18n> siteGameI18nMap, Map<String, GameI18n> gameI18nMap, SiteGame siteGame) {
+    private void setGameNameAndCover(Map<String, SiteGameI18n> siteGameI18nMap, Map<String, GameI18n> gameI18nMap, SiteGame siteGame, String locale) {
         Integer gameId = siteGame.getGameId();
         SiteGameI18n siteGameI18n = siteGameI18nMap.get(String.valueOf(gameId));
         String gameName = null;
-        String cover = null;
         GameI18n gameI18n = gameI18nMap.get(String.valueOf(gameId));
         if (siteGameI18n != null && StringTool.isNotBlank(siteGameI18n.getName())) {
             gameName = siteGameI18n.getName();
         } else if (gameI18n != null && StringTool.isNotBlank(gameI18n.getName())) {
             gameName = gameI18n.getName();
         }
-        if (siteGameI18n != null && StringTool.isNotBlank(siteGameI18n.getCover())) {
-            cover = siteGameI18n.getCover();
-        } else if (gameI18n != null && StringTool.isNotBlank(gameI18n.getCover())) {
-            cover = gameI18n.getCover();
-        }
         siteGame.setName(gameName);
-        siteGame.setCover(cover);
+        siteGame.setCover(String.format(MobileConst.GAME_COVER_URL, locale, siteGame.getApiId(), siteGame.getId()));
     }
 
     /**

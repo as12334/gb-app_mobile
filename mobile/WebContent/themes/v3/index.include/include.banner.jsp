@@ -3,7 +3,7 @@
 <section class="mui-slider banner-slide">
     <div class="banner-ads">
         更多精彩游戏，请下载客户端！
-        <a data-rel='{"target":"","opType":"function"}' class="btn-download">立即下载</a>
+        <a data-rel='{"target":"downLoadApp","opType":"function"}' class="btn-download">立即下载</a>
         <div class="close-slide"></div>
     </div>
     <div class="mui-slider-group">
@@ -13,8 +13,7 @@
                     <c:set var="link" value="${not empty carousel['link'] ? carousel['link']:''}"/>
                     <c:choose>
                         <c:when test="${not empty link}">
-                            <c:set var="link"
-                                   value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
+                            <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                         </c:when>
                     </c:choose>
                     <c:if test="${fn:length(carousels)-1 == vs.index}">
@@ -40,7 +39,7 @@
             </c:when>
             <c:otherwise>
                 <div class="mui-slider-item">
-                    <a><img src="${resRoot}/../mobile-v3/images/banner-01.jpg" /></a>
+                    <a><img src="${resRoot}/images/banner-01.jpg" /></a>
                 </div>
             </c:otherwise>
         </c:choose>
