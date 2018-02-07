@@ -679,7 +679,8 @@ public class BaseMineController {
             if (map.get("bankNo") != null) {
                 detailApp.setWithdrawMoney("Ƀ" + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
                 detailApp.setPoundage("Ƀ" + withdrawVo.getResult().getCounterFee()); //手续费
-                detailApp.setRechargeTotalAmount(moneyType +" " + "-"+CurrencyTool.formatCurrency(po.getTransactionMoney() - withdrawVo.getResult().getCounterFee()));  //实际到账
+                double totalAmount = po.getTransactionMoney() - withdrawVo.getResult().getCounterFee();
+                detailApp.setRechargeTotalAmount("Ƀ" +" " + "-"+CurrencyTool.formatCurrency(totalAmount));  //实际到账
             } else {
                 detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));
                 detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
