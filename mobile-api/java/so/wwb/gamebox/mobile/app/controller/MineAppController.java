@@ -162,9 +162,8 @@ public class MineAppController extends BaseMineController {
         listVo = ServiceSiteTool.vPlayerTransactionService().search(listVo);
 
         List<VPlayerTransaction> vPlayerTransactionList = listVo.getResult();
-//        List<FundListApp> fundListAppList = buildList(vPlayerTransactionList);
-        Map map = buildList(vPlayerTransactionList);
-//        fundRecordApp.setFundListApps(fundListAppList);
+        List<FundListApp> fundListAppList = buildList(vPlayerTransactionList);
+        fundRecordApp.setFundListApps(fundListAppList);
 
 //统计页面反水等等数据
         fundRecordApp.setSumPlayerMap(getSumPlayerFunds(listVo));
@@ -181,7 +180,7 @@ public class MineAppController extends BaseMineController {
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map, APP_VERSION);
+                fundRecordApp, APP_VERSION);
     }
 
     /**

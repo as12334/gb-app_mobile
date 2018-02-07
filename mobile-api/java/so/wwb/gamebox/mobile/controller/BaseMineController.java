@@ -565,38 +565,38 @@ public class BaseMineController {
         return fundRecordApp;
     }
 
-    protected Map buildList(List<VPlayerTransaction> list) {//List<FundListApp>
+    protected List<FundListApp> buildList(List<VPlayerTransaction> list) {
         List<FundListApp> fundListAppList = ListTool.newArrayList();
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_TRANSACTION_TYPE);
         Map<String, String> i18nStatus = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_STATUS);
 
-//        for (VPlayerTransaction vplayer : list) {
-//            Map map = vplayer.get_describe();
-//
-//            FundListApp app = new FundListApp();
-//            String typeName = i18n.get(vplayer.getTransactionType());
-//            app.setTransaction_typeName(typeName);
-//            app.setStatusName(i18nStatus.get(vplayer.getStatus()));
-//            app.setId(vplayer.getId());
-//            app.setCreateTime(vplayer.getCreateTime());
-//
-//            if (vplayer.getTransactionMoney() != 0 && map.get("bitAmount") == null) {
-//                app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
-//            }else {
-//                app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
-//            }
-//
-//            if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
-//                if ((Double)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() == 0 && StringTool.isNotBlank((String)map.get("bankCode"))) {
-//                    app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
-//                }
-//            }
-//
-//            app.setTransactionType(vplayer.getTransactionType());
-//            app.setStatus(vplayer.getStatus());
-//            fundListAppList.add(app);
-//        }
-        return list.get(0).get_describe();
+        for (VPlayerTransaction vplayer : list) {
+            Map map = vplayer.get_describe();
+
+            FundListApp app = new FundListApp();
+            String typeName = i18n.get(vplayer.getTransactionType());
+            app.setTransaction_typeName(typeName);
+            app.setStatusName(i18nStatus.get(vplayer.getStatus()));
+            app.setId(vplayer.getId());
+            app.setCreateTime(vplayer.getCreateTime());
+
+            if (vplayer.getTransactionMoney() != 0 && map.get("bitAmount") == null) {
+                app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }else if (map.get("bankCode") != null && StringTool.equals(String.valueOf(map.get("bankCode")), "bitcoin")){
+                app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }
+
+            if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
+                if ((Double)map.get("bitAmount") > 0 && vplayer.getTransactionMoney() == 0 && StringTool.isNotBlank((String)map.get("bankCode"))) {
+                    app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+                }
+            }
+
+            app.setTransactionType(vplayer.getTransactionType());
+            app.setStatus(vplayer.getStatus());
+            fundListAppList.add(app);
+        }
+        return fundListAppList;
     }
 
     /**
