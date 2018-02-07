@@ -129,6 +129,6 @@
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
 <script src="${resRoot}/js/common/Assets.2.js?v=${rcVersion}"></script>
-
+<script src="${resRoot}/js/plugin/layer.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
