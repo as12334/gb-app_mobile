@@ -122,7 +122,6 @@ public class BaseUserInfoController {
                 }
                 userInfo.put("btc", bankcardNumMap);
             } else {
-                bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
                 if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
                     bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
                 }
@@ -130,6 +129,7 @@ public class BaseUserInfoController {
                 bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
                 String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
                 bankcardNumMap.put("bankName", bankName);
+                bankcardNumMap.put("bankNameCode", userBankcard.getBankName());
                 bankcardNumMap.put("bankUrl", setBankPictureUrl(request, bankcard));
                 if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 10) {
                     bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
