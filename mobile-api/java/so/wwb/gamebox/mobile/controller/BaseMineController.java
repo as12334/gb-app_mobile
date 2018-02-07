@@ -600,7 +600,7 @@ public class BaseMineController {
     /**
      *
      */
-    protected RecordDetailApp buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo, HttpServletRequest request) {
+    protected Map buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo, HttpServletRequest request) {
 
         VPlayerTransaction po = vo.getResult();
 
@@ -675,6 +675,7 @@ public class BaseMineController {
                 detailApp.setRechargeTotalAmount(moneyType +" " + "-"+CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
             }
 
+
             detailApp.setRealName(SessionManager.getUser().getRealName()); //姓名
             detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
             detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
@@ -707,7 +708,7 @@ public class BaseMineController {
             detailApp.setBitAmount(String.valueOf(map.get("bitAmount")));
         }
 
-        return detailApp;
+        return map;
     }
 
 
