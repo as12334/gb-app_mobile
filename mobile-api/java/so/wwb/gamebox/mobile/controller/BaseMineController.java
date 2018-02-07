@@ -580,8 +580,10 @@ public class BaseMineController {
             app.setId(vplayer.getId());
             app.setCreateTime(vplayer.getCreateTime());
 
-            if (vplayer.getTransactionMoney() != 0) {
+            if (vplayer.getTransactionMoney() != 0 && map.get("bitAmount") == null) {
                 app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }else {
+                app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
             }
 
             if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
@@ -600,7 +602,7 @@ public class BaseMineController {
     /**
      *
      */
-    protected Map buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo, HttpServletRequest request) {
+    protected RecordDetailApp buildRecordDetailApp(RecordDetailApp detailApp, VPlayerTransactionVo vo, VPlayerWithdrawVo withdrawVo, HttpServletRequest request) {
 
         VPlayerTransaction po = vo.getResult();
 
@@ -669,15 +671,17 @@ public class BaseMineController {
                 detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
             }
             if (withdrawVo.getResult().getDeductFavorable() != null && withdrawVo.getResult().getDeductFavorable() > 0) {
-
                 detailApp.setDeductFavorable(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getDeductFavorable()));//扣除优惠
                 detailApp.setAdministrativeFee(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getAdministrativeFee())); //行政费用
                 detailApp.setRechargeTotalAmount(moneyType +" " + "-"+CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
             }
-
-
             detailApp.setRealName(SessionManager.getUser().getRealName()); //姓名
-            detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
+            if (map.get("bankNo") != null) {
+                detailApp.setWithdrawMoney("Ƀ" + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
+            } else {
+                detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));
+            }
+
             detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
             detailApp.setStatusName(statusName); //状态
         }
@@ -708,7 +712,7 @@ public class BaseMineController {
             detailApp.setBitAmount(String.valueOf(map.get("bitAmount")));
         }
 
-        return map;
+        return detailApp;
     }
 
 

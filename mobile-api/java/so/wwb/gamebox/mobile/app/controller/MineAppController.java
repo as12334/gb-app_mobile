@@ -228,13 +228,12 @@ public class MineAppController extends BaseMineController {
         }
 
         RecordDetailApp recordDetailApp = new RecordDetailApp();
-//        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo, request);
-        Map map = buildRecordDetailApp(recordDetailApp, vo, withdrawVo, request);
+        recordDetailApp = buildRecordDetailApp(recordDetailApp, vo, withdrawVo, request);
 
         return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map, APP_VERSION);
+                recordDetailApp, APP_VERSION);
     }
 
     /**
