@@ -298,6 +298,7 @@ public abstract class BaseApiController extends BaseDemoController {
                     navGameMap.put(apiId, new ArrayList<>());
                 }
                 navGameMap.get(apiId).add(siteGame);
+                navApiGameMap.put(apiTypeId, navGameMap);
             }
         }
         model.addAttribute("navApiGameMap", navApiGameMap);
@@ -315,7 +316,7 @@ public abstract class BaseApiController extends BaseDemoController {
             gameName = gameI18n.getName();
         }
         siteGame.setName(gameName);
-        siteGame.setCover(String.format(MobileConst.GAME_COVER_URL, locale, siteGame.getApiId(), siteGame.getId()));
+        siteGame.setCover("http://test01.ampinplayopt0matrix.com" + String.format(MobileConst.GAME_COVER_URL, locale, siteGame.getApiId(), siteGame.getCode()));
     }
 
     /**

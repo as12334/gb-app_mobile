@@ -5,7 +5,6 @@
 <div class="swiper-container nav-slide-content api-grid">
     <div class="swiper-wrapper">
         <c:forEach var="apiType" items="${siteApiTypes}" varStatus="status">
-            <c:set var="show" value="${status.index == 0 ? 'active':''}"/>
             <c:set var="apiTypeId" value="${apiType.apiTypeId}"/>
             <c:set var="type" value=""/>
             <c:choose>
@@ -26,7 +25,7 @@
                 </c:when>
             </c:choose>
             <div class="swiper-slide slide-${type}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 ${show}">
+                <ul class="mui-table-view mui-grid-view mui-grid-9 active" data-list="${type}">
                     <c:set var="apiTypeRelations" value="${apiType.apiTypeRelations}"/>
                     <c:if test="${fn:length(apiTypeRelations)<=0}">
                         <div class="deficiency-nots">没有找到符合的游戏</div>

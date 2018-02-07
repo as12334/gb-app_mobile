@@ -23,10 +23,10 @@
                         <c:set var="type" value="chess-and-card"/>
                     </c:when>
                 </c:choose>
-                <a class="swiper-slide item-${type} ${status.index == 0 ? 'mui-active':''}">${apiType.name}</a>
+                <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-${type} ${status.index == 0 ? ' mui-active':''}"><span>${apiType.name}</span></a>
             </c:forEach>
             <c:if test="${fn:length(fish)>0}">
-                <a class="swiper-slide item-fish">${views.themes_auto['捕鱼游戏']}</a>
+                <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-fish"><span>${views.themes_auto['捕鱼游戏']}</span></a>
             </c:if>
         </div>
     </div>

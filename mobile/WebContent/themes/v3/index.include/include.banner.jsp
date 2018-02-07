@@ -4,7 +4,7 @@
     <div class="banner-ads">
         更多精彩游戏，请下载客户端！
         <a data-rel='{"target":"downLoadApp","opType":"function"}' class="btn-download">立即下载</a>
-        <div class="close-slide"></div>
+        <div data-rel='{"target":"closeDownLoad","opType":"function"}' class="close-slide"></div>
     </div>
     <div class="mui-slider-group">
         <c:choose>
