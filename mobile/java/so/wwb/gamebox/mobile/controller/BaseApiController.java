@@ -316,7 +316,7 @@ public abstract class BaseApiController extends BaseDemoController {
             gameName = gameI18n.getName();
         }
         siteGame.setName(gameName);
-        siteGame.setCover("http://test01.ampinplayopt0matrix.com" + String.format(MobileConst.GAME_COVER_URL, locale, siteGame.getApiId(), siteGame.getCode()));
+        siteGame.setCover(String.format(MobileConst.GAME_COVER_URL, locale, siteGame.getApiId(), siteGame.getCode()));
     }
 
     /**

@@ -2,7 +2,7 @@
 <%--@elvariable id="navApiGameMap" type="java.util.Map<java.lang.Integer, java.util.Map<java.lang.Integer, java.util.List<so.wwb.gamebox.model.company.site.po.SiteGame>>>"--%>
 <%--@elvariable id="g" type="so.wwb.gamebox.model.company.site.po.SiteGame"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
 <c:if test="${fn:length(apiTypeRelations)>1}">
     <div class="lottery-nav" name="nav-${apiTypeId}">
         <div class="mui-scroll-wrapper mui-slider-indicatorcode mui-segmented-control mui-segmented-control-inverted" data-scroll="7">
@@ -29,7 +29,7 @@
                     <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
-                        <img data-lazyload="${g.cover}" class="lottery-img">
+                        <img data-lazyload="${root}/${g.cover}" class="lottery-img">
                         <div class="mui-media-body">${g.name}</div>
                     </a>
                 </li>
