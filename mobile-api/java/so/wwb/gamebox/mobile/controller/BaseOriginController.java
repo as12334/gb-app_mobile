@@ -56,7 +56,6 @@ import java.util.Map;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.FISH_API_TYPE_ID;
-import static so.wwb.gamebox.model.CacheBase.getSiteGameName;
 
 /**
  * Created by LeTu on 2017/3/31.
@@ -99,7 +98,14 @@ public abstract class BaseOriginController {
         }
     }
 
-    protected SiteGameListVo getCasinoGames(SiteGameListVo listVo, SiteGameTag tag) {
+    /**
+     * 根据条件筛选游戏
+     *
+     * @param listVo
+     * @param tag
+     * @return
+     */
+    protected SiteGameListVo getGameByApiIdAndApiTypeId(SiteGameListVo listVo, SiteGameTag tag) {
         SiteGameSo so = listVo.getSearch();
         Integer apiId = so.getApiId();
         Integer apiTypeId = so.getApiTypeId();
@@ -212,6 +218,14 @@ public abstract class BaseOriginController {
         return gameIds;
     }
 
+    /**
+     * 转换电子游戏为接口所用数据
+     *
+     * @param siteGames
+     * @param domain
+     * @param isAutoPay
+     * @return
+     */
     protected List<AppSiteGame> handleCasinoGames(List<SiteGame> siteGames, String domain, boolean isAutoPay) {
         if (CollectionTool.isEmpty(siteGames)) {
             return new ArrayList<>(0);
@@ -228,7 +242,7 @@ public abstract class BaseOriginController {
             casinoGame.setStatus(siteGame.getStatus());
             casinoGame.setApiTypeId(siteGame.getApiTypeId());
             casinoGame.setCode(siteGame.getCode());
-            casinoGame.setName(getSiteGameName(siteGame.getGameId().toString()));
+            casinoGame.setName(siteGame.getName());
             casinoGame.setCover(getImagePath(domain, siteGame.getCover()));
             casinoGame.setSystemStatus(siteGame.getSystemStatus());
             casinoGame.setGameLink(getCasinoGameRequestUrl(siteGame));

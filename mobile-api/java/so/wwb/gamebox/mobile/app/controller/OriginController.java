@@ -166,7 +166,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
-        listVo = getCasinoGames(listVo, tag);
+        listVo = getGameByApiIdAndApiTypeId(listVo, tag);
         //处理游戏结果
         Map<String, Object> map = new HashMap<>(2, 1f);
         map.put("casinoGames", handleCasinoGames(listVo.getResult(), SessionManager.getDomain(request), SessionManager.isAutoPay()));
