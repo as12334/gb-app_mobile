@@ -57,48 +57,45 @@ public class ActivityMoneyAppController {
     @RequestMapping(value = "/countDrawTimes")
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
-        if (SessionManagerCommon.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.UN_LOGIN.getCode(),
-                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null, APP_VERSION);
-        }
-
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getMsg(),
                     null, APP_VERSION);
         }
 
-        Map<String, Serializable> map = new HashMap<>(4, 1f);
+        Map<String, Object> map = new HashMap<>(4, 1f);
         Integer playerId = SessionManagerBase.getUserId();
         PlayerActivityMessage moneyActivity = findMoneyActivity();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId);
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getMsg(),
                     null, APP_VERSION);
         }
 
         Date now = new Date();
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
+            map.put("drawTimes", -1);
+            map.put("isEnd", "true");
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null, APP_VERSION);
+                    map, APP_VERSION);
         }
         Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
         if (!containUserRank) {
+            map.put("drawTimes", -1);
+            map.put("isEnd", "true");
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null, APP_VERSION);
+                    map, APP_VERSION);
         }
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
         awardsRulesVo.getSearch().setActivityMessageId(moneyActivity.getId());
         awardsRulesVo.setActivityMessage(moneyActivity);
-
         boolean allDayLottery = isAllDayLottery(playerId, moneyActivity.getId());
         if (allDayLottery) {//全天开奖
             int count = countAll(moneyActivity, playerId);
