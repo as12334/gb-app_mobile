@@ -18,7 +18,6 @@ import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
-import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.ActivityPreferentialFormEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -59,13 +58,13 @@ public class ActivityMoneyAppController {
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
         if (SessionManagerCommon.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.UN_LOGIN.getCode(),
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.UN_LOGIN.getCode(),
                     AppErrorCodeEnum.UN_LOGIN.getMsg(),
                     null, APP_VERSION);
         }
 
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
@@ -76,7 +75,7 @@ public class ActivityMoneyAppController {
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId);
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
@@ -84,15 +83,14 @@ public class ActivityMoneyAppController {
         Date now = new Date();
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
         Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
         if (!containUserRank) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
@@ -131,8 +129,7 @@ public class ActivityMoneyAppController {
 
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
     }
@@ -147,8 +144,7 @@ public class ActivityMoneyAppController {
     @Token(valid = true)
     public String getPacket(String activityMessageId) {
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
@@ -161,7 +157,7 @@ public class ActivityMoneyAppController {
                 map.put("gameNum", -3);
                 map.put("award", 0);
 
-                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
                         map, APP_VERSION);
@@ -173,7 +169,7 @@ public class ActivityMoneyAppController {
                 map.put("gameNum", -3);
                 map.put("award", 0);
 
-                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
                         map, APP_VERSION);
@@ -184,7 +180,7 @@ public class ActivityMoneyAppController {
                 map.put("gameNum", -3);
                 map.put("award", 0);
 
-                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
                         map, APP_VERSION);
@@ -196,7 +192,7 @@ public class ActivityMoneyAppController {
                 map.put("gameNum", -4);
                 map.put("award", 0);
 
-                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+                return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
                         map, APP_VERSION);
@@ -222,13 +218,13 @@ public class ActivityMoneyAppController {
             map.put("gameNum", -2);
             map.put("award", 0);
 
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
                     map, APP_VERSION);
         }
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);

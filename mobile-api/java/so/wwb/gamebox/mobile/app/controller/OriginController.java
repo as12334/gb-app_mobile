@@ -54,7 +54,7 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/getTimeZone")
     @ResponseBody
     public String getTimeZone() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
     }
 
 
@@ -75,7 +75,7 @@ public class OriginController extends BaseOriginController {
         map.put("activity", getMoneyActivityFloat(request));
         map.put("language", SessionManager.getLocale().toString());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -93,7 +93,7 @@ public class OriginController extends BaseOriginController {
         //轮播图和弹窗广告
         Map<String, Object> map = new HashMap<>(2, 1f);
         getBannerAndPhoneDialog(map, request);
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -111,7 +111,7 @@ public class OriginController extends BaseOriginController {
         Map<String, Object> map = new HashMap<>(1, 1f);
         map.put("announcement", getAnnouncement());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -128,7 +128,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getApiTypeGame(model, request),
                 APP_VERSION);
@@ -147,7 +147,7 @@ public class OriginController extends BaseOriginController {
         Map<String, Object> map = MapTool.newHashMap();
         map.put("activity", getMoneyActivityFloat(request));
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
@@ -171,7 +171,7 @@ public class OriginController extends BaseOriginController {
         map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, tag));
         map.put("page", pageTotal);
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
@@ -186,7 +186,7 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/getGameTag")
     @ResponseBody
     public String getGameTags() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getGameTag(),
@@ -205,34 +205,32 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (SessionManager.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.UN_LOGIN.getCode(),
                     AppErrorCodeEnum.UN_LOGIN.getMsg(),
                     null, APP_VERSION);
         }
         if (siteGame.getApiId() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
                     null,
                     APP_VERSION);
         }
         if (siteGame.getApiTypeId() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
                     null,
                     APP_VERSION);
         }
-        Map map = MapTool.newHashMap();
-
+        Map map = new HashMap<>();
         if (SessionManager.isAutoPay()) {
             AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo);
-
             map.put("gameLink", gameUrl.getGameLink());
             map.put("gameMsg", gameUrl.getGameMsg());
 
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
                     map,
@@ -248,14 +246,14 @@ public class OriginController extends BaseOriginController {
                 map.put("gameLink", gameUrl.getGameLink());
                 map.put("gameMsg", gameUrl.getGameMsg());
 
-                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+                return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
                         map,
                         APP_VERSION);
             }
         }
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,

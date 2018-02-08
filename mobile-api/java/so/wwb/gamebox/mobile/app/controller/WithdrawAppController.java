@@ -68,38 +68,37 @@ public class WithdrawAppController extends BaseWithDrawController {
         Map<String, Object> tokenMap = new HashMap<>(1, 1f);
         tokenMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
         //判断用户是否存在安全码
         if (!isSafePassword()) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.NOT_SET_SAFE_PASSWORD.getCode(),
                     AppErrorCodeEnum.NOT_SET_SAFE_PASSWORD.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
         if (StringTool.isBlank(password.getOriginPwd())) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
                     AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
         if (!verifyOriginPwd(password)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getCode(),
                     AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
         //是否有取款银行卡
-        Map map = MapTool.newHashMap();
+        Map map = new HashMap<>();
         if (!hasBank(map, request)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.NO_BANK.getCode(),
                     AppErrorCodeEnum.NO_BANK.getMsg(),
                     tokenMap,
@@ -109,7 +108,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
         if (StringTool.isNotBlank(vo.getMessage())) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     vo.getCode(),
                     vo.getMessage(),
                     tokenMap,
@@ -117,7 +116,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         }
         //是否符合取款金额设置
         if (isInvalidAmount(playerVo, map)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.WITHDRAW_BETWEEN_MIN_MAX.getCode(),
                     map.get("msg").toString(),
                     tokenMap,
@@ -127,14 +126,14 @@ public class WithdrawAppController extends BaseWithDrawController {
         map = addWithdraw(request, playerVo);
         //成功
         if (map.get("state") != null && MapTool.getBoolean(map, "state")) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
                     map,
                     APP_VERSION);
         }
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.WITHDRAW_FAIL.getCode(),
                 AppErrorCodeEnum.WITHDRAW_FAIL.getMsg(),
                 tokenMap,
@@ -151,7 +150,7 @@ public class WithdrawAppController extends BaseWithDrawController {
     @ResponseBody
     public String withdrawFee(String withdrawAmount) {
         if (StringTool.isBlank(withdrawAmount) || !NumberTool.isNumber(withdrawAmount)) {
-            return AppModelVo.getAppModeVoJson(
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getCode(),
                     AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getMsg(),
                     null,
@@ -160,7 +159,7 @@ public class WithdrawAppController extends BaseWithDrawController {
 
         PlayerRank playerRank = getRank();
         if (playerRank == null) {
-            return AppModelVo.getAppModeVoJson(
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
                     null,
@@ -188,7 +187,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         map.put("actualWithdraw", result);// 实际取款金额
         map.put("administrativeFee", administrativeFee);//行政费
         map.put("counterFee", poundage);//手续费
-        return AppModelVo.getAppModeVoJson(
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
