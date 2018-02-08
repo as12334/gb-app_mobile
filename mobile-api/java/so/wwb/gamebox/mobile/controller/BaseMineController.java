@@ -644,10 +644,15 @@ public class BaseMineController {
                 detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
                 detailApp.setRechargeAmount("Ƀ" + map.get("bitAmount"));
             }
+            Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(),DictEnum.COMMON_FUND_TYPE);
+
+            detailApp.setTransactionWayName(i18n.get(po.getFundType()));
+
             if ("artificial_withdraw".equals(po.getFundType())) {
                 detailApp.setTransactionWayName("系统操作");  //人工存款
+            } else if ("artificial_deposit".equals(po.getFundType())) {
+                detailApp.setTransactionWayName("系统操作"); //人工存款
             }
-
 
             if (map.get("bankCode") != null) {
                 detailApp.setBankCode(String.valueOf(map.get("bankCode")));  //银行卡code icbc
@@ -695,7 +700,7 @@ public class BaseMineController {
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
             detailApp.setTransactionWayName(String.valueOf(map.get(SessionManager.getLocale().toString()))); //描述
-            if (StringTool.isBlank(detailApp.getTransactionWayName())) {
+            if (StringTool.isBlank(detailApp.getTransactionWayName()) || "null".equals(detailApp.getTransactionWayName())) {
                 detailApp.setTransactionWayName(String.valueOf(map.get("activityName"))); //描述
             }
             detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
