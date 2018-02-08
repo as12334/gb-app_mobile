@@ -431,11 +431,9 @@ public class BaseMineController {
     /**
      * 统计当前页数据
      */
-    protected Map<String, Object> statisticsData(PlayerGameOrderListVo listVo, int TIME_INTERVAL, int DEFAULT_TIME) {
+    protected Map<String, Object> statisticsData(PlayerGameOrderListVo listVo) {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        initQueryDateForgetBetting(listVo, TIME_INTERVAL, DEFAULT_TIME);
         // 统计数据
-        listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1), -1));
         Map map = ServiceSiteTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
         map.put("currency", getCurrencySign());
         return map;
