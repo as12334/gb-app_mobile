@@ -351,14 +351,14 @@ public abstract class BaseOriginController {
      * @param
      */
     protected List<AppSiteApiTypeRelastionVo> getApiTypeGame(AppRequestModelVo model, HttpServletRequest request) {
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
+        //获取游戏分类下的游戏
+        Map<Integer, Map<Integer, List<AppSiteGame>>> navGames = getNavGames(model, request, apiI18nMap, siteApiI18nMap);
+
         //获取类型
         List<SiteApiType> siteApiTypes = getApiTypes();
         Map<String, SiteApiTypeRelation> siteApiTypeRelationMap = CacheBase.siteApiTypeRelationMap(SessionManager.getSiteId());
-        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
-        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
-        //捕鱼
-        Map<String, AppSiteApiTypeRelastionVo> fish = new HashMap<>();
-        Map<Integer, Map<Integer, List<AppSiteGame>>> navGames = getNavGames(model, request, apiI18nMap, siteApiI18nMap, fish);
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = apiTypeRelationGroupByType(siteApiTypeRelationMap, apiI18nMap, siteApiI18nMap, model, request, navGames);
         Map<String, ApiTypeI18n> apiTypeI18nMap = CacheBase.getApiTypeI18n();
         List<AppSiteApiTypeRelastionVo> appApiTypes = new ArrayList<>();
@@ -371,13 +371,27 @@ public abstract class BaseOriginController {
             appApiType.setApiType(apiTypeId);
             appApiType.setApiTypeName(apiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
             appApiType.setCover(getApiTypeCover(apiLogUrl, apiTypeId));
-            appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.desc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
+            appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
             if (ApiTypeEnum.LOTTERY.getCode() == apiTypeId || ApiTypeEnum.CHESS.getCode() == apiTypeId) {
                 appApiType.setLevel(true);
             }
             appApiTypes.add(appApiType);
         }
-        appApiTypes.add(fish.get("fish"));
+        List<AppSiteGame> fishGames = navGames.get(FISH_API_TYPE_ID).get(FISH_API_TYPE_ID);
+        if (CollectionTool.isNotEmpty(fishGames)) {
+            AppSiteApiTypeRelastionVo fish = new AppSiteApiTypeRelastionVo();
+            fish.setApiType(FISH_API_TYPE_ID);
+            fish.setCover(setApiLogoUrl(model, request) + "/fish.png");
+            fish.setLevel(true);
+            fish.setApiTypeName(LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode()));
+            AppSiteApiTypeRelationI18n appSiteApiTypeRelationI18n = new AppSiteApiTypeRelationI18n();
+            appSiteApiTypeRelationI18n.setApiId(FISH_API_TYPE_ID);
+            appSiteApiTypeRelationI18n.setGameList(fishGames);
+            List<AppSiteApiTypeRelationI18n> appApis = new ArrayList<>(1);
+            appApis.add(appSiteApiTypeRelationI18n);
+            fish.setSiteApis(appApis);
+            appApiTypes.add(fish);
+        }
         return appApiTypes;
     }
 
@@ -393,7 +407,7 @@ public abstract class BaseOriginController {
      *
      * @return
      */
-    private Map<Integer, Map<Integer, List<AppSiteGame>>> getNavGames(AppRequestModelVo model, HttpServletRequest request, Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, Map map) {
+    private Map<Integer, Map<Integer, List<AppSiteGame>>> getNavGames(AppRequestModelVo model, HttpServletRequest request, Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap) {
         //处理棋牌、彩票游戏
         Map<String, SiteGame> siteGameMap = CacheBase.getSiteGame();
         //捕鱼
@@ -448,20 +462,8 @@ public abstract class BaseOriginController {
                 fishGames.add(appSiteGame);
             }
         }
-        if (CollectionTool.isNotEmpty(fishGames)) {
-            //构造捕鱼
-            AppSiteApiTypeRelastionVo appTypeVo = new AppSiteApiTypeRelastionVo();
-            appTypeVo.setApiType(FISH_API_TYPE_ID);
-            appTypeVo.setCover(setApiLogoUrl(model, request) + "/fish.png");
-            appTypeVo.setApiTypeName(LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode()));
-            AppSiteApiTypeRelationI18n appSiteApiTypeRelationI18n = new AppSiteApiTypeRelationI18n();
-            appSiteApiTypeRelationI18n.setApiId(FISH_API_TYPE_ID);
-            appSiteApiTypeRelationI18n.setGameList(fishGames);
-            List<AppSiteApiTypeRelationI18n> appApis = new ArrayList<>(1);
-            appApis.add(appSiteApiTypeRelationI18n);
-            appTypeVo.setSiteApis(appApis);
-            map.put(FISH_API_TYPE_ID, appTypeVo);
-        }
+        navGames.put(FISH_API_TYPE_ID, new HashMap<>());
+        navGames.get(FISH_API_TYPE_ID).put(FISH_API_TYPE_ID, fishGames);
         return navGames;
     }
 
@@ -579,6 +581,7 @@ public abstract class BaseOriginController {
         String preMaintain = GameStatusEnum.PRE_MAINTAIN.getCode();
         String normal = GameStatusEnum.NORMAL.getCode();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> appApiTypeRelationGroupByType = new HashMap<>();
+        String apiLogoUrl = setApiLogoUrl(model, request);
         //彩票，棋牌游戏分组数据
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
             apiTypeId = apiTypeRelation.getApiTypeId();
@@ -595,10 +598,10 @@ public abstract class BaseOriginController {
             siteApi = siteApiMap.get(String.valueOf(apiId));
             if (api != null && maintain.equals(api.getSystemStatus()) || siteApi != null && maintain.equals(siteApi.getSystemStatus())) {
                 apiTypeRelation.setApiStatus(maintain);
-                appApiTypeRelationGroupByType.get(apiTypeId).add(changeApiTypeRelationI18nModelToApp(apiTypeRelation, model, request, navGames.get(apiTypeId)));
+                appApiTypeRelationGroupByType.get(apiTypeId).add(changeApiTypeRelationI18nModelToApp(apiTypeRelation, model, apiLogoUrl, navGames.get(apiTypeId)));
             } else if (api != null && siteApi != null && (normal.equals(api.getSystemStatus()) || preMaintain.equals(api.getSystemStatus())) && (normal.equals(siteApi.getSystemStatus()) || preMaintain.equals(siteApi.getSystemStatus()))) {
                 apiTypeRelation.setApiStatus(normal);
-                appApiTypeRelationGroupByType.get(apiTypeId).add(changeApiTypeRelationI18nModelToApp(apiTypeRelation, model, request, navGames.get(apiTypeId)));
+                appApiTypeRelationGroupByType.get(apiTypeId).add(changeApiTypeRelationI18nModelToApp(apiTypeRelation, model, apiLogoUrl, navGames.get(apiTypeId)));
             }
         }
         return appApiTypeRelationGroupByType;
@@ -609,21 +612,20 @@ public abstract class BaseOriginController {
      *
      * @param apiTypeRelation
      * @param model
-     * @param request
      * @return
      */
     private AppSiteApiTypeRelationI18n changeApiTypeRelationI18nModelToApp(SiteApiTypeRelation apiTypeRelation,
                                                                            AppRequestModelVo model,
-                                                                           HttpServletRequest request,
+                                                                           String apiLogoUrl,
                                                                            Map<Integer, List<AppSiteGame>> lotteryAndChessGameGroupByApiId) {
         //转换实体提供给app原生
         AppSiteApiTypeRelationI18n appRelation = new AppSiteApiTypeRelationI18n();
         appRelation.setName(apiTypeRelation.getApiName());
         appRelation.setApiId(apiTypeRelation.getApiId());
         appRelation.setApiTypeId(apiTypeRelation.getApiTypeId());
-        appRelation.setCover(setApiLogoUrl(model, request) + "/api/api_logo_" + apiTypeRelation.getApiId() + ".png"); //api图片路劲
+        appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
         appRelation.setGameLink(getAutoPayGameLink(apiTypeRelation));
-        appRelation.setOrderNum(apiTypeRelation.getOrderNum());
+        appRelation.setOrderNum(apiTypeRelation.getMobileOrderNum());
         appRelation.setAutoPay(SessionManager.isAutoPay());
         if (lotteryAndChessGameGroupByApiId != null
                 && (ApiTypeEnum.LOTTERY.getCode() == apiTypeRelation.getApiTypeId().intValue()

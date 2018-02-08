@@ -56,8 +56,9 @@ public interface AppConstant {
     /**游戏图片路径公共部分地址：ftl/终端/分辨率/语言/apiId/gameCode*/
     String GAME_COVER_URL = "/ftl/commonPage/images/game_logo/%s/%s/%s/{0}/{1}.png";
 
-    String API_COVER_URL = "/ftl/commonPage/images/game_logo/%s/%s/%s/%s/%s.png";
-
     /**首页默认广播图*/
     String DEFAULT_BANNER_URL = "%s/images/ban-01.jpg";
+
+    /*api图片地址 */
+    String API_LOGO_URL = "%s/api/api_logo_%s.png";
 }
