@@ -59,15 +59,13 @@ public class ActivityMoneyAppController {
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
         if (SessionManagerCommon.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.UN_LOGIN.getCode(),
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.UN_LOGIN.getCode(),
                     AppErrorCodeEnum.UN_LOGIN.getMsg(),
                     null, APP_VERSION);
         }
 
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
@@ -76,11 +74,9 @@ public class ActivityMoneyAppController {
         Integer playerId = SessionManagerBase.getUserId();
         PlayerActivityMessage moneyActivity = findMoneyActivity();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
-
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId);
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
@@ -88,8 +84,7 @@ public class ActivityMoneyAppController {
         Date now = new Date();
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.ACTIVITY_END.getCode(),
+            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     null, APP_VERSION);
         }
