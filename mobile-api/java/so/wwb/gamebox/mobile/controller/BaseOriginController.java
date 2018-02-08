@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.SystemTool;
@@ -257,25 +256,41 @@ public abstract class BaseOriginController {
      */
     protected List<AppGameTag> getGameTag() {
         Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
+        Map<String, String> tagNameMap = getTagNameMap();
         List<String> tags = new ArrayList<>();
-        Map<String, SiteI18n> siteI18n = Cache.getSiteI18n(SiteI18nEnum.MASTER_GAME_TAG, Const.BOSS_DATASOURCE_ID);
-        List<AppGameTag> gameTags = ListTool.newArrayList();
+        String tagId;
+        List<AppGameTag> gameTags = new ArrayList<>();
         for (SiteGameTag tag : siteGameTag.values()) {
-            if (!tags.contains(tag.getTagId())) {
-                for (SiteI18n site : siteI18n.values()) {
-                    if (StringTool.equalsIgnoreCase(tag.getTagId(), site.getKey())
-                            && StringTool.equalsIgnoreCase(site.getLocale().toString(), SessionManager.getLocale().toString())) {
-                        AppGameTag appGameTag = new AppGameTag();
-                        appGameTag.setKey(site.getKey());
-                        appGameTag.setValue(site.getValue());
-                        gameTags.add(appGameTag);
-                    }
-                }
+            tagId = tag.getTagId();
+            if (!tags.contains(tagId)) {
+                AppGameTag appGameTag = new AppGameTag();
+                appGameTag.setKey(tagId);
+                appGameTag.setValue(tagNameMap.get(tagId));
+                gameTags.add(appGameTag);
                 tags.add(tag.getTagId());
             }
         }
-
         return gameTags;
+    }
+
+    /**
+     * 组装游戏标签国际化<tagId,tagName>
+     *
+     * @return
+     */
+    private Map<String, String> getTagNameMap() {
+        Map<String, SiteI18n> siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_GAME_TAG, Const.BOSS_DATASOURCE_ID);
+        if (MapTool.isEmpty(siteI18nMap)) {
+            return new HashMap<>(0, 1f);
+        }
+        Map<String, String> tagNameMap = new HashMap<>();
+        String locale = String.valueOf(SessionManager.getLocale());
+        for (SiteI18n siteI18n : siteI18nMap.values()) {
+            if (locale.equals(siteI18n.getLocale())) {
+                tagNameMap.put(siteI18n.getKey(), siteI18n.getValue());
+            }
+        }
+        return tagNameMap;
     }
 
     /**
