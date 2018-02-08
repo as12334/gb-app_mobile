@@ -818,13 +818,10 @@ public class BaseMineController {
     }
 
     protected AdvisoryMessageDetailApp buildingAdvisoryMessageDetailApp(AdvisoryMessageDetailApp detailApp, VPlayerAdvisory advisory) {
-
         detailApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
         detailApp.setAdvisoryContent(advisory.getAdvisoryContent());
         detailApp.setQuestionType(advisory.getQuestionType());
-        String time = LocaleDateTool.formatDate(advisory.getAdvisoryTime(), new DateFormat().getDAY_SECOND(), SessionManager.getTimeZone());
-        detailApp.setAdvisoryTime(Timestamp.valueOf(time).getTime());
-
+        detailApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
         return detailApp;
     }
 
