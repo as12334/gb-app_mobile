@@ -646,6 +646,9 @@ public class BaseMineController {
                 detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
                 detailApp.setRechargeAmount("Ƀ" + map.get("bitAmount"));
             }
+            if ("artificial_withdraw".equals(po.getFundType())) {
+                detailApp.setTransactionWayName("系统操作");  //人工存款
+            }
 
 
             if (map.get("bankCode") != null) {
@@ -665,9 +668,11 @@ public class BaseMineController {
             detailApp.setBankCodeName(bankName);
 
             String bankNo = String.valueOf(map.get("bankNo"));
-            if (StringTool.isBlank(bankName)) {
+            if (StringTool.isBlank(bankName) && !"artificial_withdraw".equals(po.getFundType())) {
                 detailApp.setTransactionWayName(" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
-            }else {
+            }else if ("artificial_withdraw".equals(po.getFundType())) {
+                detailApp.setTransactionWayName("系统操作");  //人工取款
+            } else {
                 detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
             }
             if (withdrawVo.getResult().getDeductFavorable() != null && withdrawVo.getResult().getDeductFavorable() > 0) {
@@ -675,8 +680,8 @@ public class BaseMineController {
                 detailApp.setAdministrativeFee(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getAdministrativeFee())); //行政费用
                 detailApp.setRechargeTotalAmount(moneyType +" " + "-"+CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
             }
-            detailApp.setRealName(SessionManager.getUser().getRealName()); //姓名
-            if (map.get("bankNo") != null) {
+            detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //姓名
+            if (map.get("bankNo") != null && "bitcoin".equals(map.get("bankCode"))) {
                 detailApp.setWithdrawMoney("Ƀ" + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
                 detailApp.setPoundage("Ƀ" + withdrawVo.getResult().getCounterFee()); //手续费
                 double totalAmount = withdrawVo.getResult().getWithdrawAmount() - withdrawVo.getResult().getCounterFee();
@@ -684,6 +689,7 @@ public class BaseMineController {
             } else {
                 detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));
                 detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
+                detailApp.setRechargeTotalAmount(moneyType + " " + "-" +CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount())); //实际到账
             }
 
             detailApp.setStatusName(statusName); //状态
