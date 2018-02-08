@@ -132,9 +132,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String refresh(HttpServletRequest request) {
         UserInfoApp userInfo = appRefresh(request);
-
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 userInfo,
                 APP_VERSION);
@@ -165,7 +163,7 @@ public class MineAppController extends BaseMineController {
         List<FundListApp> fundListAppList = buildList(vPlayerTransactionList);
         fundRecordApp.setFundListApps(fundListAppList);
 
-//统计页面反水等等数据
+        //统计页面反水等等数据
         fundRecordApp.setSumPlayerMap(getSumPlayerFunds(listVo));
         if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
             fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
@@ -177,8 +175,7 @@ public class MineAppController extends BaseMineController {
         fundRecordApp.setTotalCount(listVo.getPaging().getTotalCount());
         fundRecordApp.setCurrency(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 fundRecordApp, APP_VERSION);
     }
@@ -195,11 +192,8 @@ public class MineAppController extends BaseMineController {
         FundRecordApp recordApp = new FundRecordApp();
         listVo = preList(listVo);
         Map map = listVo.getDictCommonTransactionType();
-
         recordApp = buildDictCommonTransactionType(map, recordApp);
-
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 recordApp.getTransactionMap(), APP_VERSION);
     }
@@ -255,7 +249,7 @@ public class MineAppController extends BaseMineController {
 
         bettingDataApp.setTotalSize(listVo.getPaging().getTotalCount());
         //提高性能，查询分页时只统计一次
-        if (isShowStatistics != null && isShowStatistics == true) {
+        if (isShowStatistics != null && isShowStatistics) {
             bettingDataApp.setStatisticsData(statisticsData(listVo));
         }
         bettingDataApp.setList(buildBetting(gameOrderList));
@@ -264,8 +258,7 @@ public class MineAppController extends BaseMineController {
         bettingDataApp.setMinDate(listVo.getSearch().getBeginBetTime());
         bettingDataApp.setMaxDate(listVo.getSearch().getEndBetTime());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 bettingDataApp, APP_VERSION);
     }
