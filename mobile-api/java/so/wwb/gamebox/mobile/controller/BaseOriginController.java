@@ -10,7 +10,6 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.math.NumberTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
@@ -65,32 +64,11 @@ import static so.wwb.gamebox.model.CacheBase.getSiteGameName;
 public abstract class BaseOriginController {
     private Log LOG = LogFactory.getLog(BaseOriginController.class);
     private String TRANSFERS_URL = "/transfer/index.html";
-    private String FISH_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=2&search.gameType=Fish";
     private String API_DETAIL_LINK = "/api/detail.html?apiId=%d&apiTypeId=%d";
     private String API_GAME_LINK = "/game/apiGames.html?apiId=%d&apiTypeId=%d";
     private String AUTO_GAME_LINK = "/mobile-api/origin/getGameLink.html?apiId=%d&apiTypeId=%d";
     private String CASINO_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=%d";
     private String TRANSFER_LINK = "/transfer/index.html?apiId=%d&apiTypeId=%d";
-
-    /**
-     * 设置查询条件
-     */
-    protected Criteria getQueryGameCriteria(SiteGameSo so, List<SiteGameI18n> siteGameI18n) {
-        Criteria criteria = Criteria.add(SiteGame.PROP_API_TYPE_ID, Operator.EQ, so.getApiTypeId())
-                .addAnd(Criteria.add(SiteGame.PROP_API_ID, Operator.EQ, so.getApiId()))
-                .addAnd(Criteria.add(SiteGame.PROP_TERMINAL, Operator.EQ, SupportTerminal.PHONE.getCode()))
-                .addAnd(Criteria.add(SiteGame.PROP_STATUS, Operator.NE, GameStatusEnum.DISABLE.getCode()))
-                .addAnd(Criteria.add(SiteGame.PROP_GAME_TYPE, Operator.EQ, so.getGameType()));
-
-        List<Integer> gameIds = CollectionTool.extractToList(siteGameI18n, SiteGame.PROP_GAME_ID);
-        if (gameIds != null && gameIds.size() == 0) {
-            criteria.addAnd(SiteGame.PROP_GAME_ID, Operator.EQ, 0);
-        } else {
-            criteria.addAnd(SiteGame.PROP_GAME_ID, Operator.IN, gameIds);
-        }
-
-        return criteria;
-    }
 
     protected List<SiteGameI18n> getGameI18n(SiteGameListVo listVo) {
         List<Integer> gameIds = CollectionTool.extractToList(listVo.getResult(), SiteGame.PROP_GAME_ID);
@@ -121,110 +99,143 @@ public abstract class BaseOriginController {
         }
     }
 
-    /**
-     * 游戏过滤 - 总控录入的游戏status = normal && 站点游戏status = normal
-     *
-     * @return
-     */
-    protected List<SiteGame> getSiteGamesWhichIsNormalStatus(List<SiteGame> allSiteGames) {
-        List<Game> allGames = new ArrayList<>(Cache.getGame().values());
-        // 维护与正常的status都为normal
-        allGames = CollectionQueryTool.query(allGames, Criteria.add(SiteGame.PROP_STATUS, Operator.EQ, GameStatusEnum.NORMAL.getCode())
-                .addAnd(Game.PROP_SUPPORT_TERMINAL, Operator.EQ, GameSupportTerminalEnum.PHONE.getCode()));
-        List<Integer> normalGameIdList = (List<Integer>) CollectionTool.intersection(CollectionTool.extractToList(allGames, Game.PROP_ID), CollectionTool.extractToList(allSiteGames, SiteGame.PROP_GAME_ID));
-        if (normalGameIdList.size() != 0) {
-            return CollectionQueryTool.query(allSiteGames, Criteria.add(SiteGame.PROP_GAME_ID, Operator.IN, normalGameIdList));
-        } else {
-            return null;
+    protected SiteGameListVo getCasinoGames(SiteGameListVo listVo, SiteGameTag tag) {
+        SiteGameSo so = listVo.getSearch();
+        Integer apiId = so.getApiId();
+        Integer apiTypeId = so.getApiTypeId();
+        if (apiId == null || apiId <= 0 || apiTypeId == null) {
+            return listVo;
         }
-    }
-
-    /**
-     * 设置游戏状态
-     */
-    protected List<SiteGame> setGameStatus(SiteGameListVo listVo, List<SiteGame> games) {
+        List<Integer> gameIds = null;
+        if (tag != null && StringTool.isNotBlank(tag.getTagId())) { //判断是否符合游戏标签
+            gameIds = getGamesByTagId(tag.getTagId());
+            if (CollectionTool.isEmpty(gameIds)) { //无符合标签的游戏
+                return listVo;
+            }
+        }
+        //筛选的条件 类型、apiId、游戏标签、游戏名称
+        String name = so.getName();
+        Map<String, SiteGame> siteGameMap = Cache.getSiteGame();
         List<SiteGame> siteGames = new ArrayList<>();
-        Integer apiId = listVo.getSearch().getApiId();
-        String status = getApiStatus(apiId);
-        String normal = GameStatusEnum.NORMAL.getCode();
+        Integer gameId;
+        Map<String, SiteGameI18n> siteGameI18nMap = new HashMap<>();
+        Map<String, GameI18n> gameI18nMap = new HashMap<>();
         String disable = GameStatusEnum.DISABLE.getCode();
         String maintain = GameStatusEnum.MAINTAIN.getCode();
         Map<String, Game> gameMap = Cache.getGame();
-        String gameStatus;
-        for (SiteGame siteGame : games) {
-            Game game = gameMap.get(String.valueOf(siteGame.getGameId()));
-            gameStatus = siteGame.getStatus();
-            if (disable.equals(status) || game == null || disable.equals(gameStatus) || disable.equals(game.getSystemStatus())) {
-                siteGame.setStatus(disable);
-            } else if (maintain.equals(status) || maintain.equals(gameStatus) || maintain.equals(game.getSystemStatus())) {
-                siteGame.setStatus(maintain);
-                siteGames.add(siteGame);
-            } else {
-                siteGame.setStatus(normal);
-                siteGames.add(siteGame);
+        Game game;
+        for (SiteGame siteGame : siteGameMap.values()) {
+            //不属于该api分类下不包含
+            if (apiId != siteGame.getApiId() || apiTypeId != siteGame.getApiTypeId()) {
+                continue;
             }
+            //游戏维护或已停用不包含
+            if (disable.equals(siteGame.getSystemStatus()) || maintain.equals(siteGame.getSystemStatus())) {
+                continue;
+            }
+            gameId = siteGame.getGameId();
+            game = gameMap.get(String.valueOf(gameId));
+            if (game == null || disable.equals(game.getSystemStatus()) || maintain.equals(game.getSystemStatus())) {
+                continue;
+            }
+            if (gameIds != null && !gameIds.contains(gameId)) {  //搜索条件不符合游戏标签不包含
+                continue;
+            }
+            siteGame.setName(getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
+            if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
+                continue;
+            }
+            siteGames.add(siteGame);
         }
-        return siteGames;
-    }
-
-    protected String getApiStatus(Integer apiId) {
-        Map<String, Api> apiMap = Cache.getApi();
-        Api api = apiMap.get(String.valueOf(apiId));
-        Map<String, SiteApi> siteApiMap = Cache.getSiteApi(SessionManager.getSiteId());
-        SiteApi siteApi = siteApiMap.get(String.valueOf(apiId));
-        String status = GameStatusEnum.MAINTAIN.getCode();
-        if (api != null && (GameStatusEnum.NORMAL.getCode().equals(api.getSystemStatus()) || GameStatusEnum.PRE_MAINTAIN.getCode().equals(api.getSystemStatus())) && siteApi != null && (GameStatusEnum.NORMAL.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.PRE_MAINTAIN.getCode().equals(siteApi.getSystemStatus()))) {
-            status = GameStatusEnum.NORMAL.getCode();
+        if (CollectionTool.isEmpty(siteGames)) {
+            return listVo;
         }
-        return status;
+        int totalCount = siteGames.size();
+        Paging paging = listVo.getPaging();
+        paging.setTotalCount(siteGames.size());
+        int pageSize = paging.getPageSize();
+        int pageNum = paging.getPageNumber();
+        int fromIndex = (pageNum - 1) * pageSize;
+        int endIndex = pageSize * pageNum;
+        if (fromIndex > totalCount) {
+            return listVo;
+        }
+        if (endIndex > totalCount) {
+            endIndex = totalCount;
+        }
+        siteGames = siteGames.subList(fromIndex, endIndex);
+        listVo.setResult(siteGames);
+        return listVo;
     }
 
     /**
-     * 获取Api的电子游戏
+     * 获取游戏名称
      *
-     * @param listVo
+     * @param siteGameI18nMap
+     * @param gameI18nMap
+     * @param gameId
      * @return
      */
-    protected List<AppSiteGame> getCasinoGameByApiId(SiteGameListVo listVo, HttpServletRequest request, Map pageMap, SiteGameTag tag) {
-        Integer apiId = listVo.getSearch().getApiId();
-        List<AppSiteGame> siteGames = ListTool.newArrayList();
-
-        if (apiId == null) {
-            return siteGames;
+    private String getGameName(Map<String, SiteGameI18n> siteGameI18nMap, Map<String, GameI18n> gameI18nMap, String gameId) {
+        SiteGameI18n siteGameI18n = siteGameI18nMap.get(gameId);
+        String gameName = null;
+        if (siteGameI18n != null) {
+            gameName = siteGameI18n.getName();
         }
-        if (!NumberTool.isNumber(String.valueOf(apiId)) && apiId <= 0) {
-            return siteGames;
+        if (StringTool.isNotBlank(gameName)) {
+            return gameName;
         }
+        GameI18n gameI18n = gameI18nMap.get(gameId);
+        if (gameI18n != null) {
+            gameName = gameI18n.getName();
+        }
+        if (StringTool.isBlank(gameName)) { //避免比较游戏名称出现空指针异常
+            return "";
+        }
+        return gameName;
+    }
 
-        listVo = getCasinoGames(listVo, tag);
-        Map<String, SiteGameI18n> map = getGameI18nMap(listVo);
-        for (SiteGame siteGame : listVo.getResult()) {
-            for (Map.Entry<String, SiteGameI18n> entry : map.entrySet()) {
-                if (StringTool.equalsIgnoreCase(siteGame.getGameId().toString(), entry.getKey())) {
-                    AppSiteGame casinoGame = new AppSiteGame();
-                    casinoGame.setGameId(siteGame.getGameId());
-                    casinoGame.setSiteId(siteGame.getSiteId());
-                    casinoGame.setApiId(siteGame.getApiId());
-                    casinoGame.setGameType(siteGame.getGameType());
-                    casinoGame.setOrderNum(siteGame.getOrderNum());
-                    casinoGame.setStatus(siteGame.getStatus());
-                    casinoGame.setApiTypeId(siteGame.getApiTypeId());
-                    casinoGame.setCode(siteGame.getCode());
-                    casinoGame.setName(getSiteGameName(siteGame.getGameId().toString()));
-                    casinoGame.setCover(getImagePath(SessionManager.getDomain(request), entry.getValue().getCover()));
-                    casinoGame.setSystemStatus(siteGame.getSystemStatus());
-                    if (SessionManager.getUser() != null) {
-                        casinoGame.setGameLink(getCasinoGameRequestUrl(siteGame));
-                        casinoGame.setAutoPay(SessionManager.isAutoPay());
-                    }
-
-                    siteGames.add(casinoGame);
-                }
+    /**
+     * 根据tagid取游戏
+     *
+     * @param tagId
+     * @return
+     */
+    private List<Integer> getGamesByTagId(String tagId) {
+        Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
+        List<Integer> gameIds = new ArrayList<>();
+        for (SiteGameTag gameTag : gameTagMap.values()) {
+            if (StringTool.equalsIgnoreCase(tagId, gameTag.getTagId())) {
+                gameIds.add(gameTag.getGameId());
             }
         }
-        pageMap.put("pageTotal", listVo.getPaging().getTotalCount());
+        return gameIds;
+    }
 
-        return siteGames;
+    protected List<AppSiteGame> handleCasinoGames(List<SiteGame> siteGames, String domain, boolean isAutoPay) {
+        if (CollectionTool.isEmpty(siteGames)) {
+            return new ArrayList<>(0);
+        }
+        List<AppSiteGame> appSiteGames = new ArrayList<>();
+        AppSiteGame casinoGame;
+        for (SiteGame siteGame : siteGames) {
+            casinoGame = new AppSiteGame();
+            casinoGame.setGameId(siteGame.getGameId());
+            casinoGame.setSiteId(siteGame.getSiteId());
+            casinoGame.setApiId(siteGame.getApiId());
+            casinoGame.setGameType(siteGame.getGameType());
+            casinoGame.setOrderNum(siteGame.getOrderNum());
+            casinoGame.setStatus(siteGame.getStatus());
+            casinoGame.setApiTypeId(siteGame.getApiTypeId());
+            casinoGame.setCode(siteGame.getCode());
+            casinoGame.setName(getSiteGameName(siteGame.getGameId().toString()));
+            casinoGame.setCover(getImagePath(domain, siteGame.getCover()));
+            casinoGame.setSystemStatus(siteGame.getSystemStatus());
+            casinoGame.setGameLink(getCasinoGameRequestUrl(siteGame));
+            casinoGame.setAutoPay(isAutoPay);
+            appSiteGames.add(casinoGame);
+        }
+        return appSiteGames;
     }
 
     /**
@@ -271,72 +282,6 @@ public abstract class BaseOriginController {
             sb.append("&gameCode=").append(siteGame.getCode());
         }
         return sb.toString();
-    }
-
-    /**
-     * 获取电子游戏
-     */
-    private SiteGameListVo getCasinoGames(SiteGameListVo listVo, SiteGameTag tag) {
-        SiteGameSo so = listVo.getSearch();
-        Paging paging = listVo.getPaging();
-        Criteria gamesCriteria;
-        if (StringTool.isBlank(tag.getTagId())) {
-            gamesCriteria = getQueryGameCriteria(so, getGameI18n(listVo));
-        } else {
-            gamesCriteria = getGameIdByGameTagId(so, tag);
-        }
-
-        List<SiteGame> games = CollectionQueryTool.query(Cache.getSiteGame().values(), gamesCriteria);
-        games = getSiteGamesWhichIsNormalStatus(games);
-        games = games == null ? new ArrayList<SiteGame>() : games;
-        paging.setTotalCount(games.size());
-        paging.cal();
-
-        Integer pageNumber = paging.getPageNumber();
-        Integer toIndex = ((pageNumber - 1) * paging.getPageSize() + paging.getPageSize());
-        Integer formIndex = (pageNumber - 1) * paging.getPageSize();
-        games = games.subList(formIndex, toIndex > paging.getTotalCount() ? (int) paging.getTotalCount() : toIndex);
-
-        // 设置游戏状态
-        listVo.setResult(setGameStatus(listVo, games));
-        return listVo;
-    }
-
-    /**
-     * 根据GameTagId获取查询条件
-     *
-     * @param so
-     * @param tag
-     * @return
-     */
-    private Criteria getGameIdByGameTagId(SiteGameSo so, SiteGameTag tag) {
-        Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
-        List<Integer> gameIds = ListTool.newArrayList();
-        for (SiteGameTag gameTag : gameTagMap.values()) {
-            if (StringTool.equalsIgnoreCase(tag.getTagId(), gameTag.getTagId())) {
-                gameIds.add(gameTag.getGameId());
-            }
-        }
-        return getGameTagCriteria(so, gameIds);
-    }
-
-    /**
-     * 根据GameTag设置查询条件
-     */
-    private Criteria getGameTagCriteria(SiteGameSo so, List<Integer> gameIds) {
-        Criteria criteria = Criteria.add(SiteGame.PROP_API_TYPE_ID, Operator.EQ, so.getApiTypeId())
-                .addAnd(Criteria.add(SiteGame.PROP_API_ID, Operator.EQ, so.getApiId()))
-                .addAnd(Criteria.add(SiteGame.PROP_TERMINAL, Operator.EQ, SupportTerminal.PHONE.getCode()))
-                .addAnd(Criteria.add(SiteGame.PROP_STATUS, Operator.NE, GameStatusEnum.DISABLE.getCode()))
-                .addAnd(Criteria.add(SiteGame.PROP_GAME_TYPE, Operator.EQ, so.getGameType()));
-
-        if (gameIds != null && gameIds.size() == 0) {
-            criteria.addAnd(SiteGame.PROP_GAME_ID, Operator.EQ, 0);
-        } else {
-            criteria.addAnd(SiteGame.PROP_GAME_ID, Operator.IN, gameIds);
-        }
-
-        return criteria;
     }
 
     //获取API类型
@@ -679,13 +624,6 @@ public abstract class BaseOriginController {
         sb.append("/").append(model.getTheme()).append("/images");
         sb.append("/").append(model.getResolution());
         return sb.toString();
-    }
-
-    /**
-     * 获取游戏国际化数据
-     */
-    protected Map<String, SiteGameI18n> getGameI18nMap(SiteGameListVo listVo) {
-        return CollectionTool.toEntityMap(getGameI18n(listVo), SiteGameI18n.PROP_GAME_ID, String.class);
     }
 
     /**

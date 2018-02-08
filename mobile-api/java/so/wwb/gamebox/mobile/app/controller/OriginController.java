@@ -144,7 +144,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
         //浮动图
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(1);
         map.put("activity", getMoneyActivityFloat(request));
 
         return AppModelVo.getAppModeVoJson(true,
@@ -166,9 +166,13 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
-        Map<String, Object> map = MapTool.newHashMap();
-        Map<String, Object> pageTotal = MapTool.newHashMap();
-        map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, tag));
+        listVo = getCasinoGames(listVo, tag);
+        //处理游戏结果
+        Map<String, Object> map = new HashMap<>(2, 1f);
+        map.put("casinoGames", handleCasinoGames(listVo.getResult(), SessionManager.getDomain(request), SessionManager.isAutoPay()));
+        Map<String, Object> pageTotal = new HashMap<>(1, 1f);
+        //总数
+        pageTotal.put("pageTotal", listVo.getPaging().getTotalCount());
         map.put("page", pageTotal);
 
         return AppModelVo.getAppModeVoJson(true,
@@ -177,6 +181,7 @@ public class OriginController extends BaseOriginController {
                 map,
                 APP_VERSION);
     }
+
 
     /**
      * 获取游戏分类
