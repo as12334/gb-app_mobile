@@ -25,10 +25,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -128,11 +125,12 @@ public abstract class BaseOriginController {
         Map<String, GameI18n> gameI18nMap = new HashMap<>();
         String disable = GameStatusEnum.DISABLE.getCode();
         String maintain = GameStatusEnum.MAINTAIN.getCode();
+        String terminal = TerminalEnum.MOBILE.getCode();
         Map<String, Game> gameMap = Cache.getGame();
         Game game;
         for (SiteGame siteGame : siteGameMap.values()) {
             //不属于该api分类下不包含
-            if (apiId != siteGame.getApiId() || apiTypeId != siteGame.getApiTypeId()) {
+            if (!terminal.equals(siteGame.getSupportTerminal()) || apiId.intValue() != siteGame.getApiId() || apiTypeId.intValue() != siteGame.getApiTypeId()) {
                 continue;
             }
             //游戏维护或已停用不包含
@@ -158,7 +156,7 @@ public abstract class BaseOriginController {
         }
         int totalCount = siteGames.size();
         Paging paging = listVo.getPaging();
-        paging.setTotalCount(siteGames.size());
+        paging.setTotalCount(totalCount);
         int pageSize = paging.getPageSize();
         int pageNum = paging.getPageNumber();
         int fromIndex = (pageNum - 1) * pageSize;
