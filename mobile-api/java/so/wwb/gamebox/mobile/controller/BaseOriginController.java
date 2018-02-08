@@ -121,8 +121,8 @@ public abstract class BaseOriginController {
         Map<String, SiteGame> siteGameMap = Cache.getSiteGame();
         List<SiteGame> siteGames = new ArrayList<>();
         Integer gameId;
-        Map<String, SiteGameI18n> siteGameI18nMap = new HashMap<>();
-        Map<String, GameI18n> gameI18nMap = new HashMap<>();
+        Map<String, SiteGameI18n> siteGameI18nMap = Cache.getSiteGameI18n();
+        Map<String, GameI18n> gameI18nMap = Cache.getGameI18n();
         String disable = GameStatusEnum.DISABLE.getCode();
         String maintain = GameStatusEnum.MAINTAIN.getCode();
         String terminal = TerminalEnum.MOBILE.getCode();
