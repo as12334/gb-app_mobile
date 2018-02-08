@@ -617,13 +617,13 @@ public class BaseMineController {
             Integer apiId = (Integer) map.get("API");
             detailApp.setTransferOut(CacheBase.getSiteApiName(String.valueOf(apiId)));
             detailApp.setTransferInto(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
-            detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
+            detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
         }
         if (StringTool.equals(po.getFundType(), FundTypeEnum.TRANSFER_OUT.getCode())) { //从我的钱包转出外面
             detailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
             Integer apiId = (Integer) map.get("API");
-            detailApp.setTransactionMoney(po.getTransactionMoney()); //金额
+            detailApp.setTransactionMoney(CurrencyTool.formatCurrency(po.getTransactionMoney())); //金额
             detailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
             detailApp.setStatusName(statusName); //状态
         }
@@ -697,7 +697,10 @@ public class BaseMineController {
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
             detailApp.setTransactionWayName(String.valueOf(map.get(SessionManager.getLocale().toString()))); //描述
-            detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
+            if (StringTool.isBlank(detailApp.getTransactionWayName())) {
+                detailApp.setTransactionWayName(String.valueOf(map.get("activityName"))); //描述
+            }
+            detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
         }
 
@@ -714,7 +717,7 @@ public class BaseMineController {
             }else if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer)map.get("rewardType") == 3) {
                 detailApp.setTransactionWayName("被" + "推荐" + map.get("username") + "好友"); //描述
             }
-            detailApp.setTransactionMoney(po.getTransactionMoney());  //金额
+            detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
         }
         if (map.get("bitAmount") != null) {

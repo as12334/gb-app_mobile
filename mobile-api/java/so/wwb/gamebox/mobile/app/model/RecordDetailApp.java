@@ -10,7 +10,7 @@ public class RecordDetailApp {
     private String transactionNo;     //交易号
     private java.util.Date createTime; //创建时间
     private String transactionType;   //资金类型
-    private Double transactionMoney;
+    private String transactionMoney;
     private String withdrawMoney; //取款金额
     private String status;          //状态
     private String statusName; //状态名称
@@ -89,11 +89,11 @@ public class RecordDetailApp {
         this.transactionType = transactionType;
     }
 
-    public Double getTransactionMoney() {
+    public String getTransactionMoney() {
         return transactionMoney;
     }
 
-    public void setTransactionMoney(Double transactionMoney) {
+    public void setTransactionMoney(String transactionMoney) {
         this.transactionMoney = transactionMoney;
     }
 
