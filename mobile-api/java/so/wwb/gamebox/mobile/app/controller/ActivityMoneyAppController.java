@@ -78,7 +78,6 @@ public class ActivityMoneyAppController {
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
             map.put("drawTimes", -1);
-            map.put("isEnd", "true");
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     map, APP_VERSION);
@@ -87,7 +86,6 @@ public class ActivityMoneyAppController {
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
         if (!containUserRank) {
             map.put("drawTimes", -1);
-            map.put("isEnd", "true");
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
                     map, APP_VERSION);
