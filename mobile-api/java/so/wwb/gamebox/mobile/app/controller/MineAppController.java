@@ -247,7 +247,7 @@ public class MineAppController extends BaseMineController {
         bettingDataApp.setTotalSize(listVo.getPaging().getTotalCount());
         //提高性能，查询分页时只统计一次
         if (isShowStatistics != null && isShowStatistics) {
-            bettingDataApp.setStatisticsData(statisticsData(listVo, TIME_INTERVAL, DEFAULT_TIME));
+            bettingDataApp.setStatisticsData(statisticsData(listVo));
         }
         bettingDataApp.setList(buildBetting(gameOrderList));
 
