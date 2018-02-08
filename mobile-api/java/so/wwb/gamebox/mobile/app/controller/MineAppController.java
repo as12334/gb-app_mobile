@@ -244,20 +244,20 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/getBettingList")
     @ResponseBody
-    public String getBettingList(PlayerGameOrderListVo listVo) {
+    public String getBettingList(PlayerGameOrderListVo listVo, Boolean isShowStatistics) {
 
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        if (listVo.getSearch().getEndBetTime() != null) {
-            listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1), -1));
-        }
 
         initQueryDateForgetBetting(listVo, TIME_INTERVAL, DEFAULT_TIME);
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
 
         bettingDataApp.setTotalSize(listVo.getPaging().getTotalCount());
-        bettingDataApp.setStatisticsData(statisticsData(listVo, TIME_INTERVAL, DEFAULT_TIME));
+        //提高性能，查询分页时只统计一次
+        if (isShowStatistics != null && isShowStatistics == true) {
+            bettingDataApp.setStatisticsData(statisticsData(listVo, TIME_INTERVAL, DEFAULT_TIME));
+        }
         bettingDataApp.setList(buildBetting(gameOrderList));
 
         //设置默认时间

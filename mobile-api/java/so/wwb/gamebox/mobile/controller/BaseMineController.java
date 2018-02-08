@@ -48,6 +48,7 @@ import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
@@ -72,6 +73,7 @@ import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
@@ -578,8 +580,10 @@ public class BaseMineController {
             app.setId(vplayer.getId());
             app.setCreateTime(vplayer.getCreateTime());
 
-            if (vplayer.getTransactionMoney() != 0) {
+            if (vplayer.getTransactionMoney() != 0 && map.get("bitAmount") == null) {
                 app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            }else if (map.get("bankCode") != null && StringTool.equals(String.valueOf(map.get("bankCode")), "bitcoin")){
+                app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
             }
 
             if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
@@ -628,12 +632,24 @@ public class BaseMineController {
         detailApp.setStatusName(statusName);
 
         if (StringTool.equals(po.getTransactionType(), TransactionTypeEnum.DEPOSIT.getCode())) { //存款
-            detailApp.setTransactionWayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + detailApp.getTransactionWay())); //描述
             detailApp.setRechargeAmount(moneyType +" " + CurrencyTool.formatCurrency(po.getRechargeAmount()));  //存款金额
             detailApp.setPoundage(moneyType + " " + CurrencyTool.formatCurrency((Number) map.get("poundage"))); //手续费
             detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getRechargeTotalAmount())); //实际到账
             detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //真实姓名
             detailApp.setStatusName(statusName); //状态
+            if (map.get("returnTime") != null) {
+                detailApp.setReturnTime(((Date) map.get("returnTime")).getTime()); //交易时间
+            }
+            if (StringTool.equals(po.getFundType(), DepositWayEnum.BITCOIN_FAST.getCode())) {//如果存款类型是比特币支付
+                detailApp.setTransactionWayName("比特币支付");
+                detailApp.setTxId(String.valueOf(map.get("bankOrder")));
+                detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
+                detailApp.setRechargeAmount("Ƀ" + map.get("bitAmount"));
+            }
+            if ("artificial_withdraw".equals(po.getFundType())) {
+                detailApp.setTransactionWayName("系统操作");  //人工存款
+            }
+
 
             if (map.get("bankCode") != null) {
                 detailApp.setBankCode(String.valueOf(map.get("bankCode")));  //银行卡code icbc
@@ -650,15 +666,32 @@ public class BaseMineController {
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
-            detailApp.setAdministrativeFee(withdrawVo.getResult().getAdministrativeFee()); //行政费用
-            detailApp.setRechargeTotalAmount(moneyType +" " + CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
-            String bankNo = String.valueOf(map.get("bankNo"));
-            detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
 
-            detailApp.setRealName(SessionManager.getUser().getRealName()); //姓名
-            detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
-            detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
-            detailApp.setRechargeTotalAmount(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney())); //实际到账
+            String bankNo = String.valueOf(map.get("bankNo"));
+            if (StringTool.isBlank(bankName) && !"artificial_withdraw".equals(po.getFundType())) {
+                detailApp.setTransactionWayName(" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
+            }else if ("artificial_withdraw".equals(po.getFundType())) {
+                detailApp.setTransactionWayName("系统操作");  //人工取款
+            } else {
+                detailApp.setTransactionWayName(bankName +" 尾号 "+ StringTool.substring(bankNo, bankNo.length()-4, bankNo.length())); //描述
+            }
+            if (withdrawVo.getResult().getDeductFavorable() != null && withdrawVo.getResult().getDeductFavorable() > 0) {
+                detailApp.setDeductFavorable(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getDeductFavorable()));//扣除优惠
+                detailApp.setAdministrativeFee(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getAdministrativeFee())); //行政费用
+                detailApp.setRechargeTotalAmount(moneyType +" " + "-"+CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount()));  //实际到账
+            }
+            detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //姓名
+            if (map.get("bankNo") != null && "bitcoin".equals(map.get("bankCode"))) {
+                detailApp.setWithdrawMoney("Ƀ" + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
+                detailApp.setPoundage("Ƀ" + withdrawVo.getResult().getCounterFee()); //手续费
+                double totalAmount = withdrawVo.getResult().getWithdrawAmount() - withdrawVo.getResult().getCounterFee();
+                detailApp.setRechargeTotalAmount("Ƀ" +" " + "-"+CurrencyTool.formatCurrency(totalAmount));  //实际到账
+            } else {
+                detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));
+                detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
+                detailApp.setRechargeTotalAmount(moneyType + " " + "-" +CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount())); //实际到账
+            }
+
             detailApp.setStatusName(statusName); //状态
         }
 
