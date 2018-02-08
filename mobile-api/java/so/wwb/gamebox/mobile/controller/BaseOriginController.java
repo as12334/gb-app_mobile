@@ -454,10 +454,9 @@ public abstract class BaseOriginController {
                 }
                 apiGameMap.get(apiId).add(appSiteGame);
             } else if (fishGameType.equals(siteGame.getGameType())) {
-                apiName = getApiName(apiId, apiI18nMap, siteApiI18nMap);
                 //捕鱼游戏名称=api名称 + 游戏名称
                 fishName = new StringBuffer();
-                fishName.append(apiName).append(" ").append(siteGame.getName());
+                fishName.append(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(apiId))).append(" ").append(siteGame.getName());
                 siteGame.setName(fishName.toString());
                 appSiteGame = changeSiteGameToApp(siteGame);
                 fishGames.add(appSiteGame);
