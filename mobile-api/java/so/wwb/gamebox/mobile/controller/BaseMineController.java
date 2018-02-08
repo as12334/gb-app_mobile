@@ -650,6 +650,8 @@ public class BaseMineController {
 
             if ("artificial_withdraw".equals(po.getFundType())) {
                 detailApp.setTransactionWayName("系统操作");  //人工存款
+            } else if ("artificial_deposit".equals(po.getFundType())) {
+                detailApp.setTransactionWayName("系统操作"); //人工存款
             }
 
             if (map.get("bankCode") != null) {
