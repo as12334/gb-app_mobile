@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.session.listener;
 
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
@@ -23,10 +24,10 @@ public class UserInfoListener extends PassportListenerAdapter {
     @Override
     public void onLoginSuccess(PassportEvent passportEvent) {
         SysUser sysUser = passportEvent.getSysUser();
-        log.debug( "移动站点登录成功:{0}-{1}-{2}" ,sysUser.getUserType(),sysUser.getId(),sysUser.getUsername());
+        log.debug("移动站点登录成功:{0}-{1}-{2}", sysUser.getUserType(), sysUser.getId(), sysUser.getUsername());
         SysUserVo sysUserVo = new SysUserVo();
-        UserPlayerVo userPlayerVo=new UserPlayerVo();
-        UserPlayer userPlayer=new UserPlayer();
+        UserPlayerVo userPlayerVo = new UserPlayerVo();
+        UserPlayer userPlayer = new UserPlayer();
         sysUserVo._setDataSourceId(SessionManager.getSiteParentId());
         sysUserVo.getSearch().setId(SessionManager.getSiteUserId());
         sysUserVo = ServiceTool.sysUserService().get(sysUserVo);
@@ -37,5 +38,16 @@ public class UserInfoListener extends PassportListenerAdapter {
         userPlayerVo.setResult(userPlayer);
         userPlayerVo.setProperties(UserPlayer.PROP_CHANNEL_TERMINAL);
         ServiceSiteTool.userPlayerService().updateOnly(userPlayerVo);
+        //接收未处理消息
+        fetchUnReceiveMsg();
+    }
+
+    /**
+     * 接收未处理消息
+     */
+    private void fetchUnReceiveMsg() {
+        NoticeVo noticeVo = new NoticeVo();
+        noticeVo.setSearchUserId(SessionManager.getUserId());
+        ServiceTool.noticeService().fetchUnReceivedMsgs(noticeVo);
     }
 }
