@@ -34,6 +34,7 @@
     <div class="mui-scroll">
         <form id="electronicForm">
             <gb:token/>
+            <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
             <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
