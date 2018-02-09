@@ -5,6 +5,7 @@
 <head>
     <title>${siteName}</title>
     <%@include file="include/include.head.jsp" %>
+    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css" />
 </head>
 
 <body>
@@ -30,8 +31,12 @@
 <%@include file="index.include/Envelope.jsp"%>
 </body>
 <%@include file="include/include.js.jsp"%>
-<script type="text/javascript" src="${resRoot}/js/Index.js"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.js"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.img.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/jquery.marquee.min.js"></script>
+<script type="text/javascript" src="${resRoot}/js/swiper.min.js"></script>
+<script type="text/javascript" src="${resRoot}/js/Index.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
 <script type="text/javascript" src="${resRoot}/js/envelope/Envelope.js"></script>

@@ -222,8 +222,6 @@
 </div>  <!--mui-content 闭合标签-->
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resComRoot}/js/jquery/plugins/jquery.validate/jquery.validate.min.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/jquery/jquery.validate.extend.mobile.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
