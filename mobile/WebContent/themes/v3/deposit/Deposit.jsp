@@ -64,7 +64,7 @@
                                             </li>
                                         </c:if>
                                     </c:forEach>
-                                    <c:if test="${empty digiccyAccountInfo}">
+                                    <c:if test="${not empty digiccyAccountInfo}">
                                         <li key="digiccyAccountInfo"><a data-rel='{"target":"/wallet/deposit/digiccy/index.html","opType":"href"}'
                                                 class="long"><i class="pay digitalc"></i><span><div class="text-two-line">${views.themes_auto['数字货币支付']}</div></span></a>
                                         </li>
