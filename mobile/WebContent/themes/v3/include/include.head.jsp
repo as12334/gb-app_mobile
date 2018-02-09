@@ -37,4 +37,7 @@
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css" />
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
 <link rel="stylesheet" href="${resRoot}/themes/loading.css"/>
+<link rel="stylesheet" href="${resRoot}/themes/mui.picker.css">
+<link rel="stylesheet" href="${resRoot}/themes/mui.poppicker.css">
+
 

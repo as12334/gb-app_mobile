@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
 <div data-rel='{"target":"userAssert","opType":"function"}' id="login-info" class="mui-hidden login-info">
     <div class="user_name"></div>
     <div class="money"></div>

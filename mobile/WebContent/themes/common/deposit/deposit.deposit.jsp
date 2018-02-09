@@ -72,8 +72,8 @@
                                                     <li key="${p.key}"><a data-bitcoin="/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}" class="${fn:length(views.deposit_auto['比特币支付'])>5?'long':''}"><i class="pay bitcoin"></i><span><div class="text-two-line">${views.deposit_auto['比特币支付']}</div></span></a></li>
                                                 </c:if>
                                             </c:forEach>
-                                            <c:if test="${!empty digiccyAccountInfo}">
-                                                <li key="digiccyAccountInfo"><a data-bitcoin="/wallet/deposit/digiccy/index.html" class="${fn:length(views.themes_auto['数字货币支付'])>5?'long':''}"><i class="pay math"></i><span><div class="text-two-line">${views.themes_auto['数字货币支付']}</div></span></a></li>
+                                            <c:if test="${not empty digiccyAccountInfo}">
+                                                <li key="digiccyAccountInfo"><a data-bitcoin="/wallet/deposit/digiccy/index.html" class="${fn:length(views.themes_auto['数字货币支付'])>5?'long':''}"><i class="pay digitalc"></i><span><div class="text-two-line">${views.themes_auto['数字货币支付']}</div></span></a></li>
                                             </c:if>
                                         </ul>
                                         <div class="clearfix"></div>
