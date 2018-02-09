@@ -281,7 +281,7 @@ public abstract class BaseOriginController {
     private Map<String, String> getTagNameMap() {
         Map<String, SiteI18n> siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_GAME_TAG, Const.BOSS_DATASOURCE_ID);
         if (MapTool.isEmpty(siteI18nMap)) {
-            return new HashMap<>(0, 1f);
+            return new HashMap<>(0);
         }
         Map<String, String> tagNameMap = new HashMap<>();
         String locale = String.valueOf(SessionManager.getLocale());
@@ -722,30 +722,17 @@ public abstract class BaseOriginController {
      * @return
      */
     private String buildGameUrl(String url, AppRequestModelVo model, Integer apiId) {
-        if (StringTool.isBlank(url)) {
+        if (StringTool.isBlank(url) || apiId == null) {
             return url;
         }
-        if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
-            if (apiId != null && StringTool.equals(apiId.toString(), ApiProviderEnum.PL.getCode())) {
-                url = url + "?ad=" + apiId;
-            }
+        String terminal = model.getTerminal();
+        if (AppTypeEnum.APP_ANDROID.getCode().equals(terminal) && ApiProviderEnum.PL.getCode().equals(String.valueOf(apiId))) {
+            url = url + "mainIndex.html?ad=22";
+        } else if (url.indexOf("?") > 0) {
+            url = url + "&ad=" + apiId;
+        } else {
+            url = url + "?ad=" + apiId;
         }
-
-        if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
-            if (apiId != null
-                    && StringTool.equals(apiId.toString(), ApiProviderEnum.PL.getCode())
-                    && url.indexOf("/mainIndex") == -1
-                    && url.indexOf("/lottery/") == -1) {
-                url = url + "mainIndex.html?ad=22";
-            } else {
-                if (url.indexOf("?") > 0) {
-                    url = url + "&ad=" + apiId;
-                } else {
-                    url = url + "?ad=" + apiId;
-                }
-            }
-        }
-
         return url;
     }
 
