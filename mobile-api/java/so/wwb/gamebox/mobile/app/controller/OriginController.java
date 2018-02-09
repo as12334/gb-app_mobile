@@ -229,7 +229,7 @@ public class OriginController extends BaseOriginController {
                     null,
                     APP_VERSION);
         }
-        Map map = new HashMap<>();
+        Map map = new HashMap<>(2, 1f);
         if (SessionManager.isAutoPay()) {
             AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo);
             map.put("gameLink", gameUrl.getGameLink());
@@ -240,23 +240,21 @@ public class OriginController extends BaseOriginController {
                     AppErrorCodeEnum.SUCCESS.getMsg(),
                     map,
                     APP_VERSION);
-        } else {
-            if (Integer.parseInt(siteGame.getApiTypeId()) == ApiTypeEnum.CASINO.getCode()) {
-                PlayerApiAccountVo player = new PlayerApiAccountVo();
-                player.setApiId(siteGame.getApiId());
-                player.setApiTypeId(siteGame.getApiTypeId().toString());
-                player.setGameId(siteGame.getGameId());
-                player.setGameCode(siteGame.getGameCode());
-                AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
-                map.put("gameLink", gameUrl.getGameLink());
-                map.put("gameMsg", gameUrl.getGameMsg());
-
-                return AppModelVo.getAppModeVoJson(true,
-                        AppErrorCodeEnum.SUCCESS.getCode(),
-                        AppErrorCodeEnum.SUCCESS.getMsg(),
-                        map,
-                        APP_VERSION);
-            }
+        }
+        if (String.valueOf(ApiTypeEnum.CASINO.getCode()).equals(siteGame.getApiTypeId())) {
+            PlayerApiAccountVo player = new PlayerApiAccountVo();
+            player.setApiId(siteGame.getApiId());
+            player.setApiTypeId(siteGame.getApiTypeId());
+            player.setGameId(siteGame.getGameId());
+            player.setGameCode(siteGame.getGameCode());
+            AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
+            map.put("gameLink", gameUrl.getGameLink());
+            map.put("gameMsg", gameUrl.getGameMsg());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getMsg(),
+                    map,
+                    APP_VERSION);
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),

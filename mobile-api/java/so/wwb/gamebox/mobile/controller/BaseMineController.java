@@ -131,10 +131,7 @@ public class BaseMineController {
         List<MyPromoApp> myPromoApps = ListTool.newArrayList();
         for (VPreferentialRecode recode : recodeList) {
             MyPromoApp promoApp = new MyPromoApp();
-
-            if (userId != null) {
-                promoApp.setId(recode.getId());
-            }
+            promoApp.setId(recode.getId());
             promoApp.setApplyTime(recode.getApplyTime());
             if (recode.getPreferentialAudit() != null && recode.getPreferentialAudit() != 0) {
                 promoApp.setPreferentialAuditName("倍稽核");  // 倍稽核
@@ -150,6 +147,7 @@ public class BaseMineController {
             promoApp.setUserId(userId);
             promoApp.setCheckState(recode.getCheckState());
             String checkState = recode.getCheckState();
+
             if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equals("2", checkState)
                     || StringTool.equals("4", checkState)) {
                 promoApp.setCheckStateName("已发放");
@@ -162,7 +160,6 @@ public class BaseMineController {
             }
             promoApp.setCheckState(recode.getCheckState());
             myPromoApps.add(promoApp);
-
         }
         return myPromoApps;
     }

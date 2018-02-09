@@ -103,21 +103,17 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/getMyPromo")
     @ResponseBody
     public String getMyPromo(VPreferentialRecodeListVo vPreferentialRecodeListVo) {
-
         VPreferentialRecodeSo so = vPreferentialRecodeListVo.getSearch();
-
         so.setActivityVersion(SessionManager.getLocale().toString());
         so.setUserId(SessionManager.getUserId());
         so.setCurrentDate(SessionManager.getDate().getNow());
-
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
 
-        Map<String, Object> map = MapTool.newHashMap();
-        map.put("totalCount", ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo).getPaging().getTotalCount()); // 总数
+        Map<String, Object> map = new HashMap<>(2, 1f);
+        map.put("totalCount", vPreferentialRecodeListVo.getPaging().getTotalCount()); // 总数
         map.put("list", buildingMyPromoApp(vPreferentialRecodeListVo.getResult()));
 
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
 
     /**
