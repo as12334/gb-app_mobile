@@ -22,7 +22,6 @@
 <script src="${resComRoot}/js/jquery/plugins/jquery.validate/jquery.validate.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/jquery/jquery.validate.extend.mobile.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js"></script>
-<%--<script src="${resRoot}/js/common.js"></script>--%>
 <script src="${resRoot}/js/common/Common.js"></script>
 <script src="${resRoot}/js/common/Head.js"></script>
 <script src="${resRoot}/js/common/Menu.js"></script>

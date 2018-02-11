@@ -11,6 +11,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
@@ -47,13 +48,13 @@ public class OriginController extends BaseOriginController {
 
     /**
      * 获取当前时区
+     *
      * @return
      */
     @RequestMapping(value = "/getTimeZone")
     @ResponseBody
     public String getTimeZone() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
     }
 
 
@@ -67,15 +68,14 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/mainIndex")
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(5, 1f);
         getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
         map.put("siteApiRelation", getApiTypeGame(model, request));
         map.put("activity", getMoneyActivityFloat(request));
-        map.put("language",SessionManager.getLocale().toString());
+        map.put("language", SessionManager.getLocale().toString());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -91,10 +91,9 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getCarouse(HttpServletRequest request) {
         //轮播图和弹窗广告
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(2, 1f);
         getBannerAndPhoneDialog(map, request);
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -109,11 +108,10 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getAnnounce() {
         //公告
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(1, 1f);
         map.put("announcement", getAnnouncement());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
@@ -130,8 +128,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getSiteApi(HttpServletRequest request, AppRequestModelVo model) {
         //游戏
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getApiTypeGame(model, request),
                 APP_VERSION);
@@ -147,10 +144,10 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getFloat(HttpServletRequest request) {
         //浮动图
-        Map<String, Object> map = MapTool.newHashMap();
+        Map<String, Object> map = new HashMap<>(1);
         map.put("activity", getMoneyActivityFloat(request));
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
@@ -169,17 +166,22 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
         //电子游戏
-        Map<String, Object> map = MapTool.newHashMap();
-        Map<String, Object> pageTotal = MapTool.newHashMap();
-        map.put("casinoGames", getCasinoGameByApiId(listVo, request, pageTotal, tag));
+        listVo = getGameByApiIdAndApiTypeId(listVo, tag);
+        //处理游戏结果
+        Map<String, Object> map = new HashMap<>(2, 1f);
+        map.put("casinoGames", handleCasinoGames(listVo.getResult(), SessionManager.getDomain(request), SessionManager.isAutoPay()));
+        Map<String, Object> pageTotal = new HashMap<>(1, 1f);
+        //总数
+        pageTotal.put("pageTotal", listVo.getPaging().getTotalCount());
         map.put("page", pageTotal);
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
     }
+
 
     /**
      * 获取游戏分类
@@ -189,7 +191,7 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/getGameTag")
     @ResponseBody
     public String getGameTags() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getGameTag(),
@@ -208,57 +210,53 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (SessionManager.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.UN_LOGIN.getCode(),
                     AppErrorCodeEnum.UN_LOGIN.getMsg(),
                     null, APP_VERSION);
         }
         if (siteGame.getApiId() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
                     null,
                     APP_VERSION);
         }
         if (siteGame.getApiTypeId() == null) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
                     null,
                     APP_VERSION);
         }
-        Map map = MapTool.newHashMap();
-
+        Map map = new HashMap<>(2, 1f);
         if (SessionManager.isAutoPay()) {
             AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo);
-
             map.put("gameLink", gameUrl.getGameLink());
             map.put("gameMsg", gameUrl.getGameMsg());
 
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.SUCCESS.getMsg(),
                     map,
                     APP_VERSION);
-        } else {
-            if (Integer.parseInt(siteGame.getApiTypeId()) == ApiTypeEnum.CASINO.getCode()) {
-                PlayerApiAccountVo player = new PlayerApiAccountVo();
-                player.setApiId(siteGame.getApiId());
-                player.setApiTypeId(siteGame.getApiTypeId().toString());
-                player.setGameId(siteGame.getGameId());
-                player.setGameCode(siteGame.getGameCode());
-                AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
-                map.put("gameLink", gameUrl.getGameLink());
-                map.put("gameMsg", gameUrl.getGameMsg());
-
-                return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
-                        AppErrorCodeEnum.SUCCESS.getCode(),
-                        AppErrorCodeEnum.SUCCESS.getMsg(),
-                        map,
-                        APP_VERSION);
-            }
         }
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        if (String.valueOf(ApiTypeEnum.CASINO.getCode()).equals(siteGame.getApiTypeId())) {
+            PlayerApiAccountVo player = new PlayerApiAccountVo();
+            player.setApiId(siteGame.getApiId());
+            player.setApiTypeId(siteGame.getApiTypeId());
+            player.setGameId(siteGame.getGameId());
+            player.setGameCode(siteGame.getGameCode());
+            AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
+            map.put("gameLink", gameUrl.getGameLink());
+            map.put("gameMsg", gameUrl.getGameMsg());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getMsg(),
+                    map,
+                    APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
@@ -311,7 +309,7 @@ public class OriginController extends BaseOriginController {
         //没数据默认banner图
         if (carousels.size() <= 0) {
             Map defaultMap = new HashMap();
-            String coverUrl = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()) + "/images/ban-01.jpg";
+            String coverUrl = String.format(AppConstant.DEFAULT_BANNER_URL, MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
             defaultMap.put("cover", coverUrl);
             carousels.add(defaultMap);
         }

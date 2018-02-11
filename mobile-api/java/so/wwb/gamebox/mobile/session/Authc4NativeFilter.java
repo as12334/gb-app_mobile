@@ -27,7 +27,7 @@ public class Authc4NativeFilter extends AuthenticationFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String rs = AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+        String rs = AppModelVo.getAppModeVoJson(false,
                 AppErrorCodeEnum.UN_LOGIN.getCode(),
                 AppErrorCodeEnum.UN_LOGIN.getMsg(),
                 null, APP_VERSION);

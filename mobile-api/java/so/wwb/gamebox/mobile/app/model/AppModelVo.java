@@ -2,14 +2,12 @@ package so.wwb.gamebox.mobile.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.model.error.ErrorMessage;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 
-import java.io.Serializable;
+public class AppModelVo extends ErrorMessage {
+    private static final long serialVersionUID = 404144692505585980L;
 
-public class AppModelVo implements Serializable{
-
-    private String code;
-    private String message;
     private Object data;
     private String version;
 
@@ -17,73 +15,43 @@ public class AppModelVo implements Serializable{
 
     }
 
-    public AppModelVo(String code, String message) {
-        this.code = code;
-        this.message = message;
+    public AppModelVo(boolean success, String code, String message) {
+        setSuccess(success);
+        setCode(code);
+        setMessage(message);
         this.version = AppConstant.APP_VERSION;
     }
 
-    public AppModelVo(String code, String message,Object data, String version) {
-        this.code = code;
-        this.message = message;
+    public AppModelVo(boolean success, String code, String message, Object data) {
+        setSuccess(success);
+        setCode(code);
+        setMessage(message);
         this.data = data;
         this.version = AppConstant.APP_VERSION;
     }
 
-    /**
-     * @deprecated
-     * @param error
-     * @param code
-     * @param message
-     * @param data
-     * @param version
-     */
-    public AppModelVo(Integer error, String code, String message, Object data, String version) {
-        this.code = code;
-        this.message = message;
+    public AppModelVo(boolean success, String code, String message, Object data, String version) {
+        setSuccess(success);
+        setCode(code);
+        setMessage(message);
         this.data = data;
         this.version = version;
     }
 
 
     @JsonIgnore
-    public static String getAppModeVoJson(String code, String message, Object data, String version) {
-        return JsonTool.toJson(new AppModelVo(code, message, data, version));
+    public static String getAppModeVoJson(boolean success, String code, String message, Object data) {
+        return JsonTool.toJson(new AppModelVo(success, code, message, data));
     }
 
-    /**
-     * @deprecated
-     * @param error
-     * @param code
-     * @param data
-     * @param
-     * @see #getAppModeVoJson(AppModelVo)
-     * @see #AppModelVo(String, String)
-     * @see #getAppModeVoJson(String, String, Object, String)
-     */
     @JsonIgnore
-    public static String getAppModeVoJson(Integer error, String code, String msg, Object data, String version) {
-        return JsonTool.toJson(new AppModelVo(error, code, msg, data, version));
+    public static String getAppModeVoJson(boolean success, String code, String message, Object data, String version) {
+        return JsonTool.toJson(new AppModelVo(success, code, message, data, version));
     }
 
+    @JsonIgnore
     public static String getAppModeVoJson(AppModelVo appModelVo) {
         return JsonTool.toJson(appModelVo);
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getVersion() {
