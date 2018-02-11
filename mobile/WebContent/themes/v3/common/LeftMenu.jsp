@@ -31,6 +31,7 @@
                         <li class="about ${path == 'about'?'active':''}"><a data-rel='{"target":"${root}/about.html?path=about","opType":"href"}'>关于我们</a></li>
                         <li class="download"><a data-rel='{"target":"downLoadApp","opType":"function"}'>下载客户端</a></li>
                         <li class="pc"><a data-rel='{"target":"goPC","opType":"function"}'>电脑版</a></li>
+                        <li class="download"><a data-rel='{"target":"${root}/recommend.html","opType":"href"}'>推荐好友</a></li>
                         <li class=" lang zh-CN">
                             <a href="">${views.themes_auto['语言']}</a>
                         </li>
