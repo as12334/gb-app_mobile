@@ -84,18 +84,10 @@
     </div>
     <div class="mui-row">
         <div class="gb-form-foot bank-pay-btn">
-            <soul:button tag="a" precall="" callback="" target="nextStep" opType="function" text="${views.deposit_auto['下一步']}"
-                         cssClass="mui-btn mui-btn-primary submit">
-            </soul:button>
+            <a data-rel='{"target":"nextStep","opType":"function"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['下一步']}</a>
         </div>
     </div>
 </div>
-
-<%--线上支付选择银行--%>
-<%--<div id="choose_bank" class="mui-popover mui-popover-action mui-popover-bottom gb-popover">
-    <ul id="bankUl" class="mui-table-view">
-    </ul>
-</div>--%>
 
 <!--存款帮助：-->
 <%--微信反扫教程：--%>
