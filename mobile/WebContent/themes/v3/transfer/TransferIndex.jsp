@@ -80,7 +80,7 @@
 
 
             <div class="mui-row" style="height: 30px;">
-                <button id="refreshAllApiBalance" class="mui-btn mui-pull-right"
+                <button id="refreshAllApiBalance" data-rel='{"target":"refreshAllBalance", "opType":"function"}' class="mui-btn mui-pull-right"
                         style="margin-right: 10px;font-size: 12px; padding: 3px 10px;line-height: 1.4;">${views.transfer_auto['刷新余额']}
                 </button>
             </div>
@@ -103,7 +103,7 @@
                                                 <c:set var="status" value="${views.transfer_auto['维护中']}"/>
                                             </c:if>
                                             <span class="_apiMoney_${api.id}">${api.balance}${status}</span>
-                                            <span class="mui-icon mui-icon-reload _refresh_api" data-value="${api.id}"></span>
+                                            <span class="mui-icon mui-icon-reload _refresh_api" data-value="${api.id}" data-rel='{"target":"freshApi","dataApiId":"${api.id}" ,"opType":"function"}'></span>
                                         </a>
                                     </p>
                                 </div>
@@ -128,7 +128,6 @@
 <script src="${resRoot}/js/transfer/Index.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-<script src="${resRoot}/js/common/Assets.2.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/plugin/layer.js?v=${rcVersion}"></script>
+
 </html>
 <%@ include file="/include/include.footer.jsp" %>
