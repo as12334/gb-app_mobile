@@ -3,14 +3,15 @@ package so.wwb.gamebox.mobile.app.enums;
 public enum AppErrorCodeEnum {
     SUCCESS("0", "请求成功"),
     UN_LOGIN("1001", "您还未登录,请重新登录"),
-    USER_LOCK("1005","您的账号已被系统冻结，请联系客服处理"),
-    USER_INFO_NOT_EXIST("1008","用户不存在"),
+    USER_LOCK("1005", "您的账号已被系统冻结，请联系客服处理"),
+    USER_INFO_NOT_EXIST("1008", "用户不存在"),
     PASSWORD_ERROR("1011", "密码输入错误"),
     PASSWORD_SAME("1016", "新密码不能和旧密码相同"),
     SYSTEM_INFO_NOT_EXIST("1017", "信息不存在"),
-    WITHDRAW_AMOUNT_ERROR("1022","请输入正确的提现金额"),
+    WITHDRAW_AMOUNT_ERROR("1022", "请输入正确的提现金额"),
     WITHDRAW_IS_FULL("1024", "今日提现次数已达上限"),
-    ACTIVITY_END("1031", "该活动不存在或已结束"),
+    ACTIVITY_END("1031", "活动已结束"),
+    ACTIVITY_NOT_EXIST("1032", "不存在该活动"),
     WITHDRAW_HAS_ORDER("1100", "取款订单已存在"),
     USER_HAS_FREEZE("1101", "全款玩家已被冻结"),
     WITHDRAW_MIN_AMOUNT("1102", "取款金额最少为x元"),
@@ -30,7 +31,7 @@ public enum AppErrorCodeEnum {
     VALIDATE_ERROR("1301", "验证码输入错误"),
     REAL_NAME_ERROR("1302", "真实姓名不正确"),
     ORIGIN_SAFE_PASSWORD_ERROR("1303", "原始密码有误"),
-    SAFE_PASSWORD_ERROR("1303","安全密码有误"),
+    SAFE_PASSWORD_ERROR("1303", "安全密码有误"),
     UPDATE_REAL_NAME_FAIL("1304", "真实姓名修改失败"),
     SAFE_PASSWORD_NOT_NULL("1305", "安全密码不能为空"),
     NEW_PASSWORD_NOT_NULL("1306", "新密码不能为空"),
@@ -38,13 +39,12 @@ public enum AppErrorCodeEnum {
     SYSTEM_VALIDATE_NOT_NULL("1308", "验证码不能为空"),
     UPDATE_PASSWORD_FAIL("1309", "修改密码失败"),
     PARAM_HAS_ERROR("1310", "参数有误"),
-    SAFE_PASSWORD_TOO_SIMPLE("1311","密码过于简单"),
+    SAFE_PASSWORD_TOO_SIMPLE("1311", "密码过于简单"),
     GAME_NOT_EXIST("1400", "游戏不存在"),
     UPDATE_STATUS_FAIL("1401", "更新失败"),
     NOT_RECOVER("1402", "非免转不能一键回收"),
-    SYSTEM_READ("1403","消息已读"),
-    NOT_SET_SAFE_PASSWORD("1404","未设置安全密码"),
-    ;
+    SYSTEM_READ("1403", "消息已读"),
+    NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
     private String code;

@@ -45,7 +45,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityType")
     @ResponseBody
     public String getActivityType() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypes(), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypes(), APP_VERSION);
     }
 
     /**
@@ -54,7 +54,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypeList")
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, request), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, request), APP_VERSION);
     }
 
     /**
@@ -63,7 +63,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypes")
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
     }
 
     /**
