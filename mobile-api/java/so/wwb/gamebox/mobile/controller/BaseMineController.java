@@ -423,6 +423,10 @@ public class BaseMineController {
         if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
             playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -1));
         }
+
+        if (playerGameOrderListVo.getSearch().getBeginBetTime().getTime() == playerGameOrderListVo.getSearch().getEndBetTime().getTime()) { //如果两个时间一样，用户要查一天之内的数据
+            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1));
+        }
     }
 
     /**
