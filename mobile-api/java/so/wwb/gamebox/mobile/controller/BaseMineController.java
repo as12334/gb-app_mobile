@@ -696,9 +696,14 @@ public class BaseMineController {
         }
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.FAVORABLE.getCode())) { //优惠
+            Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(),DictEnum.COMMON_FUND_TYPE);
             detailApp.setTransactionWayName(String.valueOf(map.get(SessionManager.getLocale().toString()))); //描述
             if (StringTool.isBlank(detailApp.getTransactionWayName()) || "null".equals(detailApp.getTransactionWayName())) {
                 detailApp.setTransactionWayName(String.valueOf(map.get("activityName"))); //描述
+            } else if ((StringTool.isBlank(detailApp.getTransactionWayName()) || "null".equals(detailApp.getTransactionWayName()))
+                    && "refund_fee".equals(po.getFundType())) {
+
+                detailApp.setTransactionWayName(i18n.get(po.getFundType()));
             }
             detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
