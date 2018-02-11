@@ -26,10 +26,7 @@
 <script src="${resRoot}/js/common/Common.js"></script>
 <script src="${resRoot}/js/common/Head.js"></script>
 <script src="${resRoot}/js/common/Menu.js"></script>
-<script src="${resRoot}/../common/js/mobile/layer.js"></script>
-<script src="${resRoot}/js/mui/mui.picker.js"></script>
-<script src="${resRoot}/js/mui/mui.dtpicker.js"></script>
-<script src="${resRoot}/js/mui/mui.poppicker.js"></script>
+
 
 
 

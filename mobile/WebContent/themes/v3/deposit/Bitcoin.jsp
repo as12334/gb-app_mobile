@@ -4,6 +4,8 @@
     <%@include file="../include/include.head.jsp" %>
     <link rel="stylesheet" href="${resRoot}/themes/otherpage.css">
     <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css">
+    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css">
+    <link rel="stylesheet" href="${resRoot}/themes/mui.poppicker.css">
 </head>
 <body class="exchange-bitcoin exchange-bank">
 <header class="mui-bar mui-bar-nav">
@@ -31,7 +33,7 @@
                                     </p>
                                 </div>
                                 <div class="ct" style="padding-left:20px;">
-                                    <p class="text-green">
+                                    <p class="text-green"><span style="word-break: break-all;">
                                         <span>
                                         <c:choose>
                                             <c:when test="${isHide}">
@@ -42,7 +44,7 @@
                                             </c:otherwise>
                                         </c:choose>
                                         </span>
-                                    </p>
+                                    </span></p>
                                     <div class="ct">
                                         <p><span>${views.deposit_auto['姓名']}:</span>
                                                 ${payAccount.fullName}<a href="#" class="copy" data-clipboard-text="${payAccount.fullName}" style="margin-right:10px;">${views.themes_auto['复制']}</a>
@@ -124,5 +126,8 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
+<script src="${resRoot}/js/mui/mui.picker.js"></script>
+<script src="${resRoot}/js/mui/mui.poppicker.js"></script>
+<script src="${resRoot}/js/mui/mui.dtpicker.js"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js"></script>
