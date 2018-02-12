@@ -214,6 +214,7 @@ public class BaseDepositController extends BaseCommonDepositController {
         Date now = SessionManager.getDate().getNow();
         listVo.getSearch().setEndTime(now);
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.setRank(rank);
         if (isFee && rank.getFreeCount() != null && rank.getFreeCount() > 0 && rank.getFeeTime() != null) {
             listVo.getSearch().setStartTime(DateTool.addHours(now, -rank.getFeeTime()));
         } else if (isReturnFee && rank.getReturnFeeCount() != null && rank.getReturnFeeCount() > 0 && rank.getReturnTime() != null) {

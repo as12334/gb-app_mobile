@@ -5,7 +5,7 @@
 </head>
 <body class="online-pay-sz">
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <a data-rel='{opType:"function","target":"goToLastPage"}' class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
     <h1 class="mui-title">${views.themes_auto['数字货币支付']}</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">

@@ -8,9 +8,7 @@
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css"/>
 </head>
 <body class="deposit">
-<header class="mui-bar mui-bar-nav">
-<%@ include file="../common/Assert.jsp" %>
-</header>
+<%@include file="../common/SecondaryHead.jsp"%>
 <div class="mui-content mui-scroll-wrapper deposit-content">
     <div class="mui-scroll">
         <div class="mui-row">
