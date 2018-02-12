@@ -50,7 +50,8 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypeList")
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo), APP_VERSION);
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap), APP_VERSION);
     }
 
     /**
@@ -95,9 +96,10 @@ public class DiscountsAppController {
             types = getActivityTypes();
         }
         Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
-            Map messages = getActivityMessages(listVo);
+            Map messages = getActivityMessages(listVo, activityMessageMap);
             activityTypes.put(type.getActivityKey(), messages);
         }
         return activityTypes;
@@ -106,8 +108,7 @@ public class DiscountsAppController {
     /**
      * 获取正在进行中的活动 转换接口数据
      */
-    private Map getActivityMessages(VActivityMessageListVo listVo) {
-        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
+    private Map getActivityMessages(VActivityMessageListVo listVo, Map<String, PlayerActivityMessage> activityMessageMap) {
         Map<String, Object> map = new HashMap<>(2, 1f);
         if (MapTool.isEmpty(activityMessageMap)) {
             map.put("list", new ArrayList<>(0));
