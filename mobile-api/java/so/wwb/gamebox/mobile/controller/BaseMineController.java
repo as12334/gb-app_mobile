@@ -423,6 +423,10 @@ public class BaseMineController {
         if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
             playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -1));
         }
+
+        if (playerGameOrderListVo.getSearch().getBeginBetTime().getTime() == playerGameOrderListVo.getSearch().getEndBetTime().getTime()) { //如果两个时间一样，用户要查一天之内的数据
+            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1));
+        }
     }
 
     /**
@@ -666,6 +670,7 @@ public class BaseMineController {
             detailApp.setBankCode((String) map.get("bankCode"));
             String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + detailApp.getBankCode());
             detailApp.setBankCodeName(bankName);
+            detailApp.setBankUrl(setBankPictureUrl(request, detailApp.getBankCode()));
 
             String bankNo = String.valueOf(map.get("bankNo"));
             if (StringTool.isBlank(bankName) && !"artificial_withdraw".equals(po.getFundType())) {
@@ -730,6 +735,21 @@ public class BaseMineController {
         }
 
         return detailApp;
+    }
+
+    /**
+     * 根据银行code获取银行url图片
+     * @param request
+     * @param bankNameCode
+     * @return
+     */
+    private String setBankPictureUrl (HttpServletRequest request, String bankNameCode) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(COMMON_PAYBANK_PHOTO);
+        sb.append(bankNameCode);
+        sb.append(".png");
+        return sb.toString();
     }
 
 
