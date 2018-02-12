@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.ListTool;
-import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.validation.form.annotation.FormModel;
@@ -51,20 +50,10 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping(value = "/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
-
-        UserInfoApp userApp = new UserInfoApp();
-        SysUser user = SessionManager.getUser();
-        getAppUserInfo(request, user, userApp);
-
-        Map<String, Object> map = MapTool.newHashMap();
-        Map<String, Object> userInfoMap = MapTool.newHashMap();
-
+        Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("link", setLink());//链接地址
-        getMineLinkInfo(userInfoMap, request);//用户金额信息
-        map.put("user", userInfoMap);
+        map.put("user", getMineLinkInfo(request));
         map.put("bankList", bankList());
-        map.put("userApi", userApp);
-
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
