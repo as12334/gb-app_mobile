@@ -8,7 +8,7 @@
             <tbody>
             <tr>
                 <td>${views.themes_auto['总资产']}</td>
-                <td><span class="bar-asset" style="padding-right: 0; color: #ffffff"></span></td>
+                <td><span class="bar-asset"></span></td>
             </tr>
             </tbody>
         </table>

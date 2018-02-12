@@ -8,7 +8,10 @@
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css"/>
 </head>
 <body class="deposit">
-<%@include file="../common/SecondaryHead.jsp"%>
+<header class="mui-bar mui-bar-nav">
+    <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <%@include file="../common/Assert.jsp"%>
+</header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
     <div class="mui-scroll">
         <div class="mui-row">

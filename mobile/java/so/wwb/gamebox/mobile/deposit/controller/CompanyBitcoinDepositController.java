@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.BitcoinDepositForm;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -44,6 +45,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
 
     @RequestMapping("/index")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String index(PayAccountVo payAccountVo, Model model, HttpServletRequest request) {
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
@@ -64,6 +66,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
 
     @RequestMapping("/getSales")
     @ResponseBody
+    @Upgrade(upgrade = true)
     public String getSales() {
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());

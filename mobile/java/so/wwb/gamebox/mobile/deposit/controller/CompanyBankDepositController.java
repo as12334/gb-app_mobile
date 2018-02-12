@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2CashForm;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2Form;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
@@ -78,6 +79,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
 
     @RequestMapping("/index")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String company(PayAccountVo payAccountVo, Model model) {
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());

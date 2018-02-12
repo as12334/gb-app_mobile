@@ -8,7 +8,7 @@
 
 <body class="exchange-bank">
 <header class="mui-bar mui-bar-nav">
-    <a data-rel='{opType:"function","target":"goToLastPage"}' class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
     <h1 class="mui-title">${views.deposit_auto['银行卡转账']}</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">
