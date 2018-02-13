@@ -423,7 +423,7 @@ public class BaseMineController {
             playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME));//拿到明天在-1相当于拿到今天时间00:00:00
         }
         if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
-            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -1));
+            playerGameOrderListVo.getSearch().setEndBetTime(SessionManager.getDate().getTomorrow());
         }
 
         if (playerGameOrderListVo.getSearch().getBeginBetTime().getTime() == playerGameOrderListVo.getSearch().getEndBetTime().getTime()) { //如果两个时间一样，用户要查一天之内的数据
