@@ -141,13 +141,14 @@
                             <c:set var="len" value="${len+1}"/>
                         </c:if>
                         <li class="mui-col-xs-4">
-                            <soul:button target="${root}/message/gameNotice.html?isSendMessage=true" text="" opType="href" cssClass="">
-                                <span class="item-img-wrap">
-                                    <img src="${resRoot}/images/my-ico9.png" class="mine-item-img"/>
-                                </span>
-                                <p>${views.mine_auto['申请优惠']}</p>
+                            <soul:button target="${root}/my/password/editPassword.html" text="" opType="href" cssClass="">
+						        <span class="item-img-wrap">
+							        <img src="${resRoot}/images/my-ico10.png" class="mine-item-img"/>
+						        </span>
+                                <p>${views.themes_auto['修改登录密码']}</p>
                             </soul:button>
                         </li>
+
                         <c:if test="${len!=2}">
                             <li class="mui-col-xs-4">
                                 <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href" cssClass="">
@@ -171,14 +172,6 @@
                             </li>
                         </c:if>
                         <li class="mui-col-xs-4">
-                            <soul:button target="${root}/my/password/editPassword.html" text="" opType="href" cssClass="">
-						        <span class="item-img-wrap">
-							        <img src="${resRoot}/images/my-ico10.png" class="mine-item-img"/>
-						        </span>
-                                <p>${views.themes_auto['修改登录密码']}</p>
-                            </soul:button>
-                        </li>
-                        <%--<li class="mui-col-xs-4">
                             <a href="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico8.png" class="mine-item-img"/>
@@ -186,7 +179,17 @@
                                 <p>${views.themes_auto['推荐好友']}</p>
                                 <span class="ext-info recomdAmount"></span>
                             </a>
-                        </li>--%>
+                        </li>
+                        <li class="mui-col-xs-4">
+                            <soul:button target="${root}/message/gameNotice.html?isSendMessage=true" text="" opType="href" cssClass="">
+                                <span class="item-img-wrap">
+                                    <img src="${resRoot}/images/my-ico9.png" class="mine-item-img"/>
+                                </span>
+                                <p>${views.mine_auto['申请优惠']}</p>
+                            </soul:button>
+                        </li>
+
+
                     </ul>
                 </div>
             </div> <!--mui-scroll 闭合标签-->
