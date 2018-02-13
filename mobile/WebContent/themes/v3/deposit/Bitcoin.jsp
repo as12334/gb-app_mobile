@@ -32,22 +32,27 @@
                                         <span class="pay-third BTC"></span>
                                     </p>
                                 </div>
-                                <div class="ct" style="padding-left:20px;">
-                                    <p class="text-green"><span style="word-break: break-all;">
-                                        <span>
-                                        <c:choose>
-                                            <c:when test="${isHide}">
-                                                ${payAccount.code} ${views.deposit_auto['请联系客服']}
-                                            </c:when>
-                                            <c:otherwise>
-                                                ${payAccount.account}
-                                            </c:otherwise>
-                                        </c:choose>
+                                <div class="ct">
+                                    <p class="text-green">
+                                        <span style="word-break: break-all;">
+                                            <c:choose>
+                                                <c:when test="${isHide}">
+                                                    <c:set var="copyText" value="${payAccount.code}"/>
+                                                    ${payAccount.code} ${views.deposit_auto['请联系客服']}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="copyText" value="${payAccount.account}"/>
+                                                    ${payAccount.account}
+                                                </c:otherwise>
+                                            </c:choose>
                                         </span>
-                                    </span></p>
+                                        <a href="#" class="copy" data-clipboard-text="${copyText}" style="margin-right:10px;">${views.themes_auto['复制']}</a>
+                                    </p>
                                     <div class="ct">
-                                        <p><span>${views.deposit_auto['姓名']}:</span>
-                                                ${payAccount.fullName}<a href="#" class="copy" data-clipboard-text="${payAccount.fullName}" style="margin-right:10px;">${views.themes_auto['复制']}</a>
+                                        <p>
+                                            <span>${views.deposit_auto['姓名']}:</span>
+                                            ${payAccount.fullName}
+                                            <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}" style="margin-right:10px;">${views.themes_auto['复制']}</a>
                                         </p>
                                     </div>
                                 </div>
@@ -120,7 +125,7 @@
         </div>
         <div class="ft">
             <a data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
-            <a data-rel='{"target":"${root}/mainIndex.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
+            <a data-rel='{"target":"goToHome","opType":"function"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>
 </div>

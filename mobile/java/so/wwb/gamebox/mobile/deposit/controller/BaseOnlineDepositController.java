@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.Module;
@@ -265,6 +266,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
      * @return
      */
     @RequestMapping("/submit")
+    @Upgrade(upgrade = true)
     public String submit(PlayerRechargeVo playerRechargeVo, Model model) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         Double rechargeAmount = playerRecharge.getRechargeAmount();

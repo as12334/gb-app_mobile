@@ -25,8 +25,7 @@ public class CompanyElectronicDepositForm implements IForm {
 //    private String $code;
 
     @Comment("存款账号")
-    @Depends(property ="result.rechargeType", operator = Operator.NE,value= RechargeTypeEnum.RECHARGE_TYPE_ONECODEPAY_FASE,message = "valid.rechargeForm.payerBankcardNotBlank")
-    //@NotBlank(message = "valid.rechargeForm.payerBankcardNotBlank")
+    @Depends(property = "result.rechargeType", operator = {Operator.IN}, value = {RechargeTypeEnum.RECHARGE_TYPE_WECHATPAY_FAST, RechargeTypeEnum.RECHARGE_TYPE_BDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_JDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_QQWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_OTHER_FAST})
     @Length(message = "valid.rechargeForm.payerBankcardLength", max = 20)
     public String getResult_payerBankcard() {
         return result_payerBankcard;
