@@ -55,8 +55,10 @@ import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
+import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadListVo;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
@@ -1031,14 +1033,6 @@ public class BaseMineController {
         //查询回复表每一条在已读表是否存在
         replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
 
-        Integer[] readIds = new Integer[replyListVo.getResult().size()];
-        for (int i = 0; i < replyListVo.getResult().size(); i++) {
-            readIds[i] = replyListVo.getResult().get(i).getId();
-        }
-
-
-
-        //所有咨询数据
 
         for (PlayerAdvisoryReply replay : replyListVo.getResult()) {
             PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
