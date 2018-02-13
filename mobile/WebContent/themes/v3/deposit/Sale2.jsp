@@ -7,7 +7,7 @@
             <c:if test="${depositChannel eq 'online' || depositChannel eq 'scan' || depositChannel eq 'reverseSacn'}">
                 <div class="masker" id="masker" style="display:block;"></div> <!--遮罩-->
             </c:if>
-            <div class="gb-withdraw-box pro-window"style="display:block">
+            <div class="gb-withdraw-box pro-window" style="display:block">
                 <div  class="cont">
                     <h3>${views.deposit_auto['消息']}</h3>
                     <div class="cont-text">
@@ -18,20 +18,24 @@
                     <div class="text-pro">
                         <p>${views.deposit_auto['优惠']}：</p>
                         <ul>
-                            <li>
-                                <div class="text-warp">
-                                    <span>${views.deposit_auto['不参与优惠']}</span>
-                                    <input name="activityId" type="radio" value="" checked="checked"/>
+                            <div class="mui-scroll-wrapper">
+                                <div class="mui-scroll">
+                                    <li>
+                                        <div class="text-warp">
+                                            <span>${views.deposit_auto['不参与优惠']}</span>
+                                            <input name="activityId" type="radio" value="" checked="checked"/>
+                                        </div>
+                                    </li>
+                                    <c:forEach items="${sales}" varStatus="vs" var="i">
+                                        <li>
+                                            <div class="text-warp">
+                                                <span>${i.activityName}</span>
+                                                <input name="activityId" type="radio" value="${i.id}"/>
+                                            </div>
+                                        </li>
+                                    </c:forEach>
                                 </div>
-                            </li>
-                            <c:forEach items="${sales}" varStatus="vs" var="i">
-                                <li>
-                                    <div class="text-warp">
-                                        <span>${i.activityName}</span>
-                                        <input name="activityId" type="radio" value="${i.id}"/>
-                                    </div>
-                                </li>
-                            </c:forEach>
+                            </div>
                         </ul>
                     </div>
                     <div class="pro-btn">
