@@ -1021,22 +1021,34 @@ public class BaseMineController {
         listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
         int advisoryUnReadCount = 0;
         String tag = "";
+
+        PlayerAdvisoryReplyListVo replyListVo = new PlayerAdvisoryReplyListVo();
+        Integer[] ids = new Integer[listVo.getResult().size()];
+        for (int i = 0; i < listVo.getResult().size(); i++) {
+            ids[i] = listVo.getResult().get(i).getId();
+        }
+        replyListVo.getSearch().setIds(ids);
+        //查询回复表每一条在已读表是否存在
+        replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
+
+        Integer[] readIds = new Integer[replyListVo.getResult().size()];
+        for (int i = 0; i < replyListVo.getResult().size(); i++) {
+            readIds[i] = replyListVo.getResult().get(i).getId();
+        }
+
+
+
         //所有咨询数据
-        for (VPlayerAdvisory obj : listVo.getResult()) {
-            //查询回复表每一条在已读表是否存在
-            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
-            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
-            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
-                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
-                readVo.getSearch().setUserId(SessionManager.getUserId());
-                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
-                //不存在未读+1，标记已读咨询Id
-                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
-                    advisoryUnReadCount++;
-                    tag += replay.getPlayerAdvisoryId().toString() + ",";
-                }
+
+        for (PlayerAdvisoryReply replay : replyListVo.getResult()) {
+            PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+            readVo.getSearch().setUserId(SessionManager.getUserId());
+            readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
+            readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
+            //不存在未读+1，标记已读咨询Id
+            if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
+                advisoryUnReadCount++;
+                tag += replay.getPlayerAdvisoryId().toString() + ",";
             }
         }
         Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
