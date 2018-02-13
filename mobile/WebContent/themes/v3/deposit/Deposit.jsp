@@ -3,9 +3,9 @@
 <html>
 <head>
     <%@include file="../include/include.head.jsp" %>
+    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css"/>
     <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css">
     <link rel="stylesheet" href="${resRoot}/themes/mui.poppicker.css">
-    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css"/>
 </head>
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">

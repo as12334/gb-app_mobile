@@ -1,6 +1,6 @@
 <%--@elvariable id="command" type="so.wwb.gamebox.model.master.content.vo.PayAccountListVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
 <c:choose>
     <c:when test="${fn:length(payAccountMap)>0}">
         <form id="onlineForm" onsubmit="return false">
@@ -23,8 +23,8 @@
                     <label>${views.deposit_auto['选择您所使用的银行']}</label>
                     <div class="ct" id="selectBank">
                         <p class="text-gray-light gb-select">
-                            <a id="selectText" data-rel='{"opType":"function","target":"showBankList"}' style="margin-right: 0px">
-                                    ${bankList[0]["text"]}
+                            <a id="selectText" style="margin-right: 0px">
+                               ${bankList[0]["text"]}
                             </a>
                         </p>
                         <input type="hidden" name="result.payerBank" id="result.payerBank" value="${bank}"/>
