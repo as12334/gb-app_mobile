@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
 <div data-rel='{"target":"userAssert","opType":"function"}' id="login-info" class="mui-hidden login-info">
     <div class="user_name"></div>
     <div class="money"></div>
@@ -8,7 +8,7 @@
             <tbody>
             <tr>
                 <td>${views.themes_auto['总资产']}</td>
-                <td><span class="bar-asset" style="padding-right: 0; color: #ffffff"></span></td>
+                <td><span class="bar-asset"></span></td>
             </tr>
             </tbody>
         </table>
@@ -26,11 +26,6 @@
             <div class="mui-scroll">
                 <table id="api-balance">
                     <tbody>
-                        <%--异步求出需展示的api--%>
-                        <%--<tr data="${i.value.apiId}">
-                            <td>${gbFn:getApiName(i.value.apiId.toString())}</td>
-                            <td class="_money" name="money_${i.value.apiId}"></td>
-                        </tr>--%>
                     </tbody>
                 </table>
             </div>

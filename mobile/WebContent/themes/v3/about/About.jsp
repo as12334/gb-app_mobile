@@ -13,18 +13,26 @@
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-            <header class="mui-bar mui-bar-nav">
-                <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
-                <h1 class="mui-title">注册条款</h1>
-            </header>
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">关于我们</h1>
+        </header>
 
-            <div class="mui-content mui-scroll-wrapper">
-                <div class="mui-scroll">
-                    <div class="register-rules-wrap" data-list="rules">
-                        ${terms.value}
-                    </div>
+        <div class="mui-content mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <div class="register-rules-wrap" data-list="rules">
+                    <p style="text-align:center">
+                        <strong>
+                            <span style="font-size:24px;font-family: 宋体">${about.title}</span>
+
+                        </strong>
+                    </p>
+                    ${about.content}
                 </div>
             </div>
+        </div>
+
+
         <!-- off-canvas backdrop -->
         <div class="mui-off-canvas-backdrop"></div>
     </div>

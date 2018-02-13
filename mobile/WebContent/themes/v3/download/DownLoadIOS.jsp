@@ -17,8 +17,7 @@
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav mui-bar-blue">
-            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-icon mui-icon-arrowleft mui-pull-left"></soul:button>
-            <%--<a class="mui-icon mui-icon-arrowleft mui-pull-left mui-action-back"></a>--%>
+            <a class="mui-icon mui-icon-arrowleft mui-pull-left mui-action-back"></a>
             <h1 class="mui-title">APP下载</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper mui-content-without-footer-address download-content-ios">

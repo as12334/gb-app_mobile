@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDeposit2Form;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -52,6 +53,7 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
      */
     @RequestMapping("/scanCode/{type}")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String scanCode(Model model, @PathVariable String type) {
         PlayerRank rank = getRank();
         PayAccount payAccountForScan = null;

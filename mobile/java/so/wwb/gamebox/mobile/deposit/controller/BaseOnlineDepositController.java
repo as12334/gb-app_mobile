@@ -268,10 +268,11 @@ public class BaseOnlineDepositController extends BaseDepositController {
     public String submit(PlayerRechargeVo playerRechargeVo, Model model) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         Double rechargeAmount = playerRecharge.getRechargeAmount();
+        Double randomCash = playerRechargeVo.getResult().getRandomCash();
         boolean unCheckSuccess = false;
         boolean pop = true;
-        if (playerRechargeVo.getResult().getRandomCash() != null || rechargeAmount != null) {
-            rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
+        if (randomCash != null && randomCash > 0 && rechargeAmount != null) {
+            rechargeAmount += randomCash / 100;
         }
         PlayerRank rank = getRank();
         PayAccount payAccount = null;
@@ -324,6 +325,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee", counterFee);
             }
             model.addAttribute("msg", msg);
+            model.addAttribute("depositChannel",playerRechargeVo.getDepositChannel());
         }
         return submitReturn(model, unCheckSuccess, pop, rechargeAmount, "");
     }

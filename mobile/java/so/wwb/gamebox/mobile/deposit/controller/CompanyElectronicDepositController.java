@@ -14,6 +14,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositCashForm;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -60,6 +61,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
      */
     @RequestMapping("/depositCash")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String depositCash(PayAccountVo payAccountVo, Model model){
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
         if(payAccount != null){
@@ -73,6 +75,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
 
     @RequestMapping("/index")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String index(PayAccountVo payAccountVo,Model model, HttpServletRequest request) {
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());

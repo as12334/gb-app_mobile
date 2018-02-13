@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -69,6 +70,7 @@ public class DepositController extends BaseCommonDepositController {
      * @return
      */
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String index(Model model) {
         //网银存款,柜员机/柜台存款
         PlayerRank rank = getRank();
@@ -294,13 +296,6 @@ public class DepositController extends BaseCommonDepositController {
         return scanMap;
     }
 
-    private void scanPay(List<PayAccount> payAccounts, Map<String, Object> payAccountMap, String rechargeType, String scanType) {
-        deleteMaintainChannel(payAccounts);
-        if (CollectionTool.isNotEmpty(payAccounts)) {
-            payAccountMap.put(rechargeType, scanType);
-        }
-    }
-
     private void online(List<PayAccount> payAccounts, Map<String, Object> payAccountMap) {
         deleteMaintainChannel(payAccounts);
         if (CollectionTool.isNotEmpty(payAccounts)) {
@@ -326,6 +321,7 @@ public class DepositController extends BaseCommonDepositController {
      * @return
      */
     @RequestMapping("/loadBankNotice")
+    @Upgrade
     public String loadBankNotice(Model model) {
         CttAnnouncementListVo cttAnnouncementListVo = new CttAnnouncementListVo();
         cttAnnouncementListVo.getSearch().setAnnouncementType(CttAnnouncementTypeEnum.BANK_ANNOOUNCEMENT.getCode());

@@ -183,6 +183,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                         } else if (fee == 0) {
                             msg = LocaleTool.tranMessage(Module.FUND,"Recharge.recharge.freeFee",counterFee);
                         }
+                        model.addAttribute("depositChannel",playerRechargeVo.getDepositChannel());
                         model.addAttribute("msg",msg);
                     }
                 }

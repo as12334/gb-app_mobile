@@ -13,6 +13,7 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.math.NumberTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.commons.qrcode.QrcodeDisTool;
+import org.soul.commons.security.Base36;
 import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.session.SessionManagerBase;
@@ -29,9 +30,11 @@ import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
+import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
@@ -49,6 +52,8 @@ import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
+import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -147,6 +152,73 @@ public class IndexController extends BaseApiController {
         return "/registe/RegisteRules";
     }
 
+    /**
+     * 关于我们
+     * @return
+     */
+    @RequestMapping("/about")
+    @Upgrade(upgrade = true)
+    public String getAbout(HttpServletRequest request, String path, Model model) {
+
+        if ("about".equals(path)) {
+            CttDocumentI18nListVo listVo = initDocument("aboutUs");
+            CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
+            if (cttDocumentI18n != null) {
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+            }
+            model.addAttribute("about", cttDocumentI18n);
+        }
+        return "/about/About";
+    }
+
+    /**
+     * 分享好友
+     * @return
+     */
+    @RequestMapping("/recommend")
+    @Upgrade(upgrade = true)
+    public String recommend(Model model) {
+        UserPlayerVo userPlayerVo = new UserPlayerVo();
+        userPlayerVo.getSearch().setId(SessionManager.getUserId());
+        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
+        if (userPlayerVo.getResult() != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("/register.html?c=");
+            String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
+            sb.append(Base36.encryptIgnoreCase(invitationCode));
+            //分享码
+            model.addAttribute("code", sb.toString());
+            model.addAttribute("recommendCode", Base36.encryptIgnoreCase(invitationCode));
+            LOG.info("玩家邀请码:[" + userPlayerVo.getResult().getRegistCode() + "][" + SessionManager.getUserId().toString() + "]" + Base36.encryptIgnoreCase(invitationCode));
+        }
+        //如果这个参数有值，表示有单次推荐奖励
+        model.addAttribute("theWay", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_THEWAY).getParamValue());
+        //满足存款条件后谁获利：1 表示双方获取奖励 2表示你将会得到 其他表示你推荐的好友会获取到
+        model.addAttribute("reward", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD).getParamValue());
+        //将会获取到的金额值
+        model.addAttribute("money", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_MONEY).getParamValue());
+        //有红利奖励显示分享红利标志，没有不显示
+        model.addAttribute("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getParamValue());
+
+        //查询推荐人数 获取奖励 红利
+        PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
+        playerVo.getSearch().setUserId(SessionManager.getUserId());
+        model.addAttribute("sign", getCurrencySign());
+        model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
+        return "/recommend/Recommend";
+    }
+
+    /**
+     * 获得钱币类型
+     * @return
+     */
+    private String getCurrencySign() {
+        SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());
+        if (sysCurrency != null) {
+            return sysCurrency.getCurrencySign();
+        }
+        return "";
+    }
 
 
 

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.digiccy.po.UserDigiccy;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyListVo;
@@ -36,6 +37,7 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
     private static final String DIGICCY_SALE_URI = "/deposit/DigiccySale";
 
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String index(Model model) {
         UserDigiccyListVo userDigiccyListVo = new UserDigiccyListVo();
         userDigiccyListVo.getSearch().setUserId(SessionManagerBase.getUserId());
@@ -132,6 +134,7 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
      * @return
      */
     @RequestMapping("/sale")
+    @Upgrade(upgrade = true)
     public String sale(PlayerRechargeVo playerRechargeVo, Model model) {
         playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();

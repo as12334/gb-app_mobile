@@ -9,7 +9,7 @@ import org.soul.commons.qrcode.QrcodeDisTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
@@ -20,37 +20,48 @@ import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
-import so.wwb.gamebox.model.master.operation.vo.PlayerRankAppDomainVo;
-import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
-import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  */
 @Controller
 @RequestMapping("/downLoad")
-public class DownLoadController extends BaseDemoController{
+public class DownLoadController extends BaseDemoController {
 
     private static final Log LOG = LogFactory.getLog(DownLoadController.class);
 
+    /**
+     * 跳转下载手机客户端之前先确认是否登录才显示二维码
+     *
+     * @return
+     */
+    @RequestMapping("/downLoadShowQrcode")
+    @ResponseBody
+    public Map<String, Object> downLoadShowQrcode() {
+        Map<String, Object> map = new HashMap<>(2, 1f);
+        map.put("showQrCode", ParamTool.isLoginShowQrCode());
+        map.put("isLogin", SessionManager.getUserId() != null);
+        return map;
+    }
+
     @RequestMapping("/downLoad")
     @Upgrade(upgrade = true)
-    public String downLoad(Model model,HttpServletRequest request) {
-
+    public String downLoad(Model model, HttpServletRequest request) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             return "redirect:/login/commonLogin.html";
         }
-        getAppPath(model,request);
+        getAppPath(model, request);
         return "/download/DownLoad";
     }
 
     @RequestMapping("/downLoadIOS")
     @Upgrade(upgrade = true)
-    public String downLoadIOS(Model model,HttpServletRequest request) {
-        getAppPath(model,request);
+    public String downLoadIOS(Model model, HttpServletRequest request) {
+        getAppPath(model, request);
         return "/download/DownLoadIOS";
     }
 
@@ -84,7 +95,7 @@ public class DownLoadController extends BaseDemoController{
         AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
         if (androidApp != null) {
             String appDomain = fetchAppDownloadDomain(request);
-            if(StringTool.isBlank(appDomain)){
+            if (StringTool.isBlank(appDomain)) {
                 appDomain = ParamTool.appDmain(request.getServerName());
             }
             String versionName = androidApp.getVersionName();
