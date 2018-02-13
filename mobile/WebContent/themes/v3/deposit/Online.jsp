@@ -23,11 +23,17 @@
                     <label>${views.deposit_auto['选择您所使用的银行']}</label>
                     <div class="ct" id="selectBank">
                         <p class="text-gray-light gb-select">
-                            <a id="selectText" style="margin-right: 0px">
-                               ${bankList[0]["text"]}
+                            <a id="selectText" data-rel='{"opType":"function","target":"showBankList"}' style="margin-right: 0px">
+                                    ${bankList[0]["text"]}
                             </a>
                         </p>
                         <input type="hidden" name="result.payerBank" id="result.payerBank" value="${bank}"/>
+                    </div>
+                </div>
+                <div class="mui-input-row">
+                    <label>${views.deposit_auto['选择您所使用的银行']}</label>
+                    <div class="ct" id="showUserPicker">
+                       <a>展示用户名下拉</a>
                     </div>
                 </div>
                 <div class="mui-input-row"><label for="result.rechargeAmount" style="width:20%">${views.deposit_auto['存款金额']}</label>

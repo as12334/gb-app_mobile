@@ -6,11 +6,6 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="bookmark" href="${resRoot}/favicon.ico">
-    <link rel="shortcut icon" href="${resRoot}/favicon.ico">
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.poppicker.css"/>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.picker.css"/>
 </head>
