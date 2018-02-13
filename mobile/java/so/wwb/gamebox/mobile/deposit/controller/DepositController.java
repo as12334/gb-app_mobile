@@ -321,7 +321,7 @@ public class DepositController extends BaseCommonDepositController {
      * @return
      */
     @RequestMapping("/loadBankNotice")
-    @Upgrade
+    @Upgrade(upgrade = true)
     public String loadBankNotice(Model model) {
         CttAnnouncementListVo cttAnnouncementListVo = new CttAnnouncementListVo();
         cttAnnouncementListVo.getSearch().setAnnouncementType(CttAnnouncementTypeEnum.BANK_ANNOOUNCEMENT.getCode());

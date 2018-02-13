@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
@@ -134,6 +135,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
      * @return
      */
     @RequestMapping("/submit")
+    @Upgrade(upgrade = true)
     public String submit(PlayerRechargeVo playerRechargeVo,Model model) {
 
         boolean unCheckSuccess = false;
