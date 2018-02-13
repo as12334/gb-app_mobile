@@ -17,7 +17,6 @@
                 <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
                 <h1 class="mui-title">注册条款</h1>
             </header>
-
             <div class="mui-content mui-scroll-wrapper">
                 <div class="mui-scroll">
                     <div class="register-rules-wrap" data-list="rules">
