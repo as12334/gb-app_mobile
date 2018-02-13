@@ -91,50 +91,40 @@
                             </div>
                         </div>
                     </c:if>
-                    <div class="mui-input-row">
-                        <c:set value="${views.deposit_auto['您的支付账号']}" var="n"></c:set>
-                        <c:set value="${views.deposit_auto['请输入账号']}" var="m"></c:set>
-                        <c:if test="${payAccount.bankCode eq 'wechatpay'}">
-                            <c:set value="${views.deposit_auto['您的微信昵称']}" var="n"></c:set>
-                            <c:set value="${views.deposit_auto['请输入微信昵称']}" var="m"></c:set>
-                        </c:if>
-                        <c:if test="${payAccount.bankCode eq 'alipay'}">
-                            <c:set value="${views.deposit_auto['您的支付宝账号']}" var="n"></c:set>
-                            <c:set value="${views.deposit_auto['请输入支付宝账号']}" var="m"></c:set>
-                        </c:if>
-                        <c:if test="${payAccount.bankCode eq 'qqwallet'}">
-                            <c:set value="${views.deposit_auto['您的QQ钱包账号']}" var="n"></c:set>
-                            <c:set value="${views.deposit_auto['请输入QQ钱包账号']}" var="m"></c:set>
-                        </c:if>
-                        <c:if test="${payAccount.bankCode eq 'jdwallet'}">
-                            <c:set value="${views.deposit_auto['您的京东钱包账号']}" var="n"></c:set>
-                            <c:set value="${views.deposit_auto['请输入京东钱包账号']}" var="m"></c:set>
-                        </c:if>
-                        <c:if test="${payAccount.bankCode eq 'bdwallet'}">
-                            <c:set value="${views.deposit_auto['您的百度钱包账号']}" var="n"></c:set>
-                            <c:set value="${views.deposit_auto['请输入百度钱包账号']}" var="m"></c:set>
-                        </c:if>
-                        <c:if test="${payAccount.bankCode eq 'other'}">
-                            <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
-                            <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
-                        </c:if>
-
-                        <c:choose>
-                            <c:when test="${payAccount.bankCode eq 'onecodepay'}"></c:when>
-                            <c:when test="${payAccount.bankCode eq 'alipay'}">
-                                <label>${n}</label>
-                                <div class="ct">
-                                    <input type="text" id="payerBankcard1" name="result.payerBankcard" value="${lastTimeAccount}" autocomplete="off">
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <label>${n}</label>
-                                <div class="ct">
-                                    <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
+                    <c:if test="${payAccount.bankCode != 'onecodepay'}">
+                        <div class="mui-input-row">
+                            <c:set value="${views.deposit_auto['您的支付账号']}" var="n"></c:set>
+                            <c:set value="${views.deposit_auto['请输入账号']}" var="m"></c:set>
+                            <c:if test="${payAccount.bankCode eq 'wechatpay'}">
+                                <c:set value="${views.deposit_auto['您的微信昵称']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入微信昵称']}" var="m"></c:set>
+                            </c:if>
+                            <c:if test="${payAccount.bankCode eq 'alipay'}">
+                                <c:set value="${views.deposit_auto['您的支付宝账号']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入支付宝账号']}" var="m"></c:set>
+                            </c:if>
+                            <c:if test="${payAccount.bankCode eq 'qqwallet'}">
+                                <c:set value="${views.deposit_auto['您的QQ钱包账号']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入QQ钱包账号']}" var="m"></c:set>
+                            </c:if>
+                            <c:if test="${payAccount.bankCode eq 'jdwallet'}">
+                                <c:set value="${views.deposit_auto['您的京东钱包账号']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入京东钱包账号']}" var="m"></c:set>
+                            </c:if>
+                            <c:if test="${payAccount.bankCode eq 'bdwallet'}">
+                                <c:set value="${views.deposit_auto['您的百度钱包账号']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入百度钱包账号']}" var="m"></c:set>
+                            </c:if>
+                            <c:if test="${payAccount.bankCode eq 'other'}">
+                                <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
+                            </c:if>
+                            <label>${n}</label>
+                            <div class="ct">
+                                <input type="text" id="payerBankcard1" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${payAccount.bankCode eq 'alipay'?'':m}" autocomplete="off">
+                            </div>
+                        </div>
+                    </c:if>
                     <%--存款金额--%>
                     <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
                     <div class="mui-input-row">
@@ -190,6 +180,5 @@
 <%@ include file="../include/include.js.jsp" %>
 <script src="${resRoot}/js/deposit/DepositCenter.js"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js"></script>
-<script src="${resRoot}../../common/js/jquery/plugins/jquery.validate/jquery.validate.js"></script>
 </body>
 
