@@ -83,6 +83,14 @@
             </div>
             <div class="mui-row">
                 <div class="mui-input-group mine-form m-t-sm">
+                    <c:if test="${payAccount.bankCode eq 'alipay'}">
+                        <div class="mui-input-row">
+                            <label for="result.payerName">您的支付户名</label>
+                            <div class="ct">
+                                <input type="text" id="result.payerName" name="result.payerName" placeholder="请填写存款时使用的真实姓名">
+                            </div>
+                        </div>
+                    </c:if>
                     <div class="mui-input-row">
                         <c:set value="${views.deposit_auto['您的支付账号']}" var="n"></c:set>
                         <c:set value="${views.deposit_auto['请输入账号']}" var="m"></c:set>
@@ -175,7 +183,7 @@
         </div>
         <div class="ft">
             <a data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
-            <a data-rel='{"target":"${root}/mainIndex.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
+            <a data-rel='{"target":"goToHome","opType":"function"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>
 </div>

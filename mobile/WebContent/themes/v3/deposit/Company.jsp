@@ -121,7 +121,7 @@
         </div>
         <div class="ft">
             <a data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
-            <a data-rel='{"target":"${root}/mainIndex.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
+            <a data-rel='{"target":"goToHome","opType":"function"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>
 </div>
