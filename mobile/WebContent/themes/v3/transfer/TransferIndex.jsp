@@ -112,13 +112,10 @@
                     </c:forEach>
                 </div>
             </div>
-
-
         </div>
     </div>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-
         <!-- off-canvas backdrop -->
         <div class="mui-off-canvas-backdrop"></div>
     </div>
@@ -126,8 +123,7 @@
 </body>
 <%@ include file="../include/include.js.jsp" %>
 <script src="${resRoot}/js/transfer/Index.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}" type="text/javascript" charset="utf-8"></script>
-
+<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

@@ -66,6 +66,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
      */
     @RequestMapping("/depositCash")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String depositCash(PayAccountVo payAccountVo, Model model){
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
         if(payAccount!=null) {
