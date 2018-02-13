@@ -1,16 +1,14 @@
 package so.wwb.gamebox.mobile.app.controller;
 
-import org.soul.commons.collections.ListTool;
+import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.model.security.privilege.vo.SysUserVo;
-import org.soul.web.init.BaseConfigManager;
-import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.ActivityTypeApp;
@@ -19,19 +17,17 @@ import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
-import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
-import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 
 @Controller
 @RequestMapping("/discountsOrigin")
@@ -45,7 +41,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityType")
     @ResponseBody
     public String getActivityType() {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypes(), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypes(), APP_VERSION);
     }
 
     /**
@@ -54,7 +50,8 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypeList")
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, request), APP_VERSION);
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap), APP_VERSION);
     }
 
     /**
@@ -63,7 +60,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypes")
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo), APP_VERSION);
     }
 
     /**
@@ -88,21 +85,21 @@ public class DiscountsAppController {
     /**
      * 获取活动和类型
      */
-    private Map getActivityTypeMessages(VActivityMessageListVo listVo, HttpServletRequest request) {
-        List<ActivityTypeApp> types = ListTool.newArrayList();
-        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey())) {
+    private Map getActivityTypeMessages(VActivityMessageListVo listVo) {
+        List<ActivityTypeApp> types = new ArrayList<>();
+        String activityClassifyKey = listVo.getSearch().getActivityClassifyKey();
+        if (StringTool.isNotBlank(activityClassifyKey)) {
             ActivityTypeApp typeApp = new ActivityTypeApp();
-            typeApp.setActivityKey(listVo.getSearch().getActivityClassifyKey());
+            typeApp.setActivityKey(activityClassifyKey);
             types.add(typeApp);
         } else {
             types = getActivityTypes();
         }
-
-        Map<String, Object> activityTypes = new HashMap<>(types.size(), ONE_FLOAT);
+        Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
-            Map messages = getActivityMessages(listVo, request);
-
+            Map messages = getActivityMessages(listVo, activityMessageMap);
             activityTypes.put(type.getActivityKey(), messages);
         }
         return activityTypes;
@@ -111,52 +108,53 @@ public class DiscountsAppController {
     /**
      * 获取正在进行中的活动 转换接口数据
      */
-    private Map getActivityMessages(VActivityMessageListVo listVo, HttpServletRequest request) {
-        listVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        listVo.getSearch().setIsDisplay(Boolean.TRUE);
-        listVo.getSearch().setIsDeleted(Boolean.FALSE);
-        listVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        if (StringTool.isNotBlank(listVo.getSearch().getActivityClassifyKey())) {
-            listVo.getSearch().setActivityClassifyKey(listVo.getSearch().getActivityClassifyKey());
+    private Map getActivityMessages(VActivityMessageListVo listVo, Map<String, PlayerActivityMessage> activityMessageMap) {
+        Map<String, Object> map = new HashMap<>(2, 1f);
+        if (MapTool.isEmpty(activityMessageMap)) {
+            map.put("list", new ArrayList<>(0));
+            map.put("total", 0);
+            return map;
         }
-
-        //通过玩家层级判断是否显示活动
-        if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
+        String locale = SessionManager.getLocale().toString();
+        Integer rankId = null;
+        if (SessionManager.getUser() != null && !SessionManager.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            listVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
+            rankId = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId();
         }
-        listVo = ServiceActivityTool.vActivityMessageService().getActivityList(listVo);
-        listVo = setDefaultImages(listVo, request);
-
-        //转换接口所需数据
-        Map<String, Object> map = new HashMap<>(TWO, ONE_FLOAT);
-        List<ActivityTypeListApp> messages = ListTool.newArrayList();
-        for (VActivityMessage message : listVo.getResult()) {
-            ActivityTypeListApp activityApp = new ActivityTypeListApp();
-            activityApp.setId(message.getId());
-            activityApp.setPhoto(message.getActivityAffiliated());
-            activityApp.setUrl(ACTIVITY_DETAIL_URL + "?search.id=" + message.getId());
-            activityApp.setName(message.getActivityName());
-            messages.add(activityApp);
+        long nowTime = SessionManager.getDate().getNow().getTime();
+        boolean isDisplay;
+        boolean isDelete;
+        boolean isAllRank;
+        boolean hasRank;
+        String release = ActivityStateEnum.RELEASE.getCode();
+        String activityClassifyKey = listVo.getSearch().getActivityClassifyKey();
+        List<ActivityTypeListApp> activityTypeListApps = new ArrayList<>();
+        for (PlayerActivityMessage playerActivityMessage : activityMessageMap.values()) {
+            isDisplay = playerActivityMessage.getIsDisplay() != null && playerActivityMessage.getIsDisplay();
+            isDelete = playerActivityMessage.getIsDeleted() != null && playerActivityMessage.getIsDeleted();
+            if (release.equals(playerActivityMessage.getActivityState()) && locale.equals(playerActivityMessage.getActivityVersion()) && !isDelete && isDisplay && (StringTool.isBlank(activityClassifyKey) || activityClassifyKey.equals(playerActivityMessage.getActivityClassifyKey())) && playerActivityMessage.getStartTime().getTime() <= nowTime && playerActivityMessage.getEndTime().getTime() > nowTime) {
+                isAllRank = playerActivityMessage.getAllRank() != null && playerActivityMessage.getAllRank();
+                hasRank = true;
+                if (rankId != null && !isAllRank && !playerActivityMessage.getRankid().contains(rankId + ",") && !playerActivityMessage.getRankid().contains("," + rankId)) {
+                    hasRank = false;
+                }
+                if (hasRank) {
+                    ActivityTypeListApp activityApp = new ActivityTypeListApp();
+                    activityApp.setId(playerActivityMessage.getId());
+                    activityApp.setPhoto(playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated());
+                    activityApp.setUrl(ACTIVITY_DETAIL_URL + "?searchId=" + playerActivityMessage.getSearchId());
+                    activityApp.setName(playerActivityMessage.getActivityName());
+                    activityTypeListApps.add(activityApp);
+                }
+            }
         }
-        map.put("list", messages);
-        map.put("total", listVo.getPaging().getTotalCount());
-
+        map.put("list", activityTypeListApps);
+        int total = 0;
+        if (CollectionTool.isNotEmpty(activityTypeListApps)) {
+            total = activityTypeListApps.size();
+        }
+        map.put("total", total);
         return map;
     }
-
-    /**
-     * 没有图片为默认图片
-     */
-    private VActivityMessageListVo setDefaultImages(VActivityMessageListVo vActivityMessageListVo, HttpServletRequest request) {
-        for (VActivityMessage a : vActivityMessageListVo.getResult()) {
-            String resRootFull = MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName());
-            String activityAffiliated = ImageTag.getImagePathWithDefault(request.getServerName(), a.getActivityAffiliated(), resRootFull.concat("'/images/img-sale1.jpg'"));
-            a.setActivityAffiliated(activityAffiliated);
-        }
-        return vActivityMessageListVo;
-    }
-
-
 }

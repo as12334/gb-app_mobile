@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -9,13 +10,12 @@ import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.spring.utils.SpringTool;
-import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
@@ -24,21 +24,27 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
-import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
-import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
-import so.wwb.gamebox.model.master.player.po.*;
-import so.wwb.gamebox.model.master.player.vo.*;
+import so.wwb.gamebox.model.master.player.po.PlayerApi;
+import so.wwb.gamebox.model.master.player.po.UserBankcard;
+import so.wwb.gamebox.model.master.player.po.UserPlayer;
+import so.wwb.gamebox.model.master.player.po.VUserPlayer;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
+import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
+import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
+import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -48,12 +54,12 @@ import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.COMMON_PAYBANK_PHOTO;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.PROMO_RECORD_DAYS;
 
 /**
  * Created by legend on 18-1-22.
@@ -65,37 +71,159 @@ public class BaseUserInfoController {
     /**
      * 获取我的个人数据
      */
-    protected void getMineLinkInfo(Map<String, Object> userInfo, HttpServletRequest request) {
-        SysUser sysUser = SessionManager.getUser();
+    protected MyUserInfo getMineLinkInfo(HttpServletRequest request) {
+        MyUserInfo userInfo = new MyUserInfo();
+        userInfo.setAutoPay(SessionManager.isAutoPay());
+        userInfo.setIsBit(ParamTool.isBit());
+        userInfo.setIsCash(ParamTool.isCash());
         Integer userId = SessionManager.getUserId();
-        userInfo.put("autoPay", SessionManagerCommon.isAutoPay());
-        userInfo.put("isBit", ParamTool.isBit());//是否存在比特币
-        userInfo.put("isCash", ParamTool.isCash());//是否存在银行卡
+        //获取用户资产相关信息（总资产、钱包余额）
+        getUserAssertInfo(userInfo, userId);
+        //正在处理中取款金额
+        userInfo.setWalletBalance(getDealWithdrawAmount(userId));
+        //正在处理中转账金额(额度转换)
+       // userInfo.setTransferAmount(getProcessTransferAmount(userId));
+        //计算近7日收益（优惠金额）
+       // userInfo.setPreferentialAmount(getRecent7DayFavorable(userId));
+        //用户个人信息
+        SysUser sysUser = SessionManager.getUser();
+        //比特币信息
+        if (userInfo.getIsBit()) {
+            UserBankcard userBtc = BankHelper.getUserBankcard(userId, UserBankcardTypeEnum.TYPE_BTC);
+            if (userBtc != null) {
+                Map<String, String> bankcardNumMap = new HashMap<>(2, 1f);
+                bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
+                bankcardNumMap.put("btcNum", StringTool.overlay(userBtc.getBankcardNumber(), "*", 0, userBtc.getBankcardNumber().length()));
+                userInfo.setBtc(bankcardNumMap);
+            }
+        } else if (userInfo.getIsCash()) { //用户银行卡信息
+            UserBankcard bankcard = BankHelper.getUserBankcard(userId, UserBankcardTypeEnum.TYPE_BANK);
+            if (bankcard != null) {
+                Map<String, String> bankcardNumMap = new HashMap<>(7, 1f);
+                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
+                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + bankcard.getBankName()); //将ICBC转换工商银行
+                bankcardNumMap.put("bankName", bankName);
+                bankcardNumMap.put("bankNameCode", bankcard.getBankName());
+                bankcardNumMap.put("bankUrl", setBankPictureUrl(request, bankcard));
+                bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(bankcard.getBankcardNumber()));
+                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
+                bankcardNumMap.put("realName", sysUser.getRealName());  //真实姓名
+                userInfo.setBankcard(bankcardNumMap);
+            }
+        }
+        //推荐好友,昨日收益
+        //userInfo.setRecomdAmount(getYesterdayRecommend(userId));
+        userInfo.setUsername(StringTool.overlayString(sysUser.getUsername()));
+        userInfo.setAvatarUrl(sysUser.getAvatarUrl());
+        //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
+        if (sysUser.getLastLoginTime() != null) {
+            userInfo.setLastLoginTime(LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+        } else if (sysUser.getLoginTime() != null) {
+            userInfo.setLastLoginTime(LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
+        }
+        userInfo.setCurrency(getCurrencySign());
+        userInfo.setRealName(StringTool.overlayName(sysUser.getRealName()));
+        return userInfo;
+    }
+
+    /**
+     * 获取用户资产信息（总资产、钱包余额）
+     *
+     * @param userInfo
+     */
+    private void getUserAssertInfo(MyUserInfo userInfo, Integer userId) {
+        PlayerApiListVo playerApiListVo = new PlayerApiListVo();
+        playerApiListVo.getSearch().setPlayerId(userId);
         try {
-            //总资产
-            PlayerApiListVo playerApiListVo = new PlayerApiListVo();
-            playerApiListVo.getSearch().setPlayerId(userId);
-            playerApiListVo.setApis(Cache.getApi());
-            playerApiListVo.setSiteApis(Cache.getSiteApi());
-            double totalAssets = ServiceSiteTool.playerApiService().queryPlayerAssets(playerApiListVo);
-            userInfo.put("totalAssets", totalAssets);
+            playerApiListVo = ServiceSiteTool.playerApiService().fundRecord(playerApiListVo);
+            userInfo.setTotalAssets(playerApiListVo.getTotalAssets());
+            userInfo.setWalletBalance(playerApiListVo.getUserPlayer().getWalletBalance());
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
-        //钱包余额
-        userInfo.put("walletBalance", getWalletBalance(userId));
+        List<PlayerApi> playerApis = playerApiListVo.getResult();
+        if (CollectionTool.isEmpty(playerApis)) {
+            return;
+        }
+        Map<String, Api> apiMap = Cache.getApi();
+        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
+        Map<String, Object> map;
+        for (PlayerApi api : playerApis) {
+            map = new HashMap<>(4, 1f);
+            String apiId = api.getApiId().toString();
+            map.put("apiId", apiId);
+            map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
+            map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
+            map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
+            userInfo.addApi(map);
+        }
+    }
 
-        //正在处理中取款金额
+    private String getApiStatus(Map<String, Api> apiMap, Map<String, SiteApi> siteApiMap, String apiId) {
+        Api api = apiMap.get(apiId);
+        SiteApi siteApi = siteApiMap.get(apiId);
+        String disable = GameStatusEnum.DISABLE.getCode();
+        if (api == null || siteApi == null) {
+            return disable;
+        }
+        String apiStatus = api.getSystemStatus();
+        String siteApiStatus = siteApi.getSystemStatus();
+        if (disable.equals(apiStatus) || disable.equals(siteApiStatus)) {
+            return disable;
+        }
+        String maintain = GameStatusEnum.MAINTAIN.getCode();
+        if (maintain.equals(apiStatus) || maintain.equals(siteApiStatus)) {
+            return maintain;
+        }
+        return maintain;
+    }
+
+
+    /**
+     * 获取api名称
+     *
+     * @param apiI18nMap
+     * @param siteApiI18nMap
+     * @param apiId
+     * @return
+     */
+    private String getApiName(Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, String apiId) {
+        SiteApiI18n siteApiI18n = siteApiI18nMap.get(apiId);
+        String apiName = null;
+        if (siteApiI18n != null) {
+            apiName = siteApiI18n.getName();
+        }
+        if (StringTool.isNotBlank(apiName)) {
+            return apiName;
+        }
+        ApiI18n apiI18n = apiI18nMap.get(apiId);
+        if (apiI18n != null) {
+            apiName = apiI18n.getName();
+        }
+        return apiName;
+    }
+
+    /**
+     * 正在处理中取款金额
+     *
+     * @param userId
+     * @return
+     */
+    private Double getDealWithdrawAmount(Integer userId) {
         PlayerWithdrawVo playerWithdrawVo = new PlayerWithdrawVo();
         playerWithdrawVo.getSearch().setPlayerId(userId);
-        userInfo.put("withdrawAmount", ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo));
+        return ServiceSiteTool.playerWithdrawService().getDealWithdraw(playerWithdrawVo);
+    }
 
-        //正在处理中转账金额(额度转换)
-        PlayerTransferVo playerTransferVo = new PlayerTransferVo();
-        playerTransferVo.getSearch().setUserId(userId);
-        userInfo.put("transferAmount", ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo));
-
-        //计算近7日收益（优惠金额）
+    /**
+     * 计算近7日优惠
+     *
+     * @param userId
+     * @return
+     */
+    private Double getRecent7DayFavorable(Integer userId) {
         VPreferentialRecodeListVo vPreferentialRecodeListVo = new VPreferentialRecodeListVo();
         vPreferentialRecodeListVo.getSearch().setUserId(userId);
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
@@ -103,110 +231,46 @@ public class BaseUserInfoController {
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
-        userInfo.put("preferentialAmount", ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
-
-        //银行卡信息
-        List<UserBankcard> userBankcards = BankHelper.getUserBankcardList();
-        Map<String, String> bankcardNumMap = new HashMap<>(1, 1f);
-        for (UserBankcard userBankcard : userBankcards) {
-            int length = 0;
-            if (StringTool.isNotBlank(userBankcard.getBankcardNumber())) {
-                length = userBankcard.getBankcardNumber().length();
-            }
-            bankcardNumMap = new HashMap<>(1, 1f);
-            if (UserBankcardTypeEnum.BITCOIN.getCode().equals(userBankcard.getType())) {
-                UserBankcard userBtc = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC);  //获取用户比特币信息
-                bankcardNumMap.put("btcNumber", BankCardTool.overlayBankcard(userBtc.getBankcardNumber()));//隐藏比特币账户
-                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
-                    bankcardNumMap.put("btcNum", StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-                }
-                userInfo.put("btc", bankcardNumMap);
-            } else {
-                bankcardNumMap.put(UserBankcard.PROP_BANK_NAME, userBankcard.getBankName());
-                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 4) {
-                    bankcardNumMap.put(UserBankcard.PROP_BANKCARD_NUMBER, StringTool.overlay(userBankcard.getBankcardNumber(), "*", 0, length - 4));
-                }
-                UserBankcard bankcard = BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK);//获取用户银行卡信息
-                bankcardNumMap.put("bankcardMasterName", StringTool.overlayName(bankcard.getBankcardMasterName())); //隐藏部分真实姓名
-                String bankName = LocaleTool.tranMessage(Module.COMMON, "bankname." + userBankcard.getBankName()); //将ICBC转换工商银行
-                bankcardNumMap.put("bankName", bankName);
-                bankcardNumMap.put("bankUrl", setBankPictureUrl(request, bankcard));
-                if (StringTool.isNotBlank(userBankcard.getBankcardNumber()) && userBankcard.getBankcardNumber().length() > 10) {
-                    bankcardNumMap.put("bankcardNumber", BankCardTool.overlayBankcard(userBankcard.getBankcardNumber()));
-                }
-                bankcardNumMap.put("bankDeposit", bankcard.getBankDeposit());
-                bankcardNumMap.put("realName", SessionManager.getUser().getRealName());  //真实姓名
-                userInfo.put("bankcard", bankcardNumMap);
-            }
+        Number preferential = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
+        if (preferential == null) {
+            return 0d;
+        } else {
+            return preferential.doubleValue();
         }
-
-        //推荐好友,昨日收益
-        PlayerRecommendAwardListVo playerRecommendAwardListVo = new PlayerRecommendAwardListVo();
-        playerRecommendAwardListVo.getSearch().setUserId(userId);
-        playerRecommendAwardListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), RECOMMEND_DAYS));
-        playerRecommendAwardListVo.getSearch().setEndTime(SessionManager.getDate().getToday());
-        userInfo.put("recomdAmount", ServiceSiteTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
-
-        //系统消息-未读数量
-        VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
-        Long number = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
-        VPlayerAdvisoryListVo listVo = new VPlayerAdvisoryListVo();
-        listVo.setSearch(null);
-        listVo.getSearch().setSearchType("player");
-        listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
-        listVo.getSearch().setPlayerDelete(false);
-        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
-        Integer advisoryUnReadCount = 0;
-        String tag = "";
-        //所有咨询数据
-        for (VPlayerAdvisory obj : listVo.getResult()) {
-            //查询回复表每一条在已读表是否存在
-            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
-            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
-            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
-                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
-                readVo.setResult(new PlayerAdvisoryRead());
-                readVo.getSearch().setUserId(SessionManager.getUserId());
-                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
-                //不存在未读+1，标记已读咨询Id
-                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
-                    advisoryUnReadCount++;
-                    tag += replay.getPlayerAdvisoryId().toString() + ",";
-                }
-            }
-        }
-        //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String[] tags = tag.split(SPLIT_REGEX);
-        for (VPlayerAdvisory vo : listVo.getResult()) {
-            for (int i = 0; i < tags.length; i++) {
-                if (tags[i] != "") {
-                    VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
-                    pa.getSearch().setId(Integer.valueOf(tags[i]));
-                    VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
-                    if (vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())) {
-                        vo.setIsRead(false);
-                    }
-                }
-            }
-        }
-        userInfo.put("unReadCount", number + advisoryUnReadCount);
-        //用户个人信息
-        userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
-        userInfo.put("avatarUrl", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
-        //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
-        if (sysUser.getLastLoginTime() != null) {
-            userInfo.put("lastLoginTime", LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        } else if (sysUser.getLoginTime() != null) {
-            userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
-        }
-        userInfo.put("currency", getCurrencySign());
-        userInfo.put("realName", StringTool.overlayName(sysUser.getRealName()));
     }
 
-    private String setBankPictureUrl (HttpServletRequest request, UserBankcard bankcard) {
+    /**
+     * 获取昨日推荐奖励金额
+     *
+     * @param userId
+     * @return
+     */
+    private Double getYesterdayRecommend(Integer userId) {
+        PlayerRecommendAwardListVo playerRecommendAwardListVo = new PlayerRecommendAwardListVo();
+        playerRecommendAwardListVo.getSearch().setUserId(userId);
+        playerRecommendAwardListVo.getSearch().setStartTime(SessionManager.getDate().getYestoday());
+        playerRecommendAwardListVo.getSearch().setEndTime(SessionManager.getDate().getToday());
+        Number recommend = ServiceSiteTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT);
+        if (recommend == null) {
+            return 0d;
+        } else {
+            return recommend.doubleValue();
+        }
+    }
+
+    /**
+     * 正在处理中转账金额
+     *
+     * @param userId
+     * @return
+     */
+    private Double getProcessTransferAmount(Integer userId) {
+        PlayerTransferVo playerTransferVo = new PlayerTransferVo();
+        playerTransferVo.getSearch().setUserId(userId);
+        return ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo);
+    }
+
+    private String setBankPictureUrl(HttpServletRequest request, UserBankcard bankcard) {
         StringBuilder sb = new StringBuilder();
         sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
         sb.append(COMMON_PAYBANK_PHOTO);
@@ -321,7 +385,6 @@ public class BaseUserInfoController {
         }
         return "";
     }
-
 
 
     private List<SiteApi> getSiteApi() {

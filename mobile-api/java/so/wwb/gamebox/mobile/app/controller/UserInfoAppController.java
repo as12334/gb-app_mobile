@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.ListTool;
-import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.validation.form.annotation.FormModel;
@@ -28,6 +27,7 @@ import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,21 +50,11 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping(value = "/getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request) {
-
-        UserInfoApp userApp = new UserInfoApp();
-        SysUser user = SessionManager.getUser();
-        getAppUserInfo(request, user, userApp);
-
-        Map<String, Object> map = MapTool.newHashMap();
-        Map<String, Object> userInfoMap = MapTool.newHashMap();
-
+        Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("link", setLink());//链接地址
-        getMineLinkInfo(userInfoMap, request);//用户金额信息
-        map.put("user", userInfoMap);
+        map.put("user", getMineLinkInfo(request));
         map.put("bankList", bankList());
-        map.put("userApi", userApp);
-
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
@@ -79,8 +69,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @ResponseBody
     public String submitBtc(@FormModel @Valid BtcBankcardForm form, BindingResult result) {
         if (result.hasErrors()) {
-
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
                     null, APP_VERSION);
@@ -96,8 +85,7 @@ public class UserInfoAppController extends BaseUserInfoController {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(AppConstant.APP_VERSION);
         if (checkCardIsExistsByUserId(bankcardVo)) {
-
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.HAS_BTC.getCode(),
                     AppErrorCodeEnum.HAS_BTC.getMsg(),
                     null, APP_VERSION);
@@ -109,16 +97,15 @@ public class UserInfoAppController extends BaseUserInfoController {
         bankcard.setBankName(BITCOIN);
         bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
         if (!bankcardVo.isSuccess()) {
-
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode(),
                     AppErrorCodeEnum.SUBMIT_BTC_FAIL.getMsg(),
                     null, APP_VERSION);
         }
-        Map<String, String> map = MapTool.newHashMap();
+        Map<String, String> map = new HashMap<>(1, 1f);
         map.put("btcNumber", bankcardVo.getResult().getBankcardNumber());
 
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE,
+        return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
@@ -134,12 +121,10 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping(value = "/submitBankCard", method = RequestMethod.POST)
     @ResponseBody
     public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {
-
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(), null, APP_VERSION);//当出现验证信息没有过的时候一律提示参数有误
         }
-
         UserBankcardVo vo = new UserBankcardVo();
         vo.setUserType(SessionManagerCommon.getUserType().getCode());
         if (vo.getResult() == null) {
@@ -150,33 +135,30 @@ public class UserInfoAppController extends BaseUserInfoController {
         vo.getResult().setBankcardNumber(form.getResult_bankcardNumber());
         vo.getResult().setBankDeposit(form.getResult_bankDeposit());
         vo.getResult().setUserId(SessionManager.getUserId());
-        if (checkCardIsExistsByUserId(vo)) {           //当银行卡号重复时，提示信息为银行卡号已存在
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
-                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(), null, APP_VERSION);
-        }
         if (StringTool.isBlank(SessionManager.getUser().getRealName()) && StringTool.isBlank(vo.getResult().getBankcardMasterName())) {
-
-            return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.FAIL_COED,
+            return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode(),
                     AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg(), null, APP_VERSION);
         }
-
+        if (checkCardIsExistsByUserId(vo)) {           //当银行卡号重复时，提示信息为银行卡号已存在
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
+                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(), null, APP_VERSION);
+        }
         if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
             vo.getResult().setBankcardMasterName(SessionManager.getUser().getRealName());
         }
         vo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(vo);
         SessionManagerCommon.refreshUser();
 
-        Map<String, String> map = MapTool.newHashMap();
+        Map<String, String> map = new HashMap<>(4, 1f);
         if (vo.isSuccess()) {
             map.put("realName", vo.getResult().getBankcardMasterName());
             map.put("bankName", vo.getResult().getBankName());
             map.put("bankCardNumber", vo.getResult().getBankcardNumber());
             map.put("bankDeposit", vo.getResult().getBankDeposit());
-
         }
-        return AppModelVo.getAppModeVoJson(AppErrorCodeEnum.SUCCESS_CODE, AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
 
