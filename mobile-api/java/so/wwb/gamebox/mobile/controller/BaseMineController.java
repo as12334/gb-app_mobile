@@ -19,7 +19,6 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.Base36;
-import org.soul.commons.security.CryptoTool;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
@@ -41,6 +40,7 @@ import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
@@ -69,7 +69,6 @@ import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
 import so.wwb.gamebox.web.api.IApiBalanceService;
-import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -379,16 +378,6 @@ public class BaseMineController {
         return "";
     }
 
-    /**
-     * 获取用户银行卡信息
-     *
-     * @param map
-     */
-    public void bankcard(Map map) {
-        map.put("user", SessionManagerCommon.getUser());
-        map.put("bankListVo", BankHelper.getBankListVo());
-    }
-
     protected VUserPlayer getVPlayer(Integer userId) {
         VUserPlayerVo vo = new VUserPlayerVo();
         vo.getSearch().setId(userId);
@@ -443,11 +432,12 @@ public class BaseMineController {
     protected List<BettingInfoApp> buildBetting(List<PlayerGameOrder> list) {
         List<BettingInfoApp> bettingInfoAppList = new ArrayList<>();
         Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap = getSiteApiTypeRelationMap(CommonContext.get().getSiteId());
-        Map<String, SiteGameI18n> map = getSiteGameI18n();
+        Map<String, SiteGameI18n> siteGameI18nMap = Cache.getSiteGameI18n();
+        Map<String, GameI18n> gameI18nMap = Cache.getGameI18n();
         Map<String, SiteApiI18n> siteApiI18nMap = getSiteApiI18n();
+        String url = "/fund/betting/gameRecordDetail.html?searchId=%s";
         for (PlayerGameOrder order : list) {
             BettingInfoApp infoApp = new BettingInfoApp();
-
             PlayerActivityMessage message = new PlayerActivityMessage();
             message.setId(order.getId());
             infoApp.setId(message.getSearchId());//加密后的id
@@ -459,15 +449,10 @@ public class BaseMineController {
             infoApp.setOrderState(order.getOrderState());
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
-
-//解密后的id
-            infoApp.setUrl("/fund/betting/gameRecordDetail.html?search.id=" + Integer.valueOf(CryptoTool.aesDecrypt(message.getSearchId(), "PlayerActivityMessageListVo")));
-
+            infoApp.setUrl(String.format(url, infoApp.getId()));
             String apiName = getApiName(siteApiTypeRelationMap, String.valueOf(order.getApiId()), siteApiI18nMap);
             infoApp.setApiName(apiName);
-
-            String gameName = getGameName(map, String.valueOf(order.getGameId()));
-            infoApp.setGameName(gameName);
+            infoApp.setGameName(Cache.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
@@ -479,22 +464,11 @@ public class BaseMineController {
         }
         SiteApiTypeRelation tempRelation = getSiteApiTypeRelationByApiId(apiId);
         if (tempRelation == null) {
-            return siteApiI18nMap.get(apiId.toString()).getName();
+            return siteApiI18nMap.get(apiId).getName();
         }
         Map<String, SiteApiTypeRelationI18n> relationI18nMap = siteApiTypeRelationMap.get(tempRelation.getApiTypeId().toString());
         return relationI18nMap.get(apiId).getName();
     }
-
-    private String getGameName(Map<String, SiteGameI18n> map, String gameId) {
-        if (MapTool.isEmpty(map)) {
-            return null;
-        }
-        if (map.get(gameId) != null) {
-            return map.get(gameId).getName();
-        }
-        return null;
-    }
-
 
     private static SiteApiTypeRelation getSiteApiTypeRelationByApiId(String apiId) {
         Map<String, List<SiteApiTypeRelation>> siteApiTypeRelation = getSiteApiTypeRelation();
