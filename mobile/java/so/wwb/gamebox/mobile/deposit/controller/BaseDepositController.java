@@ -110,12 +110,9 @@ public class BaseDepositController extends BaseCommonDepositController {
         vActivityMessageVo.setDepositAmount(rechargeAmount);
         vActivityMessageVo.setRankId(userPlayer.getRankId());
         vActivityMessageVo.setLocal(SessionManager.getLocale().toString());
-        IVActivityMessageService ivActivityMessageService = ServiceActivityTool.vActivityMessageService();
-        if(ivActivityMessageService != null){
-            ivActivityMessageService.searchDepositPromotions(vActivityMessageVo);
-        }
+        vActivityMessageVo = ServiceActivityTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
-        if(CollectionTool.isEmpty(vActivityMessages)) {
+        if (CollectionTool.isEmpty(vActivityMessages)) {
             return new ArrayList<>();
         }
         //如果玩家首存可同时显示首存送和存就送
@@ -235,7 +232,7 @@ public class BaseDepositController extends BaseCommonDepositController {
      */
     private double computeFee(String feeType, Double feeMoney, Double rechargeAmount, Double maxFee) {
         double fee = 0d;
-        if(feeMoney != null || rechargeAmount != null) {
+        if (feeMoney != null || rechargeAmount != null) {
             if (RankFeeType.PROPORTION.getCode().equals(feeType)) {
                 fee = rechargeAmount * feeMoney / 100.0;
             } else if (RankFeeType.FIXED.getCode().equals(feeType)) {
@@ -275,6 +272,7 @@ public class BaseDepositController extends BaseCommonDepositController {
 
     /**
      * 验证码验证
+     *
      * @param code
      * @return
      */

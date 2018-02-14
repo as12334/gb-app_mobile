@@ -128,6 +128,8 @@ public class IndexController extends BaseApiController {
         //手机弹窗广告、查询Banner和公告
         getBannerAndAd(model,request);
         initFloatPic(model);
+
+        model.addAttribute("isShowQrCode", ParamTool.isLoginShowQrCode()); //这是二维码开启开关
         return "/Index";
     }
 

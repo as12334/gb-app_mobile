@@ -10,13 +10,13 @@ public class RecordDetailApp {
     private String transactionNo;     //交易号
     private java.util.Date createTime; //创建时间
     private String transactionType;   //资金类型
-    private Double transactionMoney;
+    private String transactionMoney;
     private String withdrawMoney; //取款金额
     private String status;          //状态
     private String statusName; //状态名称
 
     private String failureReason;    //失败原因
-    private Double administrativeFee;  //行政费用
+    private String administrativeFee;  //行政费用
     private String deductFavorable;    //扣除优惠
     private String fundType;         //资金类型
     private String transactionWay;   //资金类型
@@ -25,11 +25,16 @@ public class RecordDetailApp {
     private String poundage;  //手续费
     private String poundageName; // 是否免手续费（中文汉字）
     private String realName; //真实姓名
+    private Long returnTime; //交易时间
+    private String bitcoinAdress;
 
+    private String txId; // 比特币的txid
     private String transferOut; // 转出
     private String transferInto; //转入
     private String bankCode; //取款 银行code
     private String bankCodeName; // 银行名称
+
+    private String bankUrl; //银行的图片的链接地址
 
     private String withDrwalsRemark; // 取款 和优惠描述
 
@@ -84,11 +89,11 @@ public class RecordDetailApp {
         this.transactionType = transactionType;
     }
 
-    public Double getTransactionMoney() {
+    public String getTransactionMoney() {
         return transactionMoney;
     }
 
-    public void setTransactionMoney(Double transactionMoney) {
+    public void setTransactionMoney(String transactionMoney) {
         this.transactionMoney = transactionMoney;
     }
 
@@ -108,11 +113,11 @@ public class RecordDetailApp {
         this.failureReason = failureReason;
     }
 
-    public Double getAdministrativeFee() {
+    public String getAdministrativeFee() {
         return administrativeFee;
     }
 
-    public void setAdministrativeFee(Double administrativeFee) {
+    public void setAdministrativeFee(String administrativeFee) {
         this.administrativeFee = administrativeFee;
     }
 
@@ -274,5 +279,37 @@ public class RecordDetailApp {
 
     public void setWithdrawMoney(String withdrawMoney) {
         this.withdrawMoney = withdrawMoney;
+    }
+
+    public String getBankUrl() {
+        return bankUrl;
+    }
+
+    public void setBankUrl(String bankUrl) {
+        this.bankUrl = bankUrl;
+    }
+
+    public Long getReturnTime() {
+        return returnTime;
+    }
+
+    public void setReturnTime(Long returnTime) {
+        this.returnTime = returnTime;
+    }
+
+    public String getTxId() {
+        return txId;
+    }
+
+    public void setTxId(String txId) {
+        this.txId = txId;
+    }
+
+    public String getBitcoinAdress() {
+        return bitcoinAdress;
+    }
+
+    public void setBitcoinAdress(String bitcoinAdress) {
+        this.bitcoinAdress = bitcoinAdress;
     }
 }
