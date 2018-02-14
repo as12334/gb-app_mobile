@@ -1,10 +1,12 @@
 package so.wwb.gamebox.mobile.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -66,6 +68,7 @@ import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
+import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
 import so.wwb.gamebox.web.api.IApiBalanceService;
@@ -1048,8 +1051,15 @@ public class BaseMineController {
         //将会获取到的金额值
         map.put("money", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_MONEY).getParamValue());
         //有红利奖励显示分享红利标志，没有不显示
-        map.put("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getParamValue());
+        map.put("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getActive());
+        // 存款金额满多少钱
+        map.put("witchWithdraw", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_THEWAY).getParamValue());
 
+        //有效分享人数 和所对应的红利
+        SysParam bonusJson = ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS_JSON);
+        ArrayList<GradientTemp> gradientTempArrayList = JsonTool.fromJson(bonusJson.getParamValue(), new TypeReference<ArrayList<GradientTemp>>() {
+        });
+        map.put("gradientTempArrayList", gradientTempArrayList);
         //查询推荐人数 获取奖励 红利
         PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
         playerVo.getSearch().setUserId(SessionManager.getUserId());
