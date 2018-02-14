@@ -452,7 +452,7 @@ public class BaseMineController {
             infoApp.setUrl(String.format(url, infoApp.getId()));
             String apiName = getApiName(siteApiTypeRelationMap, String.valueOf(order.getApiId()), siteApiI18nMap);
             infoApp.setApiName(apiName);
-            infoApp.setGameName(Cache.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
+            infoApp.setGameName(ApiGameBase.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
