@@ -3,111 +3,194 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <!DOCTYPE html>
-<html>
+<html class="new-invite">
 <head>
     <title>${siteName}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <%@ include file="../include/include.head.jsp" %>
+    <link rel="bookmark" href="${resRoot}/favicon.ico">
+    <link rel="shortcut icon" href="${resRoot}/favicon.ico">
+    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css" />
 </head>
 
-<body class="invite">
+<body>
 <!-- 侧滑导航根容器 -->
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav">
-            <a class="mui-action-back mui-icon mui-icon-left-nav"></a>
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">推荐好友</h1>
-            <a href="mine-invite-records.html" class="button mui-btn mui-btn-outlined mui-pull-right" data-href="mine-invite-records.html">推荐记录</a>
+            <a href="javascript:void(0);" class="btn-question" id="question" ></a>
         </header>
 
         <div class="mui-content mui-scroll-wrapper invite-content">
             <div class="mui-scroll">
-                <div class="mui-row">
-                    <div class="gb-panel">
-                        <div class="invite-code">
-                            <p class="p1">您的专属推荐码：<span class="text-green">${recommendCode}</span></p>
-                            <p class="p2">
-                                    <span class="mui-pull-right">
-                                        获得红利：<span class="text-green">${sign}${soulFn:formatCurrency(recommend.count)}</span>
-                                    </span>
-                                <span class="span">
-                                        您已推荐好友：<span class="text-green">${recommend.user}名</span>
-                                    </span>
-                            </p>
-                        </div>
+                <div class="panel1">
+                    <div class="row1">
+                        <div>我分享的好友数 <span>${recommend.user}</span>人</div>
+                        <div>我的分享奖励 <span>${recommend.single}</span> 元</div>
+                    </div>
+                    <div class="row2">
+                        <div>我的奖励次数 <span>${recommend.count}</span> 次</div>
+                        <div>我的分享红利 <span>${recommend.bonus}</span> 元</div>
+                    </div>
+                </div>
+                <div class="panel2">
+                    您的专属链接，<br>
+                    复制后通过微信、QQ等方式发送给好友
+                    <div class="input-wrap">
+                        <input type="text" value="${code}"> <a href="javascript:void(0)" id="copyCode" data-clipboard-text="${code}" class="btn-copy">复制</a>
                     </div>
                 </div>
 
-
-                <div class="mui-row">
-                    <div class="gb-panel m-t-sm">
-                        <div class="invite-cont">
-                            <div class="cont">
-                                <p>这是您的专属邀请码<br>复制以下文字通过QQ等方式发送给好友</p>
-                                <div class="link">
-                                    <p>${resRoot}${code}</p>
-                                </div>
-                                <p class="mui-text-center">
-                                    <a href="#" id="copyCode" class="btn mui-btn mui-btn-primary" data-clipboard-text="${code}">${views.themes_auto['复制']}</a>
-
-                                </p>
-                            </div>
-
-                            <div class="cont">
-                                <p><span class="text-blue">推荐奖励</span></p>
+                <div class="panel3">
+                    <div class="mui-segmented-control">
+                        <a class="mui-control-item mui-active" href="#item1">
+                            奖励规则
+                        </a>
+                        <a class="mui-control-item" href="#item2">
+                            分享记录
+                        </a>
+                    </div>
+                    <div id="item1" class="mui-control-content mui-active">
+                        <div id="scroll" class="mui-scroll-wrapper">
+                            <div class="mui-scroll">
                                 <c:if test="${reward eq 1}">
-                                    <p>推荐好友成功注册并存款满￥30， 双方各获<span class="text-green">${sign}${money}</span>奖励。</p>
+                                    <div class="pan">
+                                        <div class="tit">互惠奖励</div>
+                                        推荐好友成功注册并存款满${witchWithdraw}元 <br>
+                                        双方各获${money}元奖励
+                                    </div>
                                 </c:if>
-                                <c:if test="${reward eq 2}">
-                                    <p>推荐好友成功注册并存款满￥30， 你将会得到<span class="text-green">${sign}${money}</span>奖励。</p>
-                                </c:if>
-                                <c:if test="${reward ne 1 && reward ne 2}">
-                                    <p>推荐好友成功注册并存款满￥30， 你推荐的好友会获取到<span class="text-green">${sign}${money}</span>奖励。</p>
-                                </c:if>
-                            </div>
 
-                            <div class="cont">
-                                <p><span class="text-blue">推荐红利</span></p>
-                                <div class="tabl">
-                                    <table>
-                                        <tbody><tr>
-                                            <td>推荐玩家数量</td>
-                                            <td>推荐红利比例</td>
-                                        </tr>
+                                <c:if test="${bonus eq true}">
+
+
+                                <div class="pan">
+                                    <div class="tit">分享红利</div>
+                                    红利=分享好友的有效投注额*分享红利比例
+                                    <table class="table1">
+                                        <thead>
                                         <tr>
-                                            <td>1</td>
-                                            <td>5%</td>
+                                            <th>分享好友有效投注人数</th>
+                                            <th>分享红利比例</th>
                                         </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>10%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>15%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>6</td>
-                                            <td>20%</td>
-                                        </tr>
-                                        </tbody></table>
+                                        </thead>
+                                        <tbody>
+
+                                        <c:forEach items="${gradientTempArrayList}" var="p" varStatus="status">
+                                            <tr>
+                                                <td>${p.playerNum}以上</td><%--分享好友投注人数--%>
+                                                <td>${p.proportion} %</td><%--红利比例--%>
+                                            </tr>
+
+                                        </c:forEach>
+
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <p></p>
+                                </c:if>
+                                
+                                
                             </div>
-
-                            <div class="cont">
-                                <p><span class="text-blue">活动细则</span></p>
-                                <p class="al-left">1. 新用户通过您的邀请链接进行注册、绑定手机后，将立即获得5元红包。您将在第二天获得5元红包。
-                                </p><p class="al-left">2. 新用户的手机号码必须是在平安游戏使用过的。</p>
-                                <p class="al-left">3. 新用户的手机号码所在地须是平安游戏覆盖城市。</p>
-                                <p class="al-left">4. 同一手机号码只在第一次被绑定时赠送红包。每部手机仅限第一次注册时有效。</p>
-                                <p class="al-left">5. 如对本活动规则有疑问请联系平安游戏客服。</p>
+                        </div>
+                    </div>
+                    <div id="item2" class="mui-control-content share-record-wrap">
+                        <div class="filter-p">
+                            <div class="gb-datafilter">
+                                创建日期:
+                                <span class="input-date" ><a href=""></a>
+		                <input type="datetime" class="date"
+                               value="${soulFn:formatDateTz(defaultMinDate, DateFormat.DAY, timeZone)}"
+                               id="beginTime" data-rel='{"target":"clickMinDate","opType":"function"}' minDate="${soulFn:formatDateTz(defaultMinDate, DateFormat.DAY, timeZone)}">
+		            </span>
+                                ~
+                                <span class="input-date"><a href=""></a>
+		                <input type="datetime" class="date"
+                               value="${soulFn:formatDateTz(defaultMaxDate, DateFormat.DAY, timeZone)}" id="endTime"
+                               endTime="${soulFn:formatDateTz(defaultMaxDate, DateFormat.DAY, timeZone)}"
+                               minDate="${soulFn:formatDateTz(defaultMinDate, DateFormat.DAY, timeZone)}" data-rel='{"target":"clickMaxDate","opType":"function"}'>
+		            </span>
+                                <a href="#selectDate" class="btn mui-btn mui-btn-primary btn-kx" style="width: 15%;" data-rel='{"target":"searchBydate","opType":"function"}'>搜索</a>
+                                <div class="clearfix"></div>
                             </div>
+                        </div>
+                        <div  class="mui-scroll-wrapper">
+                            <div class="mui-scroll">
+                                <div class="sha-wra">
+                                    <table class="table2">
+                                        <thead>
+                                        <tr>
+                                            <th>好友账号</th>
+                                            <th>有效投注</th>
+                                            <th>红利</th>
+                                            <th>互惠奖励</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach items="command" var="vo">
+                                            <tr>
+                                                <td>${vo.recommendUserName}</td> <%--被推荐人账号--%>
+                                                <td></td> 有效投注额，暂时注掉
+                                            </tr>
 
+
+                                        </c:forEach>
+
+
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td>已获得</td>
+                                        </tr>
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td><span class="red">为达到条件</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td>已获得</td>
+                                        </tr>
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td><span class="red">为达到条件</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td>已获得</td>
+                                        </tr>
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td><span class="red">为达到条件</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>jac***456</td>
+                                            <td>123405</td>
+                                            <td>33</td>
+                                            <td>已获得</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -118,6 +201,8 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
+<script src="/legend02/rcenter/common/js/dist/clipboard.js"></script>
+<script src="${resRoot}/js/mui/mui.picker.min.js"></script>
 <script type="text/javascript" src="${resRoot}/js/recommend/Recommend.js"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
