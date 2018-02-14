@@ -74,6 +74,6 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resRoot}/js/common.js"></script>
+<script src="${resComRoot}/js/dist/clipboard.js"></script>
 <script src="${resRoot}/js/deposit/ThirdPartyPay.js"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js"></script>

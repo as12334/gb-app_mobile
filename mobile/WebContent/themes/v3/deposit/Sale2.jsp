@@ -18,24 +18,20 @@
                     <div class="text-pro">
                         <p>${views.deposit_auto['优惠']}：</p>
                         <ul>
-                            <div class="mui-scroll-wrapper">
-                                <div class="mui-scroll">
-                                    <li>
-                                        <div class="text-warp">
-                                            <span>${views.deposit_auto['不参与优惠']}</span>
-                                            <input name="activityId" type="radio" value="" checked="checked"/>
-                                        </div>
-                                    </li>
-                                    <c:forEach items="${sales}" varStatus="vs" var="i">
-                                        <li>
-                                            <div class="text-warp">
-                                                <span>${i.activityName}</span>
-                                                <input name="activityId" type="radio" value="${i.id}"/>
-                                            </div>
-                                        </li>
-                                    </c:forEach>
+                            <li>
+                                <div class="text-warp">
+                                    <span>${views.deposit_auto['不参与优惠']}</span>
+                                    <input name="activityId" type="radio" value="" checked="checked"/>
                                 </div>
-                            </div>
+                            </li>
+                            <c:forEach items="${sales}" varStatus="vs" var="i">
+                                <li>
+                                    <div class="text-warp">
+                                        <span>${i.activityName}</span>
+                                        <input name="activityId" type="radio" value="${i.id}"/>
+                                    </div>
+                                </li>
+                            </c:forEach>
                         </ul>
                     </div>
                     <div class="pro-btn">
