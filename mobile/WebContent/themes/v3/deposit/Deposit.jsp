@@ -3,9 +3,9 @@
 <html>
 <head>
     <%@include file="../include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css">
-    <link rel="stylesheet" href="${resRoot}/themes/mui.poppicker.css">
-    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css"/>
+    <link rel="stylesheet" type="text/css" href="${resRoot}/themes/swiper.min.css?v=${rcVersion}"/>
+    <link href="${resRoot}/themes/mui.picker.css?v=${rcVersion}" type="text/css" rel="stylesheet" />
+    <link href="${resRoot}/themes/mui.poppicker.css?v=${rcVersion}" type="text/css" rel="stylesheet" />
 </head>
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">
@@ -131,10 +131,10 @@
 
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resRoot}/js/mui/mui.picker.js"></script>
-<script src="${resRoot}/js/mui/mui.poppicker.js"></script>
-<script src="${resRoot}/js/swiper.min.js"></script>
-<script src="${resRoot}/js/deposit/DepositCenter.js"></script>
-<script src="${resRoot}/js/deposit/OnlinePay.js"></script>
-<script src="${resRoot}/js/deposit/CompanyDeposit.js"></script>
+<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/OnlinePay.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
 </html>

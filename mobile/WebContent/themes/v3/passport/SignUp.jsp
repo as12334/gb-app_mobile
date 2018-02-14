@@ -208,7 +208,7 @@
                         </div>
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left tk">
-                        <a data-rel='{"target":"${root}/index/protocol.html","opType":"href"}'>${views.register['signUp.termsOfService']}</a>
+                        <a data-rel='{"target":"terms","opType":"function"}'>${views.register['signUp.termsOfService']}</a>
                         <input name="termsOfService" value="11" type="checkbox"
                                data-rel='{"target":"termsOfService","opType":"function"}' checked>
                     </div>

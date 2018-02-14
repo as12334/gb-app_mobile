@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../include/include.inc.jsp" %>
 <c:choose>
     <c:when test="${companyPayAccount != null}">
         <form id="companyCashForm" onsubmit="return false">

@@ -16,9 +16,9 @@
 <link rel="bookmark" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
 <link rel="shortcut icon" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
 
-<link rel="stylesheet" href="${resRoot}/themes/mui.min.css" />
-<link rel="stylesheet" href="${resRoot}/themes/common.css" />
-<link rel="stylesheet" href="${resRoot}/themes/index.css" />
+<link rel="stylesheet" href="${resRoot}/themes/mui.min.css?v=${rcVersion}" />
+<link rel="stylesheet" href="${resRoot}/themes/common.css?v=${rcVersion}" />
+<link rel="stylesheet" href="${resRoot}/themes/index.css?v=${rcVersion}" />
 <c:set var="background_type" value="${backgroundParam.paramValue}"/>
 <c:choose>
     <c:when test="${background_type eq 'black'}">
@@ -34,9 +34,9 @@
         <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
     </c:otherwise>
 </c:choose>
-<link rel="stylesheet" href="${resRoot}/themes/hongbao.css" />
-<link rel="stylesheet" href="${resRoot}/themes/otherpage.css" />
-<link rel="stylesheet" href="${resRoot}/themes/loading.css"/>
+<link rel="stylesheet" href="${resRoot}/themes/hongbao.css?v=${rcVersion}" />
+<link rel="stylesheet" href="${resRoot}/themes/otherpage.css?v=${rcVersion}" />
+<link rel="stylesheet" href="${resRoot}/themes/loading.css?v=${rcVersion}"/>
 
 
 
