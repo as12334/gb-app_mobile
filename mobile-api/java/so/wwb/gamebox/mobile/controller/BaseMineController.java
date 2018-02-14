@@ -60,6 +60,7 @@ import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
+import so.wwb.gamebox.model.master.player.so.VPlayerAdvisorySo;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
@@ -1022,6 +1023,24 @@ public class BaseMineController {
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
         return map;
+    }
+
+    /**
+     * 获取玩家咨询的List
+     * @param listVo
+     * @return
+     */
+    protected VPlayerAdvisoryListVo searchAdvisoryList(VPlayerAdvisoryListVo listVo) {
+        if (listVo.getSearch() == null) {
+            listVo.setSearch(new VPlayerAdvisorySo());
+        }
+        listVo.getSearch().setSearchType("player");
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
+        listVo.getSearch().setPlayerDelete(false);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
+
+        return listVo;
     }
 
     /**

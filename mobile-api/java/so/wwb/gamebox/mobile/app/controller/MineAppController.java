@@ -300,12 +300,10 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
         //提问内容+未读数量
-        Map<String, Object> map = MapTool.newHashMap();
-        listVo = this.unReadCount(listVo, map);
+        listVo = searchAdvisoryList(listVo);
 
-        List<VPlayerAdvisory> advisoryList = listVo.getResult();
         List<AdvisoryMessageApp> messageAppList = ListTool.newArrayList();
-        for (VPlayerAdvisory advisory : advisoryList) {
+        for (VPlayerAdvisory advisory : listVo.getResult()) {
             AdvisoryMessageApp messageApp = new AdvisoryMessageApp();
             messageApp.setAdvisoryTitle(advisory.getAdvisoryTitle());
             messageApp.setAdvisoryContent(advisory.getAdvisoryContent());
@@ -1429,61 +1427,5 @@ public class MineAppController extends BaseMineController {
         return false;
     }
 
-    private VPlayerAdvisoryListVo unReadCount(VPlayerAdvisoryListVo listVo, Map map) {
-        //系统消息-未读数量
-        VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
-        Long length = ServiceTool.noticeService().fetchUnclaimedMsgCount(vNoticeReceivedTextVo);
-        map.put("length", length);
-        //玩家咨询-未读数量
-        listVo.setSearch(null);
-        listVo.getSearch().setSearchType("player");
-        listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
-        listVo.getSearch().setPlayerDelete(false);
-        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
-        Integer advisoryUnReadCount = 0;
-        String tag = "";
-        //所有咨询数据
-        for (VPlayerAdvisory obj : listVo.getResult()) {
-            //查询回复表每一条在已读表是否存在
-            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
-            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
-            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
-            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
-                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
-                readVo.setResult(new PlayerAdvisoryRead());
-                readVo.getSearch().setUserId(SessionManager.getUserId());
-                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
-                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
-                //不存在未读+1，标记已读咨询Id
-                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
-                    advisoryUnReadCount++;
-                    tag += replay.getPlayerAdvisoryId().toString() + ",";
-                }
-            }
-        }
-        //判断已标记的咨询Id除外的未读咨询id,添加未读标记isRead=false;
-        String[] tags = tag.split(",");
-        for (VPlayerAdvisory vo : listVo.getResult()) {
-            for (int i = 0; i < tags.length; i++) {
-                if (tags[i] != "") {
-                    VPlayerAdvisoryVo pa = new VPlayerAdvisoryVo();
-                    pa.getSearch().setId(Integer.valueOf(tags[i]));
-                    VPlayerAdvisoryVo vpaVo = ServiceSiteTool.vPlayerAdvisoryService().get(pa);
-                    if (vo.getId().equals(vpaVo.getResult().getContinueQuizId()) || vo.getId().equals(vpaVo.getResult().getId())) {
-                        vo.setIsRead(false);
-                    } else {
-                        vo.setIsRead(true);
-                    }
-                }
-            }
-        }
-        Long sysMessageUnReadCount = null;
-        advisoryUnReadCount = 0;
-        sysMessageUnReadCount = length;
-        map.put("sysMessageUnReadCount", sysMessageUnReadCount);
-        map.put("advisoryUnReadCount", advisoryUnReadCount);
-        return listVo;
-    }
 }
 
