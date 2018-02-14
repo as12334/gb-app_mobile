@@ -142,7 +142,7 @@ public class IndexController extends BaseApiController {
     private List<Map<String, String>> getLottery(HttpServletRequest request, Integer pageSize) {
         String terminal = SessionManagerCommon.fetchTerminalType(request);
         List<Map<String, String>> lotteryList = new ArrayList<>();
-        List<SiteLottery> lotteries = Cache.getNormalSiteLottery(terminal, SessionManagerCommon.getSiteId());
+        List<SiteLottery> lotteries = Cache.getNormalMaintainSiteLottery(terminal, SessionManagerCommon.getSiteId());
         if (!CollectionTool.isEmpty(lotteries)) {
             if (pageSize == null || lotteries.size() < pageSize) {
                 pageSize = lotteries.size();
