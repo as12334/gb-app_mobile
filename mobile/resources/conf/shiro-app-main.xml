@@ -44,6 +44,8 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
+				/about.html = anon
+				/getRegisterRules.html = anon
 				/message_*.js = anon
 				/ =  anon
 				/message_*.js = anon
