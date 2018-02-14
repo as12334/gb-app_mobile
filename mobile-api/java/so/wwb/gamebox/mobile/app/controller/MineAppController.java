@@ -232,14 +232,11 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/getBettingList")
     @ResponseBody
     public String getBettingList(PlayerGameOrderListVo listVo, Boolean isShowStatistics) {
-
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-
-        initQueryDateForgetBetting(listVo, TIME_INTERVAL, DEFAULT_TIME);
+        initQueryDateForgetBetting(listVo);
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
-
         bettingDataApp.setTotalSize(listVo.getPaging().getTotalCount());
         //提高性能，查询分页时只统计一次
         if (isShowStatistics != null && isShowStatistics) {
