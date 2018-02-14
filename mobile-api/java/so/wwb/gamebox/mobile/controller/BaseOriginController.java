@@ -144,7 +144,7 @@ public abstract class BaseOriginController {
             if (gameIds != null && !gameIds.contains(gameId)) {  //搜索条件不符合游戏标签不包含
                 continue;
             }
-            siteGame.setName(getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
+            siteGame.setName(ApiGameBase.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }
@@ -169,33 +169,6 @@ public abstract class BaseOriginController {
         siteGames = siteGames.subList(fromIndex, endIndex);
         listVo.setResult(siteGames);
         return listVo;
-    }
-
-    /**
-     * 获取游戏名称
-     *
-     * @param siteGameI18nMap
-     * @param gameI18nMap
-     * @param gameId
-     * @return
-     */
-    private String getGameName(Map<String, SiteGameI18n> siteGameI18nMap, Map<String, GameI18n> gameI18nMap, String gameId) {
-        SiteGameI18n siteGameI18n = siteGameI18nMap.get(gameId);
-        String gameName = null;
-        if (siteGameI18n != null) {
-            gameName = siteGameI18n.getName();
-        }
-        if (StringTool.isNotBlank(gameName)) {
-            return gameName;
-        }
-        GameI18n gameI18n = gameI18nMap.get(gameId);
-        if (gameI18n != null) {
-            gameName = gameI18n.getName();
-        }
-        if (StringTool.isBlank(gameName)) { //避免比较游戏名称出现空指针异常
-            return "";
-        }
-        return gameName;
     }
 
     /**
@@ -323,16 +296,16 @@ public abstract class BaseOriginController {
      * @param
      */
     protected List<AppSiteApiTypeRelastionVo> getApiTypeGame(AppRequestModelVo model, HttpServletRequest request) {
-        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
-        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
         //需要有二级分类的游戏分类
         List<Integer> navApiTypes = navApiTypes();
         //获取游戏分类下的游戏
-        Map<Integer, Map<Integer, List<AppSiteGame>>> navGames = getNavGames(model, apiI18nMap, siteApiI18nMap, navApiTypes);
+        Map<Integer, Map<Integer, List<AppSiteGame>>> navGames = getNavGames(model, navApiTypes);
         //获取类型
         List<SiteApiType> siteApiTypes = getApiTypes();
         Map<String, SiteApiTypeRelation> siteApiTypeRelationMap = CacheBase.siteApiTypeRelationMap(SessionManager.getSiteId());
         String apiLogoUrl = setApiLogoUrl(model, request);
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = apiTypeRelationGroupByType(siteApiTypeRelationMap, apiI18nMap, siteApiI18nMap, apiLogoUrl, navGames);
         Map<String, ApiTypeI18n> apiTypeI18nMap = CacheBase.getApiTypeI18n();
         List<AppSiteApiTypeRelastionVo> appApiTypes = new ArrayList<>();
@@ -369,6 +342,13 @@ public abstract class BaseOriginController {
         return appApiTypes;
     }
 
+    /**
+     * 获取api类型图片
+     *
+     * @param apiLogUrl
+     * @param apiTypeId
+     * @return
+     */
     private String getApiTypeCover(String apiLogUrl, Integer apiTypeId) {
         StringBuffer coverBuffer = new StringBuffer();
         coverBuffer.append(apiLogUrl).append("/api_type_");
@@ -381,7 +361,7 @@ public abstract class BaseOriginController {
      *
      * @return
      */
-    private Map<Integer, Map<Integer, List<AppSiteGame>>> getNavGames(AppRequestModelVo model, Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, List<Integer> navApiTypes) {
+    private Map<Integer, Map<Integer, List<AppSiteGame>>> getNavGames(AppRequestModelVo model, List<Integer> navApiTypes) {
         //处理棋牌、彩票游戏
         Map<String, SiteGame> siteGameMap = CacheBase.getSiteGame();
         //捕鱼
@@ -402,17 +382,18 @@ public abstract class BaseOriginController {
         Integer apiTypeId;
         AppSiteGame appSiteGame;
         Map<Integer, List<AppSiteGame>> apiGameMap;
-        String apiName;
         StringBuffer fishName;
+        String gameId;
         for (SiteGame siteGame : siteGameMap.values()) {
             apiId = siteGame.getApiId();
-            game = gameMap.get(String.valueOf(siteGame.getGameId()));
+            gameId = String.valueOf(siteGame.getGameId());
+            game = gameMap.get(gameId);
             //非手机端游戏、已下架游戏、已维护游戏过滤
             if (!mobile.equals(siteGame.getSupportTerminal()) || game == null || disabled.equals(game.getStatus()) || disabled.equals(siteGame.getStatus()) || maintain.equals(game.getSystemStatus()) || maintain.equals(siteGame.getSystemStatus())) {
                 continue;
             }
             game.setStatus(normal);
-            setGameName(siteGameI18nMap, gameI18nMap, siteGame);
+            siteGame.setName(ApiGameBase.getGameName(siteGameI18nMap, gameI18nMap, gameId));
             siteGame.setCover(MessageFormat.format(gameCover, apiId, siteGame.getCode()));
             apiTypeId = siteGame.getApiTypeId();
             if (navApiTypes.contains(apiTypeId)) {
@@ -476,26 +457,6 @@ public abstract class BaseOriginController {
         }
         appSiteGame.setAutoPay(SessionManager.isAutoPay());
         return appSiteGame;
-    }
-
-    /**
-     * 设置游戏名称和图片地址
-     *
-     * @param siteGameI18nMap
-     * @param gameI18nMap
-     * @param siteGame
-     */
-    private void setGameName(Map<String, SiteGameI18n> siteGameI18nMap, Map<String, GameI18n> gameI18nMap, SiteGame siteGame) {
-        Integer gameId = siteGame.getGameId();
-        SiteGameI18n siteGameI18n = siteGameI18nMap.get(String.valueOf(gameId));
-        String gameName = null;
-        GameI18n gameI18n = gameI18nMap.get(String.valueOf(gameId));
-        if (siteGameI18n != null && StringTool.isNotBlank(siteGameI18n.getName())) {
-            gameName = siteGameI18n.getName();
-        } else if (gameI18n != null && StringTool.isNotBlank(gameI18n.getName())) {
-            gameName = gameI18n.getName();
-        }
-        siteGame.setName(gameName);
     }
 
     /**
