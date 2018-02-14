@@ -8,7 +8,6 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
-import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
@@ -42,9 +41,13 @@ import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
-import so.wwb.gamebox.model.company.site.po.*;
+import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
+import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelation;
+import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -434,10 +437,10 @@ public class BaseMineController {
 
     protected List<BettingInfoApp> buildBetting(List<PlayerGameOrder> list) {
         List<BettingInfoApp> bettingInfoAppList = new ArrayList<>();
-        Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap = getSiteApiTypeRelationMap(CommonContext.get().getSiteId());
         Map<String, SiteGameI18n> siteGameI18nMap = Cache.getSiteGameI18n();
         Map<String, GameI18n> gameI18nMap = Cache.getGameI18n();
         Map<String, SiteApiI18n> siteApiI18nMap = getSiteApiI18n();
+        Map<String, ApiI18n> apiI18nMap = getApiI18n();
         String url = "/fund/betting/gameRecordDetail.html?searchId=%s";
         for (PlayerGameOrder order : list) {
             BettingInfoApp infoApp = new BettingInfoApp();
@@ -453,47 +456,12 @@ public class BaseMineController {
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
             infoApp.setUrl(String.format(url, infoApp.getId()));
-            String apiName = getApiName(siteApiTypeRelationMap, String.valueOf(order.getApiId()), siteApiI18nMap);
-            infoApp.setApiName(apiName);
-            infoApp.setGameName(ApiGameBase.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
+            infoApp.setApiName(ApiGameTool.getApiName(siteApiI18nMap, apiI18nMap, String.valueOf(order.getApiId())));
+            infoApp.setGameName(ApiGameTool.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
     }
-
-    private String getApiName(Map<String, Map<String, SiteApiTypeRelationI18n>> siteApiTypeRelationMap, String apiId, Map<String, SiteApiI18n> siteApiI18nMap) {
-        if (siteApiTypeRelationMap == null) {
-            return "";
-        }
-        SiteApiTypeRelation tempRelation = getSiteApiTypeRelationByApiId(apiId);
-        if (tempRelation == null) {
-            return siteApiI18nMap.get(apiId).getName();
-        }
-        Map<String, SiteApiTypeRelationI18n> relationI18nMap = siteApiTypeRelationMap.get(tempRelation.getApiTypeId().toString());
-        return relationI18nMap.get(apiId).getName();
-    }
-
-    private static SiteApiTypeRelation getSiteApiTypeRelationByApiId(String apiId) {
-        Map<String, List<SiteApiTypeRelation>> siteApiTypeRelation = getSiteApiTypeRelation();
-        Iterator<String> relationIter = siteApiTypeRelation.keySet().iterator();
-        int count = 0;
-        SiteApiTypeRelation tempRelation = null;
-        while (relationIter.hasNext()) {
-            String apiTypeId = relationIter.next();
-            List<SiteApiTypeRelation> relationList = siteApiTypeRelation.get(apiTypeId);
-            for (SiteApiTypeRelation relation : relationList) {
-                if (Integer.valueOf(apiId).equals(relation.getApiId())) {
-                    tempRelation = relation;
-                    count++;
-                }
-            }
-        }
-        if (count == 1 && tempRelation != null) {
-            return tempRelation;
-        }
-        return null;
-    }
-
 
     protected void initQueryDate(VPlayerTransactionListVo listVo) {
 

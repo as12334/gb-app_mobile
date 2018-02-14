@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.common.consts.MobileConst;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
@@ -329,21 +330,9 @@ public abstract class BaseApiController extends BaseDemoController {
      */
     private Map<Integer, List<SiteApiTypeRelation>> apiTypeRelationGroupByType(Map<String, SiteApiTypeRelation> siteApiTypeRelationMap, Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelationI18nMap = Cache.getSiteApiTypeRelactionI18n();
-        Map<Integer, Map<Integer, String>> map = new HashMap<>(siteApiI18nMap.size());
-        Integer siteId = SessionManager.getSiteId();
+        Map<Integer, Map<Integer, String>> map = ApiGameTool.getApiNameGroupByApiType(siteApiTypeRelationI18nMap);
         Integer apiTypeId;
         Integer apiId;
-        String apiName;
-        for (SiteApiTypeRelationI18n siteApiTypeRelationI18n : siteApiTypeRelationI18nMap.values()) {
-            if (siteId.equals(siteApiTypeRelationI18n.getSiteId())) {
-                apiTypeId = siteApiTypeRelationI18n.getApiTypeId();
-                apiId = siteApiTypeRelationI18n.getApiId();
-                if (map.get(apiTypeId) == null) {
-                    map.put(apiTypeId, new HashMap<>());
-                }
-                map.get(apiTypeId).put(apiId, siteApiTypeRelationI18n.getName());
-            }
-        }
         Map<String, Api> apiMap = Cache.getApi();
         Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
         Api api;
@@ -358,11 +347,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 apiTypeRelationGroupByType.put(apiTypeId, new ArrayList<>());
             }
             apiId = apiTypeRelation.getApiId();
-            apiName = MapTool.getString(map.get(apiTypeId), apiId);
-            if (StringTool.isBlank(apiName)) {
-                apiName = getApiName(apiId, apiI18nMap, siteApiI18nMap);
-            }
-            apiTypeRelation.setApiName(apiName);
+            apiTypeRelation.setApiName(ApiGameTool.getApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
             if (api != null && maintain.equals(api.getSystemStatus()) || siteApi != null && maintain.equals(siteApi.getSystemStatus())) {
@@ -374,26 +359,6 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
         return apiTypeRelationGroupByType;
-    }
-
-    /**
-     * 获取api名称
-     *
-     * @param apiId
-     * @param apiI18nMap
-     * @param siteApiI18nMap
-     * @return
-     */
-    private String getApiName(Integer apiId, Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap) {
-        String apiName = "";
-        SiteApiI18n siteApiI18n = siteApiI18nMap.get(String.valueOf(apiId));
-        ApiI18n apiI18n = apiI18nMap.get(String.valueOf(apiId));
-        if (siteApiI18n != null && StringTool.isNotBlank(siteApiI18n.getName())) {
-            apiName = siteApiI18n.getName();
-        } else if (apiI18n != null && StringTool.isNotBlank(apiI18n.getName())) {
-            apiName = apiI18n.getName();
-        }
-        return apiName;
     }
 
     /**

@@ -344,7 +344,6 @@ public class OriginController extends BaseOriginController {
         if (cttFloatPic == null) {
             return null;
         }
-
         PlayerActivityMessage moneyActivity = findMoneyActivity();
         if (moneyActivity == null) {
             return null;
@@ -372,24 +371,21 @@ public class OriginController extends BaseOriginController {
         Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
         String lang = SessionManagerBase.getLocale().toString();
         Iterator<String> iter = activityMessages.keySet().iterator();
-        Date justNow = new Date();
-        PlayerActivityMessage playerActivityMessage = null;
+        Date justNow = SessionManager.getDate().getNow();
+        PlayerActivityMessage playerActivityMessage;
         while (iter.hasNext()) {
             String key = iter.next();
             if (key.endsWith(lang)) {
                 playerActivityMessage = activityMessages.get(key);
-                Date startTime = playerActivityMessage.getStartTime();
-                Date endTime = playerActivityMessage.getEndTime();
                 if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
                     //不是红包活动继续
-                    continue;
-                }
-                if (playerActivityMessage.getIsDeleted()) {
                     continue;
                 }
                 if (!playerActivityMessage.getIsDisplay()) {
                     continue;
                 }
+                Date startTime = playerActivityMessage.getStartTime();
+                Date endTime = playerActivityMessage.getEndTime();
                 if (startTime.before(justNow) && justNow.before(endTime)) {
                     return playerActivityMessage;
                 }
