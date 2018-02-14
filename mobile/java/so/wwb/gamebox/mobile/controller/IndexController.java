@@ -1,10 +1,12 @@
 package so.wwb.gamebox.mobile.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
+import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
@@ -16,6 +18,7 @@ import org.soul.commons.qrcode.QrcodeDisTool;
 import org.soul.commons.security.Base36;
 import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
@@ -53,7 +56,10 @@ import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardRecord;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
+import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
@@ -69,6 +75,8 @@ import java.util.*;
 @Controller
 public class IndexController extends BaseApiController {
     private Log LOG = LogFactory.getLog(IndexController.class);
+
+    private static final int DEFAULT_MIN_TIME = -6;
 
     @RequestMapping("/game")
     public String game(Integer typeId, Model model, HttpServletRequest request) {
@@ -177,7 +185,7 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/recommend")
     @Upgrade(upgrade = true)
-    public String recommend(Model model) {
+    public String recommend(Model model, PlayerRecommendAwardListVo listVo) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
@@ -198,7 +206,24 @@ public class IndexController extends BaseApiController {
         //将会获取到的金额值
         model.addAttribute("money", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_MONEY).getParamValue());
         //有红利奖励显示分享红利标志，没有不显示
-        model.addAttribute("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getParamValue());
+        model.addAttribute("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getActive());
+        // 存款金额满多少钱
+        model.addAttribute("witchWithdraw", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_THEWAY).getParamValue());
+        //有效分享人数 和所对应的红利
+        SysParam bonusJson = ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS_JSON);
+        ArrayList<GradientTemp> gradientTempArrayList = JsonTool.fromJson(bonusJson.getParamValue(), new TypeReference<ArrayList<GradientTemp>>() {
+        });
+        model.addAttribute("gradientTempArrayList",gradientTempArrayList);
+
+        //查询被该玩家推荐的好友记录奖励表
+        listVo.getSearch().setUserId(SessionManager.getUserId());
+        initSearchDate(listVo);
+        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecode(listVo);
+        List<PlayerRecommendAwardRecord> list = listVo.getRecommendAwardRecords();
+        model.addAttribute("command", list);
+        //查询推荐记录 默认时间区间
+        model.addAttribute("defaultMinDate", SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
+        model.addAttribute("defaultMaxDate", SessionManager.getDate().getNow());
 
         //查询推荐人数 获取奖励 红利
         PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
@@ -206,6 +231,19 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sign", getCurrencySign());
         model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         return "/recommend/Recommend";
+    }
+
+    /**
+     * 初始化 推荐记录 时间区间
+     * @param listVo
+     */
+    private void initSearchDate(PlayerRecommendAwardListVo listVo) {
+        if (listVo.getSearch().getStartTime() == null) {
+            listVo.getSearch().setStartTime(SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
+        }else if (listVo.getSearch().getEndTime() == null) {
+            listVo.getSearch().setEndTime(SessionManager.getDate().getNow());
+        }
+
     }
 
     /**
