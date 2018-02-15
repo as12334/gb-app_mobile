@@ -61,4 +61,11 @@ public interface AppConstant {
 
     /*api图片地址 */
     String API_LOGO_URL = "%s/api/api_logo_%s.png";
+
+    String SUCCESS = "success";    //4 , 2 ,success代表已发放
+    String SUCCESS_4 = "4";
+    String SUCCESS_2 = "2";
+
+    String CHECKING_1 = "1"; // 1代表 待审核
+    String PROCESSING_0 = "0"; // 0代表 进行中
 }
