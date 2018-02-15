@@ -6,6 +6,12 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="bookmark" href="${resRoot}/favicon.ico">
+    <link rel="shortcut icon" href="${resRoot}/favicon.ico">
+    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css" />
+    <%--<meta name="apple-mobile-web-app-status-bar-style" content="black">--%>
 </head>
 
 <body>
@@ -13,36 +19,79 @@
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
     <%@ include file="../common/LeftMenu.jsp" %>
+
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-        <%@include file="../common/Head.jsp" %>
-        <div class="mui-content mui-scroll-wrapper" id="pullrefresh">
-            <div class="mui-scroll">
-                <!-- 主界面具体展示内容 -->
-                <!--优惠列表-->
-                <section class="promo">
-                    <div class="promo-sorts">
-                        <soul:button activityType="" target="activityType" text="${views.themes_auto['全部']}" opType="function"
-                                     cssClass="mui-btn btn-promo-sort active"/>
-                        <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
-                            <soul:button activityType="${type.key}" target="activityType" text="${type.value}" opType="function"
-                                         cssClass="mui-btn btn-promo-sort"/>
+
+        <%@include file="../discounts/PromoHead.jsp" %>
+
+        <div class="promo-header">
+            <div class="swiper-container p-t-slide-indicators promo-sorts">
+                <div class="swiper-wrapper">
+                    <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType":"function","activityType",""}'><span>${views.themes_auto['全部']}</span></a>
+                    <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
+                        <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType","function","activityType","${type.key}"}'><span>${type.value}</span></a>
+                    </c:forEach>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="mui-content promo-content">
+            <div class="promo">
+                <div class="swiper-container p-t-slide-content promo-list">
+                    <div class="swiper-wrapper">
+
+                        <div class="swiper-slide">
+                            <div class="mui-scroll-wrapper">
+                                <div class="mui-scroll">
+                                    <c:forEach var="map" items="${messageVo.typeMessageMap}">
+                                        <c:forEach var="message" items="${map.value}">
+                                            <a href="${root}/promo/promoDetail.html?search.id=${message.id}"><img src="${message.activityAffiliated}" /></a>
+                                        </c:forEach>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <c:forEach var="message" items="${typeMessageMap}">
+                            <c:if test="${message.key ne 'default'}">
+                                <div class="swiper-slide">
+                                    <div class="mui-scroll-wrapper">
+                                        <div class="mui-scroll">
+                                            <c:forEach var="mapValue" items="${message.value}">
+                                                <a href="${root}/promo/promoDetail.html?search.id=${mapValue.id}"><img src="${mapValue.activityAffiliated}"></a>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:if>
                         </c:forEach>
+
+                        <div class="swiper-slide">
+                            <div class="mui-scroll-wrapper">
+                                <div class="mui-scroll">
+                                    <c:forEach var="message" items="${typeMessageMap}">
+                                        <c:if test="${message.key eq 'default'}">
+                                            <c:forEach items="${message.value}" var="mapValue">
+                                                <a href="${root}/promo/promoDetail.html?search.id=${mapValue.id}"><img src="${mapValue.activityAffiliated}"></a>
+                                            </c:forEach>
+                                        </c:if>
+                                    </c:forEach>
+
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
-                    <ul class="promo-list mui-list-unstyled">
-                        <c:forEach var="map" items="${messageVo.typeMessageMap}" >
-                            <c:forEach var="message" items="${map.value}">
-                                <li class="${message.activityClassifyKey}">
-                                    <soul:button text="" opType="href" target="${root}/promo/promoDetail.html?search.id=${message.id}">
-                                        <img src="${message.activityAffiliated}"/>
-                                    </soul:button>
-                                </li>
-                            </c:forEach>
-                        </c:forEach>
-                    </ul>
-                </section>
-            </div> <!--mui-scroll 闭合标签-->
-        </div>  <!--mui-content 闭合标签-->
+                </div>
+            </div>
+        </div>
+
         <!--footer-->
         <%@ include file="../common/Footer.jsp" %>
         <!-- off-canvas backdrop -->
@@ -56,5 +105,6 @@
 <script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/discounts/Promo.js"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
+<script type="text/javascript" src="${resRoot}/js/swiper.min.js"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

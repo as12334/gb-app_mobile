@@ -41,7 +41,9 @@ public class DiscountsController{
     @Upgrade(upgrade = true)
     public String index(Model model,Integer skip,HttpServletRequest request) {
         model.addAttribute("skip",skip);
-        model.addAttribute("messageVo",getActivity(request));
+        MobileActivityMessageVo messageVo = getActivity(request);
+        model.addAttribute("messageVo", messageVo);
+        model.addAttribute("typeMessageMap", messageVo.getTypeMessageMap());
         return "/discounts/Promo";
     }
 
