@@ -9,7 +9,7 @@
 </head>
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">
-    <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <a id="depositBack" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
     <%@include file="../common/Assert.jsp"%>
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
@@ -57,7 +57,7 @@
                                             </c:forEach>
                                         </c:if>
                                         <c:if test="${p.key eq 'isFastRecharge'}">
-                                            <li key="${p.key}"><a data-rel='{"target":"${p.value}","opType":"href"}'
+                                            <li key="${p.key}"><a data-rel='{"target":"fastRecharge","url":"${p.value}","opType":"function"}'
                                                                   class="long"><i class="pay ks"></i><span><div class="text-two-line">${views.deposit_auto['快速充值中心']}</div></span></a>
                                             </li>
                                         </c:if>
