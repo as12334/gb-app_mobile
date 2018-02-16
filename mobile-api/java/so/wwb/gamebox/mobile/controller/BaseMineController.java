@@ -1007,8 +1007,6 @@ public class BaseMineController {
             replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
         }
 
-
-
         for (PlayerAdvisoryReply replay : replyListVo.getResult()) {
             PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
             readVo.getSearch().setUserId(SessionManager.getUserId());
