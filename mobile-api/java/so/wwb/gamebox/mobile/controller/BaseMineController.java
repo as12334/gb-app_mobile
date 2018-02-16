@@ -46,10 +46,7 @@ import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
-import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
-import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
-import so.wwb.gamebox.model.master.enums.DepositWayEnum;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
+import so.wwb.gamebox.model.master.enums.*;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
@@ -60,6 +57,7 @@ import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
+import so.wwb.gamebox.model.master.player.so.VPlayerAdvisorySo;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
@@ -145,12 +143,12 @@ public class BaseMineController {
             promoApp.setCheckState(recode.getCheckState());
             String checkState = recode.getCheckState();
 
-            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equals("2", checkState)
-                    || StringTool.equals("4", checkState)) {
+            if (StringTool.equalsIgnoreCase(CommonStatusEnum.SUCCESS.getCode(), checkState) || StringTool.equals(ActivityApplyCheckStatusEnum.SUCCESS.getCode(), checkState)
+                    || StringTool.equals(SUCCESS_4, checkState)) {
                 promoApp.setCheckStateName("已发放");
-            } else if (StringTool.equals("1", checkState)) {
+            } else if (StringTool.equals(ActivityApplyCheckStatusEnum.PENDING.getCode(), checkState)) {
                 promoApp.setCheckStateName("待审核");
-            } else if (StringTool.equals("0", checkState)) {
+            } else if (StringTool.equals(PROCESSING_0, checkState)) {
                 promoApp.setCheckStateName("进行中");
             } else {
                 promoApp.setCheckStateName("未通过");
@@ -1022,6 +1020,24 @@ public class BaseMineController {
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
         return map;
+    }
+
+    /**
+     * 获取玩家咨询的List
+     * @param listVo
+     * @return
+     */
+    protected VPlayerAdvisoryListVo searchAdvisoryList(VPlayerAdvisoryListVo listVo) {
+        if (listVo.getSearch() == null) {
+            listVo.setSearch(new VPlayerAdvisorySo());
+        }
+        listVo.getSearch().setSearchType("player");
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
+        listVo.getSearch().setPlayerDelete(false);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
+
+        return listVo;
     }
 
     /**
