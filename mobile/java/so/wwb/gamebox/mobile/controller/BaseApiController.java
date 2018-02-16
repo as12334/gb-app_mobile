@@ -347,7 +347,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 apiTypeRelationGroupByType.put(apiTypeId, new ArrayList<>());
             }
             apiId = apiTypeRelation.getApiId();
-            apiTypeRelation.setApiName(ApiGameTool.getApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
+            apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
             if (api != null && maintain.equals(api.getSystemStatus()) || siteApi != null && maintain.equals(siteApi.getSystemStatus())) {
