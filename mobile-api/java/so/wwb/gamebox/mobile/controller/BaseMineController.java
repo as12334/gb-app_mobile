@@ -1001,8 +1001,12 @@ public class BaseMineController {
             ids[i] = listVo.getResult().get(i).getId();
         }
         replyListVo.getSearch().setIds(ids);
-        //查询回复表每一条在已读表是否存在
-        replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
+        //根据ids查，如果ids为空，就不用在查了
+        if (ids.length > 1) {
+            //查询回复表每一条在已读表是否存在
+            replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
+        }
+
 
 
         for (PlayerAdvisoryReply replay : replyListVo.getResult()) {
