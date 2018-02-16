@@ -19,7 +19,7 @@
         <header class="mui-bar mui-bar-nav">
             <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
             <%@include file="../common/Assert.jsp"%>
-            <h1 class="mui-title">${activity.activityName}</h1>
+            <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice content-without-footer">
             <div class="mui-scroll">
@@ -34,6 +34,7 @@
                                             <img src="${soulFn:getImagePathWithDefault(domain, activity.activityAffiliated, resRoot.concat('/images/img-sale1.jpg'))}">
                                         </a>
                                         <div class="ct">
+                                            <h5><i></i><span>${activity.activityName}</span></h5>
                                             <p>${activity.activityDescription}</p>
                                         </div>
                                     </li>
