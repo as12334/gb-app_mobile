@@ -49,7 +49,7 @@
                                 <div class="mui-scroll">
                                     <c:forEach var="map" items="${messageVo.typeMessageMap}">
                                         <c:forEach var="message" items="${map.value}">
-                                            <a href="${root}/promo/promoDetail.html?search.id=${message.id}"><img src="${message.activityAffiliated}" /></a>
+                                            <a href="${root}/promo/promoDetail.html?search.id=${message.id}" data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"} '><img src="${message.activityAffiliated}" /></a>
                                         </c:forEach>
                                     </c:forEach>
                                 </div>
@@ -63,7 +63,7 @@
                                     <div class="mui-scroll-wrapper">
                                         <div class="mui-scroll">
                                             <c:forEach var="mapValue" items="${message.value}">
-                                                <a href="${root}/promo/promoDetail.html?search.id=${mapValue.id}"><img src="${mapValue.activityAffiliated}"></a>
+                                                <a href="${root}/promo/promoDetail.html?search.id=${mapValue.id}" data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${mapValue.id}","opType":"href"}'><img src="${mapValue.activityAffiliated}"></a>
                                             </c:forEach>
                                         </div>
                                     </div>
@@ -77,7 +77,7 @@
                                     <c:forEach var="message" items="${typeMessageMap}">
                                         <c:if test="${message.key eq 'default'}">
                                             <c:forEach items="${message.value}" var="mapValue">
-                                                <a href="${root}/promo/promoDetail.html?search.id=${mapValue.id}"><img src="${mapValue.activityAffiliated}"></a>
+                                                <a href="${root}/promo/promoDetail.html?search.id=${mapValue.id}" data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${mapValue.id}","opType":"href"}'><img src="${mapValue.activityAffiliated}"></a>
                                             </c:forEach>
                                         </c:if>
                                     </c:forEach>
