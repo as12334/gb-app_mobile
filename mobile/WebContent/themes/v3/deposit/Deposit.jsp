@@ -9,7 +9,7 @@
 </head>
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">
-    <a id="depositBack" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
+    <a id="depositBack" style="display: none" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
     <%@include file="../common/Assert.jsp"%>
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
