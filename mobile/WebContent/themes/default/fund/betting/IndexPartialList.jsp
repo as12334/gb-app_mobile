@@ -9,7 +9,7 @@
             <%--<c:set var="resultVo" value="${p.resultVo}"/>--%>
             <%--<c:set var="len" value="${fn:length(resultVo.apiSportResultVoList)}"/>--%>
             <tr data-href="${root}/fund/betting/gameRecordDetail.html?searchId=${command.getSearchId(p.id)}">
-                <td>${gbFn:getApiName(p.apiId.toString())}<br/>${gbFn:getGameName(p.gameId.toString())}</td>
+                <td>${p.apiName}<br/>${p.gameName}</td>
                 <td><c:if test="${p.terminal==2}"><i
                         class="mb_icon"></i></c:if>${soulFn:formatDateTz(p.betTime, DateFormat.DAY,timeZone)}
                     <br>${soulFn:formatDateTz(p.betTime, DateFormat.SECOND,timeZone)}

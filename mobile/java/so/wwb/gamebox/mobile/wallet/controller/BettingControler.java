@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.wallet.controller;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.log.Log;
@@ -11,8 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
+import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
+import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderVo;
@@ -20,9 +26,11 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.report.betting.controller.BaseGameOrderController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
-/**投注记录
+/**
+ * 投注记录
  * Created by bill on 16-11-29.
  */
 @Controller
@@ -40,44 +48,71 @@ public class BettingControler {
     /**
      * 查询投注记录列表
      * 按日期查询
+     *
      * @param listVo
      * @param model
      * @param request
      * @return
      */
     @RequestMapping("/index")
-    public String getBettingList(PlayerGameOrderListVo listVo, Model model, HttpServletRequest request){
-        String url=BETTING_URL;
+    public String getBettingList(PlayerGameOrderListVo listVo, Model model, HttpServletRequest request) {
+        String url = BETTING_URL;
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         //判断ajax请求
         if (ServletTool.isAjaxSoulRequest(request)) {
             //判断日期查询
-            listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
+            listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1), -1));
             url = BETTING_URL + "PartialList";
         }
 //        model.addAttribute("statisticalData",statisticsData(listVo));
         initQueryDate(listVo);
-        listVo= ServiceSiteTool.playerGameOrderService().search(listVo);
-        model.addAttribute("command",listVo);
+        listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
+        setApiNameAndGame(listVo.getResult());
+        model.addAttribute("command", listVo);
 
         //设置默认时间
-        model.addAttribute("minDate",SessionManager.getDate().addDays(TIME_INTERVAL));
-        model.addAttribute("maxDate",SessionManager.getDate().getNow());
+        model.addAttribute("minDate", SessionManager.getDate().addDays(TIME_INTERVAL));
+        model.addAttribute("maxDate", SessionManager.getDate().getNow());
         return url;
     }
 
     /**
+     * 设置api名称和游戏名称
+     *
+     * @param playerGameOrders
+     */
+    private void setApiNameAndGame(List<PlayerGameOrder> playerGameOrders) {
+        if (CollectionTool.isEmpty(playerGameOrders)) {
+            return;
+        }
+        Map<Integer, Map<Integer, String>> apiNameGroupByApiType = ApiGameTool.getSiteApiNameByApiType(Cache.getSiteApiTypeRelactionI18n());
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteGameI18n> siteGameI18nMap = Cache.getSiteGameI18n();
+        Map<String, GameI18n> gameI18nMap = Cache.getGameI18n();
+        Integer gameId;
+        for (PlayerGameOrder playerGameOrder : playerGameOrders) {
+            playerGameOrder.setApiName(ApiGameTool.getSiteApiName(apiNameGroupByApiType, siteApiI18nMap, apiI18nMap, playerGameOrder.getApiId(), playerGameOrder.getApiTypeId()));
+            gameId = playerGameOrder.getGameId();
+            if (gameId != null && gameId != 0) {
+                playerGameOrder.setGameName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
+            }
+        }
+    }
+
+    /**
      * 投注记录详情
+     *
      * @param playerGameOrderVo
      * @param model
      * @return
      */
     @RequestMapping("/detail")
-    public String queryVPlayerGameOrder(PlayerGameOrderVo playerGameOrderVo, Model model){
+    public String queryVPlayerGameOrder(PlayerGameOrderVo playerGameOrderVo, Model model) {
         playerGameOrderVo.getSearch().setPlayerId(SessionManager.getUserId());
-        playerGameOrderVo=ServiceSiteTool.playerGameOrderService().get(playerGameOrderVo);
-        model.addAttribute("command",playerGameOrderVo);
-        model.addAttribute("username",SessionManager.getUserName());
+        playerGameOrderVo = ServiceSiteTool.playerGameOrderService().get(playerGameOrderVo);
+        model.addAttribute("command", playerGameOrderVo);
+        model.addAttribute("username", SessionManager.getUserName());
         model.addAttribute("isLotterySite", ParamTool.isLotterySite());
         return BETTING_DETAIL_URL;
     }
@@ -98,6 +133,7 @@ public class BettingControler {
 
     /**
      * 统计当前页数据
+     *
      * @param listVo
      */
     @RequestMapping("/statisticsData")
@@ -107,11 +143,11 @@ public class BettingControler {
         initQueryDate(listVo);
         // 统计数据
 //        if (listVo.getPaging().getTotalCount() != 0) {
-            //判断日期查询
-            listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1),-1));
-            Map map = ServiceSiteTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
-            map.put("currency", getCurrencySign());
-            return JsonTool.toJson(map);
+        //判断日期查询
+        listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1), -1));
+        Map map = ServiceSiteTool.playerGameOrderService().queryTotalPayoutAndEffect(listVo);
+        map.put("currency", getCurrencySign());
+        return JsonTool.toJson(map);
 //        }
 //        return null;
     }
@@ -129,8 +165,8 @@ public class BettingControler {
         if (playerGameOrderListVo.getSearch().getBeginBetTime() == null) {
             playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME)); //拿到明天在-1相当于拿到今天时间00:00:00
         }
-        if (playerGameOrderListVo.getSearch().getEndBetTime() == null||playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
-            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(),-1));
+        if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
+            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -1));
         }
     }
 
