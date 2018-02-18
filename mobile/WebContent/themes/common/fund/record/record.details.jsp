@@ -232,27 +232,26 @@
                                                 </c:if>--%>
                                                 <c:set var="isOther" value="${bankCode eq 'other' && !empty command.result._describe['customBankName']}"/>
 
-                                                <c:set var="scanCss" value="${bankCode}"/>
                                                 <c:if test="${command.result.fundType eq 'alipay_scan'||command.result.fundType eq 'alipay_fast'}">
-                                                    <c:set var="scanCss" value="alipay"/>
+                                                    <c:set var="bankCss" value="alipay"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'wechatpay_scan'||command.result.fundType eq 'wechatpay_fast'}">
-                                                    <c:set var="scanCss" value="wechatpay"/>
+                                                    <c:set var="bankCss" value="wechatpay"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'qqwallet_scan'|| command.result.fundType eq 'qqwallet_fast'}">
-                                                    <c:set var="scanCss" value="qqwallet"/>
+                                                    <c:set var="bankCss" value="qqwallet"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'jdpay_scan'|| command.result.fundType eq 'jdwallet_fast'}">
-                                                    <c:set var="scanCss" value="jdwallet"/>
+                                                    <c:set var="bankCss" value="jdwallet"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'bdwallet_san'|| command.result.fundType eq 'bdwallet_fast'}">
-                                                    <c:set var="scanCss" value="bdwallet"/>
+                                                    <c:set var="bankCss" value="bdwallet"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'union_pay_scan'}">
-                                                    <c:set var="scanCss" value="unionpay"/>
+                                                    <c:set var="bankCss" value="unionpay"/>
                                                 </c:if>
                                                 <c:if test="${command.result.fundType eq 'onecodepay_fast'}">
-                                                    <c:set var="scanCss" value="onecodepay"/>
+                                                    <c:set var="bankCss" value="onecodepay"/>
                                                 </c:if>
 
                                                 <span class="${isOther?'':'pay-third '}${bankCss}"/>
