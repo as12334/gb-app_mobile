@@ -7,7 +7,7 @@
     <c:when test="${fn:length(command.result)>0}">
         <c:forEach items="${command.result}" var="p" varStatus="status">
             <tr data-href="${root}/fund/betting/gameRecordDetail.html?searchId=${command.getSearchId(p.id)}">
-                <td>${gbFn:getGameName(p.gameId.toString())}</td>
+                <td>${p.gameName}</td>
                 <td><c:if test="${p.terminal==2}"><i
                         class="mb_icon"></i></c:if>${soulFn:formatDateTz(p.betTime, DateFormat.DAY,timeZone)}
                     <br>${soulFn:formatDateTz(p.betTime, DateFormat.SECOND,timeZone)}
