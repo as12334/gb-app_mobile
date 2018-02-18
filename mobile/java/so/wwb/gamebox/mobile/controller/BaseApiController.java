@@ -330,7 +330,7 @@ public abstract class BaseApiController extends BaseDemoController {
      */
     private Map<Integer, List<SiteApiTypeRelation>> apiTypeRelationGroupByType(Map<String, SiteApiTypeRelation> siteApiTypeRelationMap, Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelationI18nMap = Cache.getSiteApiTypeRelactionI18n();
-        Map<Integer, Map<Integer, String>> map = ApiGameTool.getApiNameGroupByApiType(siteApiTypeRelationI18nMap);
+        Map<Integer, Map<Integer, String>> map = ApiGameTool.getSiteApiNameByApiType(siteApiTypeRelationI18nMap);
         Integer apiTypeId;
         Integer apiId;
         Map<String, Api> apiMap = Cache.getApi();
