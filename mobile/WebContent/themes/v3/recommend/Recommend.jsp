@@ -44,6 +44,7 @@
                     复制后通过微信、QQ等方式发送给好友
                     <div class="input-wrap">
                         <input type="text" value="${code}"> <a href="javascript:void(0)" id="copyCode" data-clipboard-text="${code}" class="btn-copy">复制</a>
+                        <input type="hidden" value="${activityRules}" id="activityRules"> <%--接收活动规则，在通过jQuery显示--%>
                     </div>
                 </div>
 
@@ -94,7 +95,7 @@
                                     </table>
                                 </div>
                                 </c:if>
-                                
+
                                 
                             </div>
                         </div>
@@ -135,7 +136,7 @@
                                         <c:forEach items="command" var="vo">
                                             <tr>
                                                 <td><%--${vo.recommendUserName}--%></td> <%--被推荐人账号--%>
-                                                <td></td> <%--有效投注额，暂时注掉--%>
+                                                <td></td> 有效投注额，暂时注掉
                                             </tr>
 
 
