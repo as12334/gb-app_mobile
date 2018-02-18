@@ -220,7 +220,7 @@ public abstract class BaseApiController extends BaseDemoController {
     //获取API类型
     protected List<SiteApiType> getApiTypes() {
         Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
-        return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_ORDER_NUM));
+        return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_MOBILE_ORDER_NUM));
     }
 
     protected void getApiTypeGame(Model model) {
