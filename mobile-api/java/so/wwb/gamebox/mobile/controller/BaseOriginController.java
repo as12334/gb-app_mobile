@@ -115,7 +115,7 @@ public abstract class BaseOriginController {
             if (gameIds != null && !gameIds.contains(gameId)) {  //搜索条件不符合游戏标签不包含
                 continue;
             }
-            siteGame.setName(ApiGameTool.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
+            siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }
@@ -364,7 +364,7 @@ public abstract class BaseOriginController {
                 continue;
             }
             game.setStatus(normal);
-            siteGame.setName(ApiGameTool.getGameName(siteGameI18nMap, gameI18nMap, gameId));
+            siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, gameId));
             siteGame.setCover(MessageFormat.format(gameCover, apiId, siteGame.getCode()));
             apiTypeId = siteGame.getApiTypeId();
             if (navApiTypes.contains(apiTypeId)) {
@@ -442,7 +442,7 @@ public abstract class BaseOriginController {
     private Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType(Map<String, SiteApiTypeRelation> siteApiTypeRelationMap, Map<String, ApiI18n> apiI18nMap,
                                                                                       Map<String, SiteApiI18n> siteApiI18nMap, String apiLogoUrl, Map<Integer, Map<Integer, List<AppSiteGame>>> navGames) {
         Map<String, SiteApiTypeRelationI18n> siteApiTypeRelationI18nMap = Cache.getSiteApiTypeRelactionI18n();
-        Map<Integer, Map<Integer, String>> map = ApiGameTool.getApiNameGroupByApiType(siteApiTypeRelationI18nMap);
+        Map<Integer, Map<Integer, String>> map = ApiGameTool.getSiteApiNameByApiType(siteApiTypeRelationI18nMap);
         Integer apiTypeId;
         Integer apiId;
         Map<String, Api> apiMap = Cache.getApi();
@@ -463,7 +463,7 @@ public abstract class BaseOriginController {
             if (api == null || siteApi == null || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
                 continue;
             }
-            apiTypeRelation.setApiName(ApiGameTool.getApiName(map,siteApiI18nMap,apiI18nMap,apiId,apiTypeId));
+            apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map,siteApiI18nMap,apiI18nMap,apiId,apiTypeId));
             if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
                 apiTypeRelation.setApiStatus(maintain);
             } else if ((normal.equals(api.getSystemStatus()) || preMaintain.equals(api.getSystemStatus())) && (normal.equals(siteApi.getSystemStatus()) || preMaintain.equals(siteApi.getSystemStatus()))) {

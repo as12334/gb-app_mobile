@@ -46,7 +46,6 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
-import so.wwb.gamebox.model.company.site.po.SiteApiTypeRelation;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
@@ -456,8 +455,8 @@ public class BaseMineController {
             infoApp.setActionIdJson(order.getActionIdJson());
             infoApp.setProfitAmount(order.getProfitAmount());
             infoApp.setUrl(String.format(url, infoApp.getId()));
-            infoApp.setApiName(ApiGameTool.getApiName(siteApiI18nMap, apiI18nMap, String.valueOf(order.getApiId())));
-            infoApp.setGameName(ApiGameTool.getGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
+            infoApp.setApiName(ApiGameTool.getSiteApiName(siteApiI18nMap, apiI18nMap, String.valueOf(order.getApiId())));
+            infoApp.setGameName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(order.getGameId())));
             bettingInfoAppList.add(infoApp);
         }
         return bettingInfoAppList;
