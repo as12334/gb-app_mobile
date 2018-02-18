@@ -133,7 +133,7 @@
 <%@ include file="../include/include.js.jsp" %>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
-<script src="${resComRoot}/js/dist/clipboard.js"></script>
+<script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/OnlinePay.js?v=${rcVersion}"></script>

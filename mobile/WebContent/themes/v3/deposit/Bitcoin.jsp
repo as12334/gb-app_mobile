@@ -134,5 +134,6 @@
 <script src="${resRoot}/js/mui/mui.picker.js"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js"></script>
 <script src="${resRoot}/js/mui/mui.dtpicker.js"></script>
+<script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js"></script>
