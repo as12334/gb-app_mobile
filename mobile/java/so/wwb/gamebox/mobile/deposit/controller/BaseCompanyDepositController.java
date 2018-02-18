@@ -24,6 +24,8 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
 import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
@@ -40,19 +42,19 @@ import java.util.*;
 public abstract class BaseCompanyDepositController extends BaseDepositController {
 
     /* 公司入款地址 */
-     private static final String MCENTER_COMPANY_RECHARGE_URL = "/fund/deposit/company/confirmCheck.html";
+    private static final String MCENTER_COMPANY_RECHARGE_URL = "/fund/deposit/company/confirmCheck.html";
 
     private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
         SysUserDataRightVo sysUserDataRightVo = new SysUserDataRightVo();
         sysUserDataRightVo.getSearch().setModuleType(DataRightModuleType.COMPANYDEPOSIT.getCode());
-        Map<Integer,List<SysUserDataRight>> udrMap = ServiceSiteTool.sysUserDataRightService().searchDataRightsByModuleType(sysUserDataRightVo);
+        Map<Integer, List<SysUserDataRight>> udrMap = ServiceSiteTool.sysUserDataRightService().searchDataRightsByModuleType(sysUserDataRightVo);
 
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         Integer rankId = userPlayerVo.getResult().getRankId();
         for (Iterator<Integer> iterator = userIdByUrl.iterator(); iterator.hasNext(); ) {
-            Integer userId =  iterator.next();
+            Integer userId = iterator.next();
             List<SysUserDataRight> dataRights = udrMap.get(userId);
             if (dataRights == null || dataRights.size() == 0) {
                 continue;
@@ -74,11 +76,12 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
 
     /**
      * 是否隐藏收款账号
+     *
      * @param model
      * @param paramEnum
      */
-     void isHide(Model model, SiteParamEnum paramEnum) {
-         // 查询隐藏参数
+    void isHide(Model model, SiteParamEnum paramEnum) {
+        // 查询隐藏参数
         SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
         if (sysParam == null) {
             return;
@@ -105,13 +108,13 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         //推送消息给前端
         MessageVo message = new MessageVo();
         message.setSubscribeType(CometSubscribeType.MCENTER_RECHARGE_REMINDER.getCode());
-        Map<String, Object> map = new HashMap<>(3,1f);
+        Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("date", recharge.getCreateTime() == null ? new Date() : recharge.getCreateTime());
         map.put("currency", getCurrencySign());
         map.put("type", recharge.getRechargeTypeParent());
         map.put("amount", CurrencyTool.formatCurrency(recharge.getRechargeAmount()));
         map.put("id", recharge.getId());
-        map.put("transactionNo",recharge.getTransactionNo());
+        map.put("transactionNo", recharge.getTransactionNo());
         message.setMsgBody(JsonTool.toJson(map));
         message.setSendToUser(true);
         message.setCcenterId(SessionManager.getSiteParentId());
@@ -136,28 +139,28 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
      */
     @RequestMapping("/submit")
     @Upgrade(upgrade = true)
-    public String submit(PlayerRechargeVo playerRechargeVo,Model model) {
+    public String submit(PlayerRechargeVo playerRechargeVo, Model model) {
 
         boolean unCheckSuccess = false;
         boolean pop = true;
         String tips = "";
         Double rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
         //验证存款金额的合法性
-        if (rechargeAmount==null || rechargeAmount <= 0) {
-            tips = LocaleTool.tranMessage(Module.FUND,"rechargeForm.rechargeAmountCorrect");
-            model.addAttribute("tips",tips);
+        if (rechargeAmount == null || rechargeAmount <= 0) {
+            tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountCorrect");
+            model.addAttribute("tips", tips);
         } else if (rechargeAmount > 0) {
             PlayerRank rank = getRank();
             Integer max = rank.getOnlinePayMax();
             Integer min = rank.getOnlinePayMin();
             //单笔存款金额提示
             if ((max != null && max < rechargeAmount) || (min != null && min > rechargeAmount)) {
-                tips = LocaleTool.tranMessage(Module.FUND,"rechargeForm.rechargeAmountOver",min,max);
-                model.addAttribute("tips",tips);
+                tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountOver", min, max);
+                model.addAttribute("tips", tips);
             } else {
                 double fee = calculateFee(rank, rechargeAmount);
                 if (rechargeAmount + fee <= 0) {
-                    model.addAttribute("tips","存款金额加手续费必须大于0");
+                    model.addAttribute("tips", "存款金额加手续费必须大于0");
                 } else {
                     unCheckSuccess = true;
                     //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
@@ -165,42 +168,44 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                     boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
                     //返手续费标志
                     boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
-
-                    List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount,
-                            playerRechargeVo.getResult().getRechargeType());
-                    if (!isFee && !isReturnFee && activityMessages.size()<=0 ) {
+                    String depositWay = playerRechargeVo.getResult().getRechargeType();
+                    if (RechargeTypeEnum.ONLINE_BANK.getCode().equals(depositWay)) {
+                        depositWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
+                    }
+                    List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, depositWay);
+                    if (!isFee && !isReturnFee && activityMessages.size() <= 0) {
                         pop = false;
-                    }else if("1".equals(playerRechargeVo.getStatusNum())){ //状态为"1"，不显示优惠信息
+                    } else if ("1".equals(playerRechargeVo.getStatusNum())) { //状态为"1"，不显示优惠信息
                         pop = false;
-                    }else{
+                    } else {
                         String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
                         model.addAttribute("counterFee", counterFee);
                         model.addAttribute("fee", fee);
                         model.addAttribute("sales", activityMessages);
                         String msg = "";
                         if (fee > 0) {
-                            msg = LocaleTool.tranMessage(Module.FUND,"Recharge.recharge.returnFee",counterFee);
+                            msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.returnFee", counterFee);
                         } else if (fee < 0) {
-                            msg = LocaleTool.tranMessage(Module.FUND,"Recharge.recharge.needFee",counterFee);
+                            msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.needFee", counterFee);
                         } else if (fee == 0) {
-                            msg = LocaleTool.tranMessage(Module.FUND,"Recharge.recharge.freeFee",counterFee);
+                            msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee", counterFee);
                         }
-                        model.addAttribute("depositChannel",playerRechargeVo.getDepositChannel());
-                        model.addAttribute("msg",msg);
+                        model.addAttribute("depositChannel", playerRechargeVo.getDepositChannel());
+                        model.addAttribute("msg", msg);
                     }
                 }
             }
         }
-        model.addAttribute("unCheckSuccess",unCheckSuccess);
-        model.addAttribute("pop",pop);
-        model.addAttribute("rechargeAmount",rechargeAmount);
-        model.addAttribute("submitType","company");
-        model.addAttribute("statusNum",playerRechargeVo.getStatusNum());
+        model.addAttribute("unCheckSuccess", unCheckSuccess);
+        model.addAttribute("pop", pop);
+        model.addAttribute("rechargeAmount", rechargeAmount);
+        model.addAttribute("submitType", "company");
+        model.addAttribute("statusNum", playerRechargeVo.getStatusNum());
         return "/deposit/Sale2";
     }
 
     public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
-        Map<String, Object> map = new HashMap<>(3,1f);
+        Map<String, Object> map = new HashMap<>(3, 1f);
         if (result.hasErrors()) {
             playerRechargeVo.setSuccess(false);
             return getVoMessage(map, playerRechargeVo);
@@ -211,7 +216,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
             return getVoMessage(map, playerRechargeVo);
         }
-        playerRechargeVo = saveRecharge(playerRechargeVo,payAccount);
+        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount);
         //保存订单
         playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
         if (playerRechargeVo.isSuccess()) {
@@ -220,5 +225,5 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         return getVoMessage(map, playerRechargeVo);
     }
 
-    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo,PayAccount payAccount);
+    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount);
 }
