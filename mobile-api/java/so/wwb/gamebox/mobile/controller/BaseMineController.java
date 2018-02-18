@@ -67,9 +67,7 @@ import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
-import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
-import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
-import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
+import so.wwb.gamebox.model.master.report.vo.*;
 import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
@@ -94,6 +92,7 @@ public class BaseMineController {
     private static final String SITE_SYSTEM_NOTICE = "/mobile-api/mineOrigin/getSiteSysNoticeDetail.html";
     private Log LOG = LogFactory.getLog(BaseMineController.class);
     private IPlayerTransferService playerTransferService;
+    private static final int DEFAULT_MIN_TIME = -6;
 
     protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
         PlayerApiListVo listVo = new PlayerApiListVo();
@@ -997,7 +996,7 @@ public class BaseMineController {
     /**
      * 获取玩家推荐信息
      */
-    protected Map<String, Object> getPlayerRecommend(HttpServletRequest request) {
+    protected Map<String, Object> getPlayerRecommend(HttpServletRequest request, PlayerRecommendAwardListVo listVo) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
@@ -1018,7 +1017,7 @@ public class BaseMineController {
         //将会获取到的金额值
         map.put("money", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_MONEY).getParamValue());
         //有红利奖励显示分享红利标志，没有不显示
-        map.put("bonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getActive());
+        map.put("isBonus", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS).getActive());
         // 存款金额满多少钱
         map.put("witchWithdraw", ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_REWARD_THEWAY).getParamValue());
 
@@ -1027,12 +1026,33 @@ public class BaseMineController {
         ArrayList<GradientTemp> gradientTempArrayList = JsonTool.fromJson(bonusJson.getParamValue(), new TypeReference<ArrayList<GradientTemp>>() {
         });
         map.put("gradientTempArrayList", gradientTempArrayList);
+
+        //查询被该玩家推荐的好友记录奖励表
+        listVo.getSearch().setUserId(SessionManager.getUserId());
+        initSearchDate(listVo);
+        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecode(listVo);
+        List<PlayerRecommendAwardRecord> list = listVo.getRecommendAwardRecords();
+        map.put("command", list);
+
         //查询推荐人数 获取奖励 红利
         PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
         playerVo.getSearch().setUserId(SessionManager.getUserId());
         map.put("sign", getCurrencySign());
         map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
+        map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
         return map;
+    }
+
+    /**
+     * 初始化 推荐记录 时间区间
+     * @param listVo
+     */
+    private void initSearchDate(PlayerRecommendAwardListVo listVo) {
+        if (listVo.getSearch().getStartTime() == null) {
+            listVo.getSearch().setStartTime(SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
+        }else if (listVo.getSearch().getEndTime() == null) {
+            listVo.getSearch().setEndTime(SessionManager.getDate().getNow());
+        }
     }
 
 }

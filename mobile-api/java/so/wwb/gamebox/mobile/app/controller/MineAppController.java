@@ -64,6 +64,7 @@ import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
@@ -1093,11 +1094,11 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/getUserPlayerRecommend")
     @ResponseBody
-    public String getUserPlayerRecommend(HttpServletRequest request) {
+    public String getUserPlayerRecommend(HttpServletRequest request, PlayerRecommendAwardListVo listVo) {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                getPlayerRecommend(request),
+                getPlayerRecommend(request, listVo),
                 APP_VERSION);
     }
 
