@@ -119,9 +119,9 @@
                                 <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
                                 <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
                             </c:if>
-                            <label>${n}</label>
+                            <label for="result.payerBankcard">${n}</label>
                             <div class="ct">
-                                <input type="text" id="payerBankcard1" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${payAccount.bankCode eq 'alipay'?'':m}" autocomplete="off">
+                                <input type="text" id="result.payerBankcard" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${payAccount.bankCode eq 'alipay'?'':m}" autocomplete="off">
                             </div>
                         </div>
                     </c:if>
