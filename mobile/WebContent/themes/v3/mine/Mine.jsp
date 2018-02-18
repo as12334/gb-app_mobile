@@ -172,13 +172,14 @@
                             </li>
                         </c:if>
                         <li class="mui-col-xs-4">
-                            <a href="">
-						        <span class="item-img-wrap">
-							        <img src="${resRoot}/images/my-ico8.png" class="mine-item-img"/>
-						        </span>
-                                <p>${views.themes_auto['推荐好友']}</p>
+                                <soul:button target="${root}/recommend.html" text="" opType="href">
+                                    <span class="item-img-wrap">
+							            <img src="${resRoot}/images/my-ico8.png" class="mine-item-img"/>
+						            </span>
+                                    <p>${views.themes_auto['推荐好友']}</p>
+                                </soul:button>
+
                                 <span class="ext-info recomdAmount"></span>
-                            </a>
                         </li>
                         <li class="mui-col-xs-4">
                             <soul:button target="${root}/message/gameNotice.html?isSendMessage=true" text="" opType="href" cssClass="">
