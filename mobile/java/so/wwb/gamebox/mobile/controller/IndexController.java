@@ -230,6 +230,8 @@ public class IndexController extends BaseApiController {
         playerVo.getSearch().setUserId(SessionManager.getUserId());
         model.addAttribute("sign", getCurrencySign());
         model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
+        //活动规则
+        model.addAttribute("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue());
         return "/recommend/Recommend";
     }
 
