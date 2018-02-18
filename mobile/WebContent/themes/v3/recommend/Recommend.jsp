@@ -134,8 +134,8 @@
                                         <tbody>
                                         <c:forEach items="command" var="vo">
                                             <tr>
-                                                <td>${vo.recommendUserName}</td> <%--被推荐人账号--%>
-                                                <td></td> 有效投注额，暂时注掉
+                                                <td><%--${vo.recommendUserName}--%></td> <%--被推荐人账号--%>
+                                                <td></td> <%--有效投注额，暂时注掉--%>
                                             </tr>
 
 
