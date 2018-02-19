@@ -89,6 +89,7 @@
                                         <input type="text" id="result.rechargeAddress" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" onchange="this.value=this.value.trim()"/>
                                     </div>
                                 </div>
+                                <input type="hidden" name="activityId" id="activityId"/>
                             </div>
                         </div>
                     </div>

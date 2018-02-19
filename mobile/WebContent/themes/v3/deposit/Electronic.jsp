@@ -37,6 +37,7 @@
             <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
             <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
+            <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="depositChannel" value="electronic"/>
             <div class="mui-row">

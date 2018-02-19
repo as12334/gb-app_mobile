@@ -21,6 +21,7 @@
                 <gb:token/>
                 <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
                 <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
+                <input type="hidden" name="activityId" id="activityId"/>
                 <input type="hidden" name="depositChannel" value="bitcoin"/>
                 <div class="mui-control-content mui-active ">
                     <div class="mui-row">
@@ -91,7 +92,6 @@
                                     </a>
                                 </div>
                             </div>
-
                             <p class="info">* 为了方便系统快速完成转账，请输入正确的txid、交易时间等.</p>
                         </div>
                     </div>

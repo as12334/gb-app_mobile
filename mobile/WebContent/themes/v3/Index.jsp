@@ -5,7 +5,7 @@
 <head>
     <title>${siteName}</title>
     <%@include file="include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css?v=${rcVersion}" />
 </head>
 
 <body>
