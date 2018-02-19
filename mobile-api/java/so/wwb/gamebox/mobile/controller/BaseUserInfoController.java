@@ -9,18 +9,26 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.IpTool;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.spring.utils.SpringTool;
+import org.soul.model.msg.notice.po.NoticeContactWay;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SubSysCodeEnum;
+import so.wwb.gamebox.model.common.SessionKey;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -32,19 +40,15 @@ import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
+import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
+import so.wwb.gamebox.model.master.enums.UserPlayerTransferStateEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
-import so.wwb.gamebox.model.master.player.po.PlayerApi;
-import so.wwb.gamebox.model.master.player.po.UserBankcard;
-import so.wwb.gamebox.model.master.player.po.UserPlayer;
-import so.wwb.gamebox.model.master.player.po.VUserPlayer;
-import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
-import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
-import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
-import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
+import so.wwb.gamebox.model.master.player.po.*;
+import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -437,6 +441,243 @@ public class BaseUserInfoController {
             Double balance = player.getWalletBalance();
             return balance == null ? 0.0d : balance;
         }
+    }
+
+    /**
+     * 根据账号查找玩家信息
+     */
+    private SysUser getUserByUsername(String username, String subSysCode) {
+        SysUserVo userVo = new SysUserVo();
+        userVo.getSearch().setUsername(username);
+        userVo.getSearch().setSubsysCode(subSysCode);
+        userVo.getSearch().setSiteId(SessionManagerCommon.getSiteId());
+        return ServiceTool.sysUserService().findByUsername(userVo);
+    }
+
+    /**
+     * 账号是否冲突
+     */
+    public boolean isConflict(UserPlayerTransferVo vo) {
+        String username = vo.getResult().getPlayerAccount();
+        if (StringTool.isNotBlank(username))
+            username = username.toLowerCase();
+        SysUser user = getUserByUsername(username, SubSysCodeEnum.PCENTER.getCode());
+        return user != null;
+    }
+
+    /**
+     * 是否开启验证码
+     */
+    private void isOpenCaptcha(boolean isOpen) {
+        SessionManagerCommon.setAttribute(SessionKey.S_IS_CAPTCHA_CODE, isOpen);
+    }
+
+    /**
+     * 验证真实姓名
+     * @param vo
+     * @param map
+     * @param inputName
+     * @param player
+     */
+    protected void checkName(UserPlayerTransferVo vo, Map<String, Object> map, String inputName, UserPlayerTransfer player) {
+        if (player != null) {
+            // 导入的玩家账号与现有库玩家账号冲突
+            map.put("conflict", isConflict(vo));
+
+            boolean isNameOk = StringTool.equals(inputName, player.getRealName());
+            map.put("nameSame", isNameOk);
+            if (isNameOk) {
+                isOpenCaptcha(false);
+            } else {
+                boolean hasName = StringTool.isNotBlank(player.getRealName());
+                isOpenCaptcha(hasName);
+                map.put("nameSame", !hasName);
+            }
+
+            map.put("playerAccount", player.getPlayerAccount());
+        }
+        SessionManagerCommon.setAttribute("tempPass", vo.getTempPass());
+        SessionManagerCommon.setAttribute("tempCode", vo.getTempCode());
+    }
+
+    /**
+     * 老玩家站点前台导入
+     * @param vo
+     * @param request
+     * @return
+     */
+    public Boolean importOldPlayer(UserPlayerTransferVo vo, HttpServletRequest request) {
+        UserPlayerVo playerVo = new UserPlayerVo();
+        String username = vo.getResult().getPlayerAccount();
+        List<UserPlayerTransfer> userPlayerTransfers = getUserPlayerTransfers(vo);
+        if(CollectionTool.isEmpty(userPlayerTransfers)){
+            return false;
+        }
+        UserPlayerTransfer transfer = userPlayerTransfers.get(0);
+        if (UserPlayerTransferStateEnum.ACTIVATE.getCode().equals(transfer.getIsActive())) {
+            return false;
+        }
+        playerVo = importPlayerData(vo, request, playerVo, username, transfer);
+        return playerVo.isSuccess();
+    }
+
+    private UserPlayerVo importPlayerData(UserPlayerTransferVo vo, HttpServletRequest request, UserPlayerVo playerVo, String username, UserPlayerTransfer transfer) {
+        if (StringTool.isNotBlank(username)) {
+            username = username.toLowerCase();
+        }
+        SysUser agent = getUserByUsername(transfer.getAgent(), SubSysCodeEnum.MCENTER_AGENT.getCode());
+
+        // 设置账户基本信息
+        playerVo.setSysUser(setSysUser(vo, transfer, request, username, agent));
+        // 设置玩家信息
+        playerVo.setResult(setPlayer(transfer, agent));
+        // 设置联系方式
+        playerVo.setNoticeContactWays(setContactWay(transfer));
+        // 设置银行卡
+        playerVo.setUserBankcard(setBankCard(transfer));
+        // 修改导入表玩家状态
+        playerVo.setPlayerTransfer(transfer);
+
+        playerVo = ServiceSiteTool.userPlayerService().importPlayer(playerVo);
+        return playerVo;
+    }
+
+    /**
+     * 设置银行卡信息
+     */
+    private UserBankcard setBankCard(UserPlayerTransfer pt) {
+        String cardNo = pt.getBankcardNumber();
+        if (StringTool.isNotBlank(cardNo)) {
+            UserBankcard card = new UserBankcard();
+            card.setBankcardNumber(cardNo);
+            card.setBankDeposit(pt.getBankDeposit());
+            card.setCreateTime(SessionManagerCommon.getDate().getNow());
+            card.setType(UserBankcardTypeEnum.BANK.getCode());
+            return card;
+        }
+        return null;
+    }
+
+    /**
+     * 设置联系方式
+     */
+    private List<NoticeContactWay> setContactWay(UserPlayerTransfer pt) {
+        List<NoticeContactWay> ways = new ArrayList<>(2);
+        if (StringTool.isNotBlank(pt.getMobilePhone())) {
+            NoticeContactWay mobile = new NoticeContactWay();
+            mobile.setContactType(ContactWayTypeEnum.MOBILE.getCode());
+            mobile.setContactValue(pt.getMobilePhone());
+            ways.add(mobile);
+        }
+        if (StringTool.isNotBlank(pt.getEmail())) {
+            NoticeContactWay email = new NoticeContactWay();
+            email.setContactType(ContactWayTypeEnum.EMAIL.getCode());
+            email.setContactValue(pt.getEmail());
+            ways.add(email);
+        }
+        return ways;
+    }
+
+    /**
+     * 设置玩家信息
+     */
+    private UserPlayer setPlayer(UserPlayerTransfer pt, SysUser agent) {
+        UserPlayer player = new UserPlayer();
+        try{
+            player.setRankId(pt.getPlayerRankId());
+        }catch (Exception ex){
+            LogFactory.getLog(this.getClass()).warn("导入玩家验证时转换层级{0}出错",pt.getPlayerRank());
+        }
+
+        player.setTotalAssets(pt.getAccountBalance() == null ? 0d : pt.getAccountBalance());
+        player.setWalletBalance(player.getTotalAssets());
+
+        if (agent != null) {
+            player.setUserAgentId(agent.getId());
+            player.setAgentName(agent.getUsername());
+            UserAgentVo agentVo = new UserAgentVo();
+            agentVo.getSearch().setId(agent.getId());
+            UserAgent userAgent = ServiceSiteTool.userAgentService().get(agentVo).getResult();
+            if(player.getRankId()==null){
+                player.setRankId(userAgent.getPlayerRankId());
+            }
+
+        } else {
+            player.setUserAgentId(-2);
+            if(player.getRankId()==null) {
+                player.setRankId(-1);
+            }
+            agent = new SysUser();
+            agent.setOwnerId(-1);
+        }
+
+        SysUser topAgent = getTopAgent(agent);
+        if(topAgent!=null){
+            player.setGeneralAgentId(topAgent.getId());
+            player.setGeneralAgentName(topAgent.getUsername());
+        }
+
+
+        PlayerRankVo vo = new PlayerRankVo();
+        vo.getSearch().setId(player.getRankId());
+        vo = ServiceSiteTool.playerRankService().get(vo);
+        if (vo.getResult() != null) {
+            player.setRakebackId(vo.getResult().getRakebackId());
+        }
+
+        return player;
+    }
+
+    private SysUser getTopAgent(SysUser agent){
+        if(agent==null||agent.getOwnerId()==null){
+            return null;
+        }
+        SysUserVo topAgentVo = new SysUserVo();
+        topAgentVo.getSearch().setId(agent.getOwnerId());
+        topAgentVo = ServiceTool.sysUserService().get(topAgentVo);
+        return topAgentVo.getResult();
+    }
+
+    /**
+     * 设置玩家基本信息
+     */
+    private SysUser setSysUser(UserPlayerTransferVo vo, UserPlayerTransfer pt, HttpServletRequest request, String username, SysUser agent) {
+        SysUser user = new SysUser();
+        user.setUsername(username);
+        String password = vo.getTempPass();
+        if (StringTool.isBlank(password)) {
+            password = (String) SessionManagerCommon.getAttribute("tempPass");
+        }
+        user.setPassword(AuthTool.md5SysUserPassword(password, username));
+        user.setRealName(pt.getRealName());
+        user.setCreateTime(SessionManagerCommon.getDate().getNow());
+        user.setRegisterIp(IpTool.ipv4StringToLong(ServletTool.getIpAddr(request)));
+        user.setRegisterIpDictCode(SessionManagerCommon.getIpDictCode());
+        user.setDefaultLocale(String.valueOf(SessionManagerCommon.getLocale()));
+        user.setDefaultTimezone(SessionManagerCommon.getTimeZone().getDisplayName());
+        user.setSiteId(SessionManagerCommon.getSiteId());
+        String domain = request.getServerName();
+        user.setUseLine(domain);
+        user.setRegisterSite(domain.startsWith("www.") ? domain.substring(4) : domain);
+        user.setPasswordLevel(vo.getPassLevel());
+        if (agent != null) {
+            user.setOwnerId(agent.getId());
+            user.setDefaultCurrency(agent.getDefaultCurrency());
+        } else {
+            user.setOwnerId(-2);
+        }
+        return user;
+    }
+
+    /**
+     * 查询账号是否存在
+     */
+    public List<UserPlayerTransfer> getUserPlayerTransfers(UserPlayerTransferVo vo) {
+        UserPlayerTransferListVo listVo = new UserPlayerTransferListVo();
+        listVo.setSearch(vo.getSearch());
+        listVo.getSearch().setIsActive(UserPlayerTransferStateEnum.INACTIVE.getCode());
+        listVo = ServiceSiteTool.userPlayerTransferService().search(listVo);
+        return listVo.getResult();
     }
 
 

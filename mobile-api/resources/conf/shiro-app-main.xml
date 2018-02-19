@@ -47,6 +47,7 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
+				/userInfoOrigin/verifyRealNameForApp.html = anon
 				/origin/*.html = anon
 				/discountsOrigin/*.html = anon
 				/** = subsys,kickout,authc,access,autho
