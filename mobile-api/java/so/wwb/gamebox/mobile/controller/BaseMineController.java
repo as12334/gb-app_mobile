@@ -147,11 +147,11 @@ public class BaseMineController {
             String checkState = recode.getCheckState();
 
             if (StringTool.equalsIgnoreCase(CommonStatusEnum.SUCCESS.getCode(), checkState) || StringTool.equals(ActivityApplyCheckStatusEnum.SUCCESS.getCode(), checkState)
-                    || StringTool.equals(SUCCESS_4, checkState)) {
+                    || StringTool.equals(ActivityApplyCheckStatusEnum.NOT_REACHED.getCode(), checkState)) {
                 promoApp.setCheckStateName("已发放");
             } else if (StringTool.equals(ActivityApplyCheckStatusEnum.PENDING.getCode(), checkState)) {
                 promoApp.setCheckStateName("待审核");
-            } else if (StringTool.equals(PROCESSING_0, checkState)) {
+            } else if (StringTool.equals(ActivityApplyCheckStatusEnum.TO_BE_CONFIRM.getCode(), checkState)) {
                 promoApp.setCheckStateName("进行中");
             } else {
                 promoApp.setCheckStateName("未通过");
