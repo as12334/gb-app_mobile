@@ -1,6 +1,10 @@
 package so.wwb.gamebox.mobile.app.controller;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.soul.commons.collections.ListTool;
+import org.soul.commons.collections.MapTool;
+import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.validation.form.annotation.FormModel;
@@ -21,9 +25,12 @@ import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.UserBankcard;
+import so.wwb.gamebox.model.master.player.po.UserPlayerTransfer;
 import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
+import so.wwb.gamebox.model.master.player.vo.UserPlayerTransferVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
+import so.wwb.gamebox.web.passport.form.CheckRealNameForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -161,6 +168,72 @@ public class UserInfoAppController extends BaseUserInfoController {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
+
+  /*  *//**
+     * 验证真实姓名
+     * @param form
+     * @param vo
+     * @param result
+     * @param request
+     * @return
+     *//*
+    @RequestMapping(value = "/verifyRealNameForApp", method = RequestMethod.POST)
+    @ResponseBody
+    public String verifyRealNameForApp(@FormModel @Valid CheckRealNameForm form, BindingResult result, UserPlayerTransferVo vo, HttpServletRequest request) {
+
+
+        boolean conflict = BooleanTool.toBoolean(MapTool.getBoolean(map,"conflict"));
+        boolean nameSame = BooleanTool.toBoolean(MapTool.getBoolean(map,"nameSame"));
+        Boolean importResult =false;
+        if(nameSame&&!conflict){
+            importResult = importOldPlayer(vo, request);
+        }
+        map.put("importResult",importResult);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
+
+    }*/
+
+    /**
+     * 验证真实姓名
+     */
+    @RequestMapping(value = "verifyRealNameForApp", method = RequestMethod.POST)
+    @ResponseBody
+    public String verifyRealNameForApp(UserPlayerTransferVo vo, @FormModel("result") @Valid CheckRealNameForm form, BindingResult result, HttpServletRequest request) {
+
+        if(result.hasErrors()){
+
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null, APP_VERSION);
+        }
+
+        Map<String, Object> map = new HashMap<>(3,1f);
+
+        String inputName = vo.getResult().getRealName();
+        vo = ServiceSiteTool.userPlayerTransferService().search(vo);
+        UserPlayerTransfer player = vo.getResult();
+
+        checkName(vo, map, inputName, player);
+
+        if(MapTool.isEmpty(map)){
+            map = new HashedMap();
+        }
+
+        boolean conflict = BooleanTool.toBoolean(MapTool.getBoolean(map,"conflict"));
+        boolean nameSame = BooleanTool.toBoolean(MapTool.getBoolean(map,"nameSame"));
+        Boolean importResult =false;
+        if(nameSame&&!conflict){
+            importResult = importOldPlayer(vo, request);
+        }
+
+        map.put("importResult",importResult);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
+    }
+
+
 
     /**
      * 设置我的链接地址

@@ -1,13 +1,12 @@
 package so.wwb.gamebox.mobile.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
@@ -41,12 +40,9 @@ import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.company.setting.po.Api;
-import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
-import so.wwb.gamebox.model.company.site.po.SiteApi;
-import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
-import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
+import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -67,8 +63,9 @@ import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.so.VPlayerTransactionSo;
-import so.wwb.gamebox.model.master.report.vo.*;
-import so.wwb.gamebox.model.master.setting.po.GradientTemp;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
+import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
 import so.wwb.gamebox.web.api.IApiBalanceService;
@@ -149,12 +146,12 @@ public class BaseMineController {
             promoApp.setCheckState(recode.getCheckState());
             String checkState = recode.getCheckState();
 
-            if (StringTool.equalsIgnoreCase("success", checkState) || StringTool.equals("2", checkState)
-                    || StringTool.equals("4", checkState)) {
+            if (StringTool.equalsIgnoreCase(CommonStatusEnum.SUCCESS.getCode(), checkState) || StringTool.equals(ActivityApplyCheckStatusEnum.SUCCESS.getCode(), checkState)
+                    || StringTool.equals(SUCCESS_4, checkState)) {
                 promoApp.setCheckStateName("已发放");
-            } else if (StringTool.equals("1", checkState)) {
+            } else if (StringTool.equals(ActivityApplyCheckStatusEnum.PENDING.getCode(), checkState)) {
                 promoApp.setCheckStateName("待审核");
-            } else if (StringTool.equals("0", checkState)) {
+            } else if (StringTool.equals(PROCESSING_0, checkState)) {
                 promoApp.setCheckStateName("进行中");
             } else {
                 promoApp.setCheckStateName("未通过");
@@ -972,9 +969,11 @@ public class BaseMineController {
             ids[i] = listVo.getResult().get(i).getId();
         }
         replyListVo.getSearch().setIds(ids);
-        //查询回复表每一条在已读表是否存在
-        replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
-
+        //根据ids查，如果ids为空，就不用在查了
+        if (ids.length > 1) {
+            //查询回复表每一条在已读表是否存在
+            replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
+        }
 
         for (PlayerAdvisoryReply replay : replyListVo.getResult()) {
             PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
@@ -991,6 +990,24 @@ public class BaseMineController {
         map.put("sysMessageUnReadCount", length);
         map.put("advisoryUnReadCount", advisoryUnReadCount);
         return map;
+    }
+
+    /**
+     * 获取玩家咨询的List
+     * @param listVo
+     * @return
+     */
+    protected VPlayerAdvisoryListVo searchAdvisoryList(VPlayerAdvisoryListVo listVo) {
+        if (listVo.getSearch() == null) {
+            listVo.setSearch(new VPlayerAdvisorySo());
+        }
+        listVo.getSearch().setSearchType("player");
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
+        listVo.getSearch().setPlayerDelete(false);
+        listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
+
+        return listVo;
     }
 
     /**

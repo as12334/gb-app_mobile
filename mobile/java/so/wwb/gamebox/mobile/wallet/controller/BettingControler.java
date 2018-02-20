@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.wallet.controller;
 
-import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.log.Log;
@@ -12,13 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.company.setting.po.ApiI18n;
-import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
-import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
-import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerGameOrderVo;
@@ -26,11 +20,9 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.report.betting.controller.BaseGameOrderController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
-/**
- * 投注记录
+/**投注记录
  * Created by bill on 16-11-29.
  */
 @Controller
@@ -48,15 +40,14 @@ public class BettingControler {
     /**
      * 查询投注记录列表
      * 按日期查询
-     *
      * @param listVo
      * @param model
      * @param request
      * @return
      */
     @RequestMapping("/index")
-    public String getBettingList(PlayerGameOrderListVo listVo, Model model, HttpServletRequest request) {
-        String url = BETTING_URL;
+    public String getBettingList(PlayerGameOrderListVo listVo, Model model, HttpServletRequest request){
+        String url=BETTING_URL;
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         //判断ajax请求
         if (ServletTool.isAjaxSoulRequest(request)) {
@@ -161,9 +152,13 @@ public class BettingControler {
     }
 
     private void initQueryDate(PlayerGameOrderListVo playerGameOrderListVo) {
-        playerGameOrderListVo.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
-        if (playerGameOrderListVo.getSearch().getBeginBetTime() == null) {
+        Date minDate = SessionManager.getDate().addDays(TIME_INTERVAL);
+        playerGameOrderListVo.setMinDate(minDate);
+        PlayerGameOrderSo playerGameOrderSo = playerGameOrderListVo.getSearch();
+        if (playerGameOrderSo.getBeginBetTime() == null) {
             playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME)); //拿到明天在-1相当于拿到今天时间00:00:00
+        } else if (playerGameOrderSo.getBeginBetTime().getTime() < minDate.getTime()) {
+            playerGameOrderListVo.getSearch().setBeginBetTime(minDate);
         }
         if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
             playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -1));
