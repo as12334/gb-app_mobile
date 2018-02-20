@@ -545,6 +545,8 @@ public class BaseMineController {
 
         VPlayerTransaction po = vo.getResult();
 
+        Map<String, String> dictMapByEnum = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_FUND_TYPE);
+        Map<String, String> dictMapByCurrency = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_CURRENCY_SYMBOL);
         detailApp.setTransactionNo(po.getTransactionNo());  //交易号
         detailApp.setCreateTime(po.getCreateTime());  //创建时间
 
@@ -580,19 +582,22 @@ public class BaseMineController {
                 detailApp.setReturnTime(((Date) map.get("returnTime")).getTime()); //交易时间
             }
             if (StringTool.equals(po.getFundType(), DepositWayEnum.BITCOIN_FAST.getCode())) {//如果存款类型是比特币支付
-                detailApp.setTransactionWayName("比特币支付");
+
+                detailApp.setTransactionWayName(dictMapByEnum.get(DepositWayEnum.BITCOIN_FAST.getCode()));//比特币支付
                 detailApp.setTxId(String.valueOf(map.get("bankOrder")));
                 detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
-                detailApp.setRechargeAmount("Ƀ" + map.get("bitAmount"));
+
+//                Map<String, String> dictMapByCurrency = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_CURRENCY_SYMBOL);
+                detailApp.setRechargeAmount(dictMapByCurrency.get("BTC") + map.get("bitAmount"));
             }
             Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_FUND_TYPE);
 
             detailApp.setTransactionWayName(i18n.get(po.getFundType()));
 
-            if ("artificial_withdraw".equals(po.getFundType())) {
-                detailApp.setTransactionWayName("系统操作");  //人工存款
-            } else if ("artificial_deposit".equals(po.getFundType())) {
-                detailApp.setTransactionWayName("系统操作"); //人工存款
+            if (FundTypeEnum.ARTIFICIAL_WITHDRAW.getCode().equals(po.getFundType())) {
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND.getCode(), "FundRecord.view.tips"));  //人工存款
+            } else if (FundTypeEnum.ARTIFICIAL_DEPOSIT.getCode().equals(po.getFundType())) {
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND.getCode(), "FundRecord.view.tips")); //人工存款
             }
 
             if (map.get("bankCode") != null) {
@@ -601,7 +606,7 @@ public class BaseMineController {
                 detailApp.setBankCodeName(bankName);
                 detailApp.setBankUrl(setBankPictureUrl(request, po));
             }
-            if (map.get("customBankName") != null && "其他方式".equals(map.get("customBankName"))) {
+            if (map.get("customBankName") != null && "other".equals(map.get("bankCode"))) {
                 detailApp.setBankCodeName(String.valueOf(map.get("customBankName")));
             }
         }
@@ -614,11 +619,11 @@ public class BaseMineController {
 
             String bankNo = String.valueOf(map.get("bankNo"));
             if (StringTool.isBlank(bankName) && !"artificial_withdraw".equals(po.getFundType())) {
-                detailApp.setTransactionWayName(" 尾号 " + StringTool.substring(bankNo, bankNo.length() - 4, bankNo.length())); //描述
-            } else if ("artificial_withdraw".equals(po.getFundType())) {
-                detailApp.setTransactionWayName("系统操作");  //人工取款
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "otherBankDescribe", StringTool.substring(bankNo, bankNo.length() - 4, bankNo.length()))); //描述
+            } else if (FundTypeEnum.ARTIFICIAL_WITHDRAW.getCode().equals(po.getFundType())) {
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND.getCode(), "FundRecord.view.tips"));  //人工取款
             } else {
-                detailApp.setTransactionWayName(bankName + " 尾号 " + StringTool.substring(bankNo, bankNo.length() - 4, bankNo.length())); //描述
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "bankNumDescribe", bankName, StringTool.substring(bankNo, bankNo.length() - 4, bankNo.length()))); //描述
             }
             if (withdrawVo.getResult().getDeductFavorable() != null && withdrawVo.getResult().getDeductFavorable() > 0) {
                 detailApp.setDeductFavorable(moneyType + " " + CurrencyTool.formatCurrency(withdrawVo.getResult().getDeductFavorable()));//扣除优惠
@@ -627,10 +632,10 @@ public class BaseMineController {
             }
             detailApp.setRealName(StringTool.overlayName(SessionManager.getUser().getRealName())); //姓名
             if (map.get("bankNo") != null && "bitcoin".equals(map.get("bankCode"))) {
-                detailApp.setWithdrawMoney("Ƀ" + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
-                detailApp.setPoundage("Ƀ" + withdrawVo.getResult().getCounterFee()); //手续费
+                detailApp.setWithdrawMoney(dictMapByCurrency.get("BTC") + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //取款金额
+                detailApp.setPoundage(dictMapByCurrency.get("BTC") + withdrawVo.getResult().getCounterFee()); //手续费
                 double totalAmount = withdrawVo.getResult().getWithdrawAmount() - withdrawVo.getResult().getCounterFee();
-                detailApp.setRechargeTotalAmount("Ƀ" + " " + "-" + CurrencyTool.formatCurrency(totalAmount));  //实际到账
+                detailApp.setRechargeTotalAmount(dictMapByCurrency.get("BTC") + " " + "-" + CurrencyTool.formatCurrency(totalAmount));  //实际到账
             } else {
                 detailApp.setWithdrawMoney(moneyType + " " + CurrencyTool.formatCurrency(po.getTransactionMoney()));
                 detailApp.setPoundage(moneyType + withdrawVo.getResult().getCounterFee()); //手续费
@@ -663,9 +668,10 @@ public class BaseMineController {
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
             if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer) map.get("rewardType") == 2) {//描述
-                detailApp.setTransactionWayName("好友" + " " + map.get("username"));
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendRecommend", map.get("username")));
+
             } else if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer) map.get("rewardType") == 3) {
-                detailApp.setTransactionWayName("被" + "推荐" + map.get("username") + "好友"); //描述
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendBeUsedToRecommend", map.get("username"))); //描述
             }
             detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
