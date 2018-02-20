@@ -143,7 +143,7 @@ public class DiscountsAppController {
                     ActivityTypeListApp activityApp = new ActivityTypeListApp();
                     activityApp.setId(playerActivityMessage.getId());
                     activityApp.setPhoto(playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated());
-                    activityApp.setUrl(ACTIVITY_DETAIL_URL + "?searchId=" + playerActivityMessage.getSearchId());
+                    activityApp.setUrl(ACTIVITY_DETAIL_URL + "?searchId=" + listVo.getSearchId(playerActivityMessage.getId()));
                     activityApp.setName(playerActivityMessage.getActivityName());
                     activityTypeListApps.add(activityApp);
                 }
