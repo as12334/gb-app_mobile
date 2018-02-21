@@ -4,13 +4,11 @@
 <body class="gb-theme help-center">
 <div class="mui-draggable mui-off-canvas-wrap">
     <div class="mui-inner-wrap">
-        <c:if test="${os ne 'android'}">
-            <header class="mui-bar mui-bar-nav">
-                <%@ include file="/include/include.toolbar.jsp" %>
-                <h1 class="mui-title">${views.help_auto['帮助中心']}</h1>
-            </header>
-        </c:if>
-        <div class="mui-content mui-scroll-wrapper" style="${os eq 'android'?'padding-top:0!important;':''}">
+        <header class="mui-bar mui-bar-nav">
+            <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left "></a>
+            <h1 class="mui-title">${views.help_auto['帮助中心']}</h1>
+        </header>
+        <div class="mui-content mui-scroll-wrapper">
             <div class="mui-scroll">
                 <ul class="mui-table-view">
                     <c:forEach items="${command}" var="helpMenu">

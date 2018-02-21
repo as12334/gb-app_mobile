@@ -6,7 +6,8 @@
     <div class="mui-inner-wrap">
         <c:if test="${os ne 'android'}">
             <header class="mui-bar mui-bar-nav">
-                <%@ include file="/include/include.toolbar.jsp" %>
+                <%--<%@ include file="/include/include.toolbar.jsp" %>--%>
+                    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left "></a>
                 <h1 class="mui-title">${name}</h1>
             </header>
         </c:if>
