@@ -7,6 +7,7 @@ import org.soul.commons.query.enums.Operator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
@@ -31,6 +32,7 @@ public class HelpCenterController {
      * @return
      */
     @RequestMapping("/firstType")
+    @Upgrade(upgrade = true)
     public String getHelpParentType(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo, Model model) {
         //先查出帮助中心父菜单
         Criteria criteria = Criteria.add(VHelpTypeAndDocument.PROP_PARENT_ID, Operator.IS_NULL, true);
@@ -47,6 +49,7 @@ public class HelpCenterController {
      * @return
      */
     @RequestMapping("/secondType")
+    @Upgrade(upgrade = true)
     public String getHelpChildType(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo, String name, Model model) {
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
         if(searchId !=null) {
@@ -68,6 +71,7 @@ public class HelpCenterController {
      * @return
      */
     @RequestMapping("/detail")
+    @Upgrade(upgrade = true)
     public String getHelpDetail(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo, String name,Model model){
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
         VHelpTypeAndDocument vHelpTypeAndDocument = Cache.getHelpTypeAndDocument().get(searchId.toString());
