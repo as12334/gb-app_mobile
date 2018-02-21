@@ -15,7 +15,8 @@
                     <c:if test="${api.get(a.apiId.toString()).systemStatus eq 'maintain' or siteApi.get(a.apiId.toString()).systemStatus eq 'maintain'}">
                         <div class="mui-maintain chess"></div>
                     </c:if>
-                    <img src="${resRoot}/images/api/api-chess-${a.apiId}.png">
+                    <c:set var="path" value="${resRoot}/images/api/api-chess-${a.apiId}.png"></c:set>
+                    <img src="${soulFn:getImagePath(domain, path)}"/>
                     ${gbFn:getApiName(a.apiId.toString())}
                 </a>
             </c:forEach>

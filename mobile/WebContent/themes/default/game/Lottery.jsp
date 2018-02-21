@@ -13,15 +13,17 @@
                         <input type="hidden" id="lottery-id" value="${a.apiId}" />
                     </c:if>
                     <a data-lottery-id="${a.apiId}" data-lotto-idx="${vs.index}" class="${vs.index == 0 ? 'active' : ''}">
+
+
                         <c:choose>
                             <c:when test="${centerId == -3   && a.apiId == 22}">
-                                <img src="${resRoot}/images/api/api-lottery-22-2.png">
+                                <c:set var="path" value="${resRoot}/images/api/api-lottery-22-2.png"></c:set>
                             </c:when>
                             <c:otherwise>
-                                <img src="${resRoot}/images/api/api-lottery-${a.apiId}.png">
+                                <c:set var="path" value="${resRoot}/images/api/api-lottery-${a.apiId}.png"></c:set>
                             </c:otherwise>
                         </c:choose>
-
+                        <img src="${soulFn:getImagePath(domain, path)}"/>
                         <span class="mui-tab-label api-name">
                                 ${gbFn:getApiName(a.apiId.toString())}
                         </span>

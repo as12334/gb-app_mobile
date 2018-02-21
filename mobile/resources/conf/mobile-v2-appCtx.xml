@@ -32,4 +32,6 @@
 	</bean>
 	<bean id="illegalCharacterFilter" class="org.soul.web.filter.IllegalCharacterFilter">
 	</bean>
+
+	<bean id="cdnConf" class="so.wwb.gamebox.common.support.CdnConf"/>
 </beans>
