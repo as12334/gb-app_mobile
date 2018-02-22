@@ -6,6 +6,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -51,7 +52,7 @@ public class DiscountsAppController {
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap, SessionManager.getDomain(request)), APP_VERSION);
     }
 
     /**
@@ -60,7 +61,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypes")
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
     }
 
     /**
@@ -85,7 +86,7 @@ public class DiscountsAppController {
     /**
      * 获取活动和类型
      */
-    private Map getActivityTypeMessages(VActivityMessageListVo listVo) {
+    private Map getActivityTypeMessages(VActivityMessageListVo listVo, HttpServletRequest request) {
         List<ActivityTypeApp> types = new ArrayList<>();
         String activityClassifyKey = listVo.getSearch().getActivityClassifyKey();
         if (StringTool.isNotBlank(activityClassifyKey)) {
@@ -97,9 +98,10 @@ public class DiscountsAppController {
         }
         Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
+        String domain = SessionManager.getDomain(request);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
-            Map messages = getActivityMessages(listVo, activityMessageMap);
+            Map messages = getActivityMessages(listVo, activityMessageMap, domain);
             activityTypes.put(type.getActivityKey(), messages);
         }
         return activityTypes;
@@ -108,7 +110,7 @@ public class DiscountsAppController {
     /**
      * 获取正在进行中的活动 转换接口数据
      */
-    private Map getActivityMessages(VActivityMessageListVo listVo, Map<String, PlayerActivityMessage> activityMessageMap) {
+    private Map getActivityMessages(VActivityMessageListVo listVo, Map<String, PlayerActivityMessage> activityMessageMap, String domain) {
         Map<String, Object> map = new HashMap<>(2, 1f);
         if (MapTool.isEmpty(activityMessageMap)) {
             map.put("list", new ArrayList<>(0));
@@ -142,7 +144,7 @@ public class DiscountsAppController {
                 if (hasRank) {
                     ActivityTypeListApp activityApp = new ActivityTypeListApp();
                     activityApp.setId(playerActivityMessage.getId());
-                    activityApp.setPhoto(playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated());
+                    activityApp.setPhoto(ImageTag.getImagePath(domain, playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated()));
                     activityApp.setUrl(ACTIVITY_DETAIL_URL + "?searchId=" + listVo.getSearchId(playerActivityMessage.getId()));
                     activityApp.setName(playerActivityMessage.getActivityName());
                     activityTypeListApps.add(activityApp);
