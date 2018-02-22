@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.master.enums.PlayerStatusEnum;
@@ -240,6 +241,7 @@ public class WithdrawController extends BaseWithdrawController {
     }
 
     @RequestMapping("/showAuditLog")
+    @Upgrade(upgrade = true)
     public String showAuditLog(PlayerTransactionListVo listVo, Model model) {
         //查询列表前先进行集合一下
         getAuditMap();
