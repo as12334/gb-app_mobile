@@ -14,7 +14,7 @@
 <!-- 侧滑导航根容器 -->
 <div class="mui-off-canvas-wrap mui-draggable">
     <header class="mui-bar mui-bar-nav">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
         <h1 class="mui-title">转账</h1>
     </header>
 
@@ -66,8 +66,6 @@
 
             <div class="mui-row">
                 <div class="gb-form-foot"  class="_api" id="mui-content-padded">
-                    <%--<button class="mui-btn mui-btn-primary submit" id="transfersMoney">${views.transfer_auto['确认提交']}</button>--%>
-                    <%--<soul:button tag="a" target="submitTransactionMoney" text="${views.transfer_auto['确认提交']}" opType="function" cssClass="mui-btn mui-btn-primary submit" />--%>
                     <a data-rel='{"target":"submitTransactionMoney","opType":"function"}' class="mui-btn mui-btn-primary submit">${views.transfer_auto['确认提交']}</a>
                 </div>
             </div>
