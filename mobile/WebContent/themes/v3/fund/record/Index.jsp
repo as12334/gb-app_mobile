@@ -156,7 +156,7 @@
 <%@ include file="../../include/include.js.jsp" %>
 <script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
-<script type="text/javascript" src="${resRoot}/js/fund/record/Index.js"></script>
+<script type="text/javascript" src="${resRoot}/js/fund/record/Index.js?v=${rcVersion}"></script>
 
 </html>
 <%@ include file="/include/include.footer.jsp" %>
