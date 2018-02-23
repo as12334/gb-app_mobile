@@ -11,27 +11,23 @@
 <c:choose>
     <c:when test="${isDemo}">
         <body class="gb-theme mine-page no-backdrop" >
-        <c:if test="${os ne 'android'}">
-            <header class="mui-bar mui-bar-nav">
-                <c:if test="${os ne 'app_ios'}">
-                    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-                </c:if>
-                <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
-            </header>
-        </c:if>
+        <header class="mui-bar mui-bar-nav">
+            <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
+        </header>
         <center>
             <img src="${resRoot}/themes/images/no_limit.png" width="90%" style="margin-top: 150px;" />
         </center>
         </body>
     </c:when>
     <c:otherwise>
-        <body class="gb-theme mine-page">
+        <body class="exchange">
         <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
             <!-- 主页面容器 -->
             <div class="mui-inner-wrap">
                 <header class="mui-bar mui-bar-nav">
                     <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
-                    <h1 class="mui-title">转账</h1>
+                    <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
                 </header>
 
                 <div class="mui-content mui-scroll-wrapper" id="refreshContainer">

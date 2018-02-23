@@ -15,7 +15,7 @@
 <div class="mui-off-canvas-wrap mui-draggable">
     <header class="mui-bar mui-bar-nav">
         <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">转账</h1>
+        <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
     </header>
 
     <div class="mui-content mui-scroll-wrapper">
