@@ -30,6 +30,6 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/registe/RegisteRules.js"></script>
+<script type="text/javascript" src="${resRoot}/js/registe/RegisteRules.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

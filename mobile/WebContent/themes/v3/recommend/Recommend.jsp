@@ -202,8 +202,8 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="/legend02/rcenter/common/js/dist/clipboard.js"></script>
-<script src="${resRoot}/js/mui/mui.picker.min.js"></script>
-<script type="text/javascript" src="${resRoot}/js/recommend/Recommend.js"></script>
+<script src="/legend02/rcenter/common/js/dist/clipboard.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/recommend/Recommend.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
