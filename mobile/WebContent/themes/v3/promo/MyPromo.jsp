@@ -30,5 +30,5 @@
 </body>
 
 <%@ include file="../include/include.js.jsp"%>
-<script src="${resRoot}/js/discounts/MyPromo.js"></script>
+<script src="${resRoot}/js/discounts/MyPromo.js?v=${rcVersion}"></script>
 </html>

@@ -975,7 +975,7 @@ public class BaseMineController {
         }
         replyListVo.getSearch().setIds(ids);
         //根据ids查，如果ids为空，就不用在查了
-        if (ids.length > 1) {
+        if (ids.length > 0) {
             //查询回复表每一条在已读表是否存在
             replyListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdsPlayerReply(replyListVo);
         }
