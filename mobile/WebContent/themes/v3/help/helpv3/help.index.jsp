@@ -24,5 +24,5 @@
 </div>
 </body>
 <%@ include file="../../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/help/Help.js"></script>
+<script type="text/javascript" src="${resRoot}/js/help/Help.js?v=${rcVersion}"></script>
 
