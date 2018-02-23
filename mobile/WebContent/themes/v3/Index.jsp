@@ -25,6 +25,14 @@
 <%@include file="common/Footer.jsp"%>
 <%-- 侧滑导航根容器 --%>
 <%@include file="common/LeftMenu.jsp"%>
+<%--添加到桌面图标--%>
+<div id="deskTip" class="desk">
+    <div class="mui-col-xs-2 logo"><img src="${resRoot}/images/app_icon_111.png"></div>
+    <div class="mui-col-xs-8 tip">
+        <span class="desk-text">点击下方<em></em>添加到主屏幕</span>
+    </div>
+    <div data-rel='{"target":"closeDesk","opType":"function"}' class="mui-col-xs-1 close"><i></i></div>
+</div>
 <!--消息弹窗-->
 <%@include file="index.include/include.dialog.jsp"%>
 <%--红包--%>
