@@ -10,6 +10,7 @@
     <modules>
         <module>../base/model</module>
         <module>../base/iservice</module>
+        <module>../base/iservice-activity</module>
         <module>../base/webcommon</module>
         <module>../base/common</module>
         <module>../base/monitor/monitor-aopclient</module>
