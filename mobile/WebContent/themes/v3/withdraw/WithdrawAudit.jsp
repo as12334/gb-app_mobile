@@ -3,18 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
     <title>${views.withdraw_auto['查看稽核']}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <%@ include file="../include/include.head.jsp" %>
-    <%--<link rel="bookmark" href="../../mobile-v3/favicon.ico">
-    <link rel="shortcut icon" href="../../mobile-v3/favicon.ico">
-    <link rel="stylesheet" href="../../mobile-v3/themes/mui.min.css" />
-    <link rel="stylesheet" href="../../mobile-v3/themes/common.css" />
-    <link rel="stylesheet" href="../../mobile-v3/themes/otherpage.css" />
-    <link rel="stylesheet" href="../../mobile-v3/themes/default/style.css" />--%>
 </head>
 <body class="audit">
 <header class="mui-bar mui-bar-nav">
@@ -144,12 +134,7 @@
 </div>
 
 </body>
-
-<%--<%@ include file="withdrawV3/withdraw.audit.jsp" %>--%>
 <%@ include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/withdraw/Withdraw.js"></script>
-
-
+<script type="text/javascript" src="${resRoot}/js/withdraw/WithdrawAudit.js?v=${rcVersion}"></script>
 </html>
-<%--
-<%@ include file="/include/include.footer.jsp" %>--%>
+<%@ include file="/include/include.footer.jsp" %>
