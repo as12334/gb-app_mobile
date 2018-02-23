@@ -22,6 +22,7 @@ import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.iservice.master.report.IVPlayerTransactionService;
 import so.wwb.gamebox.mobile.form.PlayerTransactionForm;
 import so.wwb.gamebox.mobile.form.PlayerTransactionSearchForm;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
@@ -32,6 +33,7 @@ import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
+import so.wwb.gamebox.model.master.player.vo.PlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
@@ -61,6 +63,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
     }
 
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String fundRecord(VPlayerTransactionListVo listVo, Model model, HttpServletRequest request) {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
@@ -75,6 +78,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
             listVo = getService().search(listVo);
         }
         listVo = preList(listVo);
+        model.addAttribute("sumPlayerMap", getSumPlayerFunds(listVo));//页面统计
         model.addAttribute("command", listVo);
         model.addAttribute("maxDate", SessionManager.getDate().getNow());
         model.addAttribute("minDate", SessionManager.getDate().addDays(DEFAULT_TIME));
@@ -91,6 +95,26 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
             }
         }
         return "";
+    }
+
+    /**
+     * 页面统计：充值，提现，优惠，返水
+     * @param listVo
+     * @return
+     */
+    protected Map getSumPlayerFunds(VPlayerTransactionListVo listVo) {
+        if (listVo != null) {
+            PlayerTransactionListVo transactionListVo = new PlayerTransactionListVo();
+            transactionListVo.getSearch().setPlayerId(listVo.getSearch().getPlayerId());
+            transactionListVo.getSearch().setBeginCreateTime(listVo.getSearch().getBeginCreateTime());
+            transactionListVo.getSearch().setEndCreateTime(listVo.getSearch().getEndCreateTime());
+//            transactionListVo.getSearch().setTransactionType(listVo.getSearch().getTransactionType());
+            transactionListVo.getSearch().setStates(new String[]{CommonStatusEnum.SUCCESS.getCode(), CommonStatusEnum.LSSUING.getCode()});
+
+            return ServiceSiteTool.playerTransactionService().sumPlayerFunds(transactionListVo);
+        }
+
+        return null;
     }
 
     @RequestMapping("/handleRefresh")

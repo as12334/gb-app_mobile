@@ -23,9 +23,6 @@
 <script src="${resRoot}/js/jquery/jquery.validate.extend.mobile.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/AppNative.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/Common.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
-
 
 
 
