@@ -5,7 +5,7 @@
             <table>
                 <tbody>
                 <c:forEach items="${command.result}" var="s">
-                    <tr data-href="${root}/fund/record/details.html?searchId=${command.getSearchId(s.id)}">
+                    <tr data-rel='{"target":"${root}/fund/record/details.html?searchId=${command.getSearchId(s.id)}","opType":"href"}'>
                         <td><span class="text-gray">${soulFn:formatDateTz(s.createTime, DateFormat.DAY,timeZone)}</span></td>
                         <td>
                             <c:set value="${s._describe}" var="_describe"/>
