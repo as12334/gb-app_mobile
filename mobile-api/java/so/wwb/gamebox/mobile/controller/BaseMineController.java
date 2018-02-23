@@ -437,11 +437,10 @@ public class BaseMineController {
         Map<String, SiteApiI18n> siteApiI18nMap = getSiteApiI18n();
         Map<String, ApiI18n> apiI18nMap = getApiI18n();
         String url = "/fund/betting/gameRecordDetail.html?searchId=%s";
+        PlayerGameOrderVo playerGameOrderVo = new PlayerGameOrderVo();
         for (PlayerGameOrder order : list) {
             BettingInfoApp infoApp = new BettingInfoApp();
-            PlayerActivityMessage message = new PlayerActivityMessage();
-            message.setId(order.getId());
-            infoApp.setId(message.getSearchId());//加密后的id
+            infoApp.setId(playerGameOrderVo.getSearchId(order.getId()));//加密后的id
             infoApp.setApiId(order.getApiId());
             infoApp.setGameId(order.getGameId());
             infoApp.setTerminal(order.getTerminal());
