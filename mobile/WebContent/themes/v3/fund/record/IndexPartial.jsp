@@ -27,7 +27,7 @@
                                 <c:when test="${s.status=='failure'}"><span class="text-red">${dicts.common.status[s.status]}</span></c:when>
                                 <c:when test="${s.status=='pending_pay'}"><span class="text-orange">${dicts.common.status[s.status]}</span></c:when>
                                 <c:when test="${s.status=='pending'}"><span class="text-blue">${dicts.common.status[s.status]}</span></c:when>
-                                <c:when test="${s.status=='exchange'}"><span class="text-blue">${dicts.common.status[s.status]}11</span></c:when>
+                                <c:when test="${s.status=='exchange'}"><span class="text-blue">${dicts.common.status[s.status]}</span></c:when>
                                 <c:when test="${s.status=='over_time'}"><span class="text-red">${dicts.common.status[s.status]}</span></c:when>
                                 <c:when test="${s.status=='process'}"><span class="text-blue">${dicts.common.status[s.status]}</span></c:when>
                                 <c:when test="${s.status=='reject'}"><span class="text-red">${dicts.common.status[s.status]}</span></c:when>
