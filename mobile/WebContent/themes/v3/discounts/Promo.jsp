@@ -30,7 +30,7 @@
                 <div class="swiper-wrapper">
                     <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType":"function","activityType",""}'><span>${views.themes_auto['全部']}</span></a>
                     <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
-                        <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType","function","activityType","${type.key}"}'><span>${type.value}</span></a>
+                        <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType":"function","activityType":"${type.key}"}'><span>${type.value}</span></a>
                     </c:forEach>
 
                 </div>
