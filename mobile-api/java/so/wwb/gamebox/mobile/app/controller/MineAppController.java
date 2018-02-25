@@ -1036,7 +1036,8 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         Map map = appRecovery();
-        if (map.get("isSuccess") == null && MapTool.getBoolean(map, "isSuccess") == false) {
+        Boolean isSuccess = (Boolean) map.get("isSuccess");
+        if (isSuccess == null || !isSuccess) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
                     map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
