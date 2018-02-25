@@ -4,14 +4,9 @@
 <head>
     <meta charset="utf-8">
     <title>${views.fund_auto['资金记录']}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <%@ include file="/themes/v3/include/include.head.jsp" %>
-    <link rel="bookmark" href="../../mobile-v3/favicon.ico">
-    <link rel="shortcut icon" href="../../mobile-v3/favicon.ico">
-    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css" />
-    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css" />
+    <%--<link rel="stylesheet" href="${resRoot}/themes/mui.picker.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css" />--%>
     <%--popover滚动需在页面自定义样式--%>
     <style>
         #transactionType {position: fixed;top: 16px;right: 6px;}
