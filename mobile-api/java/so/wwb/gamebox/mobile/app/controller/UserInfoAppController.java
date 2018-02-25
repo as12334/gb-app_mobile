@@ -3,10 +3,9 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.apache.commons.collections.map.HashedMap;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,6 +18,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
 import so.wwb.gamebox.mobile.app.model.AppMineLinkVo;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
 import so.wwb.gamebox.mobile.app.validateForm.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
@@ -65,6 +65,27 @@ public class UserInfoAppController extends BaseUserInfoController {
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
+    }
+
+    /**
+     * 获取用户资产信息
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getUserAssert")
+    @ResponseBody
+    public String getUserAssert(HttpServletRequest request) {
+        //获取用户资产相关信息（总资产、钱包余额）
+        MyUserInfo userInfo = new MyUserInfo();
+        getUserAssertInfo(userInfo, SessionManager.getUserId());
+        UserInfoApp userInfoApp = new UserInfoApp();
+        userInfoApp.setApis(userInfo.getApis());
+        userInfoApp.setAssets(String.valueOf(userInfo.getTotalAssets()));
+        userInfoApp.setBalance(String.valueOf(userInfo.getWalletBalance()));
+        userInfoApp.setUsername(SessionManager.getUserName());
+        userInfoApp.setCurrSign(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), userInfoApp, APP_VERSION);
     }
 
     /**
@@ -201,7 +222,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @ResponseBody
     public String verifyRealNameForApp(UserPlayerTransferVo vo, @FormModel("result") @Valid CheckRealNameForm form, BindingResult result, HttpServletRequest request) {
 
-        if(result.hasErrors()){
+        if (result.hasErrors()) {
 
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -209,7 +230,7 @@ public class UserInfoAppController extends BaseUserInfoController {
                     null, APP_VERSION);
         }
 
-        Map<String, Object> map = new HashMap<>(3,1f);
+        Map<String, Object> map = new HashMap<>(3, 1f);
 
         String inputName = vo.getResult().getRealName();
         vo = ServiceSiteTool.userPlayerTransferService().search(vo);
@@ -217,22 +238,21 @@ public class UserInfoAppController extends BaseUserInfoController {
 
         checkName(vo, map, inputName, player);
 
-        if(MapTool.isEmpty(map)){
+        if (MapTool.isEmpty(map)) {
             map = new HashedMap();
         }
 
-        boolean conflict = BooleanTool.toBoolean(MapTool.getBoolean(map,"conflict"));
-        boolean nameSame = BooleanTool.toBoolean(MapTool.getBoolean(map,"nameSame"));
-        Boolean importResult =false;
-        if(nameSame&&!conflict){
+        boolean conflict = BooleanTool.toBoolean(MapTool.getBoolean(map, "conflict"));
+        boolean nameSame = BooleanTool.toBoolean(MapTool.getBoolean(map, "nameSame"));
+        Boolean importResult = false;
+        if (nameSame && !conflict) {
             importResult = importOldPlayer(vo, request);
         }
 
-        map.put("importResult",importResult);
+        map.put("importResult", importResult);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
-
 
 
     /**

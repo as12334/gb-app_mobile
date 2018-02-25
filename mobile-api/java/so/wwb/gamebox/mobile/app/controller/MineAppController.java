@@ -1036,7 +1036,8 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         Map map = appRecovery();
-        if (map.get("isSuccess") == null && MapTool.getBoolean(map, "isSuccess") == false) {
+        Boolean isSuccess = (Boolean) map.get("isSuccess");
+        if (isSuccess == null || !isSuccess) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
                     map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
@@ -1047,7 +1048,7 @@ public class MineAppController extends BaseMineController {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                appRefresh(request),
+                new HashMap<>(0),
                 APP_VERSION);
     }
 
@@ -1132,10 +1133,11 @@ public class MineAppController extends BaseMineController {
 
     /**
      * 定义一个接口，App端每隔一段时间请求一次，防止掉线
+     *
      * @return
      */
-@RequestMapping(value = "/alwaysRequest", method = RequestMethod.POST)
-@ResponseBody
+    @RequestMapping(value = "/alwaysRequest", method = RequestMethod.POST)
+    @ResponseBody
     public String alwaysRequest() {
 
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), null, APP_VERSION);

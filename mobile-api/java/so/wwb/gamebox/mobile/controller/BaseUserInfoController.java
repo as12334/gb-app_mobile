@@ -135,7 +135,7 @@ public class BaseUserInfoController {
      *
      * @param userInfo
      */
-    private void getUserAssertInfo(MyUserInfo userInfo, Integer userId) {
+    public void getUserAssertInfo(MyUserInfo userInfo, Integer userId) {
         PlayerApiListVo playerApiListVo = new PlayerApiListVo();
         playerApiListVo.getSearch().setPlayerId(userId);
         try {
