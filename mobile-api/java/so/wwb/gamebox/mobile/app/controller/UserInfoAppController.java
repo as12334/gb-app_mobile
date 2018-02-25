@@ -81,8 +81,8 @@ public class UserInfoAppController extends BaseUserInfoController {
         getUserAssertInfo(userInfo, SessionManager.getUserId());
         UserInfoApp userInfoApp = new UserInfoApp();
         userInfoApp.setApis(userInfo.getApis());
-        userInfoApp.setAssets(CurrencyTool.formatCurrency(userInfo.getTotalAssets()));
-        userInfoApp.setBalance(CurrencyTool.formatCurrency(userInfo.getWalletBalance()));
+        userInfoApp.setAssets(String.valueOf(userInfo.getTotalAssets()));
+        userInfoApp.setBalance(String.valueOf(userInfo.getWalletBalance()));
         userInfoApp.setUsername(SessionManager.getUserName());
         userInfoApp.setCurrSign(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), userInfoApp, APP_VERSION);
