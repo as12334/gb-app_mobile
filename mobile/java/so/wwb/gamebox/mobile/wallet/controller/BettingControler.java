@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.ParamTool;
@@ -118,6 +119,7 @@ public class BettingControler {
     }
 
     @RequestMapping("/gameRecordDetail")
+    @Upgrade(upgrade = true)
     public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo, Model model) {
         playerGameOrderVo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);
         PlayerGameOrder playerGameOrder = playerGameOrderVo.getResult();
