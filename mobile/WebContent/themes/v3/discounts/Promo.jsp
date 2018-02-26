@@ -49,7 +49,20 @@
                                 <div class="mui-scroll">
                                     <c:forEach var="map" items="${messageVo.typeMessageMap}">
                                         <c:forEach var="message" items="${map.value}">
-                                            <a href="${root}/promo/promoDetail.html?search.id=${message.id}" data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"} '><img src="${message.activityAffiliated}" /></a>
+                                            <a href="${root}/promo/promoDetail.html?search.id=${message.id}" data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"} '>
+                                                <c:choose>
+                                                    <c:when test="${!empty message.activityAffiliated}">
+                                                        <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityAffiliated)}" />
+                                                    </c:when>
+                                                    <c:when test="${!empty message.activityCover}">
+                                                        <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityCover)}" />
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg" />
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <img src="${message.activityAffiliated}" />
+                                            </a>
                                         </c:forEach>
                                     </c:forEach>
                                 </div>
@@ -95,11 +108,11 @@
         <!--footer-->
         <%@ include file="../common/Footer.jsp" %>
         <!-- off-canvas backdrop -->
-        <div class="mui-off-canvas-backdrop"></div>
+        <%--<div class="mui-off-canvas-backdrop"></div>--%>
     </div>
 </div>
-<input value="1" id="pageNumber" hidden>
-<input value="1" id="lastPageNumber" hidden>
+<input value="1" id="pageNumber" type="hidden">
+<input value="1" id="lastPageNumber" type="hidden">
 </body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
