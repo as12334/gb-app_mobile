@@ -546,23 +546,16 @@ public class IndexController extends BaseApiController {
     }
 
     static String getSiteDomain(HttpServletRequest request) {
-        //125的记忆域名特殊处理
         if (SessionManager.getAttribute("SESSION_DEFAULTSITE") != null) {
             return SessionManager.getAttribute("SESSION_DEFAULTSITE").toString();
         }
         String defaultSite = "";
-        if (CommonContext.get().getSiteId() == 125) {
-            SysSite site = Cache.getSysSite().get(CommonContext.get().getSiteId().toString());
-            defaultSite = site.getWebSite();
-        } else {
-            //其他的都是取默认域名
-            List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
-            if (CollectionTool.isNotEmpty(domainList)) {
-                for (VSysSiteDomain o : domainList) {
-                    if (o.getIsDefault()) {
-                        defaultSite = o.getDomain();
-                        break;
-                    }
+        List<VSysSiteDomain> domainList = Cache.getSiteDomain(CommonContext.get().getSiteId(), DomainPageUrlEnum.INDEX.getCode());
+        if (CollectionTool.isNotEmpty(domainList)) {
+            for (VSysSiteDomain o : domainList) {
+                if (o.getIsDefault()) {
+                    defaultSite = o.getDomain();
+                    break;
                 }
             }
         }
