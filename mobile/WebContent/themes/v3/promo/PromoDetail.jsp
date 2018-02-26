@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
 <c:set var="isDemo" value="<%=SessionManagerCommon.isDemoModel() %>" />
-<!DOCTYPE html>
 <html>
 <head>
     <title>${siteName}</title>
@@ -17,7 +16,7 @@
         <c:set var="activity" value="${command.result}" />
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
-            <soul:button text="" opType="function" target="goToLastPage" cssClass="mui-icon mui-icon mui-icon-left-nav mui-pull-left"></soul:button>
+            <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
             <%@include file="../common/Assert.jsp"%>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
@@ -31,9 +30,20 @@
                                 <ul>
                                     <li>
                                         <a href="">
-                                            <img src="${soulFn:getImagePathWithDefault(domain, activity.activityAffiliated, resRoot.concat('/images/img-sale1.jpg'))}">
+                                            <c:choose>
+                                                <c:when test="${!empty activity.activityAffiliated}">
+                                                    <c:set var="imgSrc" value="${soulFn:getImagePath(domain, activity.activityAffiliated)}"/>
+                                                </c:when>
+                                                <c:when test="${!empty activity.activityCover}">
+                                                    <c:set var="imgSrc" value="${soulFn:getImagePath(domain, activity.activityCover)}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg 3"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <img src="${imgSrc}" style="width: 100%;">
                                         </a>
-                                        <div class="ct">
+                                        <div class="ct" style="padding: 0;">
                                             <h5><i></i><span>${activity.activityName}</span></h5>
                                             <p>${activity.activityDescription}</p>
                                         </div>
@@ -67,14 +77,15 @@
                                 </c:otherwise>
                             </c:choose>
                             <div class="gb-form-foot" style="margin-top: -10px;">
-                                <soul:button target="submit" opType="function" dataCode="${activity.code}"
-                                             dataStates="${activity.states}" dataType="processing" dataSearchId="${activity.searchId}"
-                                             dataRankId="${rankId}" isDemo="${isDemo}" cssClass="mui-pull-right mui-btn mui-btn-primary submit" text="">
-                                    ${btnText}
-                                </soul:button>
+                                <button class="mui-pull-right mui-btn mui-btn-primary submit" data-rel='{"target":"joinPromo","opType":"function","dataCode":"${activity.code}",
+                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}","isDemo":"${isDemo}"}' value="${btnText}"></button>
                             </div>
                         </div>
                     </c:if>
+
+                    <%@ include file="./redEnvelope/Envelope.jsp" %>
+                    <%--<div class="mui-off-canvas-backdrop"></div>--%>
+
                 </div>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
@@ -85,8 +96,6 @@
 </body>
 <%@ include file="../include/include.js.jsp"%>
 <script src="${resComRoot}/js/mobile/layer.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/common/Common.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/discounts/PromoDetail.js?v=${rcVersion}"></script>
 </html>
