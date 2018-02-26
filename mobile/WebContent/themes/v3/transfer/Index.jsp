@@ -73,7 +73,7 @@
 
 
             <div class="mui-row" style="height: 30px;">
-                <button id="refreshAllApiBalance" data-rel='{"target":"refreshAllBalance", "opType":"function"}' class="mui-btn mui-pull-right"
+                <button id="refreshAllApiBalance" data-rel='{"target":"refreshAllApiBalance", "opType":"function"}' class="mui-btn mui-pull-right"
                         style="margin-right: 10px;font-size: 12px; padding: 3px 10px;line-height: 1.4;">${views.transfer_auto['刷新余额']}
                 </button>
             </div>
