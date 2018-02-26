@@ -84,7 +84,7 @@ public class BaseUserInfoController {
         //获取用户资产相关信息（总资产、钱包余额）
         getUserAssertInfo(userInfo, userId);
         //正在处理中取款金额
-        userInfo.setWalletBalance(getDealWithdrawAmount(userId));
+        userInfo.setWithdrawAmount(getDealWithdrawAmount(userId));
         //正在处理中转账金额(额度转换)
        // userInfo.setTransferAmount(getProcessTransferAmount(userId));
         //计算近7日收益（优惠金额）
