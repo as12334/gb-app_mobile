@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <title>${views.fund_auto['资金记录']}</title>
     <%@ include file="/themes/v3/include/include.head.jsp" %>
-    <%--<link rel="stylesheet" href="${resRoot}/themes/mui.picker.css" />
-    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css" />--%>
+    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css" />
     <%--popover滚动需在页面自定义样式--%>
     <style>
         #transactionType {position: fixed;top: 16px;right: 6px;}
