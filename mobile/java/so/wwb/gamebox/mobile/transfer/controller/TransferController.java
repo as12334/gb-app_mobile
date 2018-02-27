@@ -559,6 +559,7 @@ public class TransferController extends WalletBaseController {
     }
 
     @RequestMapping(value = "/refreshAllApiBalance")
+    @Upgrade(upgrade = true)
     public String refreshAllApiBalance(Model model) {
         PlayerApiListVo playerApiListVo = fundRecord(true);
         model.addAttribute("apis", getAllAPI(playerApiListVo.getResult()));
