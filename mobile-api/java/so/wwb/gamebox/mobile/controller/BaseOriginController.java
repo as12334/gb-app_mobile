@@ -64,7 +64,7 @@ public abstract class BaseOriginController {
     private String API_GAME_LINK = "/game/apiGames.html?apiId=%d&apiTypeId=%d";
     private String AUTO_GAME_LINK = "/mobile-api/origin/getGameLink.html?apiId=%d&apiTypeId=%d";
     private String CASINO_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=%d";
-    private String TRANSFER_LINK = "/transfer/index.html?apiId=%d&apiTypeId=%d";
+    private String TRANSFER_LINK = "/transfer/index.html?apiId=%d&apiTypeId=%s";
 
     /**
      * 根据条件筛选游戏
