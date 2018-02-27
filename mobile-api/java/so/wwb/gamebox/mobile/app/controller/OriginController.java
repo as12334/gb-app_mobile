@@ -241,21 +241,14 @@ public class OriginController extends BaseOriginController {
                     map,
                     APP_VERSION);
         }
-        if (String.valueOf(ApiTypeEnum.CASINO.getCode()).equals(siteGame.getApiTypeId())) {
-            PlayerApiAccountVo player = new PlayerApiAccountVo();
-            player.setApiId(siteGame.getApiId());
-            player.setApiTypeId(siteGame.getApiTypeId());
-            player.setGameId(siteGame.getGameId());
-            player.setGameCode(siteGame.getGameCode());
-            AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
-            map.put("gameLink", gameUrl.getGameLink());
-            map.put("gameMsg", gameUrl.getGameMsg());
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.SUCCESS.getCode(),
-                    AppErrorCodeEnum.SUCCESS.getMsg(),
-                    map,
-                    APP_VERSION);
-        }
+        PlayerApiAccountVo player = new PlayerApiAccountVo();
+        player.setApiId(siteGame.getApiId());
+        player.setApiTypeId(siteGame.getApiTypeId());
+        player.setGameId(siteGame.getGameId());
+        player.setGameCode(siteGame.getGameCode());
+        AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
+        map.put("gameLink", gameUrl.getGameLink());
+        map.put("gameMsg", gameUrl.getGameMsg());
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
