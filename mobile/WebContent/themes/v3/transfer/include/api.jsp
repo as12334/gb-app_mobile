@@ -1,6 +1,6 @@
 <%--@elvariable id="apis" type="java.util.List<java.util.Map<java.lang.String,java.lang.Object>>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ include file="/include/include.inc.jsp" %>
+<%@ include file="../../include/include.inc.jsp" %>
 <div class="mui-row">
     <div class="mui-input-group mine-form mine-form-nobg">
         <c:forEach var="api" items="${apis}" varStatus="vs">
