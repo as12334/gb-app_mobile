@@ -2,11 +2,11 @@
 <%@ include file="../include/include.inc.jsp" %>
 <html>
 <head>
-    <%@ include file="/themes/v3/include/include.head.jsp" %>
+    <%@ include file="../include/include.head.jsp" %>
     <title>${views.help_auto['帮助中心']}</title>
 </head>
 
-<%@ include file="/themes/v3/help/helpv3/help.index.jsp" %>
+<%@ include file="../help/helpv3/help.index.jsp" %>
 
 </html>
 <%@ include file="/include/include.footer.jsp" %>
