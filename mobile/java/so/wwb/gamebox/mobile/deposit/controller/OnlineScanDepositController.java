@@ -21,7 +21,6 @@ import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.validation.Valid;
@@ -94,6 +93,10 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
             case BankCodeEnum.CODE_QQ_MICROPAY:
                 payAccountForScan = getScanPay(rank, PayAccountAccountType.QQ_MICROPAY.getCode(), RechargeTypeEnum.QQWALLET_SCAN.getCode());
                 scanPay = RechargeTypeEnum.QQWALLET_SCAN.getCode();
+                break;
+            case BankCodeEnum.CODE_EASY_PAY:
+                payAccountForScan = getScanPay(rank, PayAccountAccountType.EASY_PAY.getCode(), RechargeTypeEnum.EASY_PAY.getCode());
+                scanPay = RechargeTypeEnum.EASY_PAY.getCode();
                 break;
             default:
                 break;

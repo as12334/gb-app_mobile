@@ -288,6 +288,8 @@ public class DepositController extends BaseCommonDepositController {
                 bankCode = BankCodeEnum.ALIPAY_MICROPAY.getCode();
             } else if (PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccountType)) {
                 bankCode = BankCodeEnum.QQ_MICROPAY.getCode();
+            } else if (PayAccountAccountType.EASY_PAY.getCode().equals(payAccountType)) {
+                bankCode = BankCodeEnum.EASY_PAY.getCode();
             } else {
                 bankCode = BankCodeEnum.UNIONPAY.getCode();
             }
