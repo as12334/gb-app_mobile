@@ -134,10 +134,10 @@
             <div class="flex">
                 <span>合计：</span>
                 <div class="c">
-                    <div style="width: 50%;">充值总额：${soulFn:formatCurrency(sumPlayerMap.recharge)}</div>
-                    <div style="width:50%">提现总额：${soulFn:formatCurrency(sumPlayerMap.withdraw)}</div>
-                    <div style="width: 50%;">优惠总额：${soulFn:formatCurrency(sumPlayerMap.favorable)}</div>
-                    <div style="width:50%">返水总额：${soulFn:formatCurrency(sumPlayerMap.rakeback)}</div>
+                    <div style="width: 50%;" id="depositTotal">充值总额：${soulFn:formatCurrency(sumPlayerMap.recharge)}</div>
+                    <div style="width:50%" id="withdrawTotal">提现总额：${soulFn:formatCurrency(sumPlayerMap.withdraw)}</div>
+                    <div style="width: 50%;" id="promoTotal">优惠总额：${soulFn:formatCurrency(sumPlayerMap.favorable)}</div>
+                    <div style="width:50%" id="backwaterTotal">返水总额：${soulFn:formatCurrency(sumPlayerMap.rakeback)}</div>
                 </div>
             </div>
         </footer>
