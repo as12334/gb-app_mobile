@@ -50,6 +50,10 @@
 
     </c:otherwise>
 </c:choose>
+<input type="hidden" id="deposit" name="deposit" value="${soulFn:formatCurrency(sumPlayerMap.recharge)}">
+<input type="hidden" id="withdraw" name="withdraw" value="${soulFn:formatCurrency(sumPlayerMap.withdraw)}">
+<input type="hidden" id="promo" name="promo" value="${soulFn:formatCurrency(sumPlayerMap.favorable)}">
+<input type="hidden" id="backwater" name="backwater" value="${soulFn:formatCurrency(sumPlayerMap.rakeback)}">
 <tr hidden>
     <td><input type="hidden" value="${command.paging.lastPageNumber}" id="lastPageNumber"></td>
 </tr>
