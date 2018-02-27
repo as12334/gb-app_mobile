@@ -206,7 +206,7 @@ public class OriginController extends BaseOriginController {
      * @param modelVo
      * @return
      */
-    @RequestMapping(value = "getGameLink")
+    @RequestMapping("/getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (SessionManager.getUser() == null) {
