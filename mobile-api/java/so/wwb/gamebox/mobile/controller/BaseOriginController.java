@@ -9,6 +9,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.math.NumberTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
@@ -244,12 +245,13 @@ public abstract class BaseOriginController {
      * @return
      */
     private String getCasinoGameRequestUrl(SiteGame siteGame) {
+        //bb kg需进入大厅，不支持直接进入游戏
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-        if (siteGame.getGameId() != null) {
+        if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
             sb.append("&gameId=").append(siteGame.getGameId());
         }
-        if (StringTool.isNotBlank(siteGame.getCode())) {
+        if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
             sb.append("&gameCode=").append(siteGame.getCode());
         }
         return sb.toString();
@@ -377,6 +379,7 @@ public abstract class BaseOriginController {
                     apiGameMap.put(apiId, new ArrayList<>());
                 }
                 apiGameMap.get(apiId).add(appSiteGame);
+                navGames.put(apiTypeId, apiGameMap);
             } else if (fishGameType.equals(siteGame.getGameType())) {
                 //捕鱼游戏名称=api名称 + 游戏名称
                 fishName = new StringBuffer();
@@ -421,11 +424,7 @@ public abstract class BaseOriginController {
         appSiteGame.setName(siteGame.getName());
         appSiteGame.setCover(siteGame.getCover());
         appSiteGame.setSystemStatus(siteGame.getSystemStatus());
-        if (SessionManager.isAutoPay()) {
-            appSiteGame.setGameLink(getCasinoGameRequestUrl(siteGame));
-        } else {
-            appSiteGame.setGameLink(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-        }
+        appSiteGame.setGameLink(getCasinoGameRequestUrl(siteGame));
         appSiteGame.setAutoPay(SessionManager.isAutoPay());
         return appSiteGame;
     }
@@ -463,7 +462,7 @@ public abstract class BaseOriginController {
             if (api == null || siteApi == null || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
                 continue;
             }
-            apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map,siteApiI18nMap,apiI18nMap,apiId,apiTypeId));
+            apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
             if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
                 apiTypeRelation.setApiStatus(maintain);
             } else if ((normal.equals(api.getSystemStatus()) || preMaintain.equals(api.getSystemStatus())) && (normal.equals(siteApi.getSystemStatus()) || preMaintain.equals(siteApi.getSystemStatus()))) {
@@ -497,12 +496,14 @@ public abstract class BaseOriginController {
         appRelation.setApiId(apiTypeRelation.getApiId());
         appRelation.setApiTypeId(apiTypeRelation.getApiTypeId());
         appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
-        appRelation.setGameLink(getAutoPayGameLink(apiTypeRelation));
-        appRelation.setOrderNum(apiTypeRelation.getMobileOrderNum());
-        appRelation.setAutoPay(SessionManager.isAutoPay());
         if (CollectionTool.isNotEmpty(games)) {
             appRelation.setGameList(CollectionQueryTool.sort(games, Order.asc(AppSiteGame.PROP_ORDER_NUM)));
+        } else {
+            appRelation.setGameLink(getAutoPayGameLink(apiTypeRelation));
         }
+        appRelation.setOrderNum(apiTypeRelation.getMobileOrderNum());
+        appRelation.setAutoPay(SessionManager.isAutoPay());
+
         return appRelation;
     }
 
@@ -513,18 +514,13 @@ public abstract class BaseOriginController {
      * @return
      */
     private String getAutoPayGameLink(SiteApiTypeRelation siteApi) {
-        if (SessionManager.getUser() != null && siteApi.getApiTypeId() != ApiTypeEnum.LOTTERY.getCode()) {
-            if (siteApi.getApiId() != null && StringTool.equals(siteApi.getApiId().toString(), ApiProviderEnum.BSG.getCode())) {
-                return String.format(API_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
-            } else if (SessionManager.isAutoPay() && siteApi.getApiTypeId() != null && siteApi.getApiTypeId().intValue() != ApiTypeEnum.CASINO.getCode()) {
-                return String.format(AUTO_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
-            } else if (ApiTypeEnum.CASINO.getCode() == siteApi.getApiTypeId()) {
-                return String.format(CASINO_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
-            } else {
-                return String.format(API_DETAIL_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
-            }
+        if (ApiTypeEnum.CASINO.getCode() == siteApi.getApiTypeId()) {
+            return String.format(CASINO_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
+        } else if (SessionManager.isAutoPay()) {
+            return String.format(AUTO_GAME_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
+        } else {
+            return String.format(API_DETAIL_LINK, siteApi.getApiId(), siteApi.getApiTypeId());
         }
-        return "";
     }
 
     /**
