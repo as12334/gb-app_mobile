@@ -654,8 +654,12 @@ public abstract class BaseOriginController {
         } else {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             appI18n.setGameLink("");
+            return appI18n;
         }
-
+        if (StringTool.isNotBlank(playerApiAccountVo.getErrMsg())) {
+            appI18n.setGameMsg(playerApiAccountVo.getErrMsg());
+            return appI18n;
+        }
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
         if (gameApiResult == null) {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));

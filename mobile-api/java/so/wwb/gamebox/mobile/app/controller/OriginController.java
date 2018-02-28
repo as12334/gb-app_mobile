@@ -209,12 +209,6 @@ public class OriginController extends BaseOriginController {
     @RequestMapping("/getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
-        if (SessionManager.getUser() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.UN_LOGIN.getCode(),
-                    AppErrorCodeEnum.UN_LOGIN.getMsg(),
-                    null, APP_VERSION);
-        }
         if (siteGame.getApiId() == null) {
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
