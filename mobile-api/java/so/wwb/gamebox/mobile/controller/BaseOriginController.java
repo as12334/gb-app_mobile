@@ -586,6 +586,9 @@ public abstract class BaseOriginController {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
             appI18n.setGameLink("");
             return appI18n;
+        } else if(StringTool.isBlank(playerApiAccountVo.getErrMsg())) {
+            appI18n.setGameMsg(playerApiAccountVo.getErrMsg());
+            return appI18n;
         }
 
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
