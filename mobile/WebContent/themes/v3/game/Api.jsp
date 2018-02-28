@@ -38,7 +38,7 @@
                                  width="100%" alt="">
                     </div>
                     <!-- 游戏项 -->
-                    <div class="game-item api-grid " style="min-height: 0">
+                    <div class="game-item api-grid "<%-- style="min-height: 0"--%>>
                         <div class="mui-row">
                             <div class="mui-pull-left">
                                 <c:choose>
@@ -67,7 +67,7 @@
                                 <div class="g-money">
                                     <div class="login-status">
                                         <span class="rmb-c">${apiDetail.get('currSign')}</span>${apiDetail.get('apiMoney')}<%--200.25--%>
-                                        <span class="icon-refresh"></span>
+                                        <%--<span class="icon-refresh"></span>--%>
                                     </div>
                                     <div class="unlogin-status mui-hide">
                                         <a href="login">${views.themes_auto['登陆查看余额']}</a>
