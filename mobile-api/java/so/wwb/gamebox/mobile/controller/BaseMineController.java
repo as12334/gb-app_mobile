@@ -649,7 +649,8 @@ public class BaseMineController {
             detailApp.setTransactionWayName(String.valueOf(map.get(SessionManager.getLocale().toString()))); //描述
             if (StringTool.isBlank(detailApp.getTransactionWayName()) || "null".equals(detailApp.getTransactionWayName())) {
                 detailApp.setTransactionWayName(String.valueOf(map.get("activityName"))); //描述
-            } else if ((StringTool.isBlank(detailApp.getTransactionWayName()) || "null".equals(detailApp.getTransactionWayName()))
+            }
+            if ((StringTool.isBlank(detailApp.getTransactionWayName()) || "null".equals(detailApp.getTransactionWayName()))
                     && "refund_fee".equals(po.getFundType())) {
 
                 detailApp.setTransactionWayName(i18n.get(po.getFundType()));
