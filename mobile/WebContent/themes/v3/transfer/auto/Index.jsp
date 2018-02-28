@@ -12,7 +12,7 @@
     <c:when test="${isDemo}">
         <body class="gb-theme mine-page no-backdrop" >
         <header class="mui-bar mui-bar-nav">
-            <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <a style="color: #fff;" data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
         </header>
         <center>
@@ -26,7 +26,7 @@
             <!-- 主页面容器 -->
             <div class="mui-inner-wrap">
                 <header class="mui-bar mui-bar-nav">
-                    <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+                    <a style="color: #fff;" data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left"></a>
                     <h1 class="mui-title">${views.mine_auto['额度转换']}</h1>
                 </header>
 

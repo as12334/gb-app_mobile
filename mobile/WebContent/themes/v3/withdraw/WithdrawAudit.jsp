@@ -8,7 +8,7 @@
 </head>
 <body class="audit">
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+    <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
     <h1 class="mui-title">${views.withdraw_auto['查看稽核']}</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">

@@ -22,7 +22,7 @@
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav header-casino-transfer">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+            <a style="color: #fff;" class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
             <a href="#apiType" class="mui-pull-right mui-icon link-all-game">${views.game_auto['全部游戏']}</a>
         </header>
         <gb:token></gb:token>

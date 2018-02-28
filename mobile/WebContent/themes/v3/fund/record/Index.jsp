@@ -17,7 +17,7 @@
 <body class="mine-cash-record-body">
     <!-- 主页面标题 -->
     <header class="mui-bar mui-bar-nav mine-cash-record-header">
-        <a class="mui-icon mui-icon-back mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+        <a class="mui-icon mui-icon-back mui-pull-left mui-action-back"></a>
         <h1 class="mui-title">${views.fund_auto['资金记录']}</h1>
     </header>
     <div class="mui-content mine-cash-record-content">

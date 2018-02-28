@@ -22,8 +22,7 @@
         <%--<%@include file="../common/Head.jsp" %>--%>
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav casino-list-bar">
-            <%--<a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"/>--%>
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+            <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"/>
             <%@include file="../common/Assert.jsp"%>
             <h1 class="mui-title">${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</h1>
         </header>

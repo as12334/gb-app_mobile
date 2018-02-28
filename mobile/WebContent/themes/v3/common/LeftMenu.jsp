@@ -2,7 +2,7 @@
 <%@ include file="../include/include.inc.jsp" %>
 <!-- 侧滑导航根容器 -->
 <div class="mui-off-canvas-wrap index-canvas-wrap">
-    <div data-rel='{"target":"leftMenu","opType":"function"}' class="mui-icon mui-icon-closeempty"></div>
+    <div class="mui-icon mui-icon-closeempty"></div>
     <!-- 菜单容器 -->
     <aside class="mui-off-canvas-left">
         <div class="mui-scroll-wrapper side-menu-scroll-wrapper">

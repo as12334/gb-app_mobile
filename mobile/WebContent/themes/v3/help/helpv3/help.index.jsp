@@ -5,7 +5,7 @@
 <div class="mui-draggable mui-off-canvas-wrap">
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav">
-            <a data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left "></a>
+            <a style="color: #fff;" data-rel='{"target":"goToLastPage","opType":"function"}' class="mui-icon mui-icon-left-nav mui-pull-left "></a>
             <h1 class="mui-title">${views.help_auto['帮助中心']}</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper">
