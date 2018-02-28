@@ -151,7 +151,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mui-input-group mine-form m-t-sm">
+                                   <%-- <div class="mui-input-group mine-form m-t-sm">
                                         <div class="mui-input-row">
                                             <label>${views.withdraw_auto['手续费']}</label>
                                             <div class="ct">
@@ -194,7 +194,7 @@
                                                 </p>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>--%>
                                 </div>
                                 <c:if test="${auditMap.recordList}">
                                     <div class="mui-input-row last-child f-link">
@@ -212,7 +212,7 @@
                                 <div class="mui-row">
                                     <div class="gb-form-foot">
                                         <gb:token/>
-                                        <button type="button" class="mui-btn mui-btn-primary submit" disabled>${views.withdraw_auto['确认提交']}</button>
+                                        <button type="button" id="confirmWithdraw" class="mui-btn mui-btn-primary submit">${views.withdraw_auto['确认提交']}</button>
                                     </div>
                                 </div>
                             </div>
@@ -220,6 +220,25 @@
                     </div>
                 </c:otherwise>
             </c:choose>
+                <div class="masker" style="display:none;"></div>
+                <div class="gb-withdraw-box pro-window" id="confirmWithdrawDialog" style="display: none;">
+                    <div class="cont">
+                        <h3>${views.withdraw_auto['取款核算']}</h3>
+                        <div class="cont-text">
+                            <p>${views.withdraw_auto['取款金额']}：<span class="org" id="confirmWithdrawAmount"></span></p>
+                            <p>${views.withdraw_auto['手续费']}：<span class="org" id="confirmWithdrawFee"></span></p>
+                            <p>${views.withdraw_auto['行政费']}：<span class="org" id="confirmAdministrativeFee">${auditMap.administrativeFee>0?'-':''}${auditMap.administrativeFee}</span></p>
+                            <p>${views.withdraw_auto['扣除优惠']}：<span class="org">${auditMap.deductFavorable>0?'-':''}${soulFn:formatCurrency(auditMap.deductFavorable)}</span></p>
+                            <p>${views.withdraw_auto['最终可取']}：<span class="org" id="confirmWithdrawActualAmount"></span></p>
+                        </div>
+                        <div class="pro-btn">
+                            <a class="next-btn" id="submitWithdraw">${views.withdraw_auto['确认提交']}</a>
+                            <a class="agin-btn" name="closeConfirmDialog">${views.deposit_auto['重新填写金额']}</a>
+                        </div>
+                        <div class="close" name="closeConfirmDialog">
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
         <div class="mui-off-canvas-backdrop"></div>
