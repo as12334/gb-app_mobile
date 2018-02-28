@@ -227,7 +227,7 @@
                         <div class="cont-text">
                             <p>${views.withdraw_auto['取款金额']}：<span class="org" id="confirmWithdrawAmount"></span></p>
                             <p>${views.withdraw_auto['手续费']}：<span class="org" id="confirmWithdrawFee"></span></p>
-                            <p>${views.withdraw_auto['行政费']}：<span class="org" id="confirmAdministrativeFee">${auditMap.administrativeFee>0?'-':''}${auditMap.administrativeFee}</span></p>
+                            <p>${views.withdraw_auto['行政费']}：<span class="org" id="confirmAdministrativeFee">${auditMap.administrativeFee>0?'-':''}${soulFn:formatCurrency(auditMap.administrativeFee)}</span></p>
                             <p>${views.withdraw_auto['扣除优惠']}：<span class="org">${auditMap.deductFavorable>0?'-':''}${soulFn:formatCurrency(auditMap.deductFavorable)}</span></p>
                             <p>${views.withdraw_auto['最终可取']}：<span class="org" id="confirmWithdrawActualAmount"></span></p>
                         </div>
