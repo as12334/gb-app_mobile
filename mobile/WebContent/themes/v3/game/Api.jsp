@@ -38,7 +38,7 @@
                                  width="100%" alt="">
                     </div>
                     <!-- 游戏项 -->
-                    <div class="game-item api-grid "<%-- style="min-height: 0"--%>>
+                    <div class="game-item api-grid " style="min-height: 0">
                         <div class="mui-row">
                             <div class="mui-pull-left">
                                 <c:choose>
