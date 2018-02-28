@@ -22,13 +22,14 @@
                                     <div class="mui-row">
                                         <div class="mui-input-group mine-form">
                                             <div class="mui-input-row">
-                                                <label>${views.withdraw_auto['真实姓名']}<br>
+                                                <label>
+                                                    <span for="result.bankcardMasterName">${views.withdraw_auto['真实姓名']}</span><br>
                                                     <small>${views.withdraw_auto['银行卡户名与真实姓名一致才能取款成功']}</small>
                                                 </label>
                                                 <div class="ct">
                                                     <c:choose>
                                                         <c:when test="${empty realName}">
-                                                            <input type="text" placeholder="${views.withdraw_auto['请输入真实姓名']}" name="result.bankcardMasterName" autocomplete="off">
+                                                            <input type="text" placeholder="${views.withdraw_auto['请输入真实姓名']}" name="result.bankcardMasterName" id="result.bankcardMasterName" autocomplete="off">
                                                         </c:when>
                                                         <c:otherwise>
                                                             <span class="mui-text-right" style="font-size: 12px; color: #999999">${soulFn:overlayName(realName)}</span>
@@ -46,17 +47,17 @@
                                                     <i class="arrow"></i>
                                                 </div>
                                             </div>
-                                            <div class="mui-input-row"><label>${views.withdraw_auto['卡号']}</label>
+                                            <div class="mui-input-row"><label for="result.bankcardNumber">${views.withdraw_auto['卡号']}</label>
                                                 <div class="ct">
-                                                    <input type="number" placeholder="${views.withdraw_auto['请输入卡号']}" name="result.bankcardNumber"/>
+                                                    <input type="number" placeholder="${views.withdraw_auto['请输入卡号']}" name="result.bankcardNumber" id="result.bankcardNumber"/>
                                                 </div>
                                             </div>
                                             <div class="mui-input-row">
-                                                <label>${views.withdraw_auto['开户银行']}<br>
+                                                <label for="result.bankDeposit">${views.withdraw_auto['开户银行']}<br>
                                                     <small></small>
                                                 </label>
                                                 <div class="ct">
-                                                    <input type="text" placeholder="${views.withdraw_auto['例如']}" name="result.bankDeposit"/>
+                                                    <input type="text" placeholder="${views.withdraw_auto['例如']}" name="result.bankDeposit" id="result.bankDeposit"/>
                                                 </div>
                                             </div>
                                         </div>
