@@ -11,7 +11,7 @@
 <%@page import="so.wwb.gamebox.web.SupportLocale" %>
 <%@page import="so.wwb.gamebox.web.cache.Cache" %>
 <%@page import="java.text.MessageFormat" %>
-<%@ page import="so.wwb.gamebox.web.support.CdnConf" %>
+<%@ page import="org.soul.commons.support.CdnConf" %>
 <%@page trimDirectiveWhitespaces="true" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
