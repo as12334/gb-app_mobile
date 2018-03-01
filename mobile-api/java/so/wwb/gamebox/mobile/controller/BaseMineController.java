@@ -882,7 +882,7 @@ public class BaseMineController {
         if (listVo.getSearch().getEndTime() == null) {
             listVo.getSearch().setEndTime(DateQuickPicker.getInstance().getNow());
         }
-        if (listVo.getSearch().getStartTime() == listVo.getSearch().getEndTime()) {//如果开始和结束时间选择同一天
+        if (listVo.getSearch().getStartTime().getTime() == listVo.getSearch().getEndTime().getTime()) {//如果开始和结束时间选择同一天
             listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(), 1));
         }
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
