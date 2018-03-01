@@ -414,7 +414,7 @@ public class BaseMineController {
         } else if (playerGameOrderSo.getEndBetTime() == null || playerGameOrderSo.getBeginBetTime().after(playerGameOrderSo.getEndBetTime())) {
             playerGameOrderSo.setEndBetTime(SessionManager.getDate().getTomorrow());
         }
-
+        playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1), -1));
         if (playerGameOrderListVo.getSearch().getBeginBetTime().getTime() == playerGameOrderListVo.getSearch().getEndBetTime().getTime()) { //如果两个时间一样，用户要查一天之内的数据
             playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1));
         }

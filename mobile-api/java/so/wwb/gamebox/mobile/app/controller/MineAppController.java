@@ -236,7 +236,7 @@ public class MineAppController extends BaseMineController {
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDateForgetBetting(listVo);
-        listVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(listVo.getSearch().getEndBetTime(), 1), -1));
+
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
         bettingDataApp.setTotalSize(listVo.getPaging().getTotalCount());
