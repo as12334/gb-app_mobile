@@ -5,7 +5,6 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp"%>
-    <link rel="stylesheet" href="${resRoot}/themes/layer.css"/>
 </head>
 
 <body>
@@ -38,7 +37,7 @@
                                                     <c:set var="imgSrc" value="${soulFn:getImagePath(domain, activity.activityCover)}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg 3"/>
+                                                    <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg"/>
                                                 </c:otherwise>
                                             </c:choose>
                                             <img src="${imgSrc}" style="width: 100%;">
@@ -56,12 +55,13 @@
                         <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
                         <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                         <span class="_now_time" value="${nowTime}" type="hidden"></span>
+                        <c:set var="activityCode" value="${activity.code}"/>
                         <div class="gb-form-foot">
                             <c:choose>
                                 <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
                                     <c:set var="rankId" value="all" />
                                 </c:when>
-                                <c:when test="${activity.code eq 'back_water'}">
+                                <c:when test="${activityCode eq 'back_water'}">
                                     <c:set var="rankId" value="backwater" />
                                 </c:when>
                                 <c:otherwise>
@@ -69,21 +69,22 @@
                                 </c:otherwise>
                             </c:choose>
                             <c:choose>
-                                <c:when test="${activity.code eq 'money'}">
+                                <c:when test="${activityCode eq 'money'}">
                                     <c:set var="btnText" value="${views.promo_auto['抢红包']}" />
+                                </c:when>
+                                <c:when test="${activityCode eq 'back_water'}">
+                                    <c:set var="btnText" value="${views.promo_auto['参与中']}" />
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="btnText" value="${views.promo_auto['立即加入']}" />
                                 </c:otherwise>
                             </c:choose>
                             <div class="gb-form-foot" style="margin-top: -10px;">
-                                <button class="mui-pull-right mui-btn mui-btn-primary submit" data-rel='{"target":"joinPromo","opType":"function","dataCode":"${activity.code}",
-                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}","isDemo":"${isDemo}"}' value="${btnText}"></button>
+                                <button class="mui-pull-right mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
+                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</button>
                             </div>
                         </div>
                     </c:if>
-
-                    <%@ include file="./redEnvelope/Envelope.jsp" %>
                     <%--<div class="mui-off-canvas-backdrop"></div>--%>
 
                 </div>
@@ -95,7 +96,6 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp"%>
-<script src="${resComRoot}/js/mobile/layer.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/discounts/PromoDetail.js?v=${rcVersion}"></script>
 </html>

@@ -27,9 +27,9 @@
 <%@include file="common/LeftMenu.jsp"%>
 <%--添加到桌面图标--%>
 <div id="deskTip" class="desk">
-    <div class="mui-col-xs-2 logo"><img src="${resRoot}/images/app_icon_111.png"></div>
+    <div class="mui-col-xs-2 logo"><img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png"></div>
     <div class="mui-col-xs-8 tip">
-        <span class="desk-text">点击下方<em></em>添加到主屏幕</span>
+        <span class="desk-text">${views.game_auto['点击下方']}<em></em>${views.game_auto['添加到主屏幕']}</span>
     </div>
     <div data-rel='{"target":"closeDesk","opType":"function"}' class="mui-col-xs-1 close"><i></i></div>
 </div>
