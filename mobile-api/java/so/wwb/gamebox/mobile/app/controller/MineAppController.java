@@ -1180,7 +1180,7 @@ public class MineAppController extends BaseMineController {
         }
 
         map.put("isOpenCaptcha", errorTimes >= TWO);
-        if (errorTimes <= APP_ERROR_TIMES) {
+        if (errorTimes < APP_ERROR_TIMES) {
             map.put("remainTimes", APP_ERROR_TIMES - errorTimes);
             updateSysUserErrorTimes(errorTimes, now, null);
         } else if (errorTimes >= APP_ERROR_TIMES) {
