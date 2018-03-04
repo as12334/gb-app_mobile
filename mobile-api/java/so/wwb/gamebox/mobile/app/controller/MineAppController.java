@@ -804,7 +804,7 @@ public class MineAppController extends BaseMineController {
         //修改成功需将登录错误次数修改为null
         sysUser.setLoginErrorTimes(null);
         sysUserVo.setResult(sysUser);
-        sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL);
+        sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL,SysUser.PROP_LOGIN_ERROR_TIMES);
         boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();
         if (!success) {
             return AppModelVo.getAppModeVoJson(true,
