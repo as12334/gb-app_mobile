@@ -801,6 +801,8 @@ public class MineAppController extends BaseMineController {
         sysUser.setId(SessionManager.getUserId());
         sysUser.setPassword(newPwd);
         sysUser.setPasswordLevel(updatePasswordVo.getPasswordLevel());
+        //修改成功需将登录错误次数修改为null
+        sysUser.setLoginErrorTimes(null);
         sysUserVo.setResult(sysUser);
         sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL);
         boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();

@@ -10,6 +10,16 @@
     <%@include file="../common/Assert.jsp"%>
     <img src="${appLogo}" alt="logo" class="logo">
     <h1 class="mui-title">优惠活动</h1>
+    <div class="promo-header">
+        <div class="swiper-container p-t-slide-indicators promo-sorts">
+            <div class="swiper-wrapper">
+                <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType":"function","activityType":""}'><span>${views.themes_auto['全部']}</span></a>
+                <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
+                    <a class="swiper-slide mui-btn btn-promo-sort" name="${type.key}" data-rel='{"target":"activityType","opType":"function","activityType":"${type.key}"}'><span>${type.value}</span></a>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
     <!--易记域名-->
     <%--<section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>--%>
 </header>

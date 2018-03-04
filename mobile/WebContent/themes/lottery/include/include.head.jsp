@@ -3,3 +3,4 @@
 <link rel="stylesheet" type="text/css" href="${resRoot}/lottery/themes/default/style.css?v=${rcVersion}" />
 <link rel="stylesheet" type="text/css" href="${resRoot}/lottery/themes/default/loading.css?v=${rcVersion}" />
 <script>var siteType='lottery';</script><%-- 有用，勿删 --%>
+<link rel="stylesheet" type="text/css" href="${resRoot}/themes/hongbao.css?v=${rcVersion}" />

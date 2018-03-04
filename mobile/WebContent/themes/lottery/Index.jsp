@@ -8,9 +8,12 @@
     <%@ include file="/themes/lottery/include/include.head.jsp" %>
     <title>${siteName}</title>
     <%@ include file="/include/include.js.jsp" %>
+    <script src="${resRoot}/js/promo/redEnvelope/Envelope.js?v=${rcVersion}"></script>
 </head>
 
 <body class="gb-theme index">
+<input type="hidden" id="activityId" value="${activityId}">
+<%@ include file="promo/redEnvelope/Envelope.jsp" %>
 <!-- 侧滑导航根容器 -->
 <div class="index-canvas mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
@@ -40,6 +43,7 @@
 
         <!--底部-->
         <%@include file="/themes/lottery/include/include.footer.jsp" %>
+        <%@include file="../common/index.include/Hongbao.jsp"%>
         <!-- 内容 -->
         <div class="mui-scroll-wrapper middle-content _cacheContent" id="mui-refresh">
             <div class="mui-scroll">
