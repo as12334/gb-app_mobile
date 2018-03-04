@@ -5,7 +5,7 @@
 <!-- 删除默认的苹果工具栏和菜单栏 -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <!-- 苹果手机顶部为黑色 -->
-<meta name="apple-mobile-web-status-bar-style" content="block" />
+<meta name="apple-mobile-web-status-bar-style" content="black" />
 <!-- 屏蔽浏览器自动识别数字为电话号码 -->
 <meta name="fromat-detecition" content="telephone=no" />
 <!--禁止百度转码-->
