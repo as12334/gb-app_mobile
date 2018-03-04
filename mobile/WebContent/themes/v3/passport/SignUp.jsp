@@ -48,9 +48,7 @@
                                                value="${soulFn:formatDateTz(params['minDate'], DateFormat.YEAR, timeZone)}"/>
                                         <c:set var="endYear"
                                                value="${soulFn:formatDateTz(params['maxDate'], DateFormat.YEAR, timeZone)}"/>
-                                        <button id="dateButton"
-                                                data-options='{"type":"date","beginYear":${minYear},"endYear":${endYear}}'>
-                                                ${views.register['signUp.sysUser.birthday']}</button>
+                                        <input type="text" id="dateButton" data-options='{"type":"date","beginYear":${minYear},"endYear":${endYear}}' class="mui-input-select" readonly="" placeholder="${views.register['signUp.sysUser.birthday']}">
                                         <input type="hidden" name="sysUser.birthday" id="sysUser.birthday" value=""/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
@@ -91,7 +89,7 @@
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['时区']}${isRequired?'<i class="icon-star"></i>':''}</label>
                                         <c:set var="zone" value="${params['timezone']}"/>
-                                        <button class="mui-disabled" disabled>${dicts.common.time_zone[zone]}</button>
+                                        <input type="text" class="mui-input-select" readonly placeholder="${dicts.common.time_zone[zone]}">
                                         <input type="hidden" name="sysUser.defaultTimezone" value="${zone}"/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
@@ -100,9 +98,8 @@
                                 <c:when test="${i.name=='mainCurrency'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['货币']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <button id="currencyButton">${dicts.common.currency[params.currency]}</button>
-                                        <input type="hidden" name="sysUser.defaultCurrency" id="sysUser.defaultCurrency"
-                                               value="${params.currency}"/>
+                                        <input type="text" id="currencyButton" class="mui-input-select" readonly placeholder="${dicts.common.currency[params.currency]}">
+                                        <input type="hidden" name="sysUser.defaultCurrency" id="sysUser.defaultCurrency" value="${params.currency}"/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
                                 </c:when>
@@ -110,9 +107,8 @@
                                 <c:when test="${i.name=='defaultLocale'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['主语言']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <button id="localeButton">${fn:substringBefore(dicts.common.language['zh_CN'], '#')}</button>
-                                        <input type="hidden" name="sysUser.defaultLocale" id="sysUser.defaultLocale"
-                                               value="zh_CN"/>
+                                        <input type="text" id="localeButton" class="mui-input-select" readonly placeholder="${fn:substringBefore(dicts.common.language['zh_CN'], '#')}">
+                                        <input type="hidden" name="sysUser.defaultLocale" id="sysUser.defaultLocale" value="zh_CN"/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
                                 </c:when>
@@ -120,7 +116,7 @@
                                 <c:when test="${i.name=='sex'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['性别']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <button id="sexButton">${views.register['signUp.sysUser.sex']}</button>
+                                        <input type="text" id="sexButton" class="mui-input-select" readonly placeholder="${views.register['signUp.sysUser.sex']}">
                                         <input type="hidden" name="sysUser.sex" id="sysUser.sex" value=""/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
@@ -129,13 +125,11 @@
                                 <c:when test="${i.name=='securityIssues'}">
                                     <div class="mui-input-row">
                                         <label>${views.register['signUp.sysUserProtection.question1']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <button id="questionButton">
-                                                ${views.register['signUp.sysUserProtection.question1']}
-                                        </button>
-                                        <input type="hidden" name="sysUserProtection.question1"
-                                               id="sysUserProtection.question1" value=""/>
+                                        <input type="text" id="questionButton" class="mui-input-select" readonly placeholder=" ${views.register['signUp.sysUserProtection.question1']}">
+                                        <input type="hidden" name="sysUserProtection.question1" id="sysUserProtection.question1" value=""/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
+
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['回答安全问题']}${isRequired?'<i class="icon-star"></i>':''}</label>
                                         <input type="text" name="sysUserProtection.answer1" maxlength="30"
