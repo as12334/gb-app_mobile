@@ -6,7 +6,6 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
-import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
@@ -40,7 +39,6 @@ import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
-import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -90,9 +88,9 @@ public class IndexController extends BaseApiController {
                 typeId = ApiTypeEnum.LIVE_DEALER.getCode();
             }
         }
-        if (typeId == -1){
+        if (typeId == -1) {
             model.addAttribute("channel", "activity");
-        }else{
+        } else {
             model.addAttribute("channel", "game");
         }
         model.addAttribute("apiTypeId", typeId);
@@ -139,7 +137,7 @@ public class IndexController extends BaseApiController {
             }
         }
         //手机弹窗广告、查询Banner和公告
-        getBannerAndAd(model,request);
+        getBannerAndAd(model, request);
         initFloatPic(model);
 
         model.addAttribute("isShowQrCode", ParamTool.isLoginShowQrCode()); //这是二维码开启开关
@@ -148,6 +146,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 注册条款
+     *
      * @return
      */
     @RequestMapping("/getRegisterRules")
@@ -162,6 +161,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 关于我们
+     *
      * @return
      */
     @RequestMapping("/about")
@@ -181,6 +181,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 分享好友
+     *
      * @return
      */
     @RequestMapping("/recommend")
@@ -213,7 +214,7 @@ public class IndexController extends BaseApiController {
         SysParam bonusJson = ParamTool.getSysParam(SiteParamEnum.SETTING_RECOMMENDED_BONUS_JSON);
         ArrayList<GradientTemp> gradientTempArrayList = JsonTool.fromJson(bonusJson.getParamValue(), new TypeReference<ArrayList<GradientTemp>>() {
         });
-        model.addAttribute("gradientTempArrayList",gradientTempArrayList);
+        model.addAttribute("gradientTempArrayList", gradientTempArrayList);
 
         //查询被该玩家推荐的好友记录奖励表
         listVo.getSearch().setUserId(SessionManager.getUserId());
@@ -237,12 +238,13 @@ public class IndexController extends BaseApiController {
 
     /**
      * 初始化 推荐记录 时间区间
+     *
      * @param listVo
      */
     private void initSearchDate(PlayerRecommendAwardListVo listVo) {
         if (listVo.getSearch().getStartTime() == null) {
             listVo.getSearch().setStartTime(SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
-        }else if (listVo.getSearch().getEndTime() == null) {
+        } else if (listVo.getSearch().getEndTime() == null) {
             listVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         }
 
@@ -250,6 +252,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 获得钱币类型
+     *
      * @return
      */
     private String getCurrencySign() {
@@ -259,7 +262,6 @@ public class IndexController extends BaseApiController {
         }
         return "";
     }
-
 
 
     private void initFloatPic(Model model) {
@@ -354,7 +356,7 @@ public class IndexController extends BaseApiController {
         for (Map m : carouselMap.values()) {
             if ((StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local)) && (((Date) m.get("start_time")).before(date) && ((Date) m.get("end_time")).after(date))
                     && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
-                String link = MapTool.getString(m,"link");
+                String link = MapTool.getString(m, "link");
                 if (StringTool.isNotBlank(link)) {
                     if (link.contains("${website}")) {
                         link = link.replace("${website}", webSite);
@@ -633,7 +635,7 @@ public class IndexController extends BaseApiController {
         AppUpdate androidApp = Cache.getAppUpdate(AppTypeEnum.ANDROID.getCode());
         if (androidApp != null) {
             String appDomain = fetchAppDownloadDomain(request);
-            if(StringTool.isBlank(appDomain)){
+            if (StringTool.isBlank(appDomain)) {
                 appDomain = ParamTool.appDmain(request.getServerName());
             }
             String versionName = androidApp.getVersionName();
@@ -696,6 +698,7 @@ public class IndexController extends BaseApiController {
             PlayerApiListVo playerApiListVo = new PlayerApiListVo();
             playerApiListVo.getSearch().setPlayerId(SessionManager.getUserId());
             map.put("totalAssert", CurrencyTool.formatCurrency(ServiceSiteTool.playerApiService().queryPlayerAssets(playerApiListVo)));
+            map.put("isDemo", SessionManager.isLotteryDemo());//彩票试玩模式
         }
         return JsonTool.toJson(map);
     }
