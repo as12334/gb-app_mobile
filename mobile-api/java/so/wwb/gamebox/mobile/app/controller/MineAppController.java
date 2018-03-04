@@ -778,6 +778,7 @@ public class MineAppController extends BaseMineController {
         }
         //验证旧密码
         String oldPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getPassword(), SessionManager.getUserName());
+        LOG.info("玩家{0}旧密码：{1},新密码设置为{2},Md5后为{3}", SessionManager.getUserName(), SessionManager.getUser().getPassword(), updatePasswordVo.getPassword(), oldPwd);
         if (!StringTool.equalsIgnoreCase(oldPwd, SessionManager.getUser().getPassword())) {
             Map map = setPwdErrorTimes(errorTimes);
             return AppModelVo.getAppModeVoJson(true,
@@ -804,7 +805,7 @@ public class MineAppController extends BaseMineController {
         //修改成功需将登录错误次数修改为null
         sysUser.setLoginErrorTimes(null);
         sysUserVo.setResult(sysUser);
-        sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL,SysUser.PROP_LOGIN_ERROR_TIMES);
+        sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL, SysUser.PROP_LOGIN_ERROR_TIMES);
         boolean success = ServiceTool.sysUserService().updateOnly(sysUserVo).isSuccess();
         if (!success) {
             return AppModelVo.getAppModeVoJson(true,
