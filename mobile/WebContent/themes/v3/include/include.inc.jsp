@@ -11,7 +11,7 @@
 <%@page import="so.wwb.gamebox.web.SupportLocale" %>
 <%@page import="so.wwb.gamebox.web.cache.Cache" %>
 <%@page import="java.text.MessageFormat" %>
-<%@ page import="org.soul.commons.support.CdnConf" %>
+<%@ page import="org.soul.web.tag.ImageTag" %>
 <%@page trimDirectiveWhitespaces="true" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -37,7 +37,7 @@
 <c:set var="rcVersion" value="<%= Cache.getRcVersion() %>"/>
 <c:set var="domain" value="<%= request.getServerName() %>"/>
 
-<c:set var="cdnUrl" value="<%= new CdnConf().getCndUrl() %>"/>
+<c:set var="cdnUrl" value="<%= ImageTag.getCndUrl() %>"/>
 <c:set var="root" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getRoot(),request.getServerName()) %>' />
 <c:set var="resComRoot" value='<%=  MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
 <c:set var="resComRoot" value='${cdnUrl}${resComRoot}' />
