@@ -1,6 +1,7 @@
 package so.wwb.gamebox.mobile.app.controller;
 
 import org.apache.shiro.session.SessionException;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
@@ -838,6 +839,19 @@ public class MineAppController extends BaseMineController {
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
+    }
+
+    /**
+     * 登陆是否开启验证码
+     */
+    @RequestMapping(value = "/loginIsOpenVerify")
+    @ResponseBody
+    public String loginIsOpenVerify() {
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                SessionManagerCommon.isOpenCaptcha(), APP_VERSION);
     }
 
     /**
