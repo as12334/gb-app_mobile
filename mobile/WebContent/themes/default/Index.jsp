@@ -95,7 +95,7 @@
                             <div class="index-block-header">
                                 <div class="mui-pull-left title">${views.app_auto['优惠速递']}</div>
                                 <div class="mui-pull-right more">
-                                    <a class="_more" _href="/game.html?typeId=5">
+                                    <a class="_more" _href="/game.html?typeId=-1">
                                         ${views.app_auto['更多优惠']}<span class="mui-icon mui-icon-double-arrow"></span>
                                     </a>
                                 </div>

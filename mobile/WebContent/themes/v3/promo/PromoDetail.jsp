@@ -97,5 +97,8 @@
 </body>
 <%@ include file="../include/include.js.jsp"%>
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
+<%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script src="${resRoot}/js/discounts/PromoDetail.js?v=${rcVersion}"></script>
+
 </html>

@@ -18,10 +18,10 @@
                     </c:choose>
                 </a>
             </c:forEach>
-            <a class="mui-control-item ico-promo" data-id="-1" href="#_promo" data-of="">${views.game_auto['优惠']}</a>
-            <a class="mui-control-item ico-agent" data-id="-2" href="#_agent">${views.game_auto['代理']}</a>
-            <a class="mui-control-item ico-about jp-btn-distance-90" data-id="-3" href="#_about">${views.game_auto['关于']}</a>
-            <a class="mui-control-item ico-terms" data-id="-4" href="#_terms">${views.game_auto['条款']}</a>
+            <a class="mui-control-item ico-promo ico-1" data-id="-1" href="#_promo" data-of="">${views.game_auto['优惠']}</a>
+            <a class="mui-control-item ico-agent ico-2" data-id="-2" href="#_agent">${views.game_auto['代理']}</a>
+            <a class="mui-control-item ico-about jp-btn-distance-90 ico-3" data-id="-3" href="#_about">${views.game_auto['关于']}</a>
+            <a class="mui-control-item ico-terms ico-4" data-id="-4" href="#_terms">${views.game_auto['条款']}</a>
             <c:if test="${os ne 'android' && os ne 'app_ios'}">
                 <a class="mui-control-item ico-pc jp-btn-distance-80" data-terminal="pc">${views.game_auto['电脑版']}</a>
             </c:if>
