@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -119,10 +120,56 @@ public class GameController extends BaseApiController {
         redirectUrl = getRedirectUrl(listVo, redirectUrl);
 
         Integer apiId = so.getApiId();
-        if (NumberTool.isNumber(String.valueOf(apiId)) && apiId > 0) {
+        /*if (NumberTool.isNumber(String.valueOf(apiId)) && apiId > 0) {
             listVo = getGames(listVo);
             model.addAttribute("gameI18n", getGameI18nMap(listVo));
+        }*/
+        if(apiId == null) {
+            return redirectUrl;
         }
+        SiteGameTag gameTag = new SiteGameTag();
+        gameTag.setSiteId(SessionManager.getSiteId());
+        List<String> listTagStr = ServiceTool.siteGameTagService().searchNameTag(gameTag);
+        Map<String,SiteGameTag> siteGameTagMap = Cache.getSiteGameTag();
+        //tagId gameIds
+
+
+        Map<String,List<Integer>> siteGameTagByTagId = new HashMap<>();
+        List<Integer> gameIds;
+        for(SiteGameTag siteGameTag : siteGameTagMap.values()) {  // 如果为null表示需要添加这个游戏标签和这个对象的gameId，如果不为空，说明已经有tag则只添加gameId
+            gameIds = new ArrayList<>();
+            if(siteGameTagByTagId.get(siteGameTag.getTagId()) == null) {
+                gameIds.add(siteGameTag.getGameId());
+                siteGameTagByTagId.put(siteGameTag.getTagId(), gameIds);
+            } else {
+                siteGameTagByTagId.get(siteGameTag.getTagId()).add(siteGameTag.getGameId());
+            }
+
+        }
+
+        Map<String,SiteGame> siteGameMap = Cache.getSiteGame();
+        Map<String,SiteGameI18n> siteGameI18nMap = Cache.getSiteGameI18n();
+        //tag,游戏
+        Integer casino = ApiTypeEnum.CASINO.getCode();
+        Map<Integer,SiteGame> userGameMap = new HashMap<>();
+
+        for(SiteGame siteGame : siteGameMap.values()) {
+            if(apiId.equals(siteGame.getApiId()) && casino.equals(siteGame.getApiTypeId())) {
+                //youximing zhuangtai
+
+                SiteGameI18n gameI18n = siteGameI18nMap.get(siteGame.getGameId().toString());
+                if (gameI18n != null) {
+                    siteGame.setName(gameI18n.getName());
+                    siteGame.setCover(gameI18n.getCover());
+                }
+                userGameMap.put(siteGame.getGameId(),siteGame);
+
+            }
+        }
+
+        model.addAttribute("siteGameTagByTagId",siteGameTagByTagId);
+        model.addAttribute("listTagStr", listTagStr);
+        model.addAttribute("allGame", userGameMap);
         model.addAttribute("apiId", apiId);
         model.addAttribute("command", listVo);
 
