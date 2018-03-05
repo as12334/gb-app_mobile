@@ -22,15 +22,13 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
-import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
-import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
+import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
@@ -45,31 +43,15 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
     private static final String MCENTER_COMPANY_RECHARGE_URL = "/fund/deposit/company/confirmCheck.html";
 
     private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
-        SysUserDataRightVo sysUserDataRightVo = new SysUserDataRightVo();
-        sysUserDataRightVo.getSearch().setModuleType(DataRightModuleType.COMPANYDEPOSIT.getCode());
-        Map<Integer, List<SysUserDataRight>> udrMap = ServiceSiteTool.sysUserDataRightService().searchDataRightsByModuleType(sysUserDataRightVo);
+        SysUserDataRightListVo sysUserDataRightListVo = new SysUserDataRightListVo();
+        sysUserDataRightListVo.getSearch().setUserId(SessionManager.getUserId());
+        sysUserDataRightListVo.getSearch().setModuleType(DataRightModuleType.COMPANYDEPOSIT.getCode());
+        List<Integer> dataRightEntityIds = ServiceSiteTool.sysUserDataRightService().searchPlayerDataRightEntityId(sysUserDataRightListVo);
 
-        UserPlayerVo userPlayerVo = new UserPlayerVo();
-        userPlayerVo.getSearch().setId(SessionManager.getUserId());
-        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
-        Integer rankId = userPlayerVo.getResult().getRankId();
         for (Iterator<Integer> iterator = userIdByUrl.iterator(); iterator.hasNext(); ) {
             Integer userId = iterator.next();
-            List<SysUserDataRight> dataRights = udrMap.get(userId);
-            if (dataRights == null || dataRights.size() == 0) {
-                continue;
-            }
-            if (rankId != null) {
-                boolean flag = true;
-                for (SysUserDataRight sysUserDataRight : dataRights) {
-                    if (rankId.equals(sysUserDataRight.getEntityId())) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    iterator.remove();
-                }
+            if (!dataRightEntityIds.contains(userId)) {
+                iterator.remove();
             }
         }
     }
