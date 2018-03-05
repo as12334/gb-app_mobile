@@ -13,7 +13,7 @@
         <header class="mui-bar mui-bar-nav mine-bet-record-header">
             <a style="color: #fff;" class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
             <h1 class="mui-title">投注记录-详情</h1>
-            <a class="mui-action-back mui-icon mui-icon-home mui-pull-right"></a>
+            <a data-rel='{"target":"goToHome","opType":"function"}' class="mui-icon mui-icon-home mui-pull-right"></a>
         </header>
         <div class="mui-content mine-bet-record-content mui-scroll-wrapper">
             <div class="mui-scroll">
