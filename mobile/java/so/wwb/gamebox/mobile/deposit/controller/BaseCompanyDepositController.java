@@ -40,7 +40,7 @@ import java.util.*;
 public abstract class BaseCompanyDepositController extends BaseDepositController {
 
     /* 公司入款地址 */
-    private static final String MCENTER_COMPANY_RECHARGE_URL = "/fund/deposit/company/confirmCheck.html";
+    private static final String MCENTER_COMPANY_RECHARGE_URL = "fund/deposit/company/confirmCheck.html";
 
     private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
         SysUserDataRightListVo sysUserDataRightListVo = new SysUserDataRightListVo();
@@ -105,10 +105,9 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         SysResourceListVo sysResourceListVo = new SysResourceListVo();
         sysResourceListVo.getSearch().setUrl(MCENTER_COMPANY_RECHARGE_URL);
         List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
-        userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
-
         //判断账号是否可以查看该层级的记录 add by Bruce.QQ
         filterUnavailableSubAccount(userIdByUrl);
+        userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
         message.addUserIds(userIdByUrl);
         ServiceTool.messageService().sendToMcenterMsg(message);
     }
