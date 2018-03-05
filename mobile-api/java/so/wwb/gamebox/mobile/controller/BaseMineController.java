@@ -8,12 +8,10 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
-import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.DateFormat;
-import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -45,7 +43,9 @@ import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
-import so.wwb.gamebox.model.company.site.po.*;
+import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
+import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -56,7 +56,6 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
-import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
@@ -78,7 +77,8 @@ import java.util.*;
 
 import static org.soul.commons.currency.CurrencyTool.formatCurrency;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
-import static so.wwb.gamebox.model.CacheBase.*;
+import static so.wwb.gamebox.model.CacheBase.getApiI18n;
+import static so.wwb.gamebox.model.CacheBase.getSiteApiI18n;
 
 /**
  * Created by ed on 17-12-31.
@@ -880,9 +880,8 @@ public class BaseMineController {
             listVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), RECOMMEND_DAYS));
         }
         if (listVo.getSearch().getEndTime() == null) {
-            listVo.getSearch().setEndTime(DateQuickPicker.getInstance().getNow());
-        }
-        if (listVo.getSearch().getStartTime().getTime() == listVo.getSearch().getEndTime().getTime()) {//如果开始和结束时间选择同一天
+            listVo.getSearch().setEndTime(SessionManager.getDate().getTomorrow());
+        } else {//时间加一天，因为app是以日期查询的
             listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(), 1));
         }
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
@@ -1003,6 +1002,7 @@ public class BaseMineController {
 
     /**
      * 获取玩家咨询的List
+     *
      * @param listVo
      * @return
      */
@@ -1071,12 +1071,13 @@ public class BaseMineController {
 
     /**
      * 初始化 推荐记录 时间区间
+     *
      * @param listVo
      */
     private void initSearchDate(PlayerRecommendAwardListVo listVo) {
         if (listVo.getSearch().getStartTime() == null) {
             listVo.getSearch().setStartTime(SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
-        }else if (listVo.getSearch().getEndTime() == null) {
+        } else if (listVo.getSearch().getEndTime() == null) {
             listVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         }
     }
