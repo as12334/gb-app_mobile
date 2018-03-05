@@ -32,7 +32,9 @@
                 <!-- 主界面具体展示内容 -->
                 <div class="electronic-search">
                     <%--<a id="search-game" class="btn-search">搜索</a>--%>
-                    <soul:button target="searchGame" text="${views.themes_auto['搜索']}" opType="function" cssClass="btn-search"/>
+                    <%--<button data-rel='{"target":"searchGame","opType":"function"}' class="btn-search">${views.themes_auto['搜索']}</button>--%>
+                    <a id="search-game" data-rel='{"target":"searchGame","opType":"function"}' class="btn-search">${views.themes_auto['搜索']}</a>
+                    <%--<soul:button target="searchGame" text="${views.themes_auto['搜索']}" opType="function" cssClass="btn-search"/>--%>
                     <input type="text" id="game-name" class="mui-input-clear" placeholder="${views.themes_auto['输入游戏名称']}">
                 </div>
                 <!-- Swiper -->
@@ -45,6 +47,8 @@
                             </c:forEach>
                         </div>
                     </div>
+
+                    <input type="hidden" value="${apiId}" apiId="${apiId}" id="api">
 
                     <div class="swiper-container g-t-slide-content">
                         <div class="swiper-wrapper">
