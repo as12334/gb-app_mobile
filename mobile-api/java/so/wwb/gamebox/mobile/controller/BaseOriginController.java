@@ -586,7 +586,7 @@ public abstract class BaseOriginController {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
             appI18n.setGameLink("");
             return appI18n;
-        } else if(StringTool.isBlank(playerApiAccountVo.getErrMsg())) {
+        } else if (StringTool.isBlank(playerApiAccountVo.getErrMsg())) {
             appI18n.setGameMsg(playerApiAccountVo.getErrMsg());
             return appI18n;
         }
@@ -613,10 +613,7 @@ public abstract class BaseOriginController {
         if (StringTool.isBlank(url) || apiId == null) {
             return url;
         }
-        String terminal = model.getTerminal();
-        if (AppTypeEnum.APP_ANDROID.getCode().equals(terminal) && ApiProviderEnum.PL.getCode().equals(String.valueOf(apiId))) {
-            url = url + "mainIndex.html?ad=22";
-        } else if (url.indexOf("?") > 0) {
+        if (url.indexOf("?") > 0) {
             url = url + "&ad=" + apiId;
         } else {
             url = url + "?ad=" + apiId;
