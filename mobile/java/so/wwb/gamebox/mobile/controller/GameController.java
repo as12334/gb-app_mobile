@@ -111,29 +111,30 @@ public class GameController extends BaseApiController {
         return CollectionQueryTool.sort(typeRelationList, Order.asc(SiteApiTypeRelation.PROP_ORDER_NUM));
     }
 
-    @RequestMapping("/getGameByApiId")
+    /**
+     * mobile-v3 电子游戏访问这个方法
+     * @param listVo
+     * @param model
+     * @return
+     */
+    @RequestMapping("/getCasinoByApiId")
     @Upgrade(upgrade = true)
-    public String getGameByApiId(SiteGameListVo listVo, Model model) {
+    public String getGameByApiIdV3(SiteGameListVo listVo, Model model) {
         String redirectUrl = "/game/%sPartial";
         SiteGameSo so = listVo.getSearch();
-
         redirectUrl = getRedirectUrl(listVo, redirectUrl);
 
         Integer apiId = so.getApiId();
-        /*if (NumberTool.isNumber(String.valueOf(apiId)) && apiId > 0) {
-            listVo = getGames(listVo);
-            model.addAttribute("gameI18n", getGameI18nMap(listVo));
-        }*/
+
         if(apiId == null) {
             return redirectUrl;
         }
         SiteGameTag gameTag = new SiteGameTag();
         gameTag.setSiteId(SessionManager.getSiteId());
         List<String> listTagStr = ServiceTool.siteGameTagService().searchNameTag(gameTag);
+
+        //把缓存取出的game通过遍历，组成 tagId : gameIds 键值对形式
         Map<String,SiteGameTag> siteGameTagMap = Cache.getSiteGameTag();
-        //tagId gameIds
-
-
         Map<String,List<Integer>> siteGameTagByTagId = new HashMap<>();
         List<Integer> gameIds;
         for(SiteGameTag siteGameTag : siteGameTagMap.values()) {  // 如果为null表示需要添加这个游戏标签和这个对象的gameId，如果不为空，说明已经有tag则只添加gameId
@@ -144,7 +145,6 @@ public class GameController extends BaseApiController {
             } else {
                 siteGameTagByTagId.get(siteGameTag.getTagId()).add(siteGameTag.getGameId());
             }
-
         }
 
         Map<String,SiteGame> siteGameMap = Cache.getSiteGame();
@@ -153,23 +153,40 @@ public class GameController extends BaseApiController {
         Integer casino = ApiTypeEnum.CASINO.getCode();
         Map<Integer,SiteGame> userGameMap = new HashMap<>();
 
+        //按照条件筛选出对应的apiId同时 apiTypeId = 2的电子游戏的 game
         for(SiteGame siteGame : siteGameMap.values()) {
             if(apiId.equals(siteGame.getApiId()) && casino.equals(siteGame.getApiTypeId())) {
-                //youximing zhuangtai
-
                 SiteGameI18n gameI18n = siteGameI18nMap.get(siteGame.getGameId().toString());
                 if (gameI18n != null) {
                     siteGame.setName(gameI18n.getName());
                     siteGame.setCover(gameI18n.getCover());
                 }
                 userGameMap.put(siteGame.getGameId(),siteGame);
-
             }
         }
 
         model.addAttribute("siteGameTagByTagId",siteGameTagByTagId);
         model.addAttribute("listTagStr", listTagStr);
         model.addAttribute("allGame", userGameMap);
+        model.addAttribute("apiId", apiId);
+        model.addAttribute("command", listVo);
+
+        return redirectUrl;
+    }
+
+
+    @RequestMapping("/getGameByApiId")
+    public String getGameByApiId(SiteGameListVo listVo, Model model) {
+        String redirectUrl = "/game/%sPartial";
+        SiteGameSo so = listVo.getSearch();
+
+        redirectUrl = getRedirectUrl(listVo, redirectUrl);
+
+        Integer apiId = so.getApiId();
+        if (NumberTool.isNumber(String.valueOf(apiId)) && apiId > 0) {
+            listVo = getGames(listVo);
+            model.addAttribute("gameI18n", getGameI18nMap(listVo));
+        }
         model.addAttribute("apiId", apiId);
         model.addAttribute("command", listVo);
 

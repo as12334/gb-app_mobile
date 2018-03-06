@@ -40,7 +40,7 @@
                             <c:when test="${apiTypeId==2}">
                                 <c:forEach var="i" items="${apiTypeRelations}">
                                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                                        <a data-rel='{"target":"${root}/game/getGameByApiId.html?search.apiId=${i.apiId}&search.apiTypeId=${i.apiTypeId}","opType":"href"}'>
+                                        <a data-rel='{"target":"${root}/game/getCasinoByApiId.html?search.apiId=${i.apiId}&search.apiTypeId=${i.apiTypeId}","opType":"href"}'>
                                             <span class="api-item api-icon-${apiTypeId}-${i.apiId}"></span>
                                             <div class="mui-media-body">${i.apiName}</div>
                                         </a>
