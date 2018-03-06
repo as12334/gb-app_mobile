@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="${resRoot}/themes/mui.min.css?v=${rcVersion}" />
 <link rel="stylesheet" href="${resRoot}/themes/common.css?v=${rcVersion}" />
 <link rel="stylesheet" href="${resRoot}/themes/index.css?v=${rcVersion}" />
+<link rel="stylesheet" href="${resRoot}/themes/otherpage.css?v=${rcVersion}" />
 <c:set var="background_type" value="${backgroundParam.paramValue}"/>
 <c:choose>
     <c:when test="${background_type eq 'black'}">
@@ -35,7 +36,6 @@
     </c:otherwise>
 </c:choose>
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css?v=${rcVersion}" />
-<link rel="stylesheet" href="${resRoot}/themes/otherpage.css?v=${rcVersion}" />
 <link rel="stylesheet" href="${resRoot}/themes/loading.css?v=${rcVersion}"/>
 
 
