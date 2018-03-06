@@ -14,7 +14,8 @@
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
     <%@ include file="../common/LeftMenu.jsp" %>
-
+    <c:set var="defaultSaleImg" value="${resRoot}/images/img-sale1.jpg"/>
+    <input type="hidden" value="${defaultSaleImg}" name="defaultSaleImg"/>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <%@include file="../discounts/PromoHead.jsp" %>
@@ -35,11 +36,8 @@
                                                     <c:when test="${!empty message.activityCover}">
                                                         <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityCover)}" />
                                                     </c:when>
-                                                    <c:otherwise>
-                                                        <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg" />
-                                                    </c:otherwise>
                                                 </c:choose>
-                                                <img data-lazyload="${imgSrc}"/>
+                                                <img src="${empty imgSrc?defaultSaleImg:''}" data-lazyload="${imgSrc}"/>
                                             </a>
                                         </c:forEach>
                                     </c:forEach>
@@ -58,11 +56,8 @@
                                                 <c:when test="${!empty message.activityCover}">
                                                     <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityCover)}" />
                                                 </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg" />
-                                                </c:otherwise>
                                             </c:choose>
-                                            <a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'><img data-lazyload="${imgSrc}"></a>
+                                            <a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'><img src="${empty imgSrc?defaultSaleImg:''}" data-lazyload="${imgSrc}"/></a>
                                         </c:forEach>
                                     </div>
                                 </div>
