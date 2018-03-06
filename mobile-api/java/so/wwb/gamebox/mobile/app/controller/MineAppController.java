@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.app.controller;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.shiro.session.SessionException;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.soul.commons.bean.Pair;
@@ -848,10 +849,12 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String loginIsOpenVerify() {
 
+        Map<String, Boolean> map = new HashedMap();
+        map.put("isOpenCaptcha", SessionManagerCommon.isOpenCaptcha());
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                SessionManagerCommon.isOpenCaptcha(), APP_VERSION);
+                map, APP_VERSION);
     }
 
     /**
