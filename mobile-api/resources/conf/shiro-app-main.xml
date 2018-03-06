@@ -47,6 +47,7 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
+				/mineOrigin/loginIsOpenVerify.html = anon
 				/userInfoOrigin/verifyRealNameForApp.html = anon
 				/origin/*.html = anon
 				/discountsOrigin/*.html = anon
