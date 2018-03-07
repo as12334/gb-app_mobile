@@ -13,7 +13,8 @@
 <body>
 <!-- 主页面标题 -->
 <header class="mui-bar mui-bar-nav mui-bar-blue">
-    <a style="color: #fff;" class="mui-icon mui-icon-arrowleft mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+    <a style="color: #fff;" class="mui-icon mui-icon-arrowleft mui-pull-left"
+       data-rel='{"target":"goToLastPage","opType":"function"}'></a>
     <h1 class="mui-title">${views.passport_auto['会员注册']}</h1>
 </header>
 
@@ -48,7 +49,10 @@
                                                value="${soulFn:formatDateTz(params['minDate'], DateFormat.YEAR, timeZone)}"/>
                                         <c:set var="endYear"
                                                value="${soulFn:formatDateTz(params['maxDate'], DateFormat.YEAR, timeZone)}"/>
-                                        <input type="text" id="dateButton" data-options='{"type":"date","beginYear":${minYear},"endYear":${endYear}}' class="mui-input-select" readonly="" placeholder="${views.register['signUp.sysUser.birthday']}">
+                                        <input type="text" id="dateButton"
+                                               data-options='{"type":"date","beginYear":${minYear},"endYear":${endYear}}'
+                                               class="mui-input-select" readonly=""
+                                               placeholder="${views.register['signUp.sysUser.birthday']}">
                                         <input type="hidden" name="sysUser.birthday" id="sysUser.birthday" value=""/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
@@ -89,7 +93,8 @@
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['时区']}${isRequired?'<i class="icon-star"></i>':''}</label>
                                         <c:set var="zone" value="${params['timezone']}"/>
-                                        <input type="text" class="mui-input-select" readonly placeholder="${dicts.common.time_zone[zone]}">
+                                        <input type="text" class="mui-input-select" readonly
+                                               placeholder="${dicts.common.time_zone[zone]}">
                                         <input type="hidden" name="sysUser.defaultTimezone" value="${zone}"/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
@@ -98,8 +103,10 @@
                                 <c:when test="${i.name=='mainCurrency'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['货币']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <input type="text" id="currencyButton" class="mui-input-select" readonly placeholder="${dicts.common.currency[params.currency]}">
-                                        <input type="hidden" name="sysUser.defaultCurrency" id="sysUser.defaultCurrency" value="${params.currency}"/>
+                                        <input type="text" id="currencyButton" class="mui-input-select" readonly
+                                               placeholder="${dicts.common.currency[params.currency]}">
+                                        <input type="hidden" name="sysUser.defaultCurrency" id="sysUser.defaultCurrency"
+                                               value="${params.currency}"/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
                                 </c:when>
@@ -107,8 +114,10 @@
                                 <c:when test="${i.name=='defaultLocale'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['主语言']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <input type="text" id="localeButton" class="mui-input-select" readonly placeholder="${fn:substringBefore(dicts.common.language['zh_CN'], '#')}">
-                                        <input type="hidden" name="sysUser.defaultLocale" id="sysUser.defaultLocale" value="zh_CN"/>
+                                        <input type="text" id="localeButton" class="mui-input-select" readonly
+                                               placeholder="${fn:substringBefore(dicts.common.language['zh_CN'], '#')}">
+                                        <input type="hidden" name="sysUser.defaultLocale" id="sysUser.defaultLocale"
+                                               value="zh_CN"/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
                                 </c:when>
@@ -116,17 +125,22 @@
                                 <c:when test="${i.name=='sex'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['性别']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <input type="text" id="sexButton" class="mui-input-select" readonly placeholder="${views.register['signUp.sysUser.sex']}">
-                                        <input type="hidden" name="sysUser.sex" id="sysUser.sex" value=""/>
-                                        <span class="mui-icon mui-icon-arrowdown"></span>
+                                        <div id="sexButton">
+                                            <input type="text" class="mui-input-select" readonly
+                                                   placeholder="${views.register['signUp.sysUser.sex']}">
+                                            <input type="hidden" name="sysUser.sex" id="sysUser.sex" value=""/>
+                                            <span class="mui-icon mui-icon-arrowdown"></span>
+                                        </div>
                                     </div>
                                 </c:when>
                                 <%--安全问题--%>
                                 <c:when test="${i.name=='securityIssues'}">
                                     <div class="mui-input-row">
                                         <label>${views.register['signUp.sysUserProtection.question1']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <input type="text" id="questionButton" class="mui-input-select" readonly placeholder=" ${views.register['signUp.sysUserProtection.question1']}">
-                                        <input type="hidden" name="sysUserProtection.question1" id="sysUserProtection.question1" value=""/>
+                                        <input type="text" id="questionButton" class="mui-input-select" readonly
+                                               placeholder=" ${views.register['signUp.sysUserProtection.question1']}">
+                                        <input type="hidden" name="sysUserProtection.question1"
+                                               id="sysUserProtection.question1" value=""/>
                                         <span class="mui-icon mui-icon-arrowdown"></span>
                                     </div>
 
@@ -188,7 +202,8 @@
                                         <c:set var="name" value="${signUpDataMap[i.name]}"/>
                                         <c:set var="key" value="signUp.${name}"/>
                                         <label>${views.register[key]}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <input type="text" name="${name}" class="mui-input-clear mui-input" placeholder="${views.register[key]}">
+                                        <input type="text" name="${name}" class="mui-input-clear mui-input"
+                                               placeholder="${views.register[key]}">
                                     </div>
                                 </c:otherwise>
                             </c:choose>
@@ -197,8 +212,10 @@
                     <div class="mui-input-row">
                         <label>${views.passport_auto['请输入验证码']}<i class="icon-star"></i></label>
                         <div class="mui-flex">
-                            <input type="text" class="mui-input-clear" placeholder="${views.passport_auto['请输入验证码']}" maxlength="4" name="captchaCode">
-                            <img data-rel='{"target":"captchaImg","opType":"function","src":"${root}/captcha/pmregister.html"}' data-src="${root}/captcha/pmregister.html" class="captcha_img"/>
+                            <input type="text" class="mui-input-clear" placeholder="${views.passport_auto['请输入验证码']}"
+                                   maxlength="4" name="captchaCode">
+                            <img data-rel='{"target":"captchaImg","opType":"function","src":"${root}/captcha/pmregister.html"}'
+                                 data-src="${root}/captcha/pmregister.html" class="captcha_img"/>
                         </div>
                     </div>
                     <div class="mui-input-row mui-checkbox mui-left tk">
@@ -207,7 +224,9 @@
                                data-rel='{"target":"termsOfService","opType":"function"}' checked>
                     </div>
                     <div class="mui-button-row">
-                        <button type="button" class="mui-btn mui-btn-block btn-ok" data-rel='{"target":"register","opType":"function"}'>立即注册</button>
+                        <button type="button" class="mui-btn mui-btn-block btn-ok"
+                                data-rel='{"target":"register","opType":"function"}'>立即注册
+                        </button>
                     </div>
                 </form>
             </div>
