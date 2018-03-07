@@ -90,6 +90,26 @@
             <a data-rel='{"target":"nextStep","opType":"function"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['下一步']}</a>
         </div>
     </div>
+
+    <%--连续存款失败后提示弹窗--%>
+    <div class="masker" id="failureHintsMasker" style="display:none;"></div> <!--遮罩-->
+    <div class="gb-withdraw-box window-ok pro-window" id="failureHints" style="display:none">
+        <div  class="cont">
+            <h3 style="margin-left:40%;margin-top: 5%">${views.deposit_auto['消息']}</h3>
+            <div class="ok-box">
+                <i class="ok-icon"></i>
+            </div>
+            <i class="ok-icon"></i>
+            <div class="cont-text">
+                <span style="font-size: 15px ">您已多次使用此存款方式且未能成功存款，为快速存款成功，建议您使用其他的存款方式或联系在线客服！</span>
+            </div>
+            <input type="hidden" id="channel"/>
+            <div class="pro-btn">
+                <a class="agin-btn" data-rel='{"opType":"function","target":"continueDeposit"}'>仍要继续</a>
+                <a class="next-btn" data-rel='{"opType":"function","target":"goToDepositPage"}'>重新存款</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!--存款帮助：-->

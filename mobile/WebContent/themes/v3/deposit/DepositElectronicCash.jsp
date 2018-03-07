@@ -10,6 +10,7 @@
             <c:set var="onlinePayMax" value="${empty rank.onlinePayMax?99999999:rank.onlinePayMax}"/>
             <input type="hidden" name="onlinePayMin" value="${onlinePayMin}"/>
             <input type="hidden" name="onlinePayMax" value="${onlinePayMax}"/>
+            <input type="hidden" name="result.payAccount" value="${payAccount}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="statusNum" value="1"/>

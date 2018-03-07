@@ -68,6 +68,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
             model.addAttribute("electronicPayAccount",payAccount);
         }
         model.addAttribute("rank", getRank());
+        model.addAttribute("payAccount", payAccount);
         model.addAttribute("currency",getCurrencySign());
         model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositCashForm.class));
         return "/deposit/DepositElectronicCash";

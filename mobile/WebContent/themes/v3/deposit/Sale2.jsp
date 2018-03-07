@@ -53,4 +53,5 @@
     <span style="display: none" id="pop" pop="${pop}"></span>
     <span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>
     <span style="display: none" id="tips" tips="${tips}"></span>
+    <span style="display: none" id="failureCount" failureCount="${failureCount}"></span>
 </div>

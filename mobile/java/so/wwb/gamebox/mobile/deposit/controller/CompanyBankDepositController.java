@@ -73,6 +73,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
             model.addAttribute("companyPayAccount",payAccount);
         }
         model.addAttribute("rank", getRank());
+        model.addAttribute("payAccount", payAccount);
         model.addAttribute("currency",getCurrencySign());
         model.addAttribute("validateRule", JsRuleCreator.create(CompanyBankDeposit2CashForm.class));
         return "/deposit/DepositCompanyCash";
