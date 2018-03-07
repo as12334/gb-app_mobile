@@ -35,8 +35,16 @@
                     <div class="swiper-container g-t-slide-indicators">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">所有游戏</div>
-                            <c:forEach items="${siteGameTagByTagId}" var="t">
-                                <div class="swiper-slide">${t.key}</div>
+                            <c:forEach items="${tagName}" var="t">
+                                <c:choose>
+                                    <c:when test="${not empty t.value}">
+                                        <div class="swiper-slide">${t.value}</div>
+                                    </c:when>
+
+                                    <c:otherwise>
+                                        <div class="swiper-slide">${t.key}</div>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
                         </div>
                     </div>
@@ -50,7 +58,7 @@
                                 <div class="casino-wrap">
                                     <div class="casino-list">
                                         <div class="mui-row"><%--所有游戏--%>
-                                            <c:forEach var="game" items="${allGame}" varStatus="tagMap">
+                                            <c:forEach var="game" items="${allGames}" varStatus="tagMap">
                                                     <div class="mui-col-xs-3">
                                                         <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
                                                             "dataGameCode":"${game.value.apiId!=10? game.value.code : ''}","dataGameId":"${game.value.apiId!=10? game.value.gameId : ''}",
@@ -68,11 +76,36 @@
                                 </div>
                             </div>
 
+
+                            <c:forEach items="${tagGames}" var="t">
+                                <div class="swiper-slide">
+                                    <div class="casino-wrap">
+                                        <div class="casino-list">
+                                            <div class="mui-row">
+                                                <c:forEach items="${t.value}" var="g">
+                                                    <c:if test="${not empty allGames[g]}">
+                                                        <div class="mui-col-xs-3">
+                                                            <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g].apiId}","dataStatus":"${allGames[g].status}",
+                                                            "dataGameCode":"${allGames[g].apiId!=10? allGames[g].code : ''}","dataGameId":"${allGames[g].apiId!=10? allGames[g].gameId : ''}",
+                                                            "dataApiName":"${gbFn:getGameName(allGames[g].gameId)}","target":"goGame","opType":"function"}' class="" >
+
+                                                                <div class="img-wrap">
+                                                                    <img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">
+                                                                </div>
+                                                                <p>${gbFn:getGameName(allGames[g].gameId)}</p>
+                                                            </a>
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
 
