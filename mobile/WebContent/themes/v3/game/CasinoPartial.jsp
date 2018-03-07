@@ -1,14 +1,12 @@
 <%--@elvariable id="command" type="so.wwb.gamebox.model.company.site.vo.SiteGameListVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
-<%@ include file="../include/include.head.jsp" %>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Dawoo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+    <title>${siteName}</title>
+    <%@ include file="../include/include.head.jsp" %>
     <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css" />
 </head>
 
@@ -22,6 +20,7 @@
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav casino-list-bar">
             <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+            <%@include file="../common/Assert.jsp"%>
             <h1 class="mui-title">${empty siteApi.name?(gbFn:getApiName(apiId)):siteApi.name}</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper mui-content-casino-list">
@@ -29,7 +28,7 @@
                 <!-- 主界面具体展示内容 -->
                 <div class="electronic-search">
                     <a id="search-game" data-rel='{"target":"searchGame","opType":"function"}' class="btn-search">${views.themes_auto['搜索']}</a>
-                    <input type="text" id="game-name" class="mui-input-clear" placeholder="${views.themes_auto['输入游戏名称']}">
+                    <input type="text" id="game-name" class="mui-input-clear" placeholder="${views.themes_auto['输入游戏名称']}" data-input-clear="3"><span class="mui-icon mui-icon-clear mui-hidden"></span>
                 </div>
                 <!-- Swiper -->
                 <div class="casino-game-type">
@@ -55,7 +54,7 @@
                                                     <div class="mui-col-xs-3">
                                                         <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
                                                             "dataGameCode":"${game.value.apiId!=10? game.value.code : ''}","dataGameId":"${game.value.apiId!=10? game.value.gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(game.value.gameId)}","target":"goGame","opType":"function"}' class="" >
+                                                            "dataApiName":"${gbFn:getGameName(game.value.gameId)}","target":"goGame","opType":"function"}'>
 
                                                             <div class="img-wrap">
                                                                 <img data-src="${soulFn:getImagePath(domain, game.value.cover)}" src="${soulFn:getImagePath(domain, game.value.cover)}">
@@ -68,32 +67,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <c:forEach items="${siteGameTagByTagId}" var="t">
-                                <div class="swiper-slide">
-                                    <div class="casino-wrap">
-                                        <div class="casino-list">
-                                            <div class="mui-row">
-                                                <c:forEach items="${t.value}" var="g">
-                                                    <c:if test="${not empty allGame[g]}">
-                                                        <div class="mui-col-xs-3">
-                                                            <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGame[g].apiId}","dataStatus":"${allGame[g].status}",
-                                                            "dataGameCode":"${allGame[g].apiId!=10? allGame[g].code : ''}","dataGameId":"${allGame[g].apiId!=10? allGame[g].gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(allGame[g].gameId)}","target":"goGame","opType":"function"}' class="" >
-
-                                                                <div class="img-wrap">
-                                                                    <img data-src="${soulFn:getImagePath(domain, allGame[g].cover)}" src="${soulFn:getImagePath(domain, allGame[g].cover)}">
-                                                                </div>
-                                                                <p>${gbFn:getGameName(allGame[g].gameId)}</p>
-                                                            </a>
-                                                        </div>
-                                                    </c:if>
-                                                </c:forEach>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
 
                         </div>
                     </div>
@@ -109,11 +82,14 @@
 
     </div>
 </div>
-</body>
+
 <%@include file="../include/include.js.jsp" %>
-<script src="${resComRoot}/js/mobile/layer.js"></script>
+<%--<script src="${resComRoot}/js/mobile/layer.js"></script>--%>
 <script type="text/javascript" src="${resRoot}/js/swiper.min.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
 <script type="text/javascript" src="${resRoot}/js/casino/CasinoTemp.js"></script>
 <%@ include file="/include/include.footer.jsp" %>
+</body>
+</html>
