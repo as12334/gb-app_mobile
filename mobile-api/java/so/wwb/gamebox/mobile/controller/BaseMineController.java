@@ -467,8 +467,11 @@ public class BaseMineController {
             vPlayerTransactionSo.setBeginCreateTime(listVo.getMinDate());
         }
         if (vPlayerTransactionSo.getEndCreateTime() == null) {
-            vPlayerTransactionSo.setEndCreateTime(SessionManager.getDate().getNow());
+            vPlayerTransactionSo.setEndCreateTime(SessionManager.getDate().getTomorrow());
+        } else {// app查询是根据日期查询的， 所以要日期 + 1天
+            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         }
+
     }
 
     protected VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
@@ -800,9 +803,9 @@ public class BaseMineController {
      * @param listVo
      */
     protected Map<String, Object> getAppGameNotice(VSystemAnnouncementListVo listVo) {
-        if (listVo.getSearch().getEndTime() != null) {
+        /*if (listVo.getSearch().getEndTime() != null) {
             listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(), DEFAULT_TIME));
-        }
+        } 因为在 getNotice(listvo)中已经给endTime +1 了，所以这里 +1 的操作要注掉*/
 
         SysParam param = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
         if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {

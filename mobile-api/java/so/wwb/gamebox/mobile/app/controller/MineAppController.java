@@ -147,9 +147,7 @@ public class MineAppController extends BaseMineController {
 
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
-        if (listVo.getSearch().getEndCreateTime() != null) {
-            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
-        }
+
         FundRecordApp fundRecordApp = new FundRecordApp();
         getFund(fundRecordApp);
         listVo.getSearch().setNoDisplay(TransactionWayEnum.MANUAL_PAYOUT.getCode());
@@ -162,13 +160,10 @@ public class MineAppController extends BaseMineController {
 
         //统计页面反水等等数据
         fundRecordApp.setSumPlayerMap(getSumPlayerFunds(listVo));
-        if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
-            fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
-            fundRecordApp.setMaxDate(SessionManager.getDate().getNow());
-        } else {
-            fundRecordApp.setMinDate(listVo.getSearch().getBeginCreateTime());
-            fundRecordApp.setMaxDate(listVo.getSearch().getEndCreateTime());
-        }
+//        if (listVo.getSearch().getBeginCreateTime() == null && listVo.getSearch().getEndCreateTime() == null) {
+        fundRecordApp.setMinDate(SessionManager.getDate().addDays(LAST_WEEK__MIN_TIME));
+        fundRecordApp.setMaxDate(SessionManager.getDate().getNow());
+//        }
         fundRecordApp.setTotalCount(listVo.getPaging().getTotalCount());
         fundRecordApp.setCurrency(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
 
