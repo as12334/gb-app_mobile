@@ -803,9 +803,9 @@ public class BaseMineController {
      * @param listVo
      */
     protected Map<String, Object> getAppGameNotice(VSystemAnnouncementListVo listVo) {
-        if (listVo.getSearch().getEndTime() != null) {
+        /*if (listVo.getSearch().getEndTime() != null) {
             listVo.getSearch().setEndTime(DateTool.addDays(listVo.getSearch().getEndTime(), DEFAULT_TIME));
-        }
+        } 因为在 getNotice(listvo)中已经给endTime +1 了，所以这里 +1 的操作要注掉*/
 
         SysParam param = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
         if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {
