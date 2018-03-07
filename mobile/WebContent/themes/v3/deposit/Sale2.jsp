@@ -43,7 +43,7 @@
                                 <a class="next-btn" data-rel='{"opType":"function","target":"submitDeposit"}'>${views.deposit_auto['立即存款']}</a>
                             </c:otherwise>
                         </c:choose>
-                        <a class="agin-btn" data-rel='{"opType":"function","target":"closeProWindow"}'>${views.deposit_auto['重新填写金额']}</a>
+                        <a class="agin-btn" data-rel='{"opType":"function","target":"goToDepositPage"}'>${views.deposit_auto['重新填写金额']}</a>
                     </div>
                     <a class="close" data-rel='{"opType":"function","target":"closeProWindow"}'></a>
                 </div>

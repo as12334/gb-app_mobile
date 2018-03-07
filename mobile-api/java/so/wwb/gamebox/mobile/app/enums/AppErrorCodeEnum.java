@@ -5,7 +5,7 @@ public enum AppErrorCodeEnum {
     UN_LOGIN("1001", "您还未登录,请重新登录"),
     USER_LOCK("1005", "您的账号已被系统冻结，请联系客服处理"),
     USER_INFO_NOT_EXIST("1008", "用户不存在"),
-    PASSWORD_ERROR("1011", "密码输入错误"),
+    PASSWORD_ERROR("1011", "当前密码错误"),
     PASSWORD_SAME("1016", "新密码不能和旧密码相同"),
     SYSTEM_INFO_NOT_EXIST("1017", "信息不存在"),
     WITHDRAW_AMOUNT_ERROR("1022", "请输入正确的提现金额"),
