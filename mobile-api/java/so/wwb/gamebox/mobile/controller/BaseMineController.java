@@ -467,8 +467,11 @@ public class BaseMineController {
             vPlayerTransactionSo.setBeginCreateTime(listVo.getMinDate());
         }
         if (vPlayerTransactionSo.getEndCreateTime() == null) {
-            vPlayerTransactionSo.setEndCreateTime(SessionManager.getDate().getNow());
+            vPlayerTransactionSo.setEndCreateTime(SessionManager.getDate().getTomorrow());
+        } else {// app查询是根据日期查询的， 所以要日期 + 1天
+            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         }
+
     }
 
     protected VPlayerTransactionListVo preList(VPlayerTransactionListVo playerTransactionListVo) {
