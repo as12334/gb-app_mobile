@@ -209,14 +209,7 @@ public class OriginController extends BaseOriginController {
     @RequestMapping("/getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
-        if (siteGame.getApiId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        if (siteGame.getApiTypeId() == null) {
+        if (siteGame.getApiId() == null || siteGame.getApiTypeId() == null) {
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
