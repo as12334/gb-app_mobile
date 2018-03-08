@@ -849,7 +849,7 @@ public class BaseMineController {
         for (SiteApiI18n siteApi : Cache.getSiteApiI18n().values()) {
             AppSelectSiteApiI18n appSiteApi = new AppSelectSiteApiI18n();
             appSiteApi.setApiId(siteApi.getApiId());
-            appSiteApi.setApiName(siteApi.getName());
+            appSiteApi.setApiName(CacheBase.getSiteApiName(siteApi.getApiId().toString()));
             appSiteApis.add(appSiteApi);
         }
         map.put("apiSelect", appSiteApis);//获取SiteApi
