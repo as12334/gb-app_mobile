@@ -280,7 +280,7 @@ public abstract class BaseOriginController {
         Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
         Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = apiTypeRelationGroupByType(siteApiTypeRelationMap, apiI18nMap, siteApiI18nMap, apiLogoUrl, navGames);
-        Map<String, ApiTypeI18n> apiTypeI18nMap = CacheBase.getApiTypeI18n();
+        Map<String, SiteApiTypeI18n> siteApiTypeI18nMap = Cache.getSiteApiTypeI18n();
         List<AppSiteApiTypeRelastionVo> appApiTypes = new ArrayList<>();
         String apiLogUrl = setApiLogoUrl(model, request);
         Integer apiTypeId;
@@ -289,7 +289,7 @@ public abstract class BaseOriginController {
             AppSiteApiTypeRelastionVo appApiType = new AppSiteApiTypeRelastionVo();
             apiTypeId = siteApiType.getApiTypeId();
             appApiType.setApiType(apiTypeId);
-            appApiType.setApiTypeName(apiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
             appApiType.setCover(getApiTypeCover(apiLogUrl, apiTypeId));
             appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
             if (navApiTypes.contains(apiTypeId)) {
