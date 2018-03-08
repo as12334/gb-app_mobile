@@ -111,6 +111,25 @@
             </div>
         </div>
     </div>
+    <%--连续存款失败后提示弹窗--%>
+    <div class="masker" id="failureHintsMasker" style="display:none;"></div> <!--遮罩-->
+    <div class="gb-withdraw-box window-ok pro-window" id="failureHints" style="display:none">
+        <div  class="cont">
+            <h3 style="margin-left:40%;margin-top: 5%">${views.deposit_auto['消息']}</h3>
+            <div class="ok-box">
+                <i class="ok-icon"></i>
+            </div>
+            <i class="ok-icon"></i>
+            <div class="cont-text">
+                <span style="font-size: 15px ">${views.deposit_auto['多次失败提示']}</span>
+            </div>
+            <input type="hidden" id="channel"/>
+            <div class="pro-btn">
+                <a class="agin-btn" id="continueDeposit">${views.deposit_auto['仍要继续']}</a>
+                <a _href="/wallet/deposit/index.html" class="next-btn" id="goToDepositPage">${views.deposit_auto['重新存款']}</a>
+            </div>
+        </div>
+    </div>
 </div>
 <%--微信反扫教程：--%>
 <div id="depositHelpBox10" class="depositHelpBox" style="display: none">
@@ -152,12 +171,13 @@
 <script type="text/javascript" src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script>
-    curl(['site/deposit/Deposit','site/deposit/Online','site/deposit/ScanCode', 'site/common/Assets'],
-        function (Page,Online,ScanCode, Assets) {
+    curl(['site/deposit/Deposit','site/deposit/Online','site/deposit/ScanCode', 'site/common/Assets',"site/common/Footer"],
+        function (Page,Online,ScanCode, Assets,Footer) {
             page = new Page();
             page.Online = new Online();
             page.ScanCode = new ScanCode();
             page.asset = new Assets();
+            page.footer = new Footer();
         });
 </script>
 </body>
