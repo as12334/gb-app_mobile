@@ -65,7 +65,8 @@
                                                             "dataApiName":"${gbFn:getGameName(game.value.gameId)}","target":"goGame","opType":"function"}'>
 
                                                             <div class="img-wrap">
-                                                                <img data-src="${soulFn:getImagePath(domain, game.value.cover)}" src="${soulFn:getImagePath(domain, game.value.cover)}">
+                                                                <%--<img data-src="${soulFn:getImagePath(domain, game.value.cover)}" src="${soulFn:getImagePath(domain, game.value.cover)}">--%>
+                                                                <img data-lazyload="${soulFn:getImagePath(domain, game.value.cover)}">
                                                             </div>
                                                             <p>${gbFn:getGameName(game.value.gameId)}</p>
                                                         </a>
@@ -90,7 +91,8 @@
                                                             "dataApiName":"${gbFn:getGameName(allGames[g].gameId)}","target":"goGame","opType":"function"}' class="" >
 
                                                                 <div class="img-wrap">
-                                                                    <img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">
+                                                                    <%--<img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">--%>
+                                                                    <img data-lazyload="${soulFn:getImagePath(domain, allGames[g].cover)}">
                                                                 </div>
                                                                 <p>${gbFn:getGameName(allGames[g].gameId)}</p>
                                                             </a>
@@ -118,6 +120,8 @@
 
 <%@include file="../include/include.js.jsp" %>
 <%--<script src="${resComRoot}/js/mobile/layer.js"></script>--%>
+<script src="${resRoot}/js/mui/mui.lazyload.js"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.img.js"></script>
 <script type="text/javascript" src="${resRoot}/js/swiper.min.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
