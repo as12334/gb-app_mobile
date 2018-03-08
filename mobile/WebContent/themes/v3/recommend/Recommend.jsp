@@ -43,7 +43,7 @@
                     您的专属链接，<br>
                     复制后通过微信、QQ等方式发送给好友
                     <div class="input-wrap">
-                        <input type="text" value="${code}"> <a href="javascript:void(0)" id="copyCode" data-clipboard-text="${code}" class="btn-copy">复制</a>
+                        <input type="text" value="${code}"> <a href="javascript:void(0)" data-rel='{"target":"copyCode","opType":"function"}' data-clipboard-text="${code}" class="btn-copy">${views.themes_auto['复制']}</a>
                         <input type="hidden" value="${activityRules}" id="activityRules"> <%--接收活动规则，在通过jQuery显示--%>
                     </div>
                 </div>
@@ -127,64 +127,21 @@
                                         <thead>
                                         <tr>
                                             <th>好友账号</th>
-                                            <th>有效投注</th>
-                                            <th>红利</th>
-                                            <th>互惠奖励</th>
+                                            <th>注册时间</th>
+                                            <th>状态</th>
+                                            <th>推荐奖励</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <c:forEach items="command" var="vo">
+                                        <c:forEach items="${command}" var="vo">
                                             <tr>
-                                                <td><%--${vo.recommendUserName}--%></td> <%--被推荐人账号--%>
-                                                <td></td> 有效投注额，暂时注掉
+                                                <td>${vo.recommendUserName}</td> <%--被推荐人账号--%>
+                                                <td>${soulFn:formatDateTz(vo.createTime, DateFormat.DAY, timeZone)}</td>  <%--注册时间--%>
+                                                <td>${vo.status}</td>         <%--状态--%>
+                                                <td>${vo.rewardAmount}</td>    <%--推荐奖励--%>
                                             </tr>
-
-
                                         </c:forEach>
 
-
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td>已获得</td>
-                                        </tr>
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td><span class="red">为达到条件</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td>已获得</td>
-                                        </tr>
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td><span class="red">为达到条件</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td>已获得</td>
-                                        </tr>
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td><span class="red">为达到条件</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>jac***456</td>
-                                            <td>123405</td>
-                                            <td>33</td>
-                                            <td>已获得</td>
-                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -202,7 +159,7 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="/legend02/rcenter/common/js/dist/clipboard.js?v=${rcVersion}"></script>
+<script src="${resComRoot}/js/dist/clipboard.js"></script>
 <script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/recommend/Recommend.js?v=${rcVersion}"></script>
 </html>
