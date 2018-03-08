@@ -17,6 +17,7 @@ import org.soul.commons.qrcode.QrcodeDisTool;
 import org.soul.commons.security.Base36;
 import org.soul.commons.security.CryptoTool;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.security.privilege.po.SysUserStatus;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
@@ -219,8 +220,8 @@ public class IndexController extends BaseApiController {
         //查询被该玩家推荐的好友记录奖励表
         listVo.getSearch().setUserId(SessionManager.getUserId());
         initSearchDate(listVo);
-        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecode(listVo);
-        List<PlayerRecommendAwardRecord> list = listVo.getRecommendAwardRecords();
+        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecodeToApp(listVo);
+        List<PlayerRecommendAwardRecord> list = changeToApp(listVo.getRecommendAwardRecords());
         model.addAttribute("command", list);
         //查询推荐记录 默认时间区间
         model.addAttribute("defaultMinDate", SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
@@ -234,6 +235,19 @@ public class IndexController extends BaseApiController {
         //活动规则
         model.addAttribute("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue());
         return "/recommend/Recommend";
+    }
+
+    /**
+     * 推荐记录
+     * @param records
+     * @return
+     */
+    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records){
+        for (PlayerRecommendAwardRecord record : records){
+            record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
+            record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
+        }
+        return records;
     }
 
     /**

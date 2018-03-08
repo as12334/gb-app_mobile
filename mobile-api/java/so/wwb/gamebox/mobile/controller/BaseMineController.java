@@ -645,6 +645,7 @@ public class BaseMineController {
                 detailApp.setRechargeTotalAmount(moneyType + " " + "-" + CurrencyTool.formatCurrency(withdrawVo.getResult().getWithdrawActualAmount())); //实际到账
             }
 
+            detailApp.setFailureReason(po.getFailureReason()); //失败原因
             detailApp.setStatusName(statusName); //状态
         }
 

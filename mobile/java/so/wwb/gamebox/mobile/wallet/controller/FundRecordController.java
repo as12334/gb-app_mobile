@@ -168,6 +168,7 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
      * @return
      */
     @RequestMapping("/details")
+    @Upgrade(upgrade = true)
     public String details(VPlayerTransactionVo vo, Model model) {
         if (vo.getSearch().getId() == null) {
             model.addAttribute("command", vo);
