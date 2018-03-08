@@ -584,9 +584,8 @@ public abstract class BaseOriginController {
         playerApiAccountVo = ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
         if (playerApiAccountVo == null || playerApiAccountVo.getGameApiResult() == null || ResultStatus.SUCCESS != playerApiAccountVo.getGameApiResult().getStatus()) {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
-            appI18n.setGameLink("");
             return appI18n;
-        } else if (StringTool.isBlank(playerApiAccountVo.getErrMsg())) {
+        } else if (StringTool.isNotBlank(playerApiAccountVo.getErrMsg())) {
             appI18n.setGameMsg(playerApiAccountVo.getErrMsg());
             return appI18n;
         }
@@ -648,7 +647,6 @@ public abstract class BaseOriginController {
             playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
         } else {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
-            appI18n.setGameLink("");
             return appI18n;
         }
         if (StringTool.isNotBlank(playerApiAccountVo.getErrMsg())) {
