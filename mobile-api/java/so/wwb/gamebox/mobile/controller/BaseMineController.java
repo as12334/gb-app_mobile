@@ -25,6 +25,7 @@ import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.security.privilege.po.SysUserStatus;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
@@ -849,7 +850,7 @@ public class BaseMineController {
         for (SiteApiI18n siteApi : Cache.getSiteApiI18n().values()) {
             AppSelectSiteApiI18n appSiteApi = new AppSelectSiteApiI18n();
             appSiteApi.setApiId(siteApi.getApiId());
-            appSiteApi.setApiName(siteApi.getName());
+            appSiteApi.setApiName(CacheBase.getSiteApiName(siteApi.getApiId().toString()));
             appSiteApis.add(appSiteApi);
         }
         map.put("apiSelect", appSiteApis);//获取SiteApi
@@ -1059,8 +1060,8 @@ public class BaseMineController {
         //查询被该玩家推荐的好友记录奖励表
         listVo.getSearch().setUserId(SessionManager.getUserId());
         initSearchDate(listVo);
-        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecode(listVo);
-        List<PlayerRecommendAwardRecord> list = listVo.getRecommendAwardRecords();
+        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecodeToApp(listVo);
+        List<PlayerRecommendAwardRecord> list = changeToApp(listVo.getRecommendAwardRecords());
         map.put("command", list);
 
         //查询推荐人数 获取奖励 红利
@@ -1070,6 +1071,19 @@ public class BaseMineController {
         map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
         return map;
+    }
+
+    /**
+     * 转换推荐记录到原生
+     * @param records
+     * @return
+     */
+    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records){
+        for (PlayerRecommendAwardRecord record : records){
+            record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
+            record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
+        }
+        return records;
     }
 
     /**

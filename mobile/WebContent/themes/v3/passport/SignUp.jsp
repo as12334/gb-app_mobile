@@ -69,7 +69,7 @@
                                     <div class="mui-input-row">
                                         <label>${views.register['signUp.sysUser.confirmPassword']}${isRequired?'<i class="icon-star"></i>':''}</label>
                                         <input type="password" name="confirmPassword" class="mui-input-password"
-                                               placeholder="${views.passport_auto['密码长度']}">
+                                               placeholder="${views.passport_auto['再次输入您的登录密码']}">
                                     </div>
                                 </c:when>
                                 <%--安全密码--%>
