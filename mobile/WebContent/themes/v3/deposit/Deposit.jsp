@@ -101,12 +101,12 @@
             </div>
             <i class="ok-icon"></i>
             <div class="cont-text">
-                <span style="font-size: 15px ">您已多次使用此存款方式且未能成功存款，为快速存款成功，建议您使用其他的存款方式或联系在线客服！</span>
+                <span style="font-size: 15px ">${views.deposit_auto['多次失败提示']}</span>
             </div>
             <input type="hidden" id="channel"/>
             <div class="pro-btn">
-                <a class="agin-btn" data-rel='{"opType":"function","target":"continueDeposit"}'>仍要继续</a>
-                <a class="next-btn" data-rel='{"opType":"function","target":"goToDepositPage"}'>重新存款</a>
+                <a class="agin-btn" data-rel='{"opType":"function","target":"continueDeposit"}'>${views.deposit_auto['仍要继续']}</a>
+                <a class="next-btn" data-rel='{"opType":"function","target":"goToDepositPage"}'>${views.deposit_auto['重新存款']}</a>
             </div>
         </div>
     </div>
@@ -158,4 +158,5 @@
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/OnlinePay.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 </html>

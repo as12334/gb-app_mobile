@@ -52,9 +52,17 @@
                 <c:if test="${payAccountForScan.randomAmount eq true}">
                     <div class="mui-input-row">
                         <p name="randomAmountMsg" style="text-align: left;float:right;line-height: 21px;height: 58px;
-                            color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">${views.deposit_auto['随机额度提示']}</p>
+                            color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['随机额度提示']}</p>
                     </div>
                 </c:if>
+                <div class="mui-input-row">
+                    <p style="text-align: left;float:right;line-height: 21px;height: 58px;
+                            color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['提示']}<span style="color: red">${views.deposit_auto['支付成功']}</span>${views.deposit_auto['关闭支付窗口']}
+                    <p style="text-align: left;float:right;line-height: 21px;height: 58px;
+                            color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['客服帮助']}
+                        <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                    </p>
+                </div>
             </div>
         </form>
     </c:when>
