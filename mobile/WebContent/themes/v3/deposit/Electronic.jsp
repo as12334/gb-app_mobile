@@ -148,7 +148,7 @@
             <c:if test="${not empty payAccount.remark}">
                 <div class="info">
                     <ul>
-                        <li>${payAccount.remark}</li>
+                        <li>* ${payAccount.remark}</li>
                     </ul>
                 </div>
             </c:if>

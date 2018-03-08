@@ -50,7 +50,7 @@
                                         <c:if test="${p.key eq 'electronicPay'}">
                                             <c:forEach items="${p.value}" var="i">
                                                 <li key="${command.getSearchId(i.id)}"><a data-rel='{"payType":"electronicPay","url":"/wallet/deposit/company/electronic/depositCash.html?searchId=${command.getSearchId(i.id)}","opType":"function","target":"amountInput"}'
-                                                        class="${fn:length(isMultipleAccount ? i.aliasName : (i.rechargeType eq 'other_fast' ? i.customBankName : views.deposit[i.rechargeType]))>5 && isMultipleAccount ?'long':''}">
+                                                        class="${fn:length(isMultipleAccount ? i.aliasName : (i.rechargeType eq 'other_fast' ? i.customBankName : views.deposit[i.rechargeType])) > 5 ?'long':''}">
                                                     <i class="pay ${i.bankCode=='onecodepay'?'ymf':i.bankCode}"></i><span><div class="text-two-line">
                                                         ${isMultipleAccount ? i.aliasName : (i.rechargeType eq 'other_fast' ? i.customBankName : views.deposit[i.rechargeType])}</div></span></a>
                                                 </li>
