@@ -92,7 +92,10 @@
                                     </a>
                                 </div>
                             </div>
-                            <p class="info">* 为了方便系统快速完成转账，请输入正确的txid、交易时间等.</p>
+                            <p class="info">* ${views.deposit_auto['正确的txid']}</p>
+                            <p class="info">* ${views.deposit_auto['客服帮助']}
+                                <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                            </p>
                         </div>
                     </div>
                 </div>

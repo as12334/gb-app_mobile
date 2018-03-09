@@ -22,6 +22,17 @@
                     </p>
                 </div>
                 <%@include file="./ChooseAmount.jsp"%>
+                <div class="mui-input-row">
+                    <p style="text-align: left;float:left;line-height: 21px;">* ${views.deposit_auto['先查看要入款的银行账号']}
+                    <p style="text-align: left;float:left;line-height: 21px;height: 58px;
+                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['办理转账']}
+                    <p style="text-align: left;float:left;line-height: 21px;height: 58px;
+                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['存款完成后']}
+                    <p style="text-align: left;float:left;line-height: 21px;height: 58px;
+                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['客服帮助']}
+                        <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                    </p>
+                </div>
             </div>
         </form>
     </c:when>
