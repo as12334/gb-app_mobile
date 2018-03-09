@@ -125,7 +125,7 @@ public class DiscountsAppController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
             if(playerRank != null){
-                rankId = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId();
+                rankId = playerRank.getId();
             }
         }
         long nowTime = SessionManager.getDate().getNow().getTime();
