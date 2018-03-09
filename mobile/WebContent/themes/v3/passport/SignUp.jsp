@@ -125,8 +125,8 @@
                                 <c:when test="${i.name=='sex'}">
                                     <div class="mui-input-row">
                                         <label>${views.passport_auto['性别']}${isRequired?'<i class="icon-star"></i>':''}</label>
-                                        <div id="sexButton">
-                                            <input type="text" class="mui-input-select" readonly
+                                        <div id="sexDiv">
+                                            <input type="text" id="sexButton" class="mui-input-select" readonly
                                                    placeholder="${views.register['signUp.sysUser.sex']}">
                                             <input type="hidden" name="sysUser.sex" id="sysUser.sex" value=""/>
                                             <span class="mui-icon mui-icon-arrowdown"></span>
