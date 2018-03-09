@@ -20,6 +20,7 @@ import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
+import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -122,7 +123,10 @@ public class DiscountsAppController {
         if (SessionManager.getUser() != null && !SessionManager.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            rankId = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId();
+            PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
+            if(playerRank != null){
+                rankId = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId();
+            }
         }
         long nowTime = SessionManager.getDate().getNow().getTime();
         boolean isDisplay;
