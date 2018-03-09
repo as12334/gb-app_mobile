@@ -567,7 +567,7 @@ public class BaseMineController {
         if (StringTool.equals(po.getFundType(), FundTypeEnum.TRANSFER_OUT.getCode())) { //从我的钱包转出外面
             detailApp.setTransferOut(LocaleTool.tranMessage(Module.COMMON, "FundRecord.record.playerWallet"));
             Integer apiId = (Integer) map.get("API");
-            detailApp.setTransactionMoney(CurrencyTool.formatCurrency(po.getTransactionMoney())); //金额
+            detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney())); //金额
             detailApp.setTransferInto(CacheBase.getSiteApiName(String.valueOf(apiId)));
             detailApp.setStatusName(statusName); //状态
         }
