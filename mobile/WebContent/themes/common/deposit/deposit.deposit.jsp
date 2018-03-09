@@ -115,9 +115,10 @@
     <div class="masker" id="failureHintsMasker" style="display:none;"></div> <!--遮罩-->
     <div class="gb-withdraw-box window-ok pro-window" id="failureHints" style="display:none">
         <div  class="cont">
-            <h3 style="margin-left:40%;margin-top: 5%">${views.deposit_auto['消息']}</h3>
+            <h3 style="margin-left:40%;margin-top: 5%;margin-bottom: 15px">${views.deposit_auto['消息']}</h3>
             <div class="ok-box">
-                <i class="ok-icon"></i>
+                <%--<i class="ok-icon"></i>--%>
+                <img src="${resRoot}/images/warning.png" style="width: 50px;height: 50px;margin-bottom: 15px" alt="" />
             </div>
             <i class="ok-icon"></i>
             <div class="cont-text">

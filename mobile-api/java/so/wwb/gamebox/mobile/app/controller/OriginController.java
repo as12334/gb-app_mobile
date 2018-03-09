@@ -209,14 +209,7 @@ public class OriginController extends BaseOriginController {
     @RequestMapping("/getGameLink")
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
-        if (siteGame.getApiId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        if (siteGame.getApiTypeId() == null) {
+        if (siteGame.getApiId() == null || siteGame.getApiTypeId() == null) {
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
@@ -224,25 +217,16 @@ public class OriginController extends BaseOriginController {
                     APP_VERSION);
         }
         Map map = new HashMap<>(2, 1f);
-        if (SessionManager.isAutoPay()) {
-            AppSiteApiTypeRelationI18n gameUrl = goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo);
-            map.put("gameLink", gameUrl.getGameLink());
-            map.put("gameMsg", gameUrl.getGameMsg());
 
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.SUCCESS.getCode(),
-                    AppErrorCodeEnum.SUCCESS.getMsg(),
-                    map,
-                    APP_VERSION);
-        }
         PlayerApiAccountVo player = new PlayerApiAccountVo();
         player.setApiId(siteGame.getApiId());
         player.setApiTypeId(siteGame.getApiTypeId());
         player.setGameId(siteGame.getGameId());
         player.setGameCode(siteGame.getGameCode());
-        AppSiteApiTypeRelationI18n gameUrl = getCasinoGameUrl(player, request, modelVo);
+        AppSiteApiTypeRelationI18n gameUrl = SessionManager.isAutoPay() ? goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo) : getCasinoGameUrl(player, request, modelVo);
         map.put("gameLink", gameUrl.getGameLink());
         map.put("gameMsg", gameUrl.getGameMsg());
+
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
