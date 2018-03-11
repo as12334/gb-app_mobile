@@ -5,6 +5,7 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
@@ -53,7 +54,7 @@ public class DiscountsAppController {
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap, SessionManager.getDomain(request)), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap, ServletTool.getDomainFullAddress(request)), APP_VERSION);
     }
 
     /**
@@ -99,7 +100,7 @@ public class DiscountsAppController {
         }
         Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
-        String domain = SessionManager.getDomain(request);
+        String domain = ServletTool.getDomainFullAddress(request);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             Map messages = getActivityMessages(listVo, activityMessageMap, domain);

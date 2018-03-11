@@ -169,7 +169,7 @@ public class OriginController extends BaseOriginController {
         listVo = getGameByApiIdAndApiTypeId(listVo, tag);
         //处理游戏结果
         Map<String, Object> map = new HashMap<>(2, 1f);
-        map.put("casinoGames", handleCasinoGames(listVo.getResult(), SessionManager.getDomain(request), SessionManager.isAutoPay()));
+        map.put("casinoGames", handleCasinoGames(listVo.getResult(), ServletTool.getDomainFullAddress(request), SessionManager.isAutoPay()));
         Map<String, Object> pageTotal = new HashMap<>(1, 1f);
         //总数
         pageTotal.put("pageTotal", listVo.getPaging().getTotalCount());
@@ -266,7 +266,7 @@ public class OriginController extends BaseOriginController {
                 }
                 m.put("link", link);
                 String cover = m.get("cover") == null ? "" : m.get("cover").toString();
-                cover = getImagePath(SessionManager.getDomain(request), cover);
+                cover = getImagePath(ServletTool.getDomainFullAddress(request), cover);
                 m.put("cover", cover);
                 if (phoneDialogType.equals(m.get("type"))) {
                     phoneDialog.add(m);
@@ -324,7 +324,7 @@ public class OriginController extends BaseOriginController {
         CttFloatPicItem cttFloatPicItem = queryMoneyFloatPic(cttFloatPic);
         appFloatPicItem.setDescription(moneyActivity.getActivityDescription());
         appFloatPicItem.setActivityId(CryptoTool.aesEncrypt(String.valueOf(moneyActivity.getId()), "PlayerActivityMessageListVo"));
-        appFloatPicItem.setNormalEffect(getImagePath(SessionManager.getDomain(request), cttFloatPicItem.getNormalEffect()));
+        appFloatPicItem.setNormalEffect(getImagePath(ServletTool.getDomainFullAddress(request), cttFloatPicItem.getNormalEffect()));
         appFloatPicItem.setLocation(cttFloatPic.getLocation());
         appFloatPicItem.setLanguage(cttFloatPic.getLanguage());
         appFloatPicItem.setDistanceSide(cttFloatPic.getDistanceSide());
