@@ -248,7 +248,13 @@ public abstract class BaseOriginController {
         //bb kg需进入大厅，不支持直接进入游戏
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
-            sb.append(String.format(CASINO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+            sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+            if(siteGame.getGameId() != null){
+                sb.append("&gameId=").append(siteGame.getGameId());
+            }
+            if(StringTool.isNotBlank(siteGame.getCode())){
+                sb.append("&gameCode=").append(siteGame.getCode());
+            }
         } else {
             if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
                 sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameId=").append(siteGame.getGameId());
