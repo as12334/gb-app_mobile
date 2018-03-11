@@ -247,16 +247,16 @@ public abstract class BaseOriginController {
     private String getCasinoGameRequestUrl(SiteGame siteGame) {
         //bb kg需进入大厅，不支持直接进入游戏
         StringBuilder sb = new StringBuilder();
-        if(ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()){
+        if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
             sb.append(String.format(CASINO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-        }else{
+        } else {
             if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
                 sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameId=").append(siteGame.getGameId());
-            }else if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
+            } else if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
                 sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameCode=").append(siteGame.getCode());
-            }else if(NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()){
+            } else if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
                 sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-            }else {
+            } else {
                 sb.append(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
             }
         }
