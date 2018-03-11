@@ -142,7 +142,8 @@ public class DiscountsAppController {
             if (release.equals(playerActivityMessage.getActivityState()) && locale.equals(playerActivityMessage.getActivityVersion()) && !isDelete && isDisplay && (StringTool.isBlank(activityClassifyKey) || activityClassifyKey.equals(playerActivityMessage.getActivityClassifyKey())) && playerActivityMessage.getStartTime().getTime() <= nowTime && playerActivityMessage.getEndTime().getTime() > nowTime) {
                 isAllRank = playerActivityMessage.getAllRank() != null && playerActivityMessage.getAllRank();
                 hasRank = true;
-                if (rankId != null && !isAllRank && !playerActivityMessage.getRankid().contains(rankId + ",") && !playerActivityMessage.getRankid().contains("," + rankId)) {
+                if (rankId != null && !isAllRank && playerActivityMessage.getRankid() != null && !playerActivityMessage.getRankid().contains(rankId + ",")
+                        && playerActivityMessage.getRankid() != null && !playerActivityMessage.getRankid().contains("," + rankId)) {
                     hasRank = false;
                 }
                 if (hasRank) {
