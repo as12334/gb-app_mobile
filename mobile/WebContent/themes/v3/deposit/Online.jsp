@@ -57,7 +57,7 @@
                         <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
                     </p>
                 </div>--%>
-                <ul class="depositHelp" style="line-height: 25px;color: darkorchid ">
+                <ul class="depositHelp" style="color: #262729 ">
                     <li>* ${views.deposit_auto['请保留好转账单据']}</li>
                     <li>* ${views.deposit_auto['客服帮助']}
                         <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>

@@ -22,7 +22,7 @@
                     </p>
                 </div>
                 <%@include file="./ChooseAmount.jsp"%>
-                <ul class="depositHelp" style="line-height: 25px;color: darkorchid ">
+                <ul class="depositHelp" style="color: #262729 ">
                     <li>* ${views.deposit_auto['先查看要入款的银行账号']}</li>
                     <li>* ${views.deposit_auto['办理转账']}</li>
                     <li>* ${views.deposit_auto['存款完成后']}</li>

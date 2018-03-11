@@ -35,7 +35,7 @@
                         <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
                     </p>
                 </div>--%>
-                <ul class="depositHelp" style="line-height: 25px;color: darkorchid ">
+                <ul class="depositHelp" style="color: #262729 ">
                     <li>* ${views.deposit_auto['请先加好友']}</li>
                     <li>* ${views.deposit_auto['存款金额请加以小数']}</li>
                     <li>* ${views.deposit_auto['提示']}<font style="color: red">${views.deposit_auto['支付成功']}</font>${views.deposit_auto['关闭支付窗口']}</li>
