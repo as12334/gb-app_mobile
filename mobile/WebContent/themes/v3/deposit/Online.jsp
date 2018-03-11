@@ -44,16 +44,25 @@
                 <%@include file="./ChooseAmount.jsp"%>
                 <!--随机额度提示-->
                 <c:if test="${account.randomAmount eq true}">
-                    <p  class="info" name="randomAmountMsg">* ${views.deposit_auto['随机额度提示']}</p>
+                    <div class="mui-input-row">
+                        <p name="randomAmountMsg" style="text-align: left;float:right;line-height: 21px;height: 58px;
+                            color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['随机额度提示']}</p>
+                    </div>
                 </c:if>
-                <div class="mui-input-row">
+                <%--<div class="mui-input-row">
                     <p style="text-align: left;float:right;line-height: 21px;height: 58px;
                             color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['请保留好转账单据']}</p>
                     <p style="text-align: left;float:right;line-height: 21px;height: 58px;
                             color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['客服帮助']}
                         <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
                     </p>
-                </div>
+                </div>--%>
+                <ul class="depositHelp" style="color: #262729 ">
+                    <li>* ${views.deposit_auto['请保留好转账单据']}</li>
+                    <li>* ${views.deposit_auto['客服帮助']}
+                        <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                    </li>
+                </ul>
             </div>
             <input type="hidden" id="bankJson" value='${bankJson}' />
         </form>

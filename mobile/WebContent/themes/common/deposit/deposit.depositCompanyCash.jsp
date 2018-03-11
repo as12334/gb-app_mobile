@@ -12,6 +12,7 @@
             <input type="hidden" name="onlinePayMax" value="${onlinePayMax}"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="activityId" id="activityId"/>
+            <%--<input type="hidden" name="bankCode" value="${bankCode}"/>--%>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
                     <label>${views.deposit_auto['金额']}</label>
