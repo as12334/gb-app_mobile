@@ -21,6 +21,14 @@
                     <%--</div>--%>
                 </div>
                 <%@include file="./ChooseAmount.jsp"%>
+                <div class="gb-form-notice">
+                    <p>* ${views.deposit_auto['先查看要入款的银行账号']}
+                    <p>* ${views.deposit_auto['办理转账']}
+                    <p>* ${views.deposit_auto['存款完成后']}
+                    <p>* ${views.deposit_auto['客服帮助']}
+                        <a class="customer" id="loadCustomerId" href="#">${views.deposit_auto['点击联系在线客服']}</a>
+                    </p>
+                </div>
             </div>
         </form>
     </c:when>

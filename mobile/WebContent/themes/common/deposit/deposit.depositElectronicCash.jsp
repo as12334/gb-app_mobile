@@ -21,6 +21,14 @@
                     <%--</div>--%>
                 </div>
                 <%@include file="./ChooseAmount.jsp"%>
+                <div class="gb-form-notice">
+                    <p>* ${views.deposit_auto['请先加好友']}</p>
+                    <p>* ${views.deposit_auto['存款金额请加以小数']}
+                    <p>* ${views.deposit_auto['提示']}<span style="color: red">${views.deposit_auto['支付成功']}</span>${views.deposit_auto['关闭支付窗口']}
+                    <p>* ${views.deposit_auto['客服帮助']}
+                        <a class="customer" id="loadCustomerId" href="#">${views.deposit_auto['点击联系在线客服']}</a>
+                    </p>
+                </div>
             </div>
         </form>
     </c:when>
