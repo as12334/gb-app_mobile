@@ -14,6 +14,7 @@
             <input type="hidden" class="onlinePayMin" value="${onlinePayMin}" name="onlinePayMin"/>
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="account" value="${command.getSearchId(payAccountForScan.id)}"/>
+            <input type="hidden" name="result.payerBank" value="${payAccountForScan.bankCode}"/>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
                     <label for="result.rechargeAmount" style="width:20%">${views.deposit_auto['存款金额']}</label>
@@ -55,14 +56,20 @@
                             color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['随机额度提示']}</p>
                     </div>
                 </c:if>
-                <div class="mui-input-row">
+                <%--<div class="mui-input-row">
                     <p style="text-align: left;float:right;line-height: 21px;height: 58px;
                             color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['提示']}<span style="color: red">${views.deposit_auto['支付成功']}</span>${views.deposit_auto['关闭支付窗口']}
                     <p style="text-align: left;float:right;line-height: 21px;height: 58px;
                             color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['客服帮助']}
                         <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
                     </p>
-                </div>
+                </div>--%>
+                <ul class="depositHelp" style="color: darkorchid ">
+                    <li>* ${views.deposit_auto['提示']}<font style="color: red">${views.deposit_auto['支付成功']}</font>${views.deposit_auto['关闭支付窗口']}</li>
+                    <li>* ${views.deposit_auto['客服帮助']}
+                        <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                    </li>
+                </ul>
             </div>
         </form>
     </c:when>
