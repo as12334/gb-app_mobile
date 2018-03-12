@@ -54,11 +54,15 @@
                                         <div class="ct">
                                             <p><span style="float:left;">${views.deposit_auto['银行开户名']}: </span>
                                                     ${payAccount.fullName}
-                                                <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
+                                                <c:if test="${fn:length(payAccount.fullName)>0}">
+                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
+                                                </c:if>
                                             </p>
                                             <p style="margin-top:3px;"><span style="float:left;">${views.deposit_auto['开户行']}: </span>
                                                     ${payAccount.openAcountName}
-                                                <a href="#" class="copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a>
+                                                <c:if test="${fn:length(payAccount.openAcountName)>0}">
+                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a>
+                                                </c:if>
                                             </p>
                                         </div>
                                     </div>
