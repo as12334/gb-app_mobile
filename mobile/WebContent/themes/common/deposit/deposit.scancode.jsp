@@ -14,6 +14,7 @@
             <input type="hidden" class="onlinePayMin" value="${onlinePayMin}" name="onlinePayMin"/>
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="account" value="${command.getSearchId(payAccountForScan.id)}"/>
+            <input type="hidden" name="bankCode" value="${payAccountForScan.bankCode}"/>
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
                     <label for="result.rechargeAmount">${views.deposit_auto['金额']}</label>

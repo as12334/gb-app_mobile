@@ -11,12 +11,12 @@ import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.cache.CacheKey;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
+import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -78,7 +78,10 @@ public class DiscountsController {
         if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
+            PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
+            if(playerRank != null){
+                vActivityMessageListVo.getSearch().setRankId(playerRank.getId());
+            }
         }
         vActivityMessageListVo.setPaging(null);
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);

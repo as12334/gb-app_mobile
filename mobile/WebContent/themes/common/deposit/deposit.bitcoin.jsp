@@ -108,6 +108,10 @@
                                         <input type="text" id="result.returnTime" name="result.returnTime" class="time"  value="${soulFn:formatDateTz(date, DateFormat.DAY_MINUTE,timeZone)}" beginTime="${soulFn:formatDateTz(minDate, DateFormat.DAY_MINUTE,timeZone)}">
                                     </div>
                                 </div>
+                                <p class="info">* ${views.deposit_auto['正确的txid']}</p>
+                                <p class="info">* ${views.deposit_auto['客服帮助']}
+                                    <a class="customer" id="loadCustomerId" href="#">${views.deposit_auto['点击联系在线客服']}</a>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -131,8 +135,9 @@
 </div>
 </div>
 <script>
-    curl(['site/deposit/BitcoinDeposit'], function (Page) {
+    curl(['site/deposit/BitcoinDeposit',"site/common/Footer"], function (Page,Footer) {
         page = new Page();
+        page.footer = new Footer();
     });
 </script>
 </body>

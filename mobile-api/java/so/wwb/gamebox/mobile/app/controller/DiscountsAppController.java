@@ -5,6 +5,7 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
+import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +54,7 @@ public class DiscountsAppController {
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap, SessionManager.getDomain(request)), APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap, ServletTool.getDomainFullAddress(request)), APP_VERSION);
     }
 
     /**
@@ -98,7 +100,7 @@ public class DiscountsAppController {
         }
         Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
-        String domain = SessionManager.getDomain(request);
+        String domain = ServletTool.getDomainFullAddress(request);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             Map messages = getActivityMessages(listVo, activityMessageMap, domain);
@@ -122,7 +124,10 @@ public class DiscountsAppController {
         if (SessionManager.getUser() != null && !SessionManager.isLotteryDemo()) {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
-            rankId = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId();
+            PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
+            if(playerRank != null){
+                rankId = playerRank.getId();
+            }
         }
         long nowTime = SessionManager.getDate().getNow().getTime();
         boolean isDisplay;
@@ -138,7 +143,8 @@ public class DiscountsAppController {
             if (release.equals(playerActivityMessage.getActivityState()) && locale.equals(playerActivityMessage.getActivityVersion()) && !isDelete && isDisplay && (StringTool.isBlank(activityClassifyKey) || activityClassifyKey.equals(playerActivityMessage.getActivityClassifyKey())) && playerActivityMessage.getStartTime().getTime() <= nowTime && playerActivityMessage.getEndTime().getTime() > nowTime) {
                 isAllRank = playerActivityMessage.getAllRank() != null && playerActivityMessage.getAllRank();
                 hasRank = true;
-                if (rankId != null && !isAllRank && !playerActivityMessage.getRankid().contains(rankId + ",") && !playerActivityMessage.getRankid().contains("," + rankId)) {
+                if (rankId != null && !isAllRank && playerActivityMessage.getRankid() != null && !playerActivityMessage.getRankid().contains(rankId + ",")
+                        && playerActivityMessage.getRankid() != null && !playerActivityMessage.getRankid().contains("," + rankId)) {
                     hasRank = false;
                 }
                 if (hasRank) {
