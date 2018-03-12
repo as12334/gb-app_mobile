@@ -287,7 +287,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         //统计该渠道连续存款失败次数
         PlayerRechargeVo playerRechargeVo4Count = new PlayerRechargeVo();
         playerRechargeVo4Count.getSearch().setPayAccountId(payAccount.getId());
-        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
+        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo4Count, SessionManager.getUserId());
         model.addAttribute("failureCount",failureCount);
         Integer max = payAccount.getSingleDepositMax();
         Integer min = payAccount.getSingleDepositMin();
