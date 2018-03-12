@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
@@ -144,8 +145,6 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                     model.addAttribute("tips", "存款金额加手续费必须大于0");
                 } else {
                     unCheckSuccess = true;
-                    Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
-                    model.addAttribute("failureCount",failureCount);
                     //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
                     //手续费标志
                     boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
@@ -160,6 +159,8 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                         pop = false;
                     } else if ("1".equals(playerRechargeVo.getStatusNum())) { //状态为"1"，不显示优惠信息
                         pop = false;
+                        /*Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
+                        model.addAttribute("failureCount",failureCount);*/
                     } else {
                         String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
                         model.addAttribute("counterFee", counterFee);
@@ -195,8 +196,8 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
         playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
-        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
-        map.put("failureCount",failureCount);
+//        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
+//        map.put("failureCount",failureCount);
         if (payAccount == null) {
             playerRechargeVo.setSuccess(false);
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));

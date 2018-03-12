@@ -11,23 +11,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceBossTool;
-import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.boss.IAppUpdateService;
+import so.wwb.gamebox.iservice.company.site.ISiteAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
+import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
+import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
-import so.wwb.gamebox.model.master.operation.vo.PlayerRankAppDomainVo;
-import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
-import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,54 +75,109 @@ public class DownLoadController extends BaseDemoController{
         //获取站点信息
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
+        ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
 
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {
             // 获取IOS信息
-            getIosInfo(model, code, appUpdateService);
+            getIosInfo(model, code, appUpdateService,siteAppUpdateService);
         } else if (OSTypeEnum.ANDROID.getCode().equals(os)) {
             // 获取android APP信息
-            getAndroidInfo(model, request, code, appUpdateService);
+            getAndroidInfo(model, request, code, appUpdateService,siteAppUpdateService);
         } else {
-            getIosInfo(model, code, appUpdateService);
-            getAndroidInfo(model, request, code, appUpdateService);
+            getIosInfo(model, code, appUpdateService,siteAppUpdateService);
+            getAndroidInfo(model, request, code, appUpdateService,siteAppUpdateService);
         }
     }
 
     /**
      * 获取android APP信息
      */
-    private void getAndroidInfo(Model model, HttpServletRequest request, String code, IAppUpdateService appUpdateService) {
-        AppUpdateVo androidVo = new AppUpdateVo();
-        androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
-        AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
-        if (androidApp != null) {
-            String appDomain = fetchAppDownloadDomain(request);
-            if (StringTool.isBlank(appDomain)) {
-                appDomain = ParamTool.appDmain(request.getServerName());
-            }
-            String versionName = androidApp.getVersionName();
-            String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, androidApp.getAppUrl(),
-                    versionName, code, versionName);
-            model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
-            model.addAttribute("androidUrl", url);
+    private void getAndroidInfo(Model model, HttpServletRequest request, String code, IAppUpdateService appUpdateService, ISiteAppUpdateService siteAppUpdateService) {
+        boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
+        String appDomain = fetchAppDownloadDomain(request);
+        if (StringTool.isBlank(appDomain)) {
+            appDomain = ParamTool.appDmain(request.getServerName());
         }
+        if(isMobileUpgrade){
+            Integer siteId = CommonContext.get().getSiteId();
+            SiteAppUpdateVo androidVo = new SiteAppUpdateVo();
+            androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
+            androidVo.getSearch().setSiteId(siteId);
+            SiteAppUpdate androidApp = siteAppUpdateService.queryNewApp(androidVo);
+            if (androidApp != null) {
+                String versionName = androidApp.getVersionName();
+                String appUrl = androidApp.getAppUrl();
+                fillAndroidInfo(model, code, appDomain, versionName, appUrl);
+            }
+        }else{
+            AppUpdateVo androidVo = new AppUpdateVo();
+            androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
+            AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
+            if (androidApp != null) {
+                String versionName = androidApp.getVersionName();
+                fillAndroidInfo(model, code, appDomain, versionName, androidApp.getAppUrl());
+            }
+        }
+
+    }
+
+    /**
+     * 填充ANDROID信息
+     * @param model
+     * @param code
+     * @param appDomain
+     * @param versionName
+     * @param appUrl
+     */
+    private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
+        String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
+                versionName, code, versionName);
+        model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
+        model.addAttribute("androidUrl", url);
     }
 
     /**
      * 获取IOS信息
      */
-    private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService) {
-        AppUpdateVo iosVo = new AppUpdateVo();
-        iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
-        AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
-        if (iosApp != null) {
-            String versionName = iosApp.getVersionName();
-            String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", iosApp.getAppUrl(),
-                    versionName, code, code, versionName);
-            model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
-            model.addAttribute("iosUrl", url);
+    private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService, ISiteAppUpdateService siteAppUpdateService) {
+        boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
+        if(isMobileUpgrade){
+            Integer siteId = CommonContext.get().getSiteId();
+            SiteAppUpdateVo iosVo = new SiteAppUpdateVo();
+            iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
+            iosVo.getSearch().setSiteId(siteId);
+            SiteAppUpdate iosApp = siteAppUpdateService.queryNewApp(iosVo);
+            if (iosApp != null) {
+                String versionName = iosApp.getVersionName();
+                String appUrl = iosApp.getAppUrl();
+                fillIosInfo(model, code, versionName, appUrl);
+            }
+        }else{
+            AppUpdateVo iosVo = new AppUpdateVo();
+            iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
+            AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
+            if (iosApp != null) {
+                String versionName = iosApp.getVersionName();
+                String appUrl = iosApp.getAppUrl();
+                fillIosInfo(model, code, versionName, appUrl);
+            }
         }
+
+    }
+
+    /**
+     * 填充IOS信息
+     * @param model
+     * @param code
+     * @param versionName
+     * @param appUrl
+     */
+    private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
+        String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
+                versionName, code, code, versionName);
+        model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
+        model.addAttribute("iosUrl", url);
     }
 
     @Override

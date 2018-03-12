@@ -233,7 +233,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<String, SiteApiTypeI18n> siteApiTypeI18nMap = Cache.getSiteApiTypeI18n();
         for (SiteApiType siteApiType : siteApiTypes) {
             siteApiType.setName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
-            siteApiType.setApiTypeRelations(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.desc(SiteApiTypeRelation.PROP_MOBILE_ORDER_NUM)));
+            siteApiType.setApiTypeRelations(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(SiteApiTypeRelation.PROP_MOBILE_ORDER_NUM)));
         }
         model.addAttribute("siteApiTypes", siteApiTypes);
         //处理二级分类游戏数据

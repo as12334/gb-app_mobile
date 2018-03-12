@@ -92,7 +92,16 @@
                                     </a>
                                 </div>
                             </div>
-                            <p class="info">* 为了方便系统快速完成转账，请输入正确的txid、交易时间等.</p>
+                            <%--<p class="info">* ${views.deposit_auto['正确的txid']}</p>
+                            <p class="info">* ${views.deposit_auto['客服帮助']}
+                                <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                            </p>--%>
+                            <ul class="depositHelp" style="color: #262729 ">
+                                <li>* ${views.deposit_auto['正确的txid']}</li>
+                                <li>* ${views.deposit_auto['客服帮助']}
+                                    <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -137,3 +146,4 @@
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js"></script>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
