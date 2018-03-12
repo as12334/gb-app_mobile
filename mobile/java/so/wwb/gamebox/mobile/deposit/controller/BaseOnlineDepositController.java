@@ -285,6 +285,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
         }
         //统计该渠道连续存款失败次数
+        PlayerRechargeVo playerRechargeVo4Count = new PlayerRechargeVo();
+        playerRechargeVo4Count.getSearch().setPayAccountId(payAccount.getId());
         Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
         model.addAttribute("failureCount",failureCount);
         Integer max = payAccount.getSingleDepositMax();
