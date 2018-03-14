@@ -69,7 +69,7 @@
                     <c:forEach var="g" items="${fish}">
                         <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                             <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}","dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10?'':g.code}",
-                                            "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}'>
+                                            "dataStatus":"${g.status}","target":"fishGameLogin","opType":"function"}'>
                                 <img data-lazyload="${root}/${g.cover}" class="fish-img"/>
                                 <div class="mui-media-body">${g.name}</div>
                             </a>

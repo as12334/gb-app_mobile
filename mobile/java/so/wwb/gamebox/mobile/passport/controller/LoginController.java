@@ -33,7 +33,6 @@ class LoginController {
 
     @RequestMapping(value = "/commonLogin")
     @Token(generate = true)
-    @Upgrade(upgrade = true)
     public String commonLogin(Model model, HttpServletRequest request) {
         //如果已经登录
         SysUser sysUser = SessionManager.getUser();
