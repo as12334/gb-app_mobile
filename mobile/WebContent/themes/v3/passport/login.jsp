@@ -6,12 +6,14 @@
     <%@ include file="../include/include.head.jsp" %>
     <title>${views.passport_auto['登录']}</title>
 </head>
-<%--<%@ include file="/themes/common/passport/passport.login.jsp" %>--%>
 <body>
 <!-- 主页面标题 -->
-<header class="mui-bar mui-bar-nav mui-bar-blue">
+<header class="mui-bar mui-bar-nav mui-bar-blue mui-action-back">
     <a class="mui-icon mui-icon-arrowleft mui-pull-left"></a>
-    <h1 class="mui-title">登录</h1>
+    <h1 class="mui-title">${views.passport_auto['登录']}</h1>
+    <c:if test="${os ne 'app_ios' }">
+        <a class="mui-icon mui-icon-home mui-pull-right " data-rel='{"target":"${root}/mainIndex.html","opType":"href"}' data-href="/mainIndex.html"></a>
+    </c:if>
 </header>
 <div class="mui-content mui-scroll-wrapper mui-content-without-footer-address login-content">
     <div class="mui-scroll">
@@ -35,21 +37,19 @@
 				        </span>
                         <input type="password" name="password" id="password" class="mui-input-password" placeholder="${views.passport_auto['请输入密码']}">
                     </div>
-
                     <div class="mui-input-row _captcha ${isOpenCaptcha ? 'final' : ''}" id="captcha_div" ${isOpenCaptcha ? "" :'style="display: none"'}>
                         <label>${views.passport_auto['请输入验证码']}</label>
-                        <span class="error-info">
-                            <i class="mui-icon mui-icon-info"></i>验证码错误
+                        <span id="captcha-error-msg" class="error-info">
+                            <%--<i class="mui-icon mui-icon-info"></i>验证码错误--%>
                         </span>
-                        <input type="text" name="captcha" id="captcha" maxlength="4" placeholder="${views.passport_auto['请输入验证码']}">
-                        <div class="gb-vcode">
-                            <img class="_captcha_img" src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
+                        <div class="mui-flex gb-vcode">
+                            <input type="text" class="mui-input-clear" name="captcha" id="captcha" maxlength="4" placeholder="${views.passport_auto['请输入验证码']}">
+                            <img class="captcha_img" data-rel='{"target":"captchaChange","opType":"function"}' src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
                         </div>
                     </div>
-
                     <div class="mui-button-row">
                         <button data-rel='{"target":"loginOk","opType":"function"}' type="button" class="mui-btn mui-btn-block btn-ok" >立即登录</button>
-                        <button data-rel='{"target":"terms","opType":"function"}' type="button" class="mui-btn mui-btn-block btn-cancel" >免费开户</button>
+                        <button data-rel='{"target":"${root}/signUp/index.html","opType":"href"}' type="button" class="mui-btn mui-btn-block btn-cancel" >免费开户</button>
                     </div>
                 </form>
             </div>
