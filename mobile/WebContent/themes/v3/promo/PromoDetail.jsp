@@ -16,7 +16,8 @@
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
             <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
-            <%@include file="../common/Assert.jsp"%>
+            <%--<%@include file="../common/Assert.jsp"%>--%>
+            <a class="mui-icon mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}' data-href="/promo/myPromo.html"><i></i></a>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice content-without-footer">
