@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.my.form.UpdatePasswordForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -52,6 +53,7 @@ public class UpdatePasswordController {
      * @return
      */
     @RequestMapping("/editPassword")
+    @Upgrade(upgrade = true)
     public String editPassword(Model model) {
         model.addAttribute("validateRule", JsRuleCreator.create(UpdatePasswordForm.class));
         model.addAttribute("remainTimes", remainTimes());
