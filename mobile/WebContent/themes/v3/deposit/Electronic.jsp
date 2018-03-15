@@ -5,7 +5,7 @@
 </head>
 <body class="exchange-wechat exchange-bank">
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"opType":"function","target":"goToLastPage"}'></a>
     <h1 class="mui-title">
         <c:if test="${payAccount.bankCode eq 'wechatpay'}">
             ${views.deposit_auto['转账到微信']}

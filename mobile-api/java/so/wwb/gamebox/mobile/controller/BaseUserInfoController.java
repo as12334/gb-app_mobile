@@ -125,7 +125,7 @@ public class BaseUserInfoController {
             userInfo.setLastLoginTime(LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
         }
         userInfo.setCurrency(getCurrencySign());
-        userInfo.setRealName(StringTool.overlayName(sysUser.getRealName()));
+        userInfo.setRealName(sysUser.getRealName());
         return userInfo;
     }
 

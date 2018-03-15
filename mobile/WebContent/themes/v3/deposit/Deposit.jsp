@@ -62,7 +62,7 @@
                                             </li>
                                         </c:if>
                                         <c:if test="${p.key eq 'bitcoin_fast'}">
-                                            <li key="${p.key}"><a data-rel='{"target":"/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}","opType":"href"}'
+                                            <li key="${p.key}"><a data-rel='{"target":"bitcoinPage","url":"/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}","opType":"function"}'
                                                     class="long"><i class="pay bitcoin"></i><span><div class="text-two-line">${views.deposit_auto['比特币支付']}</div></span></a>
                                             </li>
                                         </c:if>

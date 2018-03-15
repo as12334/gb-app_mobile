@@ -256,14 +256,19 @@ public abstract class BaseOriginController {
                 sb.append("&gameCode=").append(siteGame.getCode());
             }
         } else {
-            if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
-                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameId=").append(siteGame.getGameId());
-            } else if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
-                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameCode=").append(siteGame.getCode());
-            } else if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
-                sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-            } else {
-                sb.append(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+            if(SessionManager.isAutoPay()){
+                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
+                    sb.append("&gameId=").append(siteGame.getGameId());
+                } else if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
+                    sb.append("&gameCode=").append(siteGame.getCode());
+                }
+            }else{
+                if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
+                    sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                } else {
+                    sb.append(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                }
             }
         }
         return sb.toString();
