@@ -670,6 +670,7 @@ public class MineAppController extends BaseMineController {
                     vo.getData(),
                     APP_VERSION);
         }
+        //验证码
         if (verifyCode(password)) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
@@ -677,6 +678,7 @@ public class MineAppController extends BaseMineController {
                     vo.getData(),
                     APP_VERSION);
         }
+        //真实姓名
         if (!verifyRealName(password)) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.REAL_NAME_ERROR.getCode(),
@@ -684,10 +686,19 @@ public class MineAppController extends BaseMineController {
                     vo.getData(),
                     APP_VERSION);
         }
+        //密码复杂度
         if (PasswordRule.isWeak(password.getPwd1())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
                     AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
+                    vo.getData(),
+                    APP_VERSION);
+        }
+        //验证原始密码不能与新密码相同
+        if(StringTool.equals(password.getOriginPwd(), password.getPwd1())){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.PASSWORD_SAME.getCode(),
+                    AppErrorCodeEnum.PASSWORD_SAME.getMsg(),
                     vo.getData(),
                     APP_VERSION);
         }
