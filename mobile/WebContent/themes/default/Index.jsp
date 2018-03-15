@@ -127,9 +127,9 @@
                     <!--底部导航-->
                     <div class="mui-row bottom-nav">
                         <ul class="mui-list-inline">
-                            <li><a data-href="${root}/game.html?typeId=6">${views.app_auto['代理加盟']}</a></li>
-                            <li><a data-href="${root}/game.html?typeId=7">${views.app_auto['关于我们']}</a></li>
-                            <li><a data-href="${root}/game.html?typeId=8">${views.app_auto['注册条款']}</a></li>
+                            <li><a data-href="${root}/game.html?typeId=-2">${views.app_auto['代理加盟']}</a></li>
+                            <li><a data-href="${root}/game.html?typeId=-3">${views.app_auto['关于我们']}</a></li>
+                            <li><a data-href="${root}/game.html?typeId=-4">${views.app_auto['注册条款']}</a></li>
 
                             <li class="_download mui-hide _downloadApp" data-download="/app/download.html">
                                 <a>${views.app_auto['客户端']}</a></li>
