@@ -34,7 +34,7 @@
     <!--HealthCheck  结束-->
     <filter>
         <filter-name>dubboClientFilter</filter-name>
-        <filter-class>so.wwb.gamebox.web.filter.DubboClientFilter</filter-class>
+        <filter-class>org.soul.web.filter.DubboClientFilter</filter-class>
         <async-supported>true</async-supported>
         <init-param>
             <param-name>encoding</param-name>
