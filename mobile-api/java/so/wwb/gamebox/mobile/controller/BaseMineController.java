@@ -56,6 +56,7 @@ import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
+import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
 import so.wwb.gamebox.model.master.player.po.*;
@@ -1023,6 +1024,34 @@ public class BaseMineController {
 
         return listVo;
     }
+
+    protected VPlayerAdvisoryListVo getUnReadList(VPlayerAdvisoryListVo listVo) {
+
+        String tag  = "";
+        for (VPlayerAdvisory obj : listVo.getResult()) {
+            //查询回复表每一条在已读表是否存在
+            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
+            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
+                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+                readVo.setResult(new PlayerAdvisoryRead());
+                readVo.getSearch().setUserId(SessionManager.getUserId());
+                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
+                //不存在未读+1，标记已读咨询Id
+                if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
+                    obj.setIsRead(false);
+                } else {
+                    obj.setIsRead(true);
+                }
+            }
+        }
+
+        return listVo;
+    }
+
+
 
     /**
      * 获取玩家推荐信息
