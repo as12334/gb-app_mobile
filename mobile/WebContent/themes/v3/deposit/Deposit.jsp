@@ -10,6 +10,7 @@
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">
     <a id="depositBack" style="display: none" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
+    <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
     <%@include file="../common/Assert.jsp"%>
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
