@@ -44,7 +44,8 @@ public enum AppErrorCodeEnum {
     UPDATE_STATUS_FAIL("1401", "更新失败"),
     NOT_RECOVER("1402", "非免转不能一键回收"),
     SYSTEM_READ("1403", "消息已读"),
-    NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),;
+    NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),
+    ORIGIN_SAFE_PASSWORD_ERROR_TIME("1312","原始密码有误,还有%d次机会");
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
     private String code;
