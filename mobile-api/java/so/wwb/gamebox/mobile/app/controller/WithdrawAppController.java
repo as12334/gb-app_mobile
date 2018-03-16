@@ -234,7 +234,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         SysUser user = SessionManager.getUser();
         Map<String, Object> map = initSecurityPwdMap();
         Boolean captcha = (Boolean) map.get(KEY_CAPTCHA);
-        if (captcha == null ? false : captcha) {
+        /*if (captcha == null ? false : captcha) {
             String sysCode = (String) SessionManager.getAttribute(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_PRIVILEGE.getSuffix());
             if (!code.equalsIgnoreCase(sysCode)) {
                 return AppModelVo.getAppModeVoJson(true,
@@ -243,7 +243,7 @@ public class WithdrawAppController extends BaseWithDrawController {
                         tokenMap,
                         APP_VERSION);
             }
-        }
+        }*/
 
         // 安全密码已锁定
         if (isLock(user)) {
@@ -272,7 +272,7 @@ public class WithdrawAppController extends BaseWithDrawController {
                 tokenMap.put(KEY_TIMES_KEY, (APP_ERROR_TIMES - 1) - errorTimes);
                 return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getCode(),
-                        AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getMsg(),
+                        String.format(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR_TIME.getMsg(),(APP_ERROR_TIMES - 1) - errorTimes),
                         tokenMap,
                         APP_VERSION);
             }
