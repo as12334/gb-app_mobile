@@ -13,7 +13,7 @@ public enum AppErrorCodeEnum {
     ACTIVITY_END("1031", "活动已结束"),
     ACTIVITY_NOT_EXIST("1032", "不存在该活动"),
     WITHDRAW_HAS_ORDER("1100", "取款订单已存在"),
-    USER_HAS_FREEZE("1101", "全款玩家已被冻结"),
+    USER_HAS_FREEZE("1101", "全款玩家已被冻结，请联系客服处理"),
     WITHDRAW_MIN_AMOUNT("1102", "取款金额最少为x元"),
     NO_BANK("1103", "没有银行卡信息"),
     WITHDRAW_BETWEEN_MIN_MAX("1104", "取款金额应在x-x范围内，并且小于等于x"),
@@ -45,7 +45,7 @@ public enum AppErrorCodeEnum {
     NOT_RECOVER("1402", "非免转不能一键回收"),
     SYSTEM_READ("1403", "消息已读"),
     NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),
-    ORIGIN_SAFE_PASSWORD_ERROR_TIME("1312","原始密码有误,还有%d次机会");
+    ORIGIN_SAFE_PASSWORD_ERROR_TIME("1312","安全密码有误,还有%d次机会");
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
     private String code;
