@@ -295,7 +295,7 @@ public class MineAppController extends BaseMineController {
      * @param listVo
      * @return
      */
-    @RequestMapping(value = "/advisoryMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/advisoryMessage")
     @ResponseBody
     public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
         //提问内容+未读数量
@@ -311,7 +311,7 @@ public class MineAppController extends BaseMineController {
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
             if(advisory.getIsRead() == null){
-                messageApp.setRead(false);
+                messageApp.setRead(true);
             }else{
                 if (advisory.getIsRead() == false) { //代表未读,
                     messageApp.setRead(false);
