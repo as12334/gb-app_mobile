@@ -45,7 +45,7 @@
                                         </a>
                                         <div class="ct" style="padding: 0;">
                                             <h5><i></i><span>${activity.activityName}</span></h5>
-                                            <p>${activity.activityDescription}</p>
+                                            <div>${activity.activityDescription}</div>
                                         </div>
                                     </li>
                                 </ul>
