@@ -310,10 +310,14 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
-            if (advisory.getIsRead() == false) { //代表未读,
+            if(advisory.getIsRead() == null){
                 messageApp.setRead(false);
-            }else {
-                messageApp.setRead(true);
+            }else{
+                if (advisory.getIsRead() == false) { //代表未读,
+                    messageApp.setRead(false);
+                }else {
+                    messageApp.setRead(true);
+                }
             }
             messageAppList.add(messageApp);
         }
