@@ -282,8 +282,8 @@ public class WithdrawAppController extends BaseWithDrawController {
             freezeAccountBalance();
 
             return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_LOCK.getCode(),
-                    AppErrorCodeEnum.USER_LOCK.getMsg(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getCode(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }

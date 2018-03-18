@@ -13,7 +13,7 @@ public enum AppErrorCodeEnum {
     ACTIVITY_END("1031", "活动已结束"),
     ACTIVITY_NOT_EXIST("1032", "不存在该活动"),
     WITHDRAW_HAS_ORDER("1100", "取款订单已存在"),
-    USER_HAS_FREEZE("1101", "全款玩家已被冻结"),
+    USER_HAS_FREEZE("1101", "全款玩家已被冻结，请联系客服处理"),
     WITHDRAW_MIN_AMOUNT("1102", "取款金额最少为x元"),
     NO_BANK("1103", "没有银行卡信息"),
     WITHDRAW_BETWEEN_MIN_MAX("1104", "取款金额应在x-x范围内，并且小于等于x"),
