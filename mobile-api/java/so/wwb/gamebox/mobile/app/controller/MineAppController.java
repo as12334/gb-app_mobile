@@ -300,7 +300,7 @@ public class MineAppController extends BaseMineController {
     public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
         //提问内容+未读数量
         listVo = searchAdvisoryList(listVo);
-
+        getUnReadList(listVo);
         List<AdvisoryMessageApp> messageAppList = ListTool.newArrayList();
         for (VPlayerAdvisory advisory : listVo.getResult()) {
             AdvisoryMessageApp messageApp = new AdvisoryMessageApp();
@@ -310,7 +310,11 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
-            messageApp.setRead(advisory.getIsRead() == null ? true : advisory.getIsRead());
+            if (advisory.getIsRead() == false) { //代表未读,
+                messageApp.setRead(false);
+            }else {
+                messageApp.setRead(true);
+            }
             messageAppList.add(messageApp);
         }
         Map<String, Object> dataMap = new HashMap<>();
