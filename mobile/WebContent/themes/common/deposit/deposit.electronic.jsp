@@ -137,6 +137,12 @@
                                             <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
                                             <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
                                         </c:if>
+                                        <c:if test="${not empty payAccount.accountInformation}">
+                                            <c:set value="${payAccount.accountInformation}" var="n"></c:set>
+                                        </c:if>
+                                        <c:if test="${not empty payAccount.accountPrompt}">
+                                            <c:set value="${payAccount.accountPrompt}" var="m"></c:set>
+                                        </c:if>
 
                                         <c:choose>
                                             <c:when test="${payAccount.bankCode eq 'onecodepay'}"></c:when>
