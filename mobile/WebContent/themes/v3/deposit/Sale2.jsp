@@ -25,12 +25,14 @@
                                 </div>
                             </li>
                             <c:forEach items="${sales}" varStatus="vs" var="i">
-                                <li>
-                                    <div class="text-warp">
-                                        <span>${i.activityName}</span>
-                                        <input name="activityId" type="radio" value="${i.id}"/>
-                                    </div>
-                                </li>
+                                <c:if test="${i.preferential}">
+                                    <li>
+                                        <div class="text-warp">
+                                            <span>${i.activityName}</span>
+                                            <input name="activityId" type="radio" value="${i.id}"/>
+                                        </div>
+                                    </li>
+                                </c:if>
                             </c:forEach>
                         </ul>
                     </div>

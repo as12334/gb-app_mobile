@@ -200,7 +200,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
             return getVoMessage(map, playerRechargeVo);
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
-        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
+//        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
 //        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
 //        map.put("failureCount",failureCount);
         if (payAccount == null) {
