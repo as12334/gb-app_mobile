@@ -55,6 +55,7 @@ public class BankCardController {
     }
 
     @RequestMapping("/page/addBtc")
+    @Upgrade(upgrade = true)
     @Token(generate = true)
     public String addBtc(Model model, HttpServletRequest request) {
         model.addAttribute("userBankCard", BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC));
