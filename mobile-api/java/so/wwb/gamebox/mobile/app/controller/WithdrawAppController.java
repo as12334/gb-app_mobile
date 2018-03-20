@@ -231,6 +231,7 @@ public class WithdrawAppController extends BaseWithDrawController {
      * @return
      */
     private String verifySafePwdErrorTime(String password, String code, Map tokenMap) {
+        SessionManager.refreshUser();
         SysUser user = SessionManager.getUser();
         Map<String, Object> map = initSecurityPwdMap();
         Boolean captcha = (Boolean) map.get(KEY_CAPTCHA);
