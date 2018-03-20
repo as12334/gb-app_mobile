@@ -56,4 +56,5 @@
     <span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>
     <span style="display: none" id="tips" tips="${tips}"></span>
     <span style="display: none" id="failureCount" failureCount="${failureCount}"></span>
+    <span style="display: none" id="accountNotUsing" accountNotUsing="${accountNotUsing}"></span>
 </div>
