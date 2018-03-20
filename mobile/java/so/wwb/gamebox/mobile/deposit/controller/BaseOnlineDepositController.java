@@ -144,7 +144,9 @@ public class BaseOnlineDepositController extends BaseDepositController {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         }
         if (payAccount == null) {
-            return getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
+            Map<String, Object> resultMsg = getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
+            resultMsg.put("accountNotUsing",true);
+            return resultMsg;
         }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
@@ -282,6 +284,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         }
         if (payAccount == null) {
+            model.addAttribute("accountNotUsing",true);
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
         }
         //统计该渠道连续存款失败次数
