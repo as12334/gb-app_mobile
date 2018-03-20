@@ -248,8 +248,8 @@ public class WithdrawAppController extends BaseWithDrawController {
         // 安全密码已锁定
         if (isLock(user)) {
             return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_LOCK.getCode(),
-                    AppErrorCodeEnum.USER_LOCK.getMsg(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getCode(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
