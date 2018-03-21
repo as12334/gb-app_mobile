@@ -4,39 +4,64 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.collections.SetTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.I18nTool;
+import org.soul.commons.lang.string.RandomStringTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.IpTool;
+import org.soul.commons.net.ServletTool;
 import org.soul.model.ip.IpBean;
+import org.soul.model.msg.notice.vo.EmailMsgVo;
+import org.soul.model.msg.notice.vo.NoticeContactWayListVo;
 import org.soul.model.security.privilege.po.SysUser;
+import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.model.session.SessionKey;
 import org.soul.model.sys.po.SysDict;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
+import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.validateForm.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.RegisterConst;
+import so.wwb.gamebox.model.common.notice.enums.ContactWayType;
 import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
+import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.master.enums.CreateChannelEnum;
+import so.wwb.gamebox.model.master.player.po.UserPlayer;
+import so.wwb.gamebox.model.master.player.vo.UserRegisterVo;
 import so.wwb.gamebox.model.master.setting.enums.FieldSortEnum;
 import so.wwb.gamebox.model.master.setting.enums.SiteCurrencyEnum;
 import so.wwb.gamebox.model.master.setting.po.FieldSort;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
+import so.wwb.gamebox.web.defense.biz.annotataion.Defense;
+import so.wwb.gamebox.web.defense.biz.enums.DefenseAction;
+import so.wwb.gamebox.web.defense.core.DefenseRs;
+import so.wwb.gamebox.web.defense.core.IDefenseRs;
+import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
@@ -79,6 +104,348 @@ public class RegisterAppController {
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getRegisterData(request),
                 APP_VERSION);
+    }
+
+    /**
+     * 玩家注册
+     *
+     * @param userRegisterVo
+     * @param form
+     * @param result
+     * @param request
+     * @return
+     */
+    @RequestMapping("/save")
+    @ResponseBody
+    @Defense(action = DefenseAction.PLAYER_REGISTER)
+    public String saveUserInfo(UserRegisterVo userRegisterVo,
+                               @FormModel @Valid SignUpForm form,
+                               BindingResult result,
+                               HttpServletRequest request) {
+        //表单验证
+        if (result.hasErrors()) {
+            LOG.debug("站长站注册:表单验证未通过，error:{0}", result.getAllErrors());
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_FAIL.getCode(),
+                    AppErrorCodeEnum.REGISTER_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //验证码
+        if (!checkedCaptcha(userRegisterVo.getCaptchaCode())) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
+                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //用户名是否存在
+        if (checkUserNameExist(userRegisterVo.getSysUser().getUsername())) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_USER_EXIST.getCode(),
+                    AppErrorCodeEnum.REGISTER_USER_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //判断真实姓名的唯一性
+        if (StringTool.equals(checkRealNameExist(userRegisterVo.getSysUser().getRealName()), "false")) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_REAL_NAME_EXIST.getCode(),
+                    AppErrorCodeEnum.REGISTER_REAL_NAME_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //QQ
+        if (StringTool.equals(checkQqExist(userRegisterVo.getQq().getContactValue()), "false")) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_QQ_EXIST.getCode(),
+                    AppErrorCodeEnum.REGISTER_QQ_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //手机号码
+        if (StringTool.equals(checkPhoneExist(userRegisterVo.getPhone().getContactValue()), "false")) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_PHONE_EXIST.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //邮箱唯一性
+        if (StringTool.equals(checkMailExist(userRegisterVo.getEmail().getContactValue()), "false")) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_EMAIL_EXIST.getCode(),
+                    AppErrorCodeEnum.REGISTER_EMAIL_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //微信
+        if (StringTool.equals(checkWeixinExist(userRegisterVo.getWeixin().getContactValue()), "false")) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_WEIXIN_EXIST.getCode(),
+                    AppErrorCodeEnum.REGISTER_WEIXIN_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //站长中心是否允许注册
+        if (!isAllowRegister()) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.NOT_ALLOW_REGISTER.getCode(),
+                    AppErrorCodeEnum.NOT_ALLOW_REGISTER.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //注册防御
+        Map<String, Object> resultMap = isAllowDefense(request);
+        if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
+            MapTool.getString(resultMap, "msg");
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_FAIL.getCode(),
+                    MapTool.getString(resultMap, "msg"),
+                    null,
+                    APP_VERSION);
+        }
+        userRegisterVo = doRegister(userRegisterVo, request);
+         /*设置注册防御结果*/
+        request.setAttribute(IDefenseRs.R_ACTION_RS, true);
+        if (!userRegisterVo.isSuccess()) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.REGISTER_FAIL.getCode(),
+                    AppErrorCodeEnum.REGISTER_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.REGISTER_SUCCESS.getCode(),
+                AppErrorCodeEnum.REGISTER_SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
+    }
+
+    //验证码
+    public boolean checkedCaptcha(@RequestParam("captchaCode") String captchaCode) {
+        if (StringTool.isEmpty(captchaCode)) {
+            return false;
+        }
+        return captchaCode.equalsIgnoreCase(SessionManager.getCaptcha(SessionKey.S_CAPTCHA_PREFIX +
+                CaptchaUrlEnum.CODE_PLAYER_REGISTER_MOBILE.getSuffix()));
+    }
+
+    /***
+     * 用户名是否已存在
+     */
+    public boolean checkUserNameExist(@RequestParam("sysUser.username") String userName) {
+        SysUserVo sysUserVo = new SysUserVo();
+        sysUserVo.getSearch().setSubsysCode(SubSysCodeEnum.PCENTER.getCode());
+        sysUserVo.getSearch().setUsername(userName);
+        sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
+        return ServiceTool.sysUserService().isExists(sysUserVo);
+    }
+
+    //email验证码
+    public String checkEmailCode(@RequestParam("emailCode") String code, @RequestParam("email.contactValue") String email) {
+        if (StringTool.isBlank(email) || StringTool.isBlank(code))
+            return "false";
+        Map<String, String> params = SessionManager.getCheckRegisterEmailInfo();
+        if (params == null) {
+            return "false";
+        }
+        if (StringTool.isBlank(params.get("email")) || StringTool.isBlank(params.get("code")))
+            return "false";
+        return (email.equals(params.get("email")) && params.get("code").equals(code)) + "";
+    }
+
+    @RequestMapping(value = "/checkEmail", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean checkEmail(@RequestParam("email") String email, @RequestParam("locale") String locale) {
+        if (SessionManager.canSendRegisterEmail()) {
+            String verificationCode = RandomStringTool.randomNumeric(6);
+            SessionManager.setRegisterCheckEmailTime(new Date());
+            try {
+                String tmplContent = LocaleTool.tranMessage("notice", "tmpl.content.BIND_EMAIL_VERIFICATION_CODE");
+                String tmplTitle = LocaleTool.tranMessage("notice", "tmpl.title.BIND_EMAIL_VERIFICATION_CODE");
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+                int mon = cal.get(Calendar.MONTH) + 1;//Calendar里取出来的month比实际的月份少1，所以要加上
+                int year = cal.get(Calendar.YEAR);
+                tmplContent = StringTool.fillTemplate(tmplContent, MapTool.newHashMap(
+                        new Pair<>("verificationCode", verificationCode),
+                        new Pair<>("sitename", Cache.getSiteI18n(SiteI18nEnum.SETTING_SITE_NAME).get(SessionManager.getLocale().toString()).getValue()),
+                        new Pair<>("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl()),
+                        new Pair<>("year", Integer.toString(year)),
+                        new Pair<>("month", Integer.toString(mon)),
+                        new Pair<>("day", Integer.toString(day)))
+                );
+                tmplTitle = StringTool.fillTemplate(tmplTitle, MapTool.newHashMap(new Pair<>("sitename", Cache.getSiteI18n(SiteI18nEnum.SETTING_SITE_NAME).get(SessionManager.getLocale().toString()).getValue())));
+
+                EmailMsgVo emailMsgVo = new EmailMsgVo();
+                emailMsgVo.setContent(tmplContent);
+                emailMsgVo.setTitle(tmplTitle);
+                emailMsgVo.setToAddressSet(SetTool.newHashSet(email));
+                ServiceTool.messageService().sendEmail(emailMsgVo);
+                Map<String, String> param = MapTool.newHashMap(
+                        new Pair<>("code", verificationCode),
+                        new Pair<>("email", email)
+                );
+                SessionManager.setCheckRegisterEmailInfo(param);
+            } catch (Exception e) {
+                LOG.debug("站长站：注册发送邮件 报错,本次验证码无效:{0}", e);
+            } finally {
+                LOG.debug("站长站：注册发送邮件验证码{0}，邮箱{1}", verificationCode, email);
+            }
+            return true;
+        }
+        return true;
+    }
+
+    /**
+     * 判断真实姓名的唯一性
+     *
+     * @return
+     */
+    public String checkRealNameExist(@RequestParam("sysUser.realName") String realName) {
+        if (!ParamTool.isOnlyFiled("realName")) {
+            return "true";
+        }
+        SysUserVo sysUserVo = new SysUserVo();
+        sysUserVo.getSearch().setRealName(realName);
+        sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
+        sysUserVo.getSearch().setSubsysCode(SubSysCodeEnum.PCENTER.getCode());
+        return ServiceSiteTool.userAgentService().isExistRealName(sysUserVo);
+    }
+
+    /**
+     * 验证QQ唯一性
+     *
+     * @param qqContactValue
+     * @return
+     */
+    public String checkQqExist(@RequestParam("qq.contactValue") String qqContactValue) {
+        if (!ParamTool.isOnlyFiled(ContactWayType.QQ.getCode())) {
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.QQ.getCode());
+        listVo.getSearch().setContactValue(qqContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    /**
+     * 判断手机号码的唯一性
+     *
+     * @return
+     */
+    public String checkPhoneExist(@RequestParam("phone.contactValue") String phoneContactValue) {
+        if (!ParamTool.isOnlyFiled(ContactWayType.CELLPHONE.getCode())) {
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.CELLPHONE.getCode());
+        listVo.getSearch().setContactValue(phoneContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    /**
+     * 判断邮箱的唯一性
+     *
+     * @return
+     */
+    public String checkMailExist(@RequestParam("email.contactValue") String mailContactValue) {
+        if (!ParamTool.isOnlyFiled(ContactWayType.EMAIL.getCode())) {
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.EMAIL.getCode());
+        listVo.getSearch().setContactValue(mailContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    /**
+     * 确认微信唯一性
+     *
+     * @return
+     */
+    public String checkWeixinExist(@RequestParam("weixin.contactValue") String weixinContactValue) {
+        if (!ParamTool.isOnlyFiled(ContactWayType.WEIXIN.getCode())) {
+            return "true";
+        }
+        NoticeContactWayListVo listVo = new NoticeContactWayListVo();
+        listVo.getSearch().setContactType(ContactWayType.WEIXIN.getCode());
+        listVo.getSearch().setContactValue(weixinContactValue);
+        return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    //注册
+    private UserRegisterVo doRegister(UserRegisterVo userRegisterVo, HttpServletRequest request) {
+        checkRegisterFormAgentDomain(userRegisterVo, request);
+        userRegisterVo.getSysUser().setRegisterSite(request.getServerName());
+        userRegisterVo.getSysUser().setRegisterIpDictCode(SessionManager.getIpDictCode());
+        userRegisterVo.getSysUser().setRegisterIp(IpTool.ipv4StringToLong(ServletTool.getIpAddr(request)));
+
+        String registerCode = SessionManager.getRecommendUserCode();
+        if (StringTool.isNotBlank(registerCode)) {
+            userRegisterVo.setRecommendRegisterCode(registerCode);
+        }
+
+        if (StringTool.isBlank(userRegisterVo.getSysUser().getDefaultCurrency())) {
+            userRegisterVo.getSysUser().setDefaultCurrency(getSysSite().getMainCurrency());
+        }
+        UserPlayer userPlayer = new UserPlayer();
+        userPlayer.setCreateChannel(CreateChannelEnum.MOBILE.getCode());
+        userRegisterVo.setUserPlayer(userPlayer);
+        return ServiceSiteTool.userPlayerService().register(userRegisterVo);
+    }
+
+    private SysSite getSysSite() {
+        return Cache.getSysSite().get(SessionManager.getSiteId().toString());
+    }
+
+    /**
+     * 是否通过代理独立域名推广注册
+     *
+     * @param userRegisterVo
+     * @param request
+     */
+    private void checkRegisterFormAgentDomain(UserRegisterVo userRegisterVo, HttpServletRequest request) {
+        String domain = SessionManager.getDomain(request);
+        VSysSiteDomain sysDomain = Cache.getSiteDomain(domain);
+        if (sysDomain != null && sysDomain.getAgentId() != null) {
+            userRegisterVo.getSysUser().setOwnerId(sysDomain.getAgentId());
+            LOG.debug("【玩家注册】通过代理独立域名{0}－代理id{1}", domain, sysDomain.getAgentId());
+        }
+        userRegisterVo.getSysUser().setRegisterSite(domain);
+    }
+
+    /**
+     * 是否通过注册防御
+     *
+     * @param request
+     * @return
+     */
+    private Map<String, Object> isAllowDefense(HttpServletRequest request) {
+         /*注册防御*/
+        IDefenseRs defense = (IDefenseRs) request.getAttribute(IDefenseRs.R_DEFENSE_RS);
+        if (defense != null && !defense.isAvalable()) {
+            Map<String, Object> resultMap = new HashMap<>(2, 1f);
+            DefenseRs defenseRs = defense.getDefenseRs();
+            resultMap.put("state", false);
+            resultMap.put("msg", defenseRs.getMessage());
+            return resultMap;
+        }
+        return null;
+    }
+
+    /**
+     * 是否允许注册
+     *
+     * @return
+     */
+    private boolean isAllowRegister() {
+        /*禁止注册*/
+        Boolean register = Boolean.valueOf(ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_PLAYER).getParamValue());
+        return register;
     }
 
     /**
