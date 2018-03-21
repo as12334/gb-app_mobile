@@ -7,7 +7,7 @@
     <artifactId>mobile</artifactId>
     <packaging>war</packaging>
     <properties>
-        <soul.version>1.0.8.1-SNAPSHOT</soul.version>
+        <soul.version>1.0.8.2-SNAPSHOT</soul.version>
         <api.version>2.0.1.9-SNAPSHOT</api.version>
         <monitor.version>2.0.1.9-SNAPSHOT</monitor.version>
         <gamebox.version>2.0.1.9-SNAPSHOT</gamebox.version>
@@ -84,23 +84,8 @@
         </dependency>
         <dependency>
             <groupId>org.soul</groupId>
-            <artifactId>soul-commons</artifactId>
-            <version>${soul.version}</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.soul</groupId>
             <artifactId>soul-web</artifactId>
             <version>${soul.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.soul</groupId>
-            <artifactId>soul-web</artifactId>
-            <version>${soul.version}</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
         </dependency>
         <!--Soul引用-->
         <!--ThirdParty引用-->

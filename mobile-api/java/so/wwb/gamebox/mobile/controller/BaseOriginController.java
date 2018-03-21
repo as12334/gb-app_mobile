@@ -208,7 +208,7 @@ public abstract class BaseOriginController {
         List<AppGameTag> gameTags = new ArrayList<>();
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
-            if (!tags.contains(tagId)) {
+            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(tagId);
                 appGameTag.setValue(tagNameMap.get(tagId));

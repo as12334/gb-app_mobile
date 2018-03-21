@@ -21,6 +21,7 @@ import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
+import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
@@ -200,12 +201,13 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
             return getVoMessage(map, playerRechargeVo);
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
-        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
+//        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
 //        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
 //        map.put("failureCount",failureCount);
-        if (payAccount == null) {
+        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             playerRechargeVo.setSuccess(false);
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
+            map.put("accountNotUsing",true);
             return getVoMessage(map, playerRechargeVo);
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount);

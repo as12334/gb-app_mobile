@@ -62,13 +62,13 @@
                                                     <div class="mui-col-xs-3">
                                                         <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
                                                             "dataGameCode":"${game.value.apiId!=10? game.value.code : ''}","dataGameId":"${game.value.apiId!=10? game.value.gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(game.value.gameId)}","target":"goGame","opType":"function"}'>
+                                                            "dataApiName":"${game.value.name}","target":"goGame","opType":"function"}'>
 
                                                             <div class="img-wrap">
                                                                 <%--<img data-src="${soulFn:getImagePath(domain, game.value.cover)}" src="${soulFn:getImagePath(domain, game.value.cover)}">--%>
                                                                 <img data-lazyload="${soulFn:getImagePath(domain, game.value.cover)}">
                                                             </div>
-                                                            <p>${gbFn:getGameName(game.value.gameId)}</p>
+                                                            <p>${game.value.name}</p>
                                                         </a>
                                                     </div>
                                             </c:forEach>
@@ -84,17 +84,17 @@
                                         <div class="casino-list">
                                             <div class="mui-row">
                                                 <c:forEach items="${t.value}" var="g">
-                                                    <c:if test="${not empty allGames[g]}">
+                                                    <c:if test="${not empty allGames[g.toString()]}">
                                                         <div class="mui-col-xs-3">
-                                                            <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g].apiId}","dataStatus":"${allGames[g].status}",
-                                                            "dataGameCode":"${allGames[g].apiId!=10? allGames[g].code : ''}","dataGameId":"${allGames[g].apiId!=10? allGames[g].gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(allGames[g].gameId)}","target":"goGame","opType":"function"}' class="" >
+                                                            <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g.toString()].apiId}","dataStatus":"${allGames[g.toString()].status}",
+                                                            "dataGameCode":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].code : ''}","dataGameId":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].gameId : ''}",
+                                                            "dataApiName":"${gbFn:getGameName(allGames[g.toString()].gameId)}","target":"goGame","opType":"function"}' class="" >
 
                                                                 <div class="img-wrap">
                                                                     <%--<img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">--%>
-                                                                    <img data-lazyload="${soulFn:getImagePath(domain, allGames[g].cover)}">
+                                                                    <img data-lazyload="${soulFn:getImagePath(domain, allGames[g.toString()].cover)}">
                                                                 </div>
-                                                                <p>${gbFn:getGameName(allGames[g].gameId)}</p>
+                                                                <p>${allGames[g.toString()].name}</p>
                                                             </a>
                                                         </div>
                                                     </c:if>
