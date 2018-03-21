@@ -231,6 +231,7 @@ public class WithdrawAppController extends BaseWithDrawController {
      * @return
      */
     private String verifySafePwdErrorTime(String password, String code, Map tokenMap) {
+        SessionManager.refreshUser();
         SysUser user = SessionManager.getUser();
         Map<String, Object> map = initSecurityPwdMap();
         Boolean captcha = (Boolean) map.get(KEY_CAPTCHA);
@@ -248,8 +249,8 @@ public class WithdrawAppController extends BaseWithDrawController {
         // 安全密码已锁定
         if (isLock(user)) {
             return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_LOCK.getCode(),
-                    AppErrorCodeEnum.USER_LOCK.getMsg(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getCode(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }
@@ -282,8 +283,8 @@ public class WithdrawAppController extends BaseWithDrawController {
             freezeAccountBalance();
 
             return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_LOCK.getCode(),
-                    AppErrorCodeEnum.USER_LOCK.getMsg(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getCode(),
+                    AppErrorCodeEnum.USER_HAS_FREEZE.getMsg(),
                     tokenMap,
                     APP_VERSION);
         }

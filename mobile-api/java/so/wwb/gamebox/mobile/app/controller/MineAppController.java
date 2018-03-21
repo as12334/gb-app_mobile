@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.app.controller;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.shiro.session.SessionException;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
@@ -295,7 +294,7 @@ public class MineAppController extends BaseMineController {
      * @param listVo
      * @return
      */
-    @RequestMapping(value = "/advisoryMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/advisoryMessage")
     @ResponseBody
     public String advisoryMessage(VPlayerAdvisoryListVo listVo) {
         //提问内容+未读数量
@@ -310,10 +309,14 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
-            if (advisory.getIsRead() == false) { //代表未读,
-                messageApp.setRead(false);
-            }else {
+            if(advisory.getIsRead() == null){
                 messageApp.setRead(true);
+            }else{
+                if (advisory.getIsRead() == false) { //代表未读,
+                    messageApp.setRead(false);
+                }else {
+                    messageApp.setRead(true);
+                }
             }
             messageAppList.add(messageApp);
         }

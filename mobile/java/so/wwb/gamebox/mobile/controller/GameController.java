@@ -231,7 +231,9 @@ public class GameController extends BaseApiController {
                 continue;
             }
             siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
-            siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
+            if(siteGameI18nMap.get(siteGame.getGameId().toString()) != null){
+                siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
+            }
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }

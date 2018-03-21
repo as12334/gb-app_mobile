@@ -757,6 +757,13 @@ public class IndexController extends BaseApiController {
         if (sysUser == null) {
             map.put("isLogin", false);
         } else {
+            String defaultCurrency = sysUser.getDefaultCurrency();
+            if (StringTool.isNotBlank(defaultCurrency)) {
+                SysCurrency sysCurrency = Cache.getSysCurrency().get(defaultCurrency);
+                if (sysCurrency != null) {
+                    map.put("currencySign", sysCurrency.getCurrencySign());
+                }
+            }
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
