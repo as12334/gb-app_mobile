@@ -32,7 +32,7 @@
     </c:when>
     <c:otherwise>
         <link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
+        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:otherwise>
 </c:choose>
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css?v=${rcVersion}" />

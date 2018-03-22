@@ -88,7 +88,7 @@
                                                         <div class="mui-col-xs-3">
                                                             <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g.toString()].apiId}","dataStatus":"${allGames[g.toString()].status}",
                                                             "dataGameCode":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].code : ''}","dataGameId":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(allGames[g.toString()].gameId)}","target":"goGame","opType":"function"}' class="" >
+                                                            "dataApiName":"${allGames[g.toString()].name}","target":"goGame","opType":"function"}' class="" >
 
                                                                 <div class="img-wrap">
                                                                     <%--<img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">--%>
