@@ -11,6 +11,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
@@ -18,13 +19,11 @@ import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
-import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
+import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
-import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
-import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
-import so.wwb.gamebox.model.master.content.po.CttFloatPic;
-import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
+import so.wwb.gamebox.model.master.content.po.*;
+import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
@@ -233,8 +232,44 @@ public class OriginController extends BaseOriginController {
                 map,
                 APP_VERSION);
     }
+
+    /**
+     * 关于我们
+     *
+     * @return
+     */
+    @RequestMapping("/about")
+    @ResponseBody
+    public String getAbout(HttpServletRequest request) {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                setAbout(request),
+                APP_VERSION);
+    }
     //endregion mainIndex
 
+    //关于我们
+    public AboutApp setAbout(HttpServletRequest request){
+        CttDocumentI18nListVo listVo = initDocument("aboutUs");
+        CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
+        if (cttDocumentI18n != null) {
+            cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+        }
+        AboutApp about = new AboutApp();
+        about.setTitle(cttDocumentI18n.getTitle());
+        about.setContent(cttDocumentI18n.getContent());
+        about.setContentDefault(cttDocumentI18n.getContentDefault());
+        return about;
+    }
+
+    private CttDocumentI18nListVo initDocument(String code) {
+        CttDocumentI18nListVo listVo = new CttDocumentI18nListVo();
+        listVo.getSearch().setStatus(CttDocumentEnum.ON.getCode());
+        listVo.getSearch().setCode(code);
+        listVo.getSearch().setLocal(SessionManager.getLocale().toString());
+        return listVo;
+    }
 
     /**
      * 获取轮播图和手机弹窗广告
