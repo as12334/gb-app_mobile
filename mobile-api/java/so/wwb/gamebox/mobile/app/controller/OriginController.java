@@ -17,6 +17,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
@@ -247,10 +248,25 @@ public class OriginController extends BaseOriginController {
                 setAbout(request),
                 APP_VERSION);
     }
+
+    /**
+     * 注册条款
+     *
+     * @return
+     */
+    @RequestMapping("/terms")
+    @ResponseBody
+    public String getRegisterRules() {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString()),
+                APP_VERSION);
+    }
     //endregion mainIndex
 
     //关于我们
-    public AboutApp setAbout(HttpServletRequest request){
+    public AboutApp setAbout(HttpServletRequest request) {
         CttDocumentI18nListVo listVo = initDocument("aboutUs");
         CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
         if (cttDocumentI18n != null) {
