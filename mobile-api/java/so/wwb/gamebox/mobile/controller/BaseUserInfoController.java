@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -158,7 +159,7 @@ public class BaseUserInfoController {
             String apiId = api.getApiId().toString();
             map.put("apiId", apiId);
             map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
-            map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
+            map.put("balance", api.getMoney() == null ? 0.00 : CurrencyTool.formatCurrency(api.getMoney()));
             map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
             userInfo.addApi(map);
         }
@@ -169,20 +170,19 @@ public class BaseUserInfoController {
         SiteApi siteApi = siteApiMap.get(apiId);
         String disable = GameStatusEnum.DISABLE.getCode();
         if (api == null || siteApi == null) {
-            return disable;
+            return LocaleTool.tranMessage(Module.FUND, "transfer.api.disable");
         }
         String apiStatus = api.getSystemStatus();
         String siteApiStatus = siteApi.getSystemStatus();
         if (disable.equals(apiStatus) || disable.equals(siteApiStatus)) {
-            return disable;
+            return LocaleTool.tranMessage(Module.FUND, "transfer.api.disable");
         }
         String maintain = GameStatusEnum.MAINTAIN.getCode();
         if (maintain.equals(apiStatus) || maintain.equals(siteApiStatus)) {
-            return maintain;
+            return LocaleTool.tranMessage(Module.FUND, "transfer.api.maintain.transferable");
         }
-        return maintain;
+        return "";//app判断空是正常
     }
-
 
     /**
      * 获取api名称

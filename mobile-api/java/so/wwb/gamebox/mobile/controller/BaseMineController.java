@@ -184,8 +184,7 @@ public class BaseMineController {
      *
      * @return
      */
-    protected Map appRecovery() {
-        PlayerApiVo playerApiVo = new PlayerApiVo();
+    protected Map appRecovery(PlayerApiVo playerApiVo) {
         playerApiVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
         Map map = doRecovery(playerApiVo);
         return map;

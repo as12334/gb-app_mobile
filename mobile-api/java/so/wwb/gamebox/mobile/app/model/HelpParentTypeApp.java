@@ -1,9 +1,9 @@
 package so.wwb.gamebox.mobile.app.model;
 
 public class HelpParentTypeApp {
-    public String name;
-    public String ids;
-    public String id;
+    private String name;
+    private String ids;
+    private String id;
 
     public String getName() {
         return name;
