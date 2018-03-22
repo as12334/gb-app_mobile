@@ -309,12 +309,12 @@ public class MineAppController extends BaseMineController {
             messageApp.setAdvisoryTime(advisory.getAdvisoryTime().getTime());
             messageApp.setReplyTitle(advisory.getReplyTitle());
             messageApp.setId(advisory.getId());
-            if(advisory.getIsRead() == null){
+            if (advisory.getIsRead() == null) {
                 messageApp.setRead(true);
-            }else{
+            } else {
                 if (advisory.getIsRead() == false) { //代表未读,
                     messageApp.setRead(false);
-                }else {
+                } else {
                     messageApp.setRead(true);
                 }
             }
@@ -702,7 +702,7 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         //验证原始密码不能与新密码相同
-        if(StringTool.equals(password.getOriginPwd(), password.getPwd1())){
+        if (StringTool.equals(password.getOriginPwd(), password.getPwd1())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.PASSWORD_SAME.getCode(),
                     AppErrorCodeEnum.PASSWORD_SAME.getMsg(),
@@ -1061,7 +1061,7 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/recovery")
     @ResponseBody
-    public String recovery(HttpServletRequest request) {
+    public String recovery(HttpServletRequest request, PlayerApiVo playerApiVo) {
         if (!SessionManagerCommon.isAutoPay()) {
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.NOT_RECOVER.getCode(),
@@ -1069,7 +1069,7 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
-        Map map = appRecovery();
+        Map map = appRecovery(playerApiVo);
         Boolean isSuccess = (Boolean) map.get("isSuccess");
         if (isSuccess == null || !isSuccess) {
             return AppModelVo.getAppModeVoJson(true,
