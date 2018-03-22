@@ -359,6 +359,7 @@ public class GameController extends BaseApiController {
                 break;
             }
         }
+        map.put("timeZone",SessionManager.getTimeZone());
 
         return map;
     }

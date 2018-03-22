@@ -40,12 +40,22 @@ public enum AppErrorCodeEnum {
     UPDATE_PASSWORD_FAIL("1309", "修改密码失败"),
     PARAM_HAS_ERROR("1310", "参数有误"),
     SAFE_PASSWORD_TOO_SIMPLE("1311", "密码过于简单"),
+    ORIGIN_SAFE_PASSWORD_ERROR_TIME("1312","安全密码有误,还有%d次机会"),
     GAME_NOT_EXIST("1400", "游戏不存在"),
     UPDATE_STATUS_FAIL("1401", "更新失败"),
     NOT_RECOVER("1402", "非免转不能一键回收"),
     SYSTEM_READ("1403", "消息已读"),
     NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),
-    ORIGIN_SAFE_PASSWORD_ERROR_TIME("1312","安全密码有误,还有%d次机会");
+    REGISTER_FAIL("1500","注册失败，请联系客服！"),
+    NOT_ALLOW_REGISTER("1501","禁止注册，请联系客服！"),
+    REGISTER_SUCCESS("1502","注册成功"),
+    REGISTER_USER_EXIST("1503","用户已存在"),
+    REGISTER_REAL_NAME_EXIST("1504","真实姓名已存在"),
+    REGISTER_QQ_EXIST("1505","QQ账号已被注册"),
+    REGISTER_PHONE_EXIST("1506","手机号码已被注册"),
+    REGISTER_EMAIL_EXIST("1507","邮箱已被注册"),
+    REGISTER_WEIXIN_EXIST("1508","微信已被注册"),
+    ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
     private String code;
