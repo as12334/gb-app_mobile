@@ -13,6 +13,7 @@ import org.soul.commons.math.NumberTool;
 import org.soul.commons.net.IpTool;
 import org.soul.commons.net.ServletTool;
 import org.soul.commons.spring.utils.SpringTool;
+import org.soul.commons.support._Module;
 import org.soul.model.msg.notice.po.NoticeContactWay;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -28,6 +29,7 @@ import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SubSysCodeEnum;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.SessionKey;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.po.Bank;
@@ -172,7 +174,7 @@ public class BaseUserInfoController {
         }
     }
 
-    private String getApiStatus(Map<String, Api> apiMap, Map<String, SiteApi> siteApiMap, String apiId) {
+    protected String getApiStatus(Map<String, Api> apiMap, Map<String, SiteApi> siteApiMap, String apiId) {
         Api api = apiMap.get(apiId);
         SiteApi siteApi = siteApiMap.get(apiId);
         String disable = GameStatusEnum.DISABLE.getCode();
@@ -729,9 +731,6 @@ public class BaseUserInfoController {
     protected Map getTransferApi() {
         Map map = new HashMap();
         //玩家信息
-        MyUserInfo userInfo = new MyUserInfo();
-        getUserAssertInfo(userInfo, SessionManager.getUserId());
-        map.put("apis", userInfo.getApis());
         map.put("currency", getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
         if (!SessionManagerCommon.isAutoPay()) {
             //正在处理中转账金额(额度转换)
@@ -952,5 +951,95 @@ public class BaseUserInfoController {
         resultMap.put("state", true);
         resultMap.put("apiId", apiId);
         return resultMap;
+    }
+
+    public boolean checkTransferAmount(Double amount, String transferOut) {
+        if (TRANSFER_WALLET.equals(transferOut)) {
+            VUserPlayer player = getPlayer();
+            if (player.getWalletBalance() != null && player.getWalletBalance() >= amount) {
+                return true;
+            }
+        } else if (StringTool.isNotBlank(transferOut)) {
+            Integer apiId = NumberTool.toInt(transferOut);
+            PlayerApi playerApi = getPlayerApi(apiId);
+            if (playerApi != null && playerApi.getMoney() != null && playerApi.getMoney() >= amount) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 再次请求转账
+     * @param playerTransferVo
+     * @return
+     */
+    public Map reconnectTransferApp(PlayerTransferVo playerTransferVo) {
+        Map<String, Object> map = new HashMap<>(5,1f);
+        if (StringTool.isBlank(playerTransferVo.getSearch().getTransactionNo())) {
+            return getMessage(playerTransferVo.isSuccess(), null, map);
+        }
+        try {
+            playerTransferVo.setResult(playerTransferService().queryTransfer(playerTransferVo));
+            playerTransferVo = ServiceSiteTool.playerTransferService().checkTransferByPlayerTransfer(playerTransferVo);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        map.put("apiId", playerTransferVo.getResult().getApiId());
+        map.put("orderId", playerTransferVo.getSearch().getTransactionNo());
+        map.put("result", playerTransferVo.getResultCode());
+        return getMessage(playerTransferVo.isSuccess(), null, map);
+    }
+
+    /**
+     * 转账结果消息提示
+     *
+     * @param isSuccess
+     * @param msg
+     * @param map
+     * @return
+     */
+    private Map<String, Object> getMessage(boolean isSuccess, String msg, Map<String, Object> map) {
+        map.put("state", isSuccess);
+        if (msg == null && isSuccess) {
+            msg = LocaleTool.tranMessage(Module.FUND, "Transfer.transfer.success");
+        } else if (msg == null && !isSuccess) {
+            msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
+        }
+        map.put("msg", msg);
+        if (!isSuccess) {
+            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+        }
+        return map;
+    }
+
+    /**
+     * 获取玩家信息
+     *
+     * @return
+     */
+    private VUserPlayer getPlayer() {
+        Integer userId = SessionManager.getUserId();
+        if (userId != null) {
+            VUserPlayerVo vo = new VUserPlayerVo();
+            vo.getSearch().setId(userId);
+            VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
+            if (player != null) {
+                player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
+            }
+            return player;
+        }
+        return null;
+    }
+
+    protected PlayerApi getPlayerApi(Integer apiId) {
+        if (apiId == null) {
+            return null;
+        }
+        PlayerApiVo playerApiVo = new PlayerApiVo();
+        playerApiVo.getSearch().setApiId(apiId);
+        playerApiVo.getSearch().setPlayerId(SessionManager.getUserId());
+        playerApiVo = ServiceSiteTool.playerApiService().search(playerApiVo);
+        return playerApiVo.getResult();
     }
 }

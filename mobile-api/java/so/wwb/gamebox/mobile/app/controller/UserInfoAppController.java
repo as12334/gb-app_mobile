@@ -3,10 +3,13 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.apache.commons.collections.map.HashedMap;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.spring.utils.SpringTool;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -25,17 +28,24 @@ import so.wwb.gamebox.mobile.app.validateForm.AppPlayerTransferForm;
 import so.wwb.gamebox.mobile.app.validateForm.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
+import so.wwb.gamebox.model.master.player.po.PlayerApi;
 import so.wwb.gamebox.model.master.player.po.PlayerApiAccount;
 import so.wwb.gamebox.model.master.player.po.UserBankcard;
 import so.wwb.gamebox.model.master.player.po.UserPlayerTransfer;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiListVo;
 import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerTransferVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.api.IApiBalanceService;
+import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
+import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 import so.wwb.gamebox.web.passport.form.CheckRealNameForm;
 
@@ -308,6 +318,15 @@ public class UserInfoAppController extends BaseUserInfoController {
                     map,
                     APP_VERSION);
         }
+        if (!checkTransferAmount(playerTransferVo.getResult().getTransferAmount(), playerTransferVo.getTransferOut())) {
+            Map map = new HashMap();
+            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
+                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
+                    map,
+                    APP_VERSION);
+        }
         loadTransferInfo(playerTransferVo);
         Map<String, Object> resultMap = isAbleToTransfer(playerTransferVo);
         if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
@@ -371,6 +390,55 @@ public class UserInfoAppController extends BaseUserInfoController {
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 doTransfer(playerTransferVo),
                 APP_VERSION);
+    }
+
+    /**
+     * 异常再次请求转账
+     *
+     * @param playerTransferVo
+     * @return
+     */
+    @RequestMapping(value = "/reconnectTransfer")
+    @ResponseBody
+    @Token(valid = true)
+    public String reconnectTransfer(PlayerTransferVo playerTransferVo) {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                reconnectTransferApp(playerTransferVo),
+                APP_VERSION);
+    }
+
+    /**
+     * 刷新单个api
+     *
+     * @param listVo
+     * @param isRefresh
+     * @return
+     */
+    @RequestMapping("refreshApi")
+    @ResponseBody
+    public String refreshApi(PlayerApiListVo listVo, String isRefresh) {
+        if (StringTool.isBlank(isRefresh)) {
+            //同步玩家api余额
+            IApiBalanceService service = (IApiBalanceService) SpringTool.getBean("apiBalanceService");
+            service.fetchPlayerApiBalance(listVo);
+        }
+
+        Map<String, Object> map = new HashMap<>(2, 1f);
+        //map.put("player", getPlayer());
+        Integer apiId = listVo.getSearch().getApiId();
+        PlayerApi playerApi = getPlayerApi(apiId);
+        Map apiMap = Cache.getApi();
+        Map siteApiMap = Cache.getSiteApi();
+        map.put("status", getApiStatus(apiMap, siteApiMap, apiId.toString()));
+        map.put("apiId", apiId);
+        if (playerApi != null) {
+            map.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
+        } else {
+            map.put("apiMoney", "0.00");
+        }
+        return JsonTool.toJson(map);
     }
 
 

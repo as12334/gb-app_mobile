@@ -54,7 +54,6 @@ public class AppPlayerTransferForm implements IForm {
     @NotBlank(message = "fund.transferForm.transferAmountNotBlank")
     @Pattern(message = "fund.transferForm.transferAmountCorrect", regexp = RegExpConstants.POSITIVE_INTEGER)
     @Min(message = "fund.transferForm.transferAmountCorrect", value = 1)
-    @Remote(message = "fund.transferForm.transferAmountCheck", checkClass = UserInfoAppController.class, checkMethod = "checkTransferAmount", additionalProperties = {"transferOut"})
     public String getResult_transferAmount() {
         return result_transferAmount;
     }
