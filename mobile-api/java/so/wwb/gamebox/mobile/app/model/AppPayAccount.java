@@ -78,6 +78,10 @@ public class AppPayAccount {
      * 对应可以存款的存款类型
      */
     private String rechargeType;
+    /**
+     * 获取优惠类型
+     */
+    private String depositWay;
 
     public Integer getId() {
         return id;
@@ -229,5 +233,13 @@ public class AppPayAccount {
 
     public void setBankName(String bankName) {
         this.bankName = bankName;
+    }
+
+    public String getDepositWay() {
+        return depositWay;
+    }
+
+    public void setDepositWay(String depositWay) {
+        this.depositWay = depositWay;
     }
 }

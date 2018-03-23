@@ -70,6 +70,7 @@ public class BaseDepositController {
         appPayAccount.setRandomAmount(payAccount.getRandomAmount());
         appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin());
         appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax());
+        appPayAccount.setDepositWay(payAccount.getDepositWay() );
         scanPay(appPayAccount);
         if (StringTool.isNotBlank(payAccount.getType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             appPayAccount.setSingleDepositMin(getRank().getOnlinePayMin());
@@ -414,12 +415,12 @@ public class BaseDepositController {
         return payAccountVo.getResult();
     }
 
-    public UserPlayer getUserPlayerById(Integer userPlayerId){
+    /**
+     * 获取玩家信息
+     */
+    public UserPlayer getUserPlayer() {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
-        if(userPlayerId == null){
-            return null;
-        }
-        userPlayerVo.getSearch().setId(userPlayerId);
+        userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult();
     }
