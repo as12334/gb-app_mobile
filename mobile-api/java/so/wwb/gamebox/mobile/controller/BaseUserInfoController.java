@@ -727,7 +727,7 @@ public class BaseUserInfoController {
         MyUserInfo userInfo = new MyUserInfo();
         getUserAssertInfo(userInfo, SessionManager.getUserId());
         map.put("apis", userInfo.getApis());
-        map.put("currency",userInfo.getCurrency());
+        map.put("currency",getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
         if (!SessionManagerCommon.isAutoPay()) {
             //正在处理中转账金额(额度转换)
             PlayerTransferVo playerTransferVo = new PlayerTransferVo();
