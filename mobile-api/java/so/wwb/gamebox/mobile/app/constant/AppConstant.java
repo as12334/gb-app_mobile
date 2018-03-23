@@ -69,4 +69,5 @@ public interface AppConstant {
     String CHECKING_1 = "1"; // 1代表 待审核
     String PROCESSING_0 = "0"; // 0代表 进行中
     String KEY_STATE = "state";
+    String TRANSFER_WALLET = "wallet";//转入转出选择我的钱包
 }

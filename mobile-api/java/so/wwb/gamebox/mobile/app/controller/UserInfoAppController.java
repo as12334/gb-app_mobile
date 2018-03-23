@@ -3,9 +3,10 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.apache.commons.collections.map.HashedMap;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.log.Log;
+import org.soul.commons.log.LogFactory;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -20,15 +21,21 @@ import so.wwb.gamebox.mobile.app.model.AppMineLinkVo;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
+import so.wwb.gamebox.mobile.app.validateForm.AppPlayerTransferForm;
 import so.wwb.gamebox.mobile.app.validateForm.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
+import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
+import so.wwb.gamebox.model.master.player.po.PlayerApiAccount;
 import so.wwb.gamebox.model.master.player.po.UserBankcard;
 import so.wwb.gamebox.model.master.player.po.UserPlayerTransfer;
+import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerTransferVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 import so.wwb.gamebox.web.passport.form.CheckRealNameForm;
 
@@ -38,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static so.wwb.gamebox.common.dubbo.ServiceSiteTool.playerTransferService;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 
 /**
@@ -47,6 +55,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 @Controller
 @RequestMapping("/userInfoOrigin")
 public class UserInfoAppController extends BaseUserInfoController {
+    private Log LOG = LogFactory.getLog(UserInfoAppController.class);
 
     /**
      * 获取用户信息
@@ -257,15 +266,110 @@ public class UserInfoAppController extends BaseUserInfoController {
 
     /**
      * 非免转初始化
+     *
      * @return
      */
     @RequestMapping(value = "/getNoAutoTransferInfo")
     @ResponseBody
-    public String getNoAutoTransferInfo(){
+    public String getNoAutoTransferInfo() {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getTransferApi(),
+                APP_VERSION);
+    }
+
+    /**
+     * 确认转账
+     *
+     * @param playerTransferVo
+     * @param form
+     * @param result
+     * @return
+     */
+    @RequestMapping(value = "/transfersMoney", method = RequestMethod.POST)
+    @ResponseBody
+    @Token(valid = true)
+    public String transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid AppPlayerTransferForm form, BindingResult result) {
+        LOG.info("【玩家[{0}]转账】:从[{1}]转到[{2}]", SessionManager.getUserName(), playerTransferVo.getTransferOut(), playerTransferVo.getTransferInto());
+        if (!isTimeToTransfer()) {//是否已经过了允许转账的间隔
+            Map map = getErrorMessage(TransferResultStatusEnum.TRANSFER_TIME_INTERVAL.getCode(), playerTransferVo.getResult().getApiId());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                    map.get("msg").toString(),
+                    map,
+                    APP_VERSION);
+        }
+        if (result.hasErrors()) {
+            Map map = getErrorMessage(TransferResultStatusEnum.TRANSFER_INTERFACE_BUSY.getCode(), playerTransferVo.getResult().getApiId());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                    map.get("msg").toString(),
+                    map,
+                    APP_VERSION);
+        }
+        loadTransferInfo(playerTransferVo);
+        Map<String, Object> resultMap = isAbleToTransfer(playerTransferVo);
+        if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                    resultMap.get("msg").toString(),
+                    resultMap,
+                    APP_VERSION);
+            //return resultMap;
+        }
+
+        try {
+            PlayerApiAccountVo playerApiAccountVo = createVoByTransfer(playerTransferVo);
+            PlayerApiAccount playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
+            if (playerApiAccount == null) {
+                Map map = getErrorMessage(TransferResultStatusEnum.API_ACCOUNT_NOT_FOUND.getCode(), playerTransferVo.getResult().getApiId());
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                        map.get("msg").toString(),
+                        map,
+                        APP_VERSION);
+                //return
+            }
+            playerApiAccount = ServiceSiteTool.playerApiAccountService().queryPlayerApiAccount(playerApiAccountVo);
+            playerTransferVo.setPlayerApiAccount(playerApiAccount);
+        } catch (Exception e) {
+            LOG.error(e, "【玩家[{0}]转账】:API账号注册超时。", playerTransferVo.getResult().getUserName());
+            Map map = getErrorMessage(TransferResultStatusEnum.API_ACCOUNT_NOT_FOUND.getCode(), playerTransferVo.getResult().getApiId());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                    map.get("msg").toString(),
+                    map,
+                    APP_VERSION);
+            //return
+        }
+
+        try {
+            TransferResultStatusEnum transferResultStatusEnum = playerTransferService().isBalanceEnough(playerTransferVo);
+            if (transferResultStatusEnum != null) {
+                Map map = getErrorMessage(transferResultStatusEnum.getCode(), playerTransferVo.getResult().getApiId());
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                        map.get("msg").toString(),
+                        map,
+                        APP_VERSION);
+                //return
+            }
+        } catch (Exception e) {
+            LOG.error(e, "【玩家[{0}]转账】:账户余额验证出现异常!", playerTransferVo.getResult().getUserName());
+            Map map = getErrorMessage(TransferResultStatusEnum.API_INTERFACE_BUSY.getCode(), playerTransferVo.getResult().getApiId());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
+                    map.get("msg").toString(),
+                    map,
+                    APP_VERSION);
+            //return
+        }
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                doTransfer(playerTransferVo),
                 APP_VERSION);
     }
 
