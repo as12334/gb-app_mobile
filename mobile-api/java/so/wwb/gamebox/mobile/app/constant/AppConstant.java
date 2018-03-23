@@ -69,4 +69,16 @@ public interface AppConstant {
     String CHECKING_1 = "1"; // 1代表 待审核
     String PROCESSING_0 = "0"; // 0代表 进行中
     String KEY_STATE = "state";
+
+
+
+    String IS_FAST_RECHARGE = "isFastRecharge";//快速充值标记
+    String WECHAT_PAY = "wechatpay";
+    String ALI_PAY = "alipay";
+    String QQ_WALLET = "qqwallet";
+    String JD_WALLET = "jdwallet";
+    String BD_WALLET = "bdwallet";
+    String ONE_CODE_PAY = "onecodepay";
+    String OTHER = "other";
+    String BITCOIN = "bitcoin";
 }
