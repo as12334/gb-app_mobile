@@ -56,6 +56,7 @@ public enum AppErrorCodeEnum {
     REGISTER_EMAIL_EXIST("1507","邮箱已被注册"),
     REGISTER_WEIXIN_EXIST("1508","微信已被注册"),
     TRANSFER_ERROR("1520","额度转换失败"),
+    TRANSFER_ACCOUNT_NOT_ENOUGH("1521","当前钱包余额不足"),
     NO_AVAILABLE_CHANNELS("1600","暂无可用渠道，请稍后刷新重试")
     ;
     public static final int SUCCESS_CODE = 0;

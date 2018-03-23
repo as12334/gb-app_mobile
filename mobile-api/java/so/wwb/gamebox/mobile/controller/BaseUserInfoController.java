@@ -729,9 +729,6 @@ public class BaseUserInfoController {
     protected Map getTransferApi() {
         Map map = new HashMap();
         //玩家信息
-        MyUserInfo userInfo = new MyUserInfo();
-        getUserAssertInfo(userInfo, SessionManager.getUserId());
-        map.put("apis", userInfo.getApis());
         map.put("currency", getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
         if (!SessionManagerCommon.isAutoPay()) {
             //正在处理中转账金额(额度转换)
@@ -952,5 +949,51 @@ public class BaseUserInfoController {
         resultMap.put("state", true);
         resultMap.put("apiId", apiId);
         return resultMap;
+    }
+
+    public boolean checkTransferAmount(Double amount, String transferOut) {
+        if (TRANSFER_WALLET.equals(transferOut)) {
+            VUserPlayer player = getPlayer();
+            if (player.getWalletBalance() != null && player.getWalletBalance() >= amount) {
+                return true;
+            }
+        } else if (StringTool.isNotBlank(transferOut)) {
+            Integer apiId = NumberTool.toInt(transferOut);
+            PlayerApi playerApi = getPlayerApi(apiId);
+            if (playerApi != null && playerApi.getMoney() != null && playerApi.getMoney() >= amount) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取玩家信息
+     *
+     * @return
+     */
+    private VUserPlayer getPlayer() {
+        Integer userId = SessionManager.getUserId();
+        if (userId != null) {
+            VUserPlayerVo vo = new VUserPlayerVo();
+            vo.getSearch().setId(userId);
+            VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
+            if (player != null) {
+                player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
+            }
+            return player;
+        }
+        return null;
+    }
+
+    private PlayerApi getPlayerApi(Integer apiId) {
+        if (apiId == null) {
+            return null;
+        }
+        PlayerApiVo playerApiVo = new PlayerApiVo();
+        playerApiVo.getSearch().setApiId(apiId);
+        playerApiVo.getSearch().setPlayerId(SessionManager.getUserId());
+        playerApiVo = ServiceSiteTool.playerApiService().search(playerApiVo);
+        return playerApiVo.getResult();
     }
 }

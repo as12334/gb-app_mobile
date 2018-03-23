@@ -36,6 +36,7 @@ import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerTransferVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.token.Token;
+import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
 import so.wwb.gamebox.web.passport.form.CheckRealNameForm;
 
@@ -305,6 +306,15 @@ public class UserInfoAppController extends BaseUserInfoController {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.TRANSFER_ERROR.getCode(),
                     map.get("msg").toString(),
+                    map,
+                    APP_VERSION);
+        }
+        if (!checkTransferAmount(playerTransferVo.getResult().getTransferAmount(), playerTransferVo.getTransferOut())) {
+            Map map = new HashMap();
+            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
+                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
                     map,
                     APP_VERSION);
         }
