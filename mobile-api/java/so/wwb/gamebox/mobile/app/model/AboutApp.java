@@ -1,9 +1,9 @@
 package so.wwb.gamebox.mobile.app.model;
 
 public class AboutApp {
-    public String title;
-    public String content;
-    public String contentDefault;
+    private String title;
+    private String content;
+    private String contentDefault;
 
     public String getTitle() {
         return title;

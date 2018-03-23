@@ -256,6 +256,21 @@ public class UserInfoAppController extends BaseUserInfoController {
 
 
     /**
+     * 非免转初始化
+     * @return
+     */
+    @RequestMapping(value = "/getNoAutoTransferInfo")
+    @ResponseBody
+    public String getNoAutoTransferInfo(){
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getTransferApi(),
+                APP_VERSION);
+    }
+
+
+    /**
      * 设置我的链接地址
      *
      * @return

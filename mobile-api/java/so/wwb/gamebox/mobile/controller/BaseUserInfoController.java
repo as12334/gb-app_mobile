@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -38,6 +39,7 @@ import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.vo.BankListVo;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
+import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserPlayerTransferStateEnum;
@@ -55,6 +57,7 @@ import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -85,9 +88,9 @@ public class BaseUserInfoController {
         //正在处理中取款金额
         userInfo.setWithdrawAmount(getDealWithdrawAmount(userId));
         //正在处理中转账金额(额度转换)
-       // userInfo.setTransferAmount(getProcessTransferAmount(userId));
+        // userInfo.setTransferAmount(getProcessTransferAmount(userId));
         //计算近7日收益（优惠金额）
-       // userInfo.setPreferentialAmount(getRecent7DayFavorable(userId));
+        // userInfo.setPreferentialAmount(getRecent7DayFavorable(userId));
         //用户个人信息
         SysUser sysUser = SessionManager.getUser();
         //比特币信息
@@ -158,7 +161,7 @@ public class BaseUserInfoController {
             String apiId = api.getApiId().toString();
             map.put("apiId", apiId);
             map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
-            map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
+            map.put("balance", api.getMoney() == null ? 0.00 : CurrencyTool.formatCurrency(api.getMoney()));
             map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
             userInfo.addApi(map);
         }
@@ -169,20 +172,19 @@ public class BaseUserInfoController {
         SiteApi siteApi = siteApiMap.get(apiId);
         String disable = GameStatusEnum.DISABLE.getCode();
         if (api == null || siteApi == null) {
-            return disable;
+            return LocaleTool.tranMessage(Module.FUND, "transfer.api.disable");
         }
         String apiStatus = api.getSystemStatus();
         String siteApiStatus = siteApi.getSystemStatus();
         if (disable.equals(apiStatus) || disable.equals(siteApiStatus)) {
-            return disable;
+            return LocaleTool.tranMessage(Module.FUND, "transfer.api.disable");
         }
         String maintain = GameStatusEnum.MAINTAIN.getCode();
         if (maintain.equals(apiStatus) || maintain.equals(siteApiStatus)) {
-            return maintain;
+            return LocaleTool.tranMessage(Module.FUND, "transfer.api.maintain.transferable");
         }
-        return maintain;
+        return "";//app判断空是正常
     }
-
 
     /**
      * 获取api名称
@@ -473,6 +475,7 @@ public class BaseUserInfoController {
 
     /**
      * 验证真实姓名
+     *
      * @param vo
      * @param map
      * @param inputName
@@ -501,6 +504,7 @@ public class BaseUserInfoController {
 
     /**
      * 老玩家站点前台导入
+     *
      * @param vo
      * @param request
      * @return
@@ -509,7 +513,7 @@ public class BaseUserInfoController {
         UserPlayerVo playerVo = new UserPlayerVo();
         String username = vo.getResult().getPlayerAccount();
         List<UserPlayerTransfer> userPlayerTransfers = getUserPlayerTransfers(vo);
-        if(CollectionTool.isEmpty(userPlayerTransfers)){
+        if (CollectionTool.isEmpty(userPlayerTransfers)) {
             return false;
         }
         UserPlayerTransfer transfer = userPlayerTransfers.get(0);
@@ -582,10 +586,10 @@ public class BaseUserInfoController {
      */
     private UserPlayer setPlayer(UserPlayerTransfer pt, SysUser agent) {
         UserPlayer player = new UserPlayer();
-        try{
+        try {
             player.setRankId(pt.getPlayerRankId());
-        }catch (Exception ex){
-            LogFactory.getLog(this.getClass()).warn("导入玩家验证时转换层级{0}出错",pt.getPlayerRank());
+        } catch (Exception ex) {
+            LogFactory.getLog(this.getClass()).warn("导入玩家验证时转换层级{0}出错", pt.getPlayerRank());
         }
 
         player.setTotalAssets(pt.getAccountBalance() == null ? 0d : pt.getAccountBalance());
@@ -597,13 +601,13 @@ public class BaseUserInfoController {
             UserAgentVo agentVo = new UserAgentVo();
             agentVo.getSearch().setId(agent.getId());
             UserAgent userAgent = ServiceSiteTool.userAgentService().get(agentVo).getResult();
-            if(player.getRankId()==null){
+            if (player.getRankId() == null) {
                 player.setRankId(userAgent.getPlayerRankId());
             }
 
         } else {
             player.setUserAgentId(-2);
-            if(player.getRankId()==null) {
+            if (player.getRankId() == null) {
                 player.setRankId(-1);
             }
             agent = new SysUser();
@@ -611,7 +615,7 @@ public class BaseUserInfoController {
         }
 
         SysUser topAgent = getTopAgent(agent);
-        if(topAgent!=null){
+        if (topAgent != null) {
             player.setGeneralAgentId(topAgent.getId());
             player.setGeneralAgentName(topAgent.getUsername());
         }
@@ -627,8 +631,8 @@ public class BaseUserInfoController {
         return player;
     }
 
-    private SysUser getTopAgent(SysUser agent){
-        if(agent==null||agent.getOwnerId()==null){
+    private SysUser getTopAgent(SysUser agent) {
+        if (agent == null || agent.getOwnerId() == null) {
             return null;
         }
         SysUserVo topAgentVo = new SysUserVo();
@@ -709,5 +713,69 @@ public class BaseUserInfoController {
             agentId = SessionManagerBase.getUser().getOwnerId();
         }
         return agentId;
+    }
+
+
+    /**
+     * 获取额度转换api
+     *
+     * @return
+     */
+    protected Map getTransferApi() {
+        Map map = new HashMap();
+        //玩家信息
+        MyUserInfo userInfo = new MyUserInfo();
+        getUserAssertInfo(userInfo, SessionManager.getUserId());
+        map.put("apis", userInfo.getApis());
+        map.put("currency",getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
+        if (!SessionManagerCommon.isAutoPay()) {
+            //正在处理中转账金额(额度转换)
+            PlayerTransferVo playerTransferVo = new PlayerTransferVo();
+            playerTransferVo.getSearch().setUserId(SessionManager.getUserId());
+            map.put("transferPendingAmount", ServiceSiteTool.playerTransferService().queryProcessAmount(playerTransferVo));
+        }
+        map.put("select", queryApis());
+        map.put(TokenHandler.TOKEN_VALUE,TokenHandler.generateGUID());
+        return map;
+    }
+
+    /**
+     * 获取转出转入账户api
+     *
+     * @return
+     */
+    private List<Map> queryApis() {
+        List<Map> transableApis = new ArrayList<>();
+        Map<String, Api> apis = Cache.getApi();
+        Map<String, SiteApi> siteApis = Cache.getSiteApi();
+        String disable = GameStatusEnum.DISABLE.getCode();
+        String maintain = GameStatusEnum.MAINTAIN.getCode();
+        Api api;
+        SiteApi siteApi;
+        Map map = new HashMap();
+        map.put("text", "我的钱包");
+        map.put("value", "wallet");
+        transableApis.add(map);
+        for (String apiId : siteApis.keySet()) {
+            api = apis.get(apiId);
+            //额度转换的ｂｓｇ不支持
+            if (ApiProviderEnum.BSG.getCode().equals(apiId)) {
+                continue;
+            }
+            siteApi = siteApis.get(apiId);
+            if (api != null
+                    && !StringTool.equals(api.getSystemStatus(), disable)
+                    && !StringTool.equals(siteApi.getSystemStatus(), disable)
+                    && !StringTool.equals(api.getSystemStatus(), maintain)
+                    && !StringTool.equals(siteApi.getSystemStatus(), maintain)
+                    && (api.getTransferable() == null || api.getTransferable())) {
+                Map apiMap = new HashMap();
+                apiMap.put("text", CacheBase.getSiteApiName(apiId));
+                apiMap.put("value", api.getId());
+                transableApis.add(apiMap);
+            }
+        }
+
+        return transableApis;
     }
 }
