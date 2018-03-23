@@ -31,6 +31,10 @@ public class AppPayAccount {
      */
     private String bankCode;
     /**
+     * 银行名称
+     */
+    private String bankName;
+    /**
      * 单笔存款最小值
      */
     private Integer singleDepositMin;
@@ -217,5 +221,13 @@ public class AppPayAccount {
 
     public void setRechargeType(String rechargeType) {
         this.rechargeType = rechargeType;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 }
