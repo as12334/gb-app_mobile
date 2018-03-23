@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
+import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.AppPayAccount;
+import so.wwb.gamebox.mobile.app.model.DepositPayApp;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -62,7 +64,6 @@ public class DepositAppController extends BaseDepositController {
      */
     private Map arrangePayAccounts(List<PayAccount> payAccounts) {
         Map<String, Object> map = new HashMap<>();
-        Map<String, Object> pay = new HashMap<>();
         Map<String, Object> payData = new HashMap<>();
         if (CollectionTool.isEmpty(payAccounts) && payAccounts.size() <= 0) {
             return map;
@@ -174,7 +175,7 @@ public class DepositAppController extends BaseDepositController {
         quickSelection(payData);
         //是否展示多个账号
         boolean isMultipleAccount = isMultipleAccount();
-        payData.put("isMultipleAccount",isMultipleAccount);
+        payData.put("isMultipleAccount", isMultipleAccount);
         //是否为纯彩票站
         boolean lotterySite = isLotterySite();
         payData.put("lotterySite", lotterySite);
@@ -192,22 +193,65 @@ public class DepositAppController extends BaseDepositController {
 
         deleteMaintainChannel(online);
 
-        pay.put("online", online);
-        pay.put("company", company);
-        pay.put("wechat", wechat);
-        pay.put("alipay", alipay);
-        pay.put("qqWallet", qqWallet);
-        pay.put("jdPay", jdPay);
-        pay.put("baifuPay", baifuPay);
-        pay.put("unionPay", unionPay);
-        pay.put("easyPay", easyPay);
-        pay.put("counter", counter);
-        pay.put("bitcoin", bitcoin);
-        pay.put("other", other);
-        pay.put("oneCodePay", oneCodePay);
-        map.put("pay",pay);
-        map.put("payData",payData);
+        List<DepositPayApp> pays = new ArrayList<>();
+        if (!CollectionTool.isEmpty(online)) {
+            pays.add(getDepositApp("online", online));
+        }
+        if (!CollectionTool.isEmpty(company)) {
+            pays.add(getDepositApp("company", company));
+        }
+        if (!CollectionTool.isEmpty(wechat)) {
+            pays.add(getDepositApp("wechat", wechat));
+        }
+        if (!CollectionTool.isEmpty(alipay)) {
+            pays.add(getDepositApp("alipay", alipay));
+        }
+        if (!CollectionTool.isEmpty(qqWallet)) {
+            pays.add(getDepositApp("qqWallet", qqWallet));
+        }
+        if (!CollectionTool.isEmpty(jdPay)) {
+            pays.add(getDepositApp("jdPay", jdPay));
+        }
+        if (!CollectionTool.isEmpty(baifuPay)) {
+            pays.add(getDepositApp("baifuPay", baifuPay));
+        }
+        if (!CollectionTool.isEmpty(bitcoin)) {
+            pays.add(getDepositApp("bitcoin", bitcoin));
+        }
+        if (!CollectionTool.isEmpty(oneCodePay)) {
+            pays.add(getDepositApp("oneCodePay", oneCodePay));
+        }
+        if (!CollectionTool.isEmpty(unionPay)) {
+            pays.add(getDepositApp("unionPay", unionPay));
+        }
+        if (!CollectionTool.isEmpty(counter)) {
+            pays.add(getDepositApp("counter", counter));
+        }
+        if (!CollectionTool.isEmpty(easyPay)) {
+            pays.add(getDepositApp("easyPay", easyPay));
+        }
+        if (!CollectionTool.isEmpty(other)) {
+            pays.add(getDepositApp("other", other));
+        }
+        map.put("pay", pays);
+        map.put("payData", payData);
         return map;
+    }
+
+    private DepositPayApp getDepositApp(String code, List<AppPayAccount> payAccounts) {
+        DepositPayApp depositPay = new DepositPayApp();
+        if (CollectionTool.isEmpty(payAccounts)) {
+            return depositPay;
+        }
+
+        depositPay.setCode(code);
+        for (AppDepositPayEnum payEnum : AppDepositPayEnum.values()) {
+            if (payEnum.getCode().equals(code)) {
+                depositPay.setName(payEnum.getTrans());
+            }
+        }
+        depositPay.setPayAccounts(payAccounts);
+        return depositPay;
     }
 
     private void fastRecharge(Map<String, Object> payAccountMap) {
