@@ -244,6 +244,8 @@ public class RegisterAppController {
     }
 
     //email验证码
+    @RequestMapping("/checkEmailCode")
+    @ResponseBody
     public String checkEmailCode(@RequestParam("emailCode") String code, @RequestParam("email.contactValue") String email) {
         if (StringTool.isBlank(email) || StringTool.isBlank(code))
             return "false";
