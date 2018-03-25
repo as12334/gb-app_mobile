@@ -205,6 +205,7 @@ public class RegisterAppController {
                     null,
                     APP_VERSION);
         }
+        userRegisterVo.setEditType(userRegisterVo.EDIT_TYPE_PLAYER);
         userRegisterVo = doRegister(userRegisterVo, request);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
