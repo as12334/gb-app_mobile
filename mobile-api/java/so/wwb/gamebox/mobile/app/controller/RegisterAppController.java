@@ -127,7 +127,7 @@ public class RegisterAppController {
             LOG.debug("站长站注册:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.REGISTER_FAIL.getCode(),
-                    AppErrorCodeEnum.REGISTER_FAIL.getMsg(),
+                    getErrorMessage(result.getAllErrors().get(0).getDefaultMessage()),
                     null,
                     APP_VERSION);
         }
@@ -627,6 +627,16 @@ public class RegisterAppController {
             map.put("requiredJson", requiredJson);
             map.put("registCodeField", registCodeField);
         }
+    }
+
+    /**
+     * 获取失败提示信息
+     *
+     * @param messageCode
+     * @return
+     */
+    protected String getErrorMessage(String messageCode) {
+        return LocaleTool.tranMessage(Module.REGISTER.getCode(), messageCode);
     }
 
     /**
