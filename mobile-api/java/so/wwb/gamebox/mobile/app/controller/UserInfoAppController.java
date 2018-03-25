@@ -416,7 +416,7 @@ public class UserInfoAppController extends BaseUserInfoController {
      * @param isRefresh
      * @return
      */
-    @RequestMapping("refreshApi")
+    @RequestMapping("/refreshApi")
     @ResponseBody
     public String refreshApi(PlayerApiListVo listVo, String isRefresh) {
         if (StringTool.isBlank(isRefresh)) {
@@ -434,14 +434,16 @@ public class UserInfoAppController extends BaseUserInfoController {
         map.put("status", getApiStatus(apiMap, siteApiMap, apiId.toString()));
         map.put("apiId", apiId);
         if (playerApi != null) {
-            map.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
+            map.put("apiMoney", playerApi.getMoney());
         } else {
             map.put("apiMoney", "0.00");
         }
-        return JsonTool.toJson(map);
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
-
-
     /**
      * 设置我的链接地址
      *
