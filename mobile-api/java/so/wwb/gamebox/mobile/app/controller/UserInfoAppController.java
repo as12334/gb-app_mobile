@@ -3,8 +3,6 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.apache.commons.collections.map.HashedMap;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
-import org.soul.commons.currency.CurrencyTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
@@ -28,8 +26,6 @@ import so.wwb.gamebox.mobile.app.validateForm.AppPlayerTransferForm;
 import so.wwb.gamebox.mobile.app.validateForm.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.company.setting.po.Api;
-import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -416,7 +412,7 @@ public class UserInfoAppController extends BaseUserInfoController {
      * @param isRefresh
      * @return
      */
-    @RequestMapping("refreshApi")
+    @RequestMapping("/refreshApi")
     @ResponseBody
     public String refreshApi(PlayerApiListVo listVo, String isRefresh) {
         if (StringTool.isBlank(isRefresh)) {
@@ -434,14 +430,16 @@ public class UserInfoAppController extends BaseUserInfoController {
         map.put("status", getApiStatus(apiMap, siteApiMap, apiId.toString()));
         map.put("apiId", apiId);
         if (playerApi != null) {
-            map.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
+            map.put("apiMoney", playerApi.getMoney());
         } else {
             map.put("apiMoney", "0.00");
         }
-        return JsonTool.toJson(map);
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
     }
-
-
     /**
      * 设置我的链接地址
      *

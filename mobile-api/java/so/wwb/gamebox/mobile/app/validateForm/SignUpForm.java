@@ -54,7 +54,6 @@ public class SignUpForm implements IForm {
 
     @NotBlank(message = "Register.username.notBlank")
     @Pattern(regexp = FormValidRegExps.ACCOUNT, message = "Register.username.format")
-    @Remote(message = "Register.username.exist", checkMethod = "checkUserNameExist", checkClass = RegisterAppController.class, additionalProperties = {"$editType"})
     public String getSysUser_username() {
         return sysUser_username;
     }
