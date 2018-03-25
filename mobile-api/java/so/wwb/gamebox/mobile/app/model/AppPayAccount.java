@@ -43,10 +43,6 @@ public class AppPayAccount {
      */
     private Integer singleDepositMax;
     /**
-     * 第三方自定义名称
-     */
-    private String customBankName;
-    /**
      * 开户行
      */
     private String openAcountName;
@@ -67,6 +63,10 @@ public class AppPayAccount {
      **/
     private String aliasName;
     /**
+     * 第三方自定义名称
+     */
+    private String customBankName;
+    /**
      * 自定义账号信息
      */
     private String accountInformation;
@@ -82,6 +82,10 @@ public class AppPayAccount {
      * 获取优惠类型
      */
     private String depositWay;
+    /**
+     * 支付类型
+     */
+    private String payType;
 
     public Integer getId() {
         return id;
@@ -241,5 +245,13 @@ public class AppPayAccount {
 
     public void setDepositWay(String depositWay) {
         this.depositWay = depositWay;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
     }
 }

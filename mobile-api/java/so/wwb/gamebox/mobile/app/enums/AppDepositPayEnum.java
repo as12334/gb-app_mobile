@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.enums;
 import org.soul.commons.enums.ICodeEnum;
 
 public enum AppDepositPayEnum implements ICodeEnum {
+    //存款入口
     ONLINE("online", "在线支付"),
     COMPANY("company", "网银存款"),
     WECHAT("wechat", "微信支付"),
@@ -16,6 +17,13 @@ public enum AppDepositPayEnum implements ICodeEnum {
     COUNTER("counter", "柜员机"),
     EASYPAY("easyPay", "易收付"),
     OTHER("other", "其他"),
+
+    //支付类型
+    ONLINE_PAY("online_pay","线上支付"),
+    SCAN_PAY("scan_pay","扫码支付"),
+    COMPANY_PAY("company_pay","网银支付"),
+    ELECTRONIC_PAY("electronic_pay","电子支付"),
+    BITCOIN_PAY("bitcoin_pay","比特币支付")
     ;
 
     private String code;

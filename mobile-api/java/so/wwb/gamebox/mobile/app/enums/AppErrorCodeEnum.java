@@ -61,7 +61,9 @@ public enum AppErrorCodeEnum {
     SUBMIT_DATA_ERROR("1601","提交信息有误，请核对信息提交"),
     CHANNEL_CLOSURE("1602","渠道未在使用中，请刷新存款页面后重试"),
     MONEY_ERROR("1603","存款金额有误，请输入正确的存款金额"),
-    NOT_SALE("1604","暂无优惠和手续费")
+    NOT_SALE("1604","暂无优惠和手续费"),
+    DEPOSIT_TYPE_ERROR("1605","存款渠道有误，建议您更换渠道或稍后刷新重试"),
+    DEPOSIT_FAIL("1606","存款失败，请稍后重试")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

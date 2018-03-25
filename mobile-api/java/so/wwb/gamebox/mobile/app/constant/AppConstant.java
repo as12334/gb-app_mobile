@@ -1,5 +1,7 @@
 package so.wwb.gamebox.mobile.app.constant;
 
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+
 public interface AppConstant {
     String APP_VERSION = "app_01";//版本号
 
@@ -82,4 +84,17 @@ public interface AppConstant {
     String ONE_CODE_PAY = "onecodepay";
     String OTHER = "other";
     String BITCOIN = "bitcoin";
+
+    String MCENTER_ONLINE_RECHARGE_URL = "/fund/deposit/online/list.html"; //站长中心-线上支付链接
+    String ONLINE_PAY_URL ="/wallet/deposit/online/pay.html?pay=online&search.transactionNo=";
+    String SCAN_PAY_URL ="/wallet/deposit/online/scan/pay.html?pay=online&search.transactionNo=";
+    String MCENTER_COMPANY_RECHARGE_URL = "fund/deposit/company/confirmCheck.html";//公司入款地址
+
+    //公司入款支持的存款类型
+    String[] RECHARGE_TYPE = {
+            RechargeTypeEnum.ONLINE_BANK.getCode(),
+            RechargeTypeEnum.ATM_COUNTER.getCode(),
+            RechargeTypeEnum.ATM_MONEY.getCode(),
+            RechargeTypeEnum.ATM_RECHARGE.getCode()
+    };
 }
