@@ -41,6 +41,7 @@ import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferSourceEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerTransfer;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.po.PlayerApi;
 import so.wwb.gamebox.model.master.player.po.PlayerApiAccount;
@@ -270,6 +271,7 @@ public class TransferController extends WalletBaseController {
      * @return 为空则本次转账请求正常
      */
     private Map<String, Object> isAbleToTransfer(PlayerTransferVo playerTransferVo) {
+        PlayerTransfer result = playerTransferVo.getResult();
         if (playerTransferVo.getResult().getTransferAmount() <= 0) {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_ERROR_AMOUNT.getCode(), playerTransferVo.getResult().getApiId());
         }
@@ -295,6 +297,10 @@ public class TransferController extends WalletBaseController {
             } else {
                 return getErrorMessage(TransferResultStatusEnum.TRANSFER_DEMO_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
             }
+        }
+        //转账上限
+        if (ParamTool.getTransLimit() && playerTransferService().transferLimit(playerTransferVo) && FundTypeEnum.TRANSFER_OUT.getCode().equals(playerTransferVo.getResult().getTransferType())) {
+            return getErrorMessage(TransferResultStatusEnum.TRANSFER_LIMIT.getCode(), playerTransferVo.getResult().getApiId());
         }
         return null;
     }
