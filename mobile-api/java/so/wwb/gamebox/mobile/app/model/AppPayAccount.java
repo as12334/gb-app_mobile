@@ -31,6 +31,10 @@ public class AppPayAccount {
      */
     private String bankCode;
     /**
+     * 银行名称
+     */
+    private String bankName;
+    /**
      * 单笔存款最小值
      */
     private Integer singleDepositMin;
@@ -74,6 +78,10 @@ public class AppPayAccount {
      * 对应可以存款的存款类型
      */
     private String rechargeType;
+    /**
+     * 获取优惠类型
+     */
+    private String depositWay;
 
     public Integer getId() {
         return id;
@@ -217,5 +225,21 @@ public class AppPayAccount {
 
     public void setRechargeType(String rechargeType) {
         this.rechargeType = rechargeType;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getDepositWay() {
+        return depositWay;
+    }
+
+    public void setDepositWay(String depositWay) {
+        this.depositWay = depositWay;
     }
 }
