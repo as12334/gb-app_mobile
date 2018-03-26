@@ -205,6 +205,22 @@ public class UserInfoAppController extends BaseUserInfoController {
                 AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
 
+    /**
+     * 一键刷新
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/refresh")
+    @ResponseBody
+    public String refresh(HttpServletRequest request) {
+        UserInfoApp userInfo = appRefresh(request);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                userInfo,
+                APP_VERSION);
+    }
+
   /*  *//**
      * 验证真实姓名
      * @param form

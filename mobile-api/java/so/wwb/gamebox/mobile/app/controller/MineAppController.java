@@ -119,22 +119,6 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
-     * 一键刷新
-     *
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/refresh")
-    @ResponseBody
-    public String refresh(HttpServletRequest request) {
-        UserInfoApp userInfo = appRefresh(request);
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
-                userInfo,
-                APP_VERSION);
-    }
-
-    /**
      * 获取资金记录列表
      *
      * @param listVo

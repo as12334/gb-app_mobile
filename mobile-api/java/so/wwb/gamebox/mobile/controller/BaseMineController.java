@@ -93,33 +93,6 @@ public class BaseMineController {
     private IPlayerTransferService playerTransferService;
     private static final int DEFAULT_MIN_TIME = -6;
 
-    protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
-        PlayerApiListVo listVo = new PlayerApiListVo();
-        listVo.getSearch().setPlayerId(userId);
-        listVo.setApis(Cache.getApi());
-        listVo.setSiteApis(Cache.getSiteApi());
-        return listVo;
-    }
-
-    /**
-     * 刷新额度
-     *
-     * @param request
-     * @return
-     */
-    protected UserInfoApp appRefresh(HttpServletRequest request) {
-        Integer userId = SessionManager.getUserId();
-        PlayerApiListVo listVo = initPlayerApiListVo(userId);
-        VUserPlayer player = getVPlayer(userId);
-
-        UserInfoApp infoApp = new UserInfoApp();
-        infoApp.setApis(getSiteApis(listVo, request, true));
-        infoApp.setCurrSign(player.getCurrencySign());
-        infoApp.setAssets(queryPlayerAssets(listVo, userId));
-        infoApp.setUsername(player.getUsername());
-        return infoApp;
-    }
-
     /**
      * 组装数据 我的优惠
      *
@@ -304,90 +277,12 @@ public class BaseMineController {
         }
     }
 
-    /**
-     * 查询玩家总资产
-     */
-    protected String queryPlayerAssets(PlayerApiListVo listVo, Integer userId) {
-        listVo.getSearch().setPlayerId(userId);
-        listVo.setApis(Cache.getApi());
-        listVo.setSiteApis(Cache.getSiteApi());
-        double assets = ServiceSiteTool.playerApiService().queryPlayerAssets(listVo);
-        return formatCurrency(assets);
-    }
-
-    protected List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
-        //同步余额
-        if (isFetch) {
-            IApiBalanceService service = (IApiBalanceService) SpringTool.getBean("apiBalanceService");
-            service.fetchPlayerAllApiBalance();
-            listVo.getSearch().setApiId(null);
-        }
-        listVo.setType(ApiQueryTypeEnum.ALL_API.getCode());
-        listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
-         /* 翻译api */
-        List<Map<String, Object>> maps = new ArrayList<>();
-        List<SiteApi> apis = getSiteApi();
-        for (SiteApi siteApi : apis) {
-            for (PlayerApi api : listVo.getResult()) {
-                if (siteApi.getApiId().intValue() == api.getApiId().intValue()) {
-                    Map<String, Object> map = new HashMap<>();
-                    String apiId = api.getApiId().toString();
-                    map.put("apiId", apiId);
-                    map.put("apiName", CacheBase.getSiteApiName(apiId));
-                    map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
-                    map.put("status", siteApi.getStatus());
-
-                    maps.add(map);
-                }
-            }
-        }
-
-        //根据API余额降序 Add by Bruce.QQ
-        Collections.sort(maps, new Comparator<Map<String, Object>>() {
-            @Override
-            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                return ((Double) o2.get("balance")).compareTo((Double) o1.get("balance"));
-            }
-        });
-        return maps;
-    }
-
-    private List<SiteApi> getSiteApi() {
-        Map<String, SiteApi> siteApiMap = CacheBase.getSiteApi();
-        List<SiteApi> siteApis = new ArrayList<>();
-        Map<String, Api> apiMap = CacheBase.getApi();
-        String disable = GameStatusEnum.DISABLE.getCode();
-        String maintain = GameStatusEnum.MAINTAIN.getCode();
-        if (MapTool.isNotEmpty(siteApiMap)) {
-            for (SiteApi siteApi : siteApiMap.values()) {
-                Api api = apiMap.get(String.valueOf(siteApi.getApiId()));
-                if (api != null && !disable.equals(api.getSystemStatus()) && !disable.equals(siteApi.getSystemStatus())) {
-                    if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
-                        siteApi.setStatus(maintain);
-                    }
-                    siteApis.add(siteApi);
-                }
-            }
-        }
-        return siteApis;
-    }
-
     private String getCurrencySign() {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());
         if (sysCurrency != null) {
             return sysCurrency.getCurrencySign();
         }
         return "";
-    }
-
-    protected VUserPlayer getVPlayer(Integer userId) {
-        VUserPlayerVo vo = new VUserPlayerVo();
-        vo.getSearch().setId(userId);
-        VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
-        if (player != null) {
-            player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
-        }
-        return player;
     }
 
     /**

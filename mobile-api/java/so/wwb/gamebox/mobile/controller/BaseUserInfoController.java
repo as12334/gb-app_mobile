@@ -195,6 +195,25 @@ public class BaseUserInfoController {
     }
 
     /**
+     * 刷新额度
+     *
+     * @param request
+     * @return
+     */
+    protected UserInfoApp appRefresh(HttpServletRequest request) {
+        Integer userId = SessionManager.getUserId();
+        PlayerApiListVo listVo = initPlayerApiListVo(userId);
+        VUserPlayer player = getVPlayer(userId);
+
+        UserInfoApp infoApp = new UserInfoApp();
+        infoApp.setApis(getSiteApis(listVo, request, true));
+        infoApp.setCurrSign(player.getCurrencySign());
+        infoApp.setAssets(queryPlayerAssets(listVo, userId));
+        infoApp.setUsername(player.getUsername());
+        return infoApp;
+    }
+
+    /**
      * 获取api名称
      *
      * @param apiI18nMap
@@ -292,24 +311,6 @@ public class BaseUserInfoController {
         return sb.toString();
     }
 
-
-    protected void getAppUserInfo(HttpServletRequest request, SysUser user, UserInfoApp userInfoApp) {
-        PlayerApiListVo listVo = initPlayerApiListVo(user.getId());
-        VUserPlayer player = getVPlayer(user.getId());
-        // API 余额
-        userInfoApp.setApis(getSiteApis(listVo, request, false));
-        if (player != null) {
-            userInfoApp.setCurrSign(player.getCurrencySign());
-            userInfoApp.setUsername(StringTool.overlayName(player.getUsername()));
-            // 钱包余额
-            Double balance = player.getWalletBalance();
-            userInfoApp.setBalance(formatCurrency(balance == null ? 0.0d : balance));
-        }
-        // 总资产
-        userInfoApp.setAssets(queryPlayerAssets(listVo, user.getId()));
-    }
-
-
     protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
         PlayerApiListVo listVo = new PlayerApiListVo();
         listVo.getSearch().setPlayerId(userId);
@@ -339,20 +340,19 @@ public class BaseUserInfoController {
         listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
          /* 翻译api */
         List<Map<String, Object>> maps = new ArrayList<>();
-        List<SiteApi> apis = getSiteApi();
-        for (SiteApi siteApi : apis) {
-            for (PlayerApi api : listVo.getResult()) {
-                if (siteApi.getApiId().intValue() == api.getApiId().intValue()) {
-                    Map<String, Object> map = new HashMap<>();
-                    String apiId = api.getApiId().toString();
-                    map.put("apiId", apiId);
-                    map.put("apiName", CacheBase.getSiteApiName(apiId));
-                    map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
-                    map.put("status", siteApi.getStatus());
-
-                    maps.add(map);
-                }
-            }
+        Map<String, Api> apiMap = Cache.getApi();
+        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
+        Map<String, Object> map;
+        for (PlayerApi api : listVo.getResult()) {
+            map = new HashMap<>(4, 1f);
+            String apiId = api.getApiId().toString();
+            map.put("apiId", apiId);
+            map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
+            map.put("balance", api.getMoney() == null ? 0.00 : api.getMoney());
+            map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
+            maps.add(map);
         }
 
         //根据API余额降序 Add by Bruce.QQ
@@ -399,28 +399,6 @@ public class BaseUserInfoController {
         return "";
     }
 
-
-    private List<SiteApi> getSiteApi() {
-        Map<String, SiteApi> siteApiMap = CacheBase.getSiteApi();
-        List<SiteApi> siteApis = new ArrayList<>();
-        Map<String, Api> apiMap = CacheBase.getApi();
-        String disable = GameStatusEnum.DISABLE.getCode();
-        String maintain = GameStatusEnum.MAINTAIN.getCode();
-        if (MapTool.isNotEmpty(siteApiMap)) {
-            for (SiteApi siteApi : siteApiMap.values()) {
-                Api api = apiMap.get(String.valueOf(siteApi.getApiId()));
-                if (api != null && !disable.equals(api.getSystemStatus()) && !disable.equals(siteApi.getSystemStatus())) {
-                    if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
-                        siteApi.setStatus(maintain);
-                    }
-                    siteApis.add(siteApi);
-                }
-            }
-        }
-        return siteApis;
-    }
-
-
     /**
      * 获取银行列表
      *
@@ -437,19 +415,6 @@ public class BaseUserInfoController {
             maps.add(map);
         }
         return maps;
-    }
-
-    protected Double getWalletBalance(Integer userId) {
-        UserPlayerVo userPlayerVo = new UserPlayerVo();
-        userPlayerVo.getSearch().setId(userId);
-        userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
-        UserPlayer player = userPlayerVo.getResult();
-        if (player == null) {
-            return 0.0d;
-        } else {
-            Double balance = player.getWalletBalance();
-            return balance == null ? 0.0d : balance;
-        }
     }
 
     /**
