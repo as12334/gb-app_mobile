@@ -51,6 +51,7 @@ public class SignUpForm implements IForm {
     private String $phoneCode;
     /*介绍人*/
     private String $recommendUserInputCode;
+    private String requiredJson;
 
     @NotBlank(message = "Register.username.notBlank")
     @Pattern(regexp = FormValidRegExps.ACCOUNT, message = "Register.username.format")
@@ -224,7 +225,8 @@ public class SignUpForm implements IForm {
         this.$captchaCode = $captchaCode;
     }
 
-    @Depends(message = "Register.termsOfService.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$requiredJson")
+    @NotBlank(message = "Register.termsOfService.notBlank")
+    @Depends(message = "Register.termsOfService.notBlank", operator = Operator.IN, property = "$requiredJson", value = "serviceTerms")
     public String get$termsOfService() {
         return $termsOfService;
     }
@@ -270,5 +272,13 @@ public class SignUpForm implements IForm {
 
     public void set$recommendUserInputCode(String $recommendUserInputCode) {
         this.$recommendUserInputCode = $recommendUserInputCode;
+    }
+
+    public String get$requiredJson() {
+        return requiredJson;
+    }
+
+    public void set$requiredJson(String requiredJson) {
+        this.requiredJson = requiredJson;
     }
 }
