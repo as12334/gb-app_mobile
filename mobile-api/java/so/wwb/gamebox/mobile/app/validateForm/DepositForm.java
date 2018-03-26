@@ -18,13 +18,15 @@ public class DepositForm implements IForm {
 
     //region your codes
     private String result_rechargeAmount;
-    private String $code;
+    private String result_payAccountId;
+    private String depositWay;
+//    private String $code;
 
-    @NotBlank(message = "valid.rechargeForm.rechargeAmountNotBlank")
-    @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
+    @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
+    @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = OnlineDepositController.class, checkMethod = "checkAmount", additionalProperties = {"result.payerBank"})
-    @Max(message = "valid.rechargeForm.rechargeAmountMax", value = 99999999)
-    @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 0)
+    @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
+    @Min(message = "rechargeForm.rechargeAmountMin", value = 0)
     @Comment("存款金额")
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
@@ -32,6 +34,25 @@ public class DepositForm implements IForm {
 
     public void setResult_rechargeAmount(String result_rechargeAmount) {
         this.result_rechargeAmount = result_rechargeAmount;
+    }
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getResult_payAccountId() {
+        return result_payAccountId;
+    }
+
+    public void setResult_payAccountId(String result_payAccountId) {
+        this.result_payAccountId = result_payAccountId;
+    }
+
+    @NotBlank(message = "rechargeForm.depositWayNotBlank")
+    public String getDepositWay() {
+        return depositWay;
+    }
+
+    public void setDepositWay(String depositWay) {
+        this.depositWay = depositWay;
     }
 
 //    @Comment("验证码")

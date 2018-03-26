@@ -7,7 +7,6 @@ public class AppSale {
     /** 优惠ｉｄ */
     private Integer id;
     /** 优惠 */
-    private boolean preferential;
     /** 活动名称 */
     private String activityName;
 
@@ -17,14 +16,6 @@ public class AppSale {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public boolean isPreferential() {
-        return preferential;
-    }
-
-    public void setPreferential(boolean preferential) {
-        this.preferential = preferential;
     }
 
     public String getActivityName() {

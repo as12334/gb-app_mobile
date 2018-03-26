@@ -27,7 +27,7 @@ public class CompanyBankDepositForm implements IForm {
 //    private String $code;
 
     @Comment("存入银行")
-    @NotBlank(message = "valid.rechargeForm.payAccountIdNotBlank")
+    @NotBlank(message = "rechargeForm.payAccountIdNotBlank")
     public String getResult_payAccountId() {
         return result_payAccountId;
     }
@@ -37,7 +37,7 @@ public class CompanyBankDepositForm implements IForm {
     }
 
     @Comment("存款人")
-    @Pattern(message = "valid.rechargeForm.payerName.pattern", regexp = RegExpConstants.PAYERNAME)
+    @Pattern(message = "rechargeForm.payerName.pattern", regexp = RegExpConstants.PAYERNAME)
     @Depends(message = "deposit_auto.存款人不能为空",property = "result.rechargeType",operator = Operator.NE,value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
     @Length(min = 2, max = 30)
     public String getResult_payerName() {
@@ -49,7 +49,7 @@ public class CompanyBankDepositForm implements IForm {
     }
 
     @Comment("交易地点")
-    @Depends(message = "valid.rechargeForm.result.rechargeAddress.notBlank", property = "result.rechargeType", operator = Operator.EQ, value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
+    @Depends(message = "rechargeForm.result.rechargeAddress.notBlank", property = "result.rechargeType", operator = Operator.EQ, value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
     @Length(max = 50, message = "fund.rechargeForm.result.rechargeAddress.length")
     public String getResult_rechargeAddress() {
         return result_rechargeAddress;
@@ -71,10 +71,10 @@ public class CompanyBankDepositForm implements IForm {
 //    }
 
     @Comment("存款金额")
-    @NotBlank(message = "valid.rechargeForm.rechargeAmountNotBlank")
-    @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
+    @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
+    @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyBankDepositController.class, checkMethod = "checkAmount")
-    @Max(message = "valid.rechargeForm.rechargeAmountMax", value = 99999999)
+    @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }

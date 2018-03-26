@@ -103,8 +103,8 @@ public class BaseDepositController {
         appPayAccount.setType(payAccount.getType());
         appPayAccount.setAliasName(payAccount.getAliasName());
         appPayAccount.setRandomAmount(payAccount.getRandomAmount());
-        appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin());
-        appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax());
+        appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin() == null ? Const.MIN_MONEY : payAccount.getSingleDepositMin());
+        appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax() == null ? Const.MAX_MONEY : payAccount.getSingleDepositMax());
         appPayAccount.setDepositWay(payAccount.getDepositWay());
         appPayAccount.setPayType(payAccount.getPayType());
         if(StringTool.isNotBlank(payAccount.getType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType()) && !PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType())){
@@ -487,11 +487,17 @@ public class BaseDepositController {
     /**
      * 线上支付（含扫码支付）提交公共方法
      */
-    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo,PayAccount payAccount, BindingResult result,HttpServletRequest request) {
+    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,HttpServletRequest request) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
+                    null, APP_VERSION);
+        }
+        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
+                    AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
         }
         PlayerRank rank = getRank();
@@ -511,13 +517,18 @@ public class BaseDepositController {
     }
 
     public String ThirdPartyPay(PlayerRechargeVo playerRechargeVo,HttpServletRequest request) {
-        LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
-        if (StringTool.isBlank(playerRechargeVo.getSearch().getTransactionNo())) {
+        LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getResult().getTransactionNo());
+        if (StringTool.isBlank(playerRechargeVo.getResult().getTransactionNo())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),
                     AppErrorCodeEnum.ORDER_ERROR.getMsg(),
                     null, APP_VERSION);
         }
         try {
+            playerRechargeVo.getSearch().setTransactionNo(playerRechargeVo.getResult().getTransactionNo());
+            if(playerRechargeVo.getResult().getId() != null){
+                playerRechargeVo.getSearch().setId(playerRechargeVo.getResult().getId());
+            }
+            playerRechargeVo._setDataSourceId(null);
             playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
             PlayerRecharge playerRecharge = playerRechargeVo.getResult();
             PayAccount payAccount = getPayAccountById(playerRecharge.getPayAccountId());
@@ -638,14 +649,19 @@ public class BaseDepositController {
         return ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
     }
 
-    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo,PayAccount payAccount, BindingResult result,String type) {
+    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,String type) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
-
+        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
+                    AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
+                    null, APP_VERSION);
+        }
 
         if(AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)){
             playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount);
