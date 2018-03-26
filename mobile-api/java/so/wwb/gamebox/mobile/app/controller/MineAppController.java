@@ -254,7 +254,7 @@ public class MineAppController extends BaseMineController {
     @RequestMapping("/getBettingDetails")
     @ResponseBody
     public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo) {
-        if(playerGameOrderVo.getSearch().getId() == null){
+        if (playerGameOrderVo.getSearch().getId() == null) {
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
                     AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
@@ -268,8 +268,8 @@ public class MineAppController extends BaseMineController {
             playerGameOrderVo.setResultArray(null);
         }
         Map map = new HashMap();
-        map.put("resultArray",playerGameOrderVo.getResultArray());
-        map.put("result",playerGameOrderVo.getResult());
+        map.put("resultArray", playerGameOrderVo.getResultArray());
+        map.put("result", playerGameOrderVo.getResult());
 
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
