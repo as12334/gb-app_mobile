@@ -52,8 +52,8 @@ public class SignUpForm implements IForm {
     /*介绍人*/
     private String $recommendUserInputCode;
 
-    @NotBlank(message = "username.notBlank")
-    @Pattern(regexp = FormValidRegExps.ACCOUNT, message = "username.format")
+    @NotBlank(message = "Register.username.notBlank")
+    @Pattern(regexp = FormValidRegExps.ACCOUNT, message = "Register.username.format")
     public String getSysUser_username() {
         return sysUser_username;
     }
@@ -62,9 +62,9 @@ public class SignUpForm implements IForm {
         this.sysUser_username = sysUser_username;
     }
 
-    @NotBlank(message = "password.notBlank")
-    @Pattern(message = "password.format", regexp = FormValidRegExps.LOGIN_PWD)
-    @Remote(message = "password.remote", checkClass = ValidateController.class, checkMethod = "passwordNotWeak", additionalProperties = "sysUser.username")
+    @NotBlank(message = "Register.password.notBlank")
+    @Pattern(message = "Register.password.format", regexp = FormValidRegExps.LOGIN_PWD)
+    @Remote(message = "Register.password.remote", checkClass = ValidateController.class, checkMethod = "passwordNotWeak", additionalProperties = "sysUser.username")
     public String getSysUser_password() {
         return sysUser_password;
     }
@@ -73,8 +73,8 @@ public class SignUpForm implements IForm {
         this.sysUser_password = sysUser_password;
     }
 
-    @NotBlank(message = "confirmPassword.notBlank")
-    @Compare(message = "confirmPassword.notEqWithPassword", anotherProperty = "sysUser.password", logic = CompareLogic.EQ)
+    @NotBlank(message = "Register.confirmPassword.notBlank")
+    @Compare(message = "Register.confirmPassword.notEqWithPassword", anotherProperty = "sysUser.password", logic = CompareLogic.EQ)
     public String get$confirmPassword() {
         return $confirmPassword;
     }
@@ -83,7 +83,7 @@ public class SignUpForm implements IForm {
         this.$confirmPassword = $confirmPassword;
     }
 
-    @Depends(message = "defaultTimezone.notBlank", operator = Operator.IN, value = "defaultTimezone", property = "$requiredJson")
+    @Depends(message = "Register.defaultTimezone.notBlank", operator = Operator.IN, value = "defaultTimezone", property = "$requiredJson")
     public String getSysUser_defaultTimezone() {
         return sysUser_defaultTimezone;
     }
@@ -92,7 +92,7 @@ public class SignUpForm implements IForm {
         this.sysUser_defaultTimezone = sysUser_defaultTimezone;
     }
 
-    @Depends(message = "defaultCurrency.notBlank", operator = Operator.IN, value = "mainCurrency", property = "$requiredJson")
+    @Depends(message = "Register.defaultCurrency.notBlank", operator = Operator.IN, value = "mainCurrency", property = "$requiredJson")
     public String getSysUser_defaultCurrency() {
         return sysUser_defaultCurrency;
     }
@@ -101,7 +101,7 @@ public class SignUpForm implements IForm {
         this.sysUser_defaultCurrency = sysUser_defaultCurrency;
     }
 
-    @Depends(message = "defaultLocale.notBlank", operator = Operator.IN, value = "defaultLocale", property = "$requiredJson")
+    @Depends(message = "Register.defaultLocale.notBlank", operator = Operator.IN, value = "defaultLocale", property = "$requiredJson")
     public String getSysUser_defaultLocale() {
         return sysUser_defaultLocale;
     }
@@ -110,9 +110,9 @@ public class SignUpForm implements IForm {
         this.sysUser_defaultLocale = sysUser_defaultLocale;
     }
 
-    @Depends(message = "permissionPwd.noBlank", operator = Operator.IN, value = "paymentPassword", property = "$requiredJson")
-    @Pattern(message = "permissionPwd.format", regexp = FormValidRegExps.SECURITY_PWD)
-    @Remote(message = "permissionPwd.remote", checkClass = ValidateController.class, checkMethod = "paymentPasswordNotWeak", additionalProperties = "sysUser.username")
+    @Depends(message = "Register.permissionPwd.noBlank", operator = Operator.IN, value = "paymentPassword", property = "$requiredJson")
+    @Pattern(message = "Register.permissionPwd.format", regexp = FormValidRegExps.SECURITY_PWD)
+    @Remote(message = "Register.permissionPwd.remote", checkClass = ValidateController.class, checkMethod = "paymentPasswordNotWeak", additionalProperties = "sysUser.username")
     public String getSysUser_permissionPwd() {
         return sysUser_permissionPwd;
     }
@@ -121,8 +121,8 @@ public class SignUpForm implements IForm {
         this.sysUser_permissionPwd = sysUser_permissionPwd;
     }
 
-    @Depends(message = "confirmPermissionPwd.notBlank", operator = Operator.IN, value = "paymentPassword", property = "$requiredJson")
-    @Compare(message = "confirmPermissionPwd.notEqWithPermissionPwd", anotherProperty = "sysUser.permissionPwd", logic = CompareLogic.EQ)
+    @Depends(message = "Register.confirmPermissionPwd.notBlank", operator = Operator.IN, value = "paymentPassword", property = "$requiredJson")
+    @Compare(message = "Register.confirmPermissionPwd.notEqWithPermissionPwd", anotherProperty = "sysUser.permissionPwd", logic = CompareLogic.EQ)
     public String get$confirmPermissionPwd() {
         return $confirmPermissionPwd;
     }
@@ -131,9 +131,9 @@ public class SignUpForm implements IForm {
         this.$confirmPermissionPwd = $confirmPermissionPwd;
     }
 
-    @Depends(message = "qq.notBlank", operator = Operator.IN, value = "301", property = "$requiredJson")
-    @Pattern(regexp = FormValidRegExps.QQ, message = "qq.format")
-    @Remote(message = "qq.exist", checkClass = RegisterAppController.class, checkMethod = "checkQqExist")
+    @Depends(message = "Register.qq.notBlank", operator = Operator.IN, value = "301", property = "$requiredJson")
+    @Pattern(regexp = FormValidRegExps.QQ, message = "Register.qq.format")
+    @Remote(message = "Register.qq.exist", checkClass = RegisterAppController.class, checkMethod = "checkQqExist")
     public String getQq_contactValue() {
         return qq_contactValue;
     }
@@ -142,9 +142,9 @@ public class SignUpForm implements IForm {
         this.qq_contactValue = qq_contactValue;
     }
 
-    @Depends(message = "phone.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"110", ""}, property = {"$requiredJson", "$checkPhone"}, andOr = AndOr.OR)
-    @Pattern(regexp = FormValidRegExps.NUMBER_PHONE, message = "phone.format")
-    @Remote(message = "phone.exist", checkClass = RegisterAppController.class, checkMethod = "checkPhoneExist")
+    @Depends(message = "Register.phone.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"110", ""}, property = {"$requiredJson", "$checkPhone"}, andOr = AndOr.OR)
+    @Pattern(regexp = FormValidRegExps.NUMBER_PHONE, message = "Register.phone.format")
+    @Remote(message = "Register.phone.exist", checkClass = RegisterAppController.class, checkMethod = "checkPhoneExist")
     public String getPhone_contactValue() {
         return phone_contactValue;
     }
@@ -153,9 +153,9 @@ public class SignUpForm implements IForm {
         this.phone_contactValue = phone_contactValue;
     }
 
-    @Pattern(regexp = FormValidRegExps.EMAIL, message = "email.format")
-    @Depends(message = "email.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"201", ""}, property = {"$requiredJson", "$checkEmail"}, andOr = AndOr.OR)
-    @Remote(message = "mail.exist", checkClass = RegisterAppController.class, checkMethod = "checkMailExist")
+    @Pattern(regexp = FormValidRegExps.EMAIL, message = "Register.email.format")
+    @Depends(message = "Register.email.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"201", ""}, property = {"$requiredJson", "$checkEmail"}, andOr = AndOr.OR)
+    @Remote(message = "Register.mail.exist", checkClass = RegisterAppController.class, checkMethod = "checkMailExist")
     public String getEmail_contactValue() {
         return email_contactValue;
     }
@@ -164,9 +164,9 @@ public class SignUpForm implements IForm {
         this.email_contactValue = email_contactValue;
     }
 
-    @Depends(message = "weixin.notBlank", operator = Operator.IN, value = "304", property = "$requiredJson")
-    @Length(min = 2, max = 20, message = "weixin.format")
-    @Remote(message = "weixin.exist", checkClass = RegisterAppController.class, checkMethod = "checkWeixinExist")
+    @Depends(message = "Register.weixin.notBlank", operator = Operator.IN, value = "304", property = "$requiredJson")
+    @Length(min = 2, max = 20, message = "Register.weixin.format")
+    @Remote(message = "Register.weixin.exist", checkClass = RegisterAppController.class, checkMethod = "checkWeixinExist")
     public String getWeixin_contactValue() {
         return weixin_contactValue;
     }
@@ -175,7 +175,7 @@ public class SignUpForm implements IForm {
         this.weixin_contactValue = weixin_contactValue;
     }
 
-    @Depends(message = "sex.notBlank", operator = Operator.IN, value = "sex", property = "$requiredJson")
+    @Depends(message = "Register.sex.notBlank", operator = Operator.IN, value = "sex", property = "$requiredJson")
     public String getSysUser_sex() {
         return sysUser_sex;
     }
@@ -184,9 +184,9 @@ public class SignUpForm implements IForm {
         this.sysUser_sex = sysUser_sex;
     }
 
-    @Depends(message = "realname.notBlank", operator = Operator.IN, value = "realName", property = "$requiredJson")
-    @Pattern(regexp = FormValidRegExps.NAME_D, message = "realname.format")
-    @Remote(message = "realName.exist", checkMethod = "checkRealNameExist", checkClass = RegisterAppController.class)
+    @Depends(message = "Register.realname.notBlank", operator = Operator.IN, value = "realName", property = "$requiredJson")
+    @Pattern(regexp = FormValidRegExps.NAME_D, message = "Register.realname.format")
+    @Remote(message = "Register.realName.exist", checkMethod = "checkRealNameExist", checkClass = RegisterAppController.class)
     public String getSysUser_realName() {
         return sysUser_realName;
     }
@@ -195,7 +195,7 @@ public class SignUpForm implements IForm {
         this.sysUser_realName = sysUser_realName;
     }
 
-    @Depends(message = "question.notBlank", operator = Operator.IN, value = "securityIssues", property = "$requiredJson")
+    @Depends(message = "Register.question.notBlank", operator = Operator.IN, value = "securityIssues", property = "$requiredJson")
     public String getSysUserProtection_question1() {
         return sysUserProtection_question1;
     }
@@ -204,8 +204,8 @@ public class SignUpForm implements IForm {
         this.sysUserProtection_question1 = sysUserProtection_question1;
     }
 
-    @Pattern(regexp = FormValidRegExps.ANSWER, message = "answer.format")
-    @Depends(message = "answer.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"securityIssues", ""}, property = {"$requiredJson", "sysUserProtection_question1"}, andOr = AndOr.OR)
+    @Pattern(regexp = FormValidRegExps.ANSWER, message = "Register.answer.format")
+    @Depends(message = "Register.answer.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"securityIssues", ""}, property = {"$requiredJson", "sysUserProtection_question1"}, andOr = AndOr.OR)
     public String getSysUserProtection_answer1() {
         return sysUserProtection_answer1;
     }
@@ -214,8 +214,8 @@ public class SignUpForm implements IForm {
         this.sysUserProtection_answer1 = sysUserProtection_answer1;
     }
 
-    @NotBlank(message = "captchaCode.notBlank")
-    @Remote(message = "captchaCode.notRight", checkClass = RegisterAppController.class, checkMethod = "checkedCaptcha", additionalProperties = {"$editType"})
+    @NotBlank(message = "Register.captchaCode.notBlank")
+    @Remote(message = "Register.captchaCode.notRight", checkClass = RegisterAppController.class, checkMethod = "checkedCaptcha", additionalProperties = {"$editType"})
     public String get$captchaCode() {
         return $captchaCode;
     }
@@ -224,16 +224,16 @@ public class SignUpForm implements IForm {
         this.$captchaCode = $captchaCode;
     }
 
-    @Depends(message = "termsOfService.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$requiredJson")
+    @Depends(message = "Register.termsOfService.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$requiredJson")
     public String get$termsOfService() {
         return $termsOfService;
     }
 
-    public void set$termsOfService(String $termsOfService) {
-        this.$termsOfService = $termsOfService;
+    public void set$termsOfService(String termsOfService) {
+        this.$termsOfService = termsOfService;
     }
 
-    @Depends(message = "birthday.notBlank", operator = Operator.IN, value = "birthday", property = "$requiredJson")
+    @Depends(message = "Register.birthday.notBlank", operator = Operator.IN, value = "birthday", property = "$requiredJson")
     public String getSysUser_birthday() {
         return sysUser_birthday;
     }
@@ -242,8 +242,8 @@ public class SignUpForm implements IForm {
         this.sysUser_birthday = sysUser_birthday;
     }
 
-    @Depends(message = "emailCode.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$checkEmail")
-    @Remote(message = "emailCode.remote", checkClass = RegisterAppController.class, checkMethod = "checkEmailCode", additionalProperties = "email.contactValue")
+    @Depends(message = "Register.emailCode.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$checkEmail")
+    @Remote(message = "Register.emailCode.remote", checkClass = RegisterAppController.class, checkMethod = "checkEmailCode", additionalProperties = "email.contactValue")
     public String get$emailCode() {
         return $emailCode;
     }
@@ -252,8 +252,8 @@ public class SignUpForm implements IForm {
         this.$emailCode = $emailCode;
     }
 
-    @Depends(message = "phoneCode.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$checkPhone")
-    @Remote(message = "phoneCode.remote", checkClass = VerificationCodeController.class, checkMethod = "checkPhoneCode", additionalProperties = "phone.contactValue")
+    @Depends(message = "Register.phoneCode.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$checkPhone")
+    @Remote(message = "Register.phoneCode.remote", checkClass = VerificationCodeController.class, checkMethod = "checkPhoneCode", additionalProperties = "phone.contactValue")
     public String get$phoneCode() {
         return $phoneCode;
     }
@@ -262,8 +262,8 @@ public class SignUpForm implements IForm {
         this.$phoneCode = $phoneCode;
     }
 
-    @Depends(message = "recomendUser.notBlank", operator = Operator.IN, value = "regCode", property = "$requiredJson")
-    @Pattern(regexp = FormValidRegExps.REC_CODE, message = "recomendUser.format")
+    @Depends(message = "Register.recomendUser.notBlank", operator = Operator.IN, value = "regCode", property = "$requiredJson")
+    @Pattern(regexp = FormValidRegExps.REC_CODE, message = "Register.recomendUser.format")
     public String get$recommendUserInputCode() {
         return $recommendUserInputCode;
     }
