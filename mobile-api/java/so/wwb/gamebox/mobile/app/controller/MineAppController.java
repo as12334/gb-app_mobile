@@ -268,8 +268,8 @@ public class MineAppController extends BaseMineController {
             playerGameOrderVo.setResultArray(null);
         }
         Map map = new HashMap();
-        map.put("command", playerGameOrderVo);
-        map.put("resultArray", playerGameOrderVo.getResultArray());
+        map.put("resultArray",playerGameOrderVo.getResultArray());
+        map.put("result",playerGameOrderVo.getResult());
 
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
