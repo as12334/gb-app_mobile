@@ -63,7 +63,8 @@ public enum AppErrorCodeEnum {
     MONEY_ERROR("1603","存款金额有误，请输入正确的存款金额"),
     NOT_SALE("1604","暂无优惠和手续费"),
     DEPOSIT_TYPE_ERROR("1605","存款渠道有误，建议您更换渠道或稍后刷新重试"),
-    DEPOSIT_FAIL("1606","存款失败，请稍后重试")
+    DEPOSIT_FAIL("1606","存款失败，请稍后重试"),
+    ORDER_ERROR("1607","订单号有误，请重新存款")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

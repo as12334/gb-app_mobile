@@ -302,19 +302,24 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/seachSale")
     @ResponseBody
     public String seachSale(PlayerRechargeVo playerRechargeVo) {
-        PayAccount payAccount = playerRechargeVo.getPayAccount();
-        if (payAccount != null) {
-            if (payAccount.getId() != null) {
-                payAccount = getPayAccountById(payAccount.getId());
+        PayAccount resultPayAccount = playerRechargeVo.getPayAccount();
+        PayAccount payAccount = null ;
+        if (resultPayAccount != null) {
+            if (resultPayAccount.getId() != null) {
+                payAccount = getPayAccountById(resultPayAccount.getId());
             }
             if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
                 return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                         AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                         null, APP_VERSION);
             }
+            payAccount.setDepositWay(resultPayAccount.getDepositWay());
             Map<String, Object> map = new HashMap<String, Object>();
             //统计该渠道连续存款失败次数
-            Double rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
+            Double rechargeAmount = null ;
+            if(playerRechargeVo.getResult() != null){
+                rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
+            }
             if (rechargeAmount == null || rechargeAmount <= 0) {
                 return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.MONEY_ERROR.getCode(),
                         AppErrorCodeEnum.MONEY_ERROR.getMsg(),
@@ -365,7 +370,7 @@ public class DepositAppController extends BaseDepositController {
             boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
             //返手续费标志
             boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
-            if(!StringTool.isNotEmpty(payAccount.getDepositWay())){
+            if (!StringTool.isNotEmpty(payAccount.getDepositWay())) {
                 return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_TYPE_ERROR.getCode(),
                         AppErrorCodeEnum.DEPOSIT_TYPE_ERROR.getMsg(),
                         null, APP_VERSION);
@@ -377,9 +382,9 @@ public class DepositAppController extends BaseDepositController {
                         AppErrorCodeEnum.NOT_SALE.getMsg(),
                         null, APP_VERSION);
             } else {
-                List<AppSale> saleList =new ArrayList<>();
-                for(VActivityMessage vActivityMessage : activityMessages){
-                    if(vActivityMessage.isPreferential()){
+                List<AppSale> saleList = new ArrayList<>();
+                for (VActivityMessage vActivityMessage : activityMessages) {
+                    if (vActivityMessage.isPreferential()) {
                         AppSale appSale = new AppSale();
                         appSale.setId(vActivityMessage.getId());
                         appSale.setActivityName(vActivityMessage.getActivityName());
@@ -423,7 +428,7 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         } else {
             for (VActivityMessage vActivityMessage : listVo.getResult()) {
-                if(vActivityMessage.isPreferential()){
+                if (vActivityMessage.isPreferential()) {
                     AppSale appSale = new AppSale();
                     appSale.setId(vActivityMessage.getId());
                     appSale.setActivityName(vActivityMessage.getActivityName());
@@ -441,7 +446,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/onlinePay")
     @ResponseBody
-    public String onlinePay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid DepositForm form, BindingResult result) {
+    public String onlinePay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid DepositForm form, BindingResult result,HttpServletRequest request) {
         PayAccount payAccount = playerRechargeVo.getPayAccount();
         if (payAccount != null && payAccount.getId() != null) {
             payAccount = getPayAccountById(payAccount.getId());
@@ -451,14 +456,14 @@ public class DepositAppController extends BaseDepositController {
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
         }
-        String url = AppConstant.ONLINE_PAY_URL;
-        return onlineCommonDeposit(playerRechargeVo,payAccount,result,url);
+//        String url = AppConstant.ONLINE_PAY_URL;
+        return onlineCommonDeposit(playerRechargeVo, payAccount, result, request);
     }
 
     //扫码支付　存款
     @RequestMapping("/scanPay")
     @ResponseBody
-    public String scanPay(PlayerRechargeVo playerRechargeVo,@FormModel @Valid OnlineScanDepositForm form,BindingResult result) {
+    public String scanPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result,HttpServletRequest request) {
         PayAccount payAccount = playerRechargeVo.getPayAccount();
         if (payAccount != null && payAccount.getId() != null) {
             payAccount = getPayAccountById(payAccount.getId());
@@ -468,8 +473,8 @@ public class DepositAppController extends BaseDepositController {
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
         }
-        String url = AppConstant.SCAN_PAY_URL;
-        return onlineCommonDeposit(playerRechargeVo,payAccount, result,url);
+//        String url = AppConstant.SCAN_PAY_URL;
+        return onlineCommonDeposit(playerRechargeVo, payAccount, result, request);
     }
 
     //网银支付　存款
@@ -486,7 +491,7 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         String type = AppDepositPayEnum.COMPANY_PAY.getCode();
-        return companyCommonDeposit(playerRechargeVo,payAccount,result,type);
+        return companyCommonDeposit(playerRechargeVo, payAccount, result, type);
     }
 
     //电子支付 存款
@@ -503,7 +508,7 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         String type = AppDepositPayEnum.ELECTRONIC_PAY.getCode();
-        return companyCommonDeposit(playerRechargeVo,payAccount,result,type);
+        return companyCommonDeposit(playerRechargeVo, payAccount, result, type);
     }
 
     //比特币支付　存款
@@ -520,45 +525,6 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         String type = AppDepositPayEnum.BITCOIN_PAY.getCode();
-        return companyCommonDeposit(playerRechargeVo,payAccount,result,type);
+        return companyCommonDeposit(playerRechargeVo, payAccount, result, type);
     }
-
-    @RequestMapping("/ThirdPartyPay")
-    public void ThirdPartyPay(PlayerRechargeVo playerRechargeVo, HttpServletResponse response, HttpServletRequest request) {
-        LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
-        if (StringTool.isBlank(playerRechargeVo.getSearch().getTransactionNo())) {
-            return;
-        }
-        try {
-            playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
-            PlayerRecharge playerRecharge = playerRechargeVo.getResult();
-            PayAccount payAccount = getPayAccountById(playerRecharge.getPayAccountId());
-            List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
-            });
-
-            String domain = ServletTool.getDomainPath(request);
-            for (Map<String, String> map : accountJson) {
-                if (map.get("column").equals(CommonFieldsConst.PAYDOMAIN)) {
-                    domain = map.get("value");
-                    break;
-                }
-            }
-
-            if (domain != null && (RechargeStatusEnum.PENDING_PAY.getCode().equals(playerRecharge.getRechargeStatus())
-                    || RechargeStatusEnum.OVER_TIME.getCode().equals(playerRecharge.getRechargeStatus()))) {
-                String uri = "/onlinePay/abcefg.html?search.transactionNo=" + playerRecharge.getTransactionNo() + "&origin=" + TerminalEnum.MOBILE.getCode();
-
-                domain = getDomain(domain, payAccount);
-                String url = domain + uri;
-                //添加支付网址
-                playerRecharge.setPayUrl(domain);
-                playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
-                ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
-                response.sendRedirect(url);
-            }
-        } catch (Exception e) {
-            LOG.error(e, "调用第三方pay出错交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
-        }
-    }
-
 }

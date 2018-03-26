@@ -107,7 +107,9 @@ public class BaseDepositController {
         appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax());
         appPayAccount.setDepositWay(payAccount.getDepositWay());
         appPayAccount.setPayType(payAccount.getPayType());
-        scanPay(appPayAccount);
+        if(StringTool.isNotBlank(payAccount.getType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType()) && !PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType())){
+            scanPay(appPayAccount);
+        }
         if (StringTool.isNotBlank(payAccount.getType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             appPayAccount.setSingleDepositMin(getRank().getOnlinePayMin());
             appPayAccount.setSingleDepositMax(getRank().getOnlinePayMax());
@@ -119,10 +121,11 @@ public class BaseDepositController {
             appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl());
             appPayAccount.setRemark(payAccount.getRemark());
             appPayAccount.setRechargeType(payAccount.getRechargeType());
-            electronicPay(appPayAccount);
-            companyBankName(appPayAccount);
             if(!PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
+                electronicPay(appPayAccount);
                 getCompanyPayAccounts(payAccount,payAccount.getRechargeType());
+            }else{
+                companyBankName(appPayAccount);
             }
         }
         return appPayAccount;
@@ -484,7 +487,7 @@ public class BaseDepositController {
     /**
      * 线上支付（含扫码支付）提交公共方法
      */
-    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo,PayAccount payAccount, BindingResult result,String url) {
+    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo,PayAccount payAccount, BindingResult result,HttpServletRequest request) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -499,16 +502,58 @@ public class BaseDepositController {
             onlineToneWarn();
             //设置session相关存款数据
             //setRechargeCount();
-            url = url + playerRechargeVo.getResult().getTransactionNo();
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SUCCESS.getCode(),
-                    AppErrorCodeEnum.SUCCESS.getCode(),
-                    url, APP_VERSION);
+            return ThirdPartyPay(playerRechargeVo,request);
         } else {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
                     playerRechargeVo.getErrMsg(),
                     null, APP_VERSION);
         }
     }
+
+    public String ThirdPartyPay(PlayerRechargeVo playerRechargeVo,HttpServletRequest request) {
+        LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
+        if (StringTool.isBlank(playerRechargeVo.getSearch().getTransactionNo())) {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),
+                    AppErrorCodeEnum.ORDER_ERROR.getMsg(),
+                    null, APP_VERSION);
+        }
+        try {
+            playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
+            PlayerRecharge playerRecharge = playerRechargeVo.getResult();
+            PayAccount payAccount = getPayAccountById(playerRecharge.getPayAccountId());
+            List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
+            });
+
+            String domain = ServletTool.getDomainPath(request);
+            for (Map<String, String> map : accountJson) {
+                if (map.get("column").equals(CommonFieldsConst.PAYDOMAIN)) {
+                    domain = map.get("value");
+                    break;
+                }
+            }
+
+            if (domain != null && (RechargeStatusEnum.PENDING_PAY.getCode().equals(playerRecharge.getRechargeStatus())
+                    || RechargeStatusEnum.OVER_TIME.getCode().equals(playerRecharge.getRechargeStatus()))) {
+                String uri = "/onlinePay/abcefg.html?search.transactionNo=" + playerRecharge.getTransactionNo() + "&origin=" + TerminalEnum.MOBILE.getCode();
+
+                domain = getDomain(domain, payAccount);
+                String url = domain + uri;
+                //添加支付网址
+                playerRecharge.setPayUrl(domain);
+                playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
+                ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
+                return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        url, APP_VERSION);
+            }
+        } catch (Exception e) {
+            LOG.error(e, "调用第三方pay出错交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
+        }
+        return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
+                AppErrorCodeEnum.DEPOSIT_FAIL.getMsg(),
+                null, APP_VERSION);
+    }
+
     /**
      * 在线支付提醒站长后台
      */
