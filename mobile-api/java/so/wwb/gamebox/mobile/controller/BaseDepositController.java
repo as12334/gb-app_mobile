@@ -1,52 +1,87 @@
 package so.wwb.gamebox.mobile.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.currency.CurrencyTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
+import org.soul.commons.support._Module;
+import org.soul.model.comet.vo.MessageVo;
+import org.soul.model.pay.enums.CommonFieldsConst;
+import org.soul.model.pay.enums.PayApiTypeConst;
+import org.soul.model.pay.vo.OnlinePayVo;
+import org.soul.model.security.privilege.vo.SysResourceListVo;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.session.SessionManagerBase;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
+import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
+import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
+import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.AppPayAccount;
+import so.wwb.gamebox.mobile.app.model.AppPlayerRechange;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.*;
+import so.wwb.gamebox.model.common.Const;
+import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
-import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
-import so.wwb.gamebox.model.master.enums.PayAccountType;
-import so.wwb.gamebox.model.master.enums.RankFeeType;
+import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
+import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
+import so.wwb.gamebox.model.master.enums.*;
+import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
+import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
+import so.wwb.gamebox.web.common.token.TokenHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 
 /**
  * Created by ed on 17-12-31.
  */
 public class BaseDepositController {
-    private Log LOG = LogFactory.getLog(BaseOriginController.class);
+    public Log LOG = LogFactory.getLog(BaseOriginController.class);
+
     /**
      * 获取层级
      */
@@ -70,7 +105,8 @@ public class BaseDepositController {
         appPayAccount.setRandomAmount(payAccount.getRandomAmount());
         appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin());
         appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax());
-        appPayAccount.setDepositWay(payAccount.getDepositWay() );
+        appPayAccount.setDepositWay(payAccount.getDepositWay());
+        appPayAccount.setPayType(payAccount.getPayType());
         scanPay(appPayAccount);
         if (StringTool.isNotBlank(payAccount.getType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             appPayAccount.setSingleDepositMin(getRank().getOnlinePayMin());
@@ -85,6 +121,9 @@ public class BaseDepositController {
             appPayAccount.setRechargeType(payAccount.getRechargeType());
             electronicPay(appPayAccount);
             companyBankName(appPayAccount);
+            if(!PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
+                getCompanyPayAccounts(payAccount,payAccount.getRechargeType());
+            }
         }
         return appPayAccount;
     }
@@ -95,21 +134,21 @@ public class BaseDepositController {
      * @param
      * @return
      */
-    public void getCompanyPayAccounts(List<AppPayAccount> AppPayAccountList,PayAccount payAccount, String rechargeType) {
+    public void getCompanyPayAccounts(PayAccount payAccount, String rechargeType) {
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.FUND_RECHARGE_TYPE);
         String bankName = i18n.get(rechargeType);
         if (isMultipleAccount()) {
-            int size = AppPayAccountList.size();
+//            int size = AppPayAccountList.size();
             int count = 1;
             String other = RechargeTypeEnum.OTHER_FAST.getCode();
             if (StringTool.isBlank(payAccount.getAliasName())) {
                 if (other.equals(rechargeType)) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
-                } else if (size > 1) {
+                } else /*if (size > 1)*/ {
                     payAccount.setAliasName(bankName + count);
                     count++;
-                } else {
-                    payAccount.setAliasName(bankName);
+                /*} else {
+                    payAccount.setAliasName(bankName);*/
                 }
             }
         }else{
@@ -121,25 +160,25 @@ public class BaseDepositController {
         String bankCode = appPayAccount.getBankCode();
         String payAccountType = appPayAccount.getAccountType();
         if (PayAccountAccountType.WECHAT.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.FAST_WECHAT.getCode();
+            bankCode = BankCodeEnum.FAST_WECHAT.getTrans();
         } else if (PayAccountAccountType.ALIPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.FAST_ALIPAY.getCode();
+            bankCode = BankCodeEnum.FAST_ALIPAY.getTrans();
         } else if (PayAccountAccountType.QQWALLET.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.QQWALLET.getCode();
+            bankCode = BankCodeEnum.QQWALLET.getTrans();
         } else if (PayAccountAccountType.JD_PAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.JDWALLET.getCode();
+            bankCode = BankCodeEnum.JDWALLET.getTrans();
         } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.BDWALLET.getCode();
+            bankCode = BankCodeEnum.BDWALLET.getTrans();
         } else if (PayAccountAccountType.WECHAT_MICROPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.WECHAT_MICROPAY.getCode();
+            bankCode = BankCodeEnum.WECHAT_MICROPAY.getTrans();
         } else if (PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.ALIPAY_MICROPAY.getCode();
+            bankCode = BankCodeEnum.ALIPAY_MICROPAY.getTrans();
         } else if (PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.QQ_MICROPAY.getCode();
+            bankCode = BankCodeEnum.QQ_MICROPAY.getTrans();
         } else if (PayAccountAccountType.EASY_PAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.EASY_PAY.getCode();
+            bankCode = BankCodeEnum.EASY_PAY.getTrans();
         } else if(PayAccountAccountType.UNION_PAY.getCode().equals(payAccountType)){
-            bankCode = BankCodeEnum.UNIONPAY.getCode();
+            bankCode = BankCodeEnum.UNIONPAY.getTrans();
         }
         appPayAccount.setBankCode(bankCode);
     }
@@ -370,7 +409,8 @@ public class BaseDepositController {
      * @param type
      * @return
      */
-    public List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type,UserPlayer userPlayer) {
+    public List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
+        UserPlayer userPlayer = getUserPlayer();
         VActivityMessageVo vActivityMessageVo = new VActivityMessageVo();
         vActivityMessageVo.getSearch().setDepositWay(type);
         vActivityMessageVo.setDepositAmount(rechargeAmount);
@@ -389,6 +429,7 @@ public class BaseDepositController {
         List<VActivityMessage> activityList = CollectionQueryTool.query(vActivityMessages, Criteria.add(VActivityMessage.PROP_CODE, Operator.EQ, ActivityTypeEnum.DEPOSIT_SEND.getCode()));
         return setClassifyKeyName(activityList);
     }
+
 
     /**
      * 设置分类
@@ -424,4 +465,371 @@ public class BaseDepositController {
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult();
     }
+
+    /**
+     * 验证txId是否已提交过
+     *
+     * @param txId
+     * @return
+     */
+    @RequestMapping("/checkTxId")
+    @ResponseBody
+    public boolean checkTxId(@RequestParam("result.bankOrder") String txId) {
+        PlayerRechargeListVo listVo = new PlayerRechargeListVo();
+        listVo.getSearch().setBankOrder(txId);
+        listVo.getSearch().setRechargeStatus(RechargeStatusEnum.FAIL.getCode());
+        return ServiceSiteTool.playerRechargeService().isExistsTxId(listVo);
+    }
+
+    /**
+     * 线上支付（含扫码支付）提交公共方法
+     */
+    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo,PayAccount payAccount, BindingResult result,String url) {
+        if (result.hasErrors()) {
+            LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
+                    null, APP_VERSION);
+        }
+        PlayerRank rank = getRank();
+        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
+                playerRechargeVo.getResult().getRechargeType());
+        if (playerRechargeVo.isSuccess()) {
+            //声音提醒站长中心
+            onlineToneWarn();
+            //设置session相关存款数据
+            //setRechargeCount();
+            url = url + playerRechargeVo.getResult().getTransactionNo();
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SUCCESS.getCode(),
+                    AppErrorCodeEnum.SUCCESS.getCode(),
+                    url, APP_VERSION);
+        } else {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
+                    playerRechargeVo.getErrMsg(),
+                    null, APP_VERSION);
+        }
+    }
+    /**
+     * 在线支付提醒站长后台
+     */
+    private void onlineToneWarn() {
+        MessageVo message = new MessageVo();
+        message.setSubscribeType(CometSubscribeType.MCENTER_ONLINE_RECHARGE_REMINDER.getCode());
+        message.setSendToUser(true);
+        message.setCcenterId(SessionManager.getSiteParentId());
+        message.setSiteId(SessionManager.getSiteId());
+        message.setMasterId(SessionManager.getSiteUserId());
+        message.setMsgBody(SiteParamEnum.WARMING_TONE_ONLINEPAY.getType());
+        SysResourceListVo sysResourceListVo = new SysResourceListVo();
+        sysResourceListVo.getSearch().setUrl(AppConstant.MCENTER_ONLINE_RECHARGE_URL);
+        List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
+        userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
+        message.addUserIds(userIdByUrl);
+        ServiceTool.messageService().sendToMcenterMsg(message);
+    }
+
+    public String getDomain(String domain, PayAccount payAccount) {
+        domain = domain.replace("http://", "");
+        VSysSiteDomain siteDomain = Cache.getSiteDomain(domain);
+        Boolean sslEnabled = false;
+        if (siteDomain != null && siteDomain.getSslEnabled() != null && siteDomain.getSslEnabled()) {
+            sslEnabled = true;
+        }
+        String sslDomain = "https://" + domain;
+        String notSslDomain = "http://" + domain;
+        ;
+        if (!sslEnabled) {
+            return notSslDomain;
+        }
+        try {
+            OnlinePayVo onlinePayVo = new OnlinePayVo();
+            onlinePayVo.setChannelCode(payAccount.getBankCode());
+            onlinePayVo.setApiType(PayApiTypeConst.PAY_SSL_ENABLE);
+            sslEnabled = ServiceTool.onlinePayService().getSslEnabled(onlinePayVo);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        if (sslEnabled) {
+            return sslDomain;
+        }
+        return notSslDomain;
+    }
+
+    /**
+     * 保存存款数据
+     */
+    private PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, PlayerRank rank,
+                                          String rechargeTypeParent, String rechargeType) {
+        //设置存款其他数据
+        PlayerRecharge playerRecharge = playerRechargeVo.getResult();
+        playerRechargeVo.setSysUser(SessionManager.getUser());
+        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setRankId(rank.getId());
+        if (playerRecharge.getCounterFee() == null) {
+            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+        }
+
+        //存款总额（存款金额+手续费）>0才能继续执行
+        if (playerRecharge.getCounterFee() + playerRecharge.getRechargeAmount() <= 0) {
+            playerRechargeVo.setSuccess(false);
+            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
+            return playerRechargeVo;
+        }
+
+        playerRecharge.setRechargeTypeParent(rechargeTypeParent);
+        playerRecharge.setRechargeType(rechargeType);
+        playerRecharge.setPlayerId(SessionManager.getUserId());
+        playerRecharge.setMasterBankType(payAccount.getAccountType());
+        playerRecharge.setPayAccountId(payAccount.getId());
+        if (StringTool.isBlank(playerRecharge.getPayerBank())) {
+            playerRecharge.setPayerBank(payAccount.getBankCode());
+        }
+        playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
+        //ip处理
+        playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
+        playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
+
+        //保存订单
+        return ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
+    }
+
+    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo,PayAccount payAccount, BindingResult result,String type) {
+        if (result.hasErrors()) {
+            LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
+                    null, APP_VERSION);
+        }
+
+
+        if(AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)){
+            playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount);
+        }else if(AppDepositPayEnum.ELECTRONIC_PAY.getCode().equals(type)){
+            playerRechargeVo = electronicSaveRecharge(playerRechargeVo, payAccount);
+        }else if(AppDepositPayEnum.BITCOIN_PAY.getCode().equals(type)){
+            playerRechargeVo = bitcoinSaveRecharge(playerRechargeVo, payAccount);
+        }
+        //保存订单
+        playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
+        if (playerRechargeVo.isSuccess()) {
+            tellerReminder(playerRechargeVo);
+        }
+        return getVoMessage(playerRechargeVo);
+    }
+
+    /**
+     * 返回信息
+     *
+     * @param
+     * @param playerRechargeVo
+     * @return
+     */
+    public String getVoMessage(PlayerRechargeVo playerRechargeVo) {
+        Map<String,Object> map = new HashMap<>();
+        String code;
+        if (!playerRechargeVo.isSuccess()) {
+            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+            code = AppErrorCodeEnum.DEPOSIT_FAIL.getCode();
+        } else {
+            map.put("orderNo", playerRechargeVo.getResult().getTransactionNo());
+            code = AppErrorCodeEnum.SUCCESS.getCode();
+        }
+        if (playerRechargeVo.isSuccess() && StringTool.isBlank(playerRechargeVo.getOkMsg())) {
+            playerRechargeVo.setOkMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_SUCCESS));
+
+        } else if (!playerRechargeVo.isSuccess() && StringTool.isBlank(playerRechargeVo.getErrMsg())) {
+            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
+        }
+
+        return AppModelVo.getAppModeVoJson(playerRechargeVo.isSuccess(), code,
+                StringTool.isNotBlank(playerRechargeVo.getOkMsg()) ? playerRechargeVo.getOkMsg() : playerRechargeVo.getErrMsg(),
+                map, APP_VERSION);
+    }
+
+    /**
+     * 存款消息提醒发送消息给前端
+     *
+     * @param playerRechargeVo
+     */
+    public void tellerReminder(PlayerRechargeVo playerRechargeVo) {
+        PlayerRecharge recharge = playerRechargeVo.getResult();
+        if (recharge == null || recharge.getId() == null) {
+            return;
+        }
+        //推送消息给前端
+        MessageVo message = new MessageVo();
+        message.setSubscribeType(CometSubscribeType.MCENTER_RECHARGE_REMINDER.getCode());
+        Map<String, Object> map = new HashMap<>(3, 1f);
+        map.put("date", recharge.getCreateTime() == null ? new Date() : recharge.getCreateTime());
+        map.put("currency", getCurrencySign());
+        map.put("type", recharge.getRechargeTypeParent());
+        map.put("amount", CurrencyTool.formatCurrency(recharge.getRechargeAmount()));
+        map.put("id", recharge.getId());
+        map.put("transactionNo", recharge.getTransactionNo());
+        message.setMsgBody(JsonTool.toJson(map));
+        message.setSendToUser(true);
+        message.setCcenterId(SessionManager.getSiteParentId());
+        message.setSiteId(SessionManager.getSiteId());
+        message.setMasterId(SessionManager.getSiteUserId());
+        SysResourceListVo sysResourceListVo = new SysResourceListVo();
+        sysResourceListVo.getSearch().setUrl(AppConstant.MCENTER_COMPANY_RECHARGE_URL);
+        List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
+        //判断账号是否可以查看该层级的记录 add by Bruce.QQ
+        filterUnavailableSubAccount(userIdByUrl);
+        userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
+        message.addUserIds(userIdByUrl);
+        ServiceTool.messageService().sendToMcenterMsg(message);
+    }
+
+    private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
+        SysUserDataRightListVo sysUserDataRightListVo = new SysUserDataRightListVo();
+        sysUserDataRightListVo.getSearch().setUserId(SessionManager.getUserId());
+        sysUserDataRightListVo.getSearch().setModuleType(DataRightModuleType.COMPANYDEPOSIT.getCode());
+        List<Integer> dataRightEntityIds = ServiceSiteTool.sysUserDataRightService().searchPlayerDataRightEntityId(sysUserDataRightListVo);
+
+        for (Iterator<Integer> iterator = userIdByUrl.iterator(); iterator.hasNext(); ) {
+            Integer userId = iterator.next();
+            if (!dataRightEntityIds.contains(userId)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 网银存款　保存提交存款
+     *
+     * @param playerRechargeVo
+     * @param payAccount
+     * @return
+     */
+    public PlayerRechargeVo companySaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+        PlayerRecharge playerRecharge = playerRechargeVo.getResult();
+        PlayerRank rank = getRank();
+        if (playerRecharge.getCounterFee() == null) {
+            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+        }
+
+        if (playerRecharge.getCounterFee() + playerRecharge.getRechargeAmount() <= 0) {
+            playerRechargeVo.setSuccess(false);
+            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
+            return playerRechargeVo;
+        }
+        boolean flag = false;//判断传回来的数据类型是否属于银行存款类型
+        String rechargeType = playerRecharge.getRechargeType();
+        for (String type : AppConstant.RECHARGE_TYPE) {
+            if (type.equals(rechargeType)) {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            playerRecharge.setRechargeType(RechargeTypeEnum.ONLINE_BANK.getCode());
+        }
+        playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
+        playerRecharge.setPlayerId(SessionManager.getUserId());
+        playerRecharge.setMasterBankType(payAccount.getAccountType());
+        playerRecharge.setPayAccountId(payAccount.getId());
+        if (StringTool.isBlank(playerRecharge.getPayerBank())) {
+            playerRecharge.setPayerBank(payAccount.getBankCode());
+        }
+        //ip处理
+        playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
+        playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
+
+        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setSysUser(SessionManager.getUser());
+        playerRechargeVo.setRankId(rank.getId());
+
+        return playerRechargeVo;
+    }
+
+    /**
+     * 电子支付　保存存款数据
+     *
+     * @param playerRechargeVo
+     * @param payAccount
+     * @return
+     */
+    public PlayerRechargeVo electronicSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+        PlayerRecharge playerRecharge = playerRechargeVo.getResult();
+        PlayerRank rank = getRank();
+        playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
+        if (playerRecharge.getCounterFee() == null) {
+            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+        }
+
+        //存款总额（存款金额+手续费）>0才能继续执行
+        if (playerRecharge.getCounterFee() + playerRecharge.getRechargeAmount() <= 0) {
+            playerRechargeVo.setSuccess(false);
+            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
+            return playerRechargeVo;
+        }
+
+
+        playerRecharge.setPlayerId(SessionManager.getUserId());
+        playerRecharge.setMasterBankType(payAccount.getAccountType());
+        playerRecharge.setPayAccountId(payAccount.getId());
+        if (StringTool.isBlank(playerRecharge.getPayerBank())) {
+            playerRecharge.setPayerBank(payAccount.getBankCode());
+        }
+        //ip处理
+        playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
+        playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
+
+        playerRechargeVo.setSysUser(SessionManager.getUser());
+        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setRankId(rank.getId());
+        playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
+
+        return playerRechargeVo;
+    }
+
+    /**
+     * 比特币支付　保存存款数据
+     *
+     * @param playerRechargeVo
+     * @param payAccount
+     * @return
+     */
+    public PlayerRechargeVo bitcoinSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+        PlayerRecharge playerRecharge = playerRechargeVo.getResult();
+        playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
+        playerRecharge.setRechargeAmount(0d);
+        playerRecharge.setPlayerId(SessionManager.getUserId());
+        playerRecharge.setMasterBankType(payAccount.getAccountType());
+        playerRecharge.setPayAccountId(payAccount.getId());
+        if (StringTool.isBlank(playerRecharge.getPayerBank())) {
+            playerRecharge.setPayerBank(payAccount.getBankCode());
+        }
+        //ip处理
+        playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
+        playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
+        playerRecharge.setRechargeType(RechargeTypeEnum.BITCOIN_FAST.getCode());
+        playerRechargeVo.setSysUser(SessionManager.getUser());
+        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
+        return playerRechargeVo;
+    }
+
+    /**
+     * 是否隐藏收款账号
+     *
+     * @param model
+     * @param paramEnum
+     */
+    /*public void isHideAccount(SiteParamEnum paramEnum) {
+        // 查询隐藏参数
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
+        if (sysParam == null) {
+            return;
+        }
+        SysParam hideParam = ParamTool.getSysParam(paramEnum);
+        // 判断是否隐藏收款账号
+        if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
+            model.addAttribute("isHide", true);
+            model.addAttribute("hideContent", Cache.getSiteI18n(SiteI18nEnum.MASTER_CONTENT_HIDE_ACCOUNT_CONTENT).get(SessionManager.getLocale().toString()));
+            model.addAttribute("customerService", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
+        }
+    }*/
+
 }
