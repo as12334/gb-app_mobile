@@ -19,7 +19,6 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.Base36;
-import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
@@ -47,7 +46,6 @@ import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
-import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.*;
@@ -59,7 +57,9 @@ import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
-import so.wwb.gamebox.model.master.player.po.*;
+import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
+import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
+import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
 import so.wwb.gamebox.model.master.player.so.VPlayerAdvisorySo;
 import so.wwb.gamebox.model.master.player.vo.*;
@@ -69,7 +69,6 @@ import so.wwb.gamebox.model.master.report.vo.*;
 import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
-import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,7 +76,6 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static org.soul.commons.currency.CurrencyTool.formatCurrency;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 import static so.wwb.gamebox.model.CacheBase.getApiI18n;
 import static so.wwb.gamebox.model.CacheBase.getSiteApiI18n;
@@ -301,6 +299,7 @@ public class BaseMineController {
 
     /**
      * 设置app投注记录默认查询时间
+     *
      * @param playerGameOrderListVo
      */
     protected void initQueryDate(PlayerGameOrderListVo playerGameOrderListVo) {
@@ -922,7 +921,7 @@ public class BaseMineController {
 
     protected VPlayerAdvisoryListVo getUnReadList(VPlayerAdvisoryListVo listVo) {
 
-        String tag  = "";
+        String tag = "";
         for (VPlayerAdvisory obj : listVo.getResult()) {
             //查询回复表每一条在已读表是否存在
             PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
@@ -935,7 +934,7 @@ public class BaseMineController {
                 readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
                 readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
                 //不存在未读+1，标记已读咨询Id
-                if(readVo.getResult()==null && !tag.contains(replay.getPlayerAdvisoryId().toString())){
+                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
                     obj.setIsRead(false);
                 } else {
                     obj.setIsRead(true);
@@ -945,7 +944,6 @@ public class BaseMineController {
 
         return listVo;
     }
-
 
 
     /**
@@ -1000,11 +998,12 @@ public class BaseMineController {
 
     /**
      * 转换推荐记录到原生
+     *
      * @param records
      * @return
      */
-    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records){
-        for (PlayerRecommendAwardRecord record : records){
+    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records) {
+        for (PlayerRecommendAwardRecord record : records) {
             record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
             record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
         }

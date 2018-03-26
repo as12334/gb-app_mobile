@@ -251,7 +251,7 @@ public class MineAppController extends BaseMineController {
             playerGameOrderVo.setResult(null);
             playerGameOrderVo.setResultArray(null);
         }
-        Map map = new HashMap(2,1f);
+        Map map = new HashMap(2, 1f);
         map.put("resultArray", playerGameOrderVo.getResultArray());
         map.put("result", playerGameOrderVo.getResult());
 

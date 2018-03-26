@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.collections.MapTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -942,11 +941,12 @@ public class BaseUserInfoController {
 
     /**
      * 再次请求转账
+     *
      * @param playerTransferVo
      * @return
      */
     public Map reconnectTransferApp(PlayerTransferVo playerTransferVo) {
-        Map<String, Object> map = new HashMap<>(5,1f);
+        Map<String, Object> map = new HashMap<>(5, 1f);
         if (StringTool.isBlank(playerTransferVo.getSearch().getTransactionNo())) {
             return getMessage(playerTransferVo.isSuccess(), null, map);
         }

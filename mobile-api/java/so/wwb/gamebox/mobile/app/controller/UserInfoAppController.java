@@ -456,6 +456,7 @@ public class UserInfoAppController extends BaseUserInfoController {
                 map,
                 APP_VERSION);
     }
+
     /**
      * 设置我的链接地址
      *
