@@ -1,10 +1,12 @@
 package so.wwb.gamebox.mobile.app.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class DepositPayApp {
     private String code;
     private String name;
+
     private List<AppPayAccount> payAccounts;
     private String url;
 
@@ -39,5 +41,6 @@ public class DepositPayApp {
     public void setPayAccounts(List<AppPayAccount> payAccounts) {
         this.payAccounts = payAccounts;
     }
+
 }
 
