@@ -20,14 +20,15 @@ import javax.validation.constraints.Pattern;
 public class OnlineScanDepositForm implements IForm {
     private String result_rechargeAmount;
     private String result_payerBankcard;
+    private String result_payAccountId;
 //    private String $code;
 
     @Comment("存款金额")
     @NotBlank(message = "deposit_auto.请输入存款金额")
-    @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
+    @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "单笔存款最低为{0}，最高为{1}", checkClass = OnlineScanDepositController.class, checkMethod = "checkScanCodeAmount", additionalProperties = {"result.rechargeType"})
     @Max(message = "deposit_auto.单笔存款最高为99", value = 99999999)
-    @Min(message = "valid.rechargeForm.rechargeAmountMin", value = 0)
+    @Min(message = "rechargeForm.rechargeAmountMin", value = 0)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }
@@ -46,6 +47,16 @@ public class OnlineScanDepositForm implements IForm {
 
     public void setResult_payerBankcard(String result_payerBankcard) {
         this.result_payerBankcard = result_payerBankcard;
+    }
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getResult_payAccountId() {
+        return result_payAccountId;
+    }
+
+    public void setResult_payAccountId(String result_payAccountId) {
+        this.result_payAccountId = result_payAccountId;
     }
 //
 //    @Comment("验证码")

@@ -22,9 +22,10 @@ public class BitcoinDepositForm implements IForm {
     private String result_bitAmount;
 //    private String $code;
     private String result_returnTime;
+    private String result_payAccountId;
 
     @Comment("玩家比特币钱包地址")
-    @NotBlank
+    @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
     @Length(min = 26, max = 34)
     public String getResult_payerBankcard() {
         return result_payerBankcard;
@@ -34,8 +35,18 @@ public class BitcoinDepositForm implements IForm {
         this.result_payerBankcard = result_payerBankcard;
     }
 
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getResult_payAccountId() {
+        return result_payAccountId;
+    }
+
+    public void setResult_payAccountId(String result_payAccountId) {
+        this.result_payAccountId = result_payAccountId;
+    }
+
     @Comment("txId")
-    @NotBlank
+    @NotBlank(message = "rechargeForm.payerTxIdNotBlank")
     @Length(max = 64)
     @Remote(message = "deposit_auto.txId已存在", checkClass = BaseDepositController.class, checkMethod = "checkTxId")
     public String getResult_bankOrder() {
@@ -58,7 +69,7 @@ public class BitcoinDepositForm implements IForm {
 //    }
 
     @Comment("比特币")
-    @NotBlank
+    @NotBlank(message = "rechargeForm.returnTimeNotBlank")
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
     @DecimalMin(value = "0.00010001")
     @Digits(integer = 8, fraction = 8)
@@ -71,7 +82,7 @@ public class BitcoinDepositForm implements IForm {
     }
 
     @Comment("交易时间")
-    @NotBlank
+    @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
     public String getResult_returnTime() {
         return result_returnTime;
     }

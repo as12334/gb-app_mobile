@@ -21,13 +21,14 @@ public class CompanyElectronicDepositForm implements IForm {
     private String result_payerBankcard;
     private String result_bankOrder;
     private String result_payerName;
+    private String result_payAccountId;
 //    private String $code;
 
     @Comment("存款金额")
-    @NotBlank(message = "valid.rechargeForm.rechargeAmountNotBlank")
-    @Pattern(message = "valid.rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
+    @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
+    @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyElectronicDepositController.class, checkMethod = "checkAmount")
-    @Max(message = "valid.rechargeForm.rechargeAmountMax", value = 99999999)
+    @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }
@@ -38,7 +39,7 @@ public class CompanyElectronicDepositForm implements IForm {
 
     @Comment("存款账号")
     @Depends(property = "result.rechargeType", operator = {Operator.IN}, value = {RechargeTypeEnum.RECHARGE_TYPE_WECHATPAY_FAST, RechargeTypeEnum.RECHARGE_TYPE_BDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_JDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_QQWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_OTHER_FAST})
-    @Length(message = "valid.rechargeForm.payerBankcardLength", max = 20)
+    @Length(message = "rechargeForm.payerBankcardLength", max = 20)
     public String getResult_payerBankcard() {
         return result_payerBankcard;
     }
@@ -48,7 +49,7 @@ public class CompanyElectronicDepositForm implements IForm {
     }
 
     @Comment("订单号后5位")
-    @Length(message = "valid.rechargeForm.bankOrderNotBlank", min = 5, max = 5)
+    @Length(message = "rechargeForm.bankOrderNotBlank", min = 5, max = 5)
     public String getResult_bankOrder() {
         return result_bankOrder;
     }
@@ -65,6 +66,16 @@ public class CompanyElectronicDepositForm implements IForm {
 
     public void setResult_payerName(String result_payerName) {
         this.result_payerName = result_payerName;
+    }
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getResult_payAccountId() {
+        return result_payAccountId;
+    }
+
+    public void setResult_payAccountId(String result_payAccountId) {
+        this.result_payAccountId = result_payAccountId;
     }
 
 //    @Comment("验证码")
