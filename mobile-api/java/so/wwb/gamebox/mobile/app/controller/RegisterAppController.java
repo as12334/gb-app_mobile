@@ -127,7 +127,7 @@ public class RegisterAppController {
             LOG.debug("站长站注册:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.REGISTER_FAIL.getCode(),
-                    AppErrorCodeEnum.REGISTER_FAIL.getMsg(),
+                    getErrorMessage(result.getAllErrors().get(0).getDefaultMessage()),
                     null,
                     APP_VERSION);
         }
@@ -205,6 +205,7 @@ public class RegisterAppController {
                     null,
                     APP_VERSION);
         }
+        userRegisterVo.setEditType(userRegisterVo.EDIT_TYPE_PLAYER);
         userRegisterVo = doRegister(userRegisterVo, request);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
@@ -243,6 +244,8 @@ public class RegisterAppController {
     }
 
     //email验证码
+    @RequestMapping("/checkEmailCode")
+    @ResponseBody
     public String checkEmailCode(@RequestParam("emailCode") String code, @RequestParam("email.contactValue") String email) {
         if (StringTool.isBlank(email) || StringTool.isBlank(code))
             return "false";
@@ -627,6 +630,16 @@ public class RegisterAppController {
             map.put("requiredJson", requiredJson);
             map.put("registCodeField", registCodeField);
         }
+    }
+
+    /**
+     * 获取失败提示信息
+     *
+     * @param messageCode
+     * @return
+     */
+    protected String getErrorMessage(String messageCode) {
+        return LocaleTool.tranMessage(Module.REGISTER.getCode(), messageCode);
     }
 
     /**

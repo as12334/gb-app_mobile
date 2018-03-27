@@ -51,10 +51,10 @@ public class SignUpForm implements IForm {
     private String $phoneCode;
     /*介绍人*/
     private String $recommendUserInputCode;
+    private String requiredJson;
 
     @NotBlank(message = "Register.username.notBlank")
     @Pattern(regexp = FormValidRegExps.ACCOUNT, message = "Register.username.format")
-    @Remote(message = "Register.username.exist", checkMethod = "checkUserNameExist", checkClass = RegisterAppController.class, additionalProperties = {"$editType"})
     public String getSysUser_username() {
         return sysUser_username;
     }
@@ -225,13 +225,14 @@ public class SignUpForm implements IForm {
         this.$captchaCode = $captchaCode;
     }
 
-    @Depends(message = "Register.termsOfService.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$requiredJson")
+    @NotBlank(message = "Register.termsOfService.notBlank")
+    @Depends(message = "Register.termsOfService.notBlank", operator = Operator.IN, property = "$requiredJson", value = "serviceTerms")
     public String get$termsOfService() {
         return $termsOfService;
     }
 
-    public void set$termsOfService(String $termsOfService) {
-        this.$termsOfService = $termsOfService;
+    public void set$termsOfService(String termsOfService) {
+        this.$termsOfService = termsOfService;
     }
 
     @Depends(message = "Register.birthday.notBlank", operator = Operator.IN, value = "birthday", property = "$requiredJson")
@@ -271,5 +272,13 @@ public class SignUpForm implements IForm {
 
     public void set$recommendUserInputCode(String $recommendUserInputCode) {
         this.$recommendUserInputCode = $recommendUserInputCode;
+    }
+
+    public String get$requiredJson() {
+        return requiredJson;
+    }
+
+    public void set$requiredJson(String requiredJson) {
+        this.requiredJson = requiredJson;
     }
 }

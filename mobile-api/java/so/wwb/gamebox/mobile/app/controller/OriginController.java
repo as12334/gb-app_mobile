@@ -361,9 +361,6 @@ public class OriginController extends BaseOriginController {
         for (Map map : getTypeI18n) {
             HelpParentTypeApp parent = new HelpParentTypeApp();
             parent.setId(listVo.getSearchId(map.get("id")));
-            if (map.get("ids") != null) {
-                parent.setIds(map.get("ids").toString());
-            }
             if (map.get("name") != null) {
                 parent.setName(map.get("name").toString());
             }

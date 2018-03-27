@@ -119,22 +119,6 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
-     * 一键刷新
-     *
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/refresh")
-    @ResponseBody
-    public String refresh(HttpServletRequest request) {
-        UserInfoApp userInfo = appRefresh(request);
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
-                userInfo,
-                APP_VERSION);
-    }
-
-    /**
      * 获取资金记录列表
      *
      * @param listVo
@@ -231,7 +215,7 @@ public class MineAppController extends BaseMineController {
     public String getBettingList(PlayerGameOrderListVo listVo, Boolean isShowStatistics) {
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        initQueryDateForgetBetting(listVo);
+        initQueryDate(listVo);
 
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
@@ -249,6 +233,32 @@ public class MineAppController extends BaseMineController {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 bettingDataApp, APP_VERSION);
+    }
+
+    @RequestMapping("/getBettingDetails")
+    @ResponseBody
+    public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo) {
+        if (playerGameOrderVo.getSearch().getId() == null) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null, APP_VERSION);
+        }
+        playerGameOrderVo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);
+        PlayerGameOrder playerGameOrder = playerGameOrderVo.getResult();
+        //如果不是这个玩家的投注订单，则视无该笔订单
+        if (playerGameOrder == null || playerGameOrder.getPlayerId() != SessionManager.getUserId().intValue()) {
+            playerGameOrderVo.setResult(null);
+            playerGameOrderVo.setResultArray(null);
+        }
+        Map map = new HashMap(2, 1f);
+        map.put("resultArray", playerGameOrderVo.getResultArray());
+        map.put("result", playerGameOrderVo.getResult());
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map, APP_VERSION);
     }
 
     /**

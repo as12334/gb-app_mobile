@@ -55,6 +55,16 @@ public enum AppErrorCodeEnum {
     REGISTER_PHONE_EXIST("1506","手机号码已被注册"),
     REGISTER_EMAIL_EXIST("1507","邮箱已被注册"),
     REGISTER_WEIXIN_EXIST("1508","微信已被注册"),
+    TRANSFER_ERROR("1520","额度转换失败"),
+    TRANSFER_ACCOUNT_NOT_ENOUGH("1521","当前钱包余额不足"),
+    NO_AVAILABLE_CHANNELS("1600","暂无可用渠道，请稍后刷新重试"),
+    SUBMIT_DATA_ERROR("1601","提交信息有误，请核对信息提交"),
+    CHANNEL_CLOSURE("1602","渠道未在使用中，请刷新存款页面后重试"),
+    MONEY_ERROR("1603","存款金额有误，请输入正确的存款金额"),
+    NOT_SALE("1604","暂无优惠和手续费"),
+    DEPOSIT_TYPE_ERROR("1605","存款渠道有误，建议您更换渠道或稍后刷新重试"),
+    DEPOSIT_FAIL("1606","存款失败，请稍后重试"),
+    ORDER_ERROR("1607","订单号有误，请重新存款")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
