@@ -76,20 +76,6 @@
             <version>${gamebox.version}</version>
         </dependency>
         <!--Gamebox引用-->
-        <!--Soul引用-->
-        <dependency>
-            <groupId>org.soul</groupId>
-            <artifactId>soul-web</artifactId>
-            <version>${soul.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.soul</groupId>
-            <artifactId>soul-web</artifactId>
-            <version>${soul.version}</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <!--Soul引用-->
         <!--ThirdParty引用-->
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
