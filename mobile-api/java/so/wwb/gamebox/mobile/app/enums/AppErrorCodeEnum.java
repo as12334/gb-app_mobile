@@ -64,7 +64,9 @@ public enum AppErrorCodeEnum {
     NOT_SALE("1604","暂无优惠和手续费"),
     DEPOSIT_TYPE_ERROR("1605","存款渠道有误，建议您更换渠道或稍后刷新重试"),
     DEPOSIT_FAIL("1606","存款失败，请稍后重试"),
-    ORDER_ERROR("1607","订单号有误，请重新存款")
+    ORDER_ERROR("1607","订单号有误，请重新存款"),
+    TXIDISEMPTY("1608","比特币TxId不能为空，请重新输入"),
+    TXIDISEXISTS("1609","比特币TxId已存在，请重新输入")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

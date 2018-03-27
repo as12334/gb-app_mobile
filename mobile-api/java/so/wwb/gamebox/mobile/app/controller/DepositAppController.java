@@ -8,28 +8,30 @@ import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.AppModelVo;
-import so.wwb.gamebox.mobile.app.model.AppPayAccount;
-import so.wwb.gamebox.mobile.app.model.AppSale;
-import so.wwb.gamebox.mobile.app.model.DepositPayApp;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.validateForm.*;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.company.enums.BankEnum;
+import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
@@ -114,47 +116,56 @@ public class DepositAppController extends BaseDepositController {
                 if (AppConstant.WECHAT_PAY.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.WECHATPAY_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.WECHATPAY_FAST.getCode());
                     wechat.add(createAppPayAccount(payAccount));
 
                 } else if (AppConstant.ALI_PAY.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.ALIPAY_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.ALIPAY_FAST.getCode());
                     alipay.add(createAppPayAccount(payAccount));
 
                 } else if (AppConstant.QQ_WALLET.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.QQWALLET_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.QQWALLET_FAST.getCode());
                     qqWallet.add(createAppPayAccount(payAccount));
 
                 } else if (AppConstant.JD_WALLET.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.JDWALLET_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.JDWALLET_FAST.getCode());
                     jdPay.add(createAppPayAccount(payAccount));
 
                 } else if (AppConstant.BD_WALLET.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.BDWALLET_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.BDWALLET_FAST.getCode());
                     baifuPay.add(createAppPayAccount(payAccount));
 
                 } else if (AppConstant.ONE_CODE_PAY.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.ONECODEPAY_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.ONECODEPAY_FAST.getCode());
                     oneCodePay.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.BITCOIN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.BITCOIN_FAST.getCode());
                     bitcoin.add(createAppPayAccount(payAccount));
 
                 } else if (AppConstant.OTHER.equals(payAccount.getBankCode())) {
                     payAccount.setDepositWay(DepositWayEnum.OTHER_FAST.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ELECTRONIC_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.OTHER_FAST.getCode());
                     other.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())) {
                     //公司入款　银行账户
                     payAccount.setDepositWay(DepositWayEnum.COMPANY_DEPOSIT.getCode());
                     payAccount.setPayType(AppDepositPayEnum.COMPANY_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.ONLINE_BANK.getCode());
                     company.add(createAppPayAccount(payAccount));
                     if (payAccount.getSupportAtmCounter() == null || payAccount.getSupportAtmCounter()) {
                         //公司入款　银行账户　柜台
@@ -167,48 +178,56 @@ public class DepositAppController extends BaseDepositController {
                     //WECHAT("3", "微信支付"),WECHAT_MICROPAY("10","微信反扫"),
                     payAccount.setDepositWay(DepositWayEnum.WECHATPAY_SCAN.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.WECHATPAY_SCAN.getCode());
                     wechat.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.ALIPAY.getCode().equals(payAccount.getAccountType()) || PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccount.getAccountType())) {
                     //ALIPAY("4", "支付宝"),ALIPAY_MICROPAY("11","支付宝反扫"),
                     payAccount.setDepositWay(DepositWayEnum.ALIPAY_SCAN.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.ALIPAY_SCAN.getCode());
                     alipay.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.QQWALLET.getCode().equals(payAccount.getAccountType()) || PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccount.getAccountType())) {
                     //QQWALLET("5","QQ钱包"),QQ_MICROPAY("12","QQ反扫"),
                     payAccount.setDepositWay(DepositWayEnum.QQWALLET_SCAN.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.QQWALLET_SCAN.getCode());
                     qqWallet.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.JD_PAY.getCode().equals(payAccount.getAccountType())) {
                     //JD_PAY("7","京东钱包"),
                     payAccount.setDepositWay(DepositWayEnum.JDPAY_SCAN.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.JDPAY_SCAN.getCode());
                     jdPay.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(payAccount.getAccountType())) {
                     //BAIFU_PAY("8","百度钱包"),
                     payAccount.setDepositWay(DepositWayEnum.BDWALLET_SAN.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.BDWALLET_SAN.getCode());
                     baifuPay.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.UNION_PAY.getCode().equals(payAccount.getAccountType())) {
                     //UNION_PAY("9","银联扫码"),
                     payAccount.setDepositWay(DepositWayEnum.UNION_PAY_SCAN.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.UNION_PAY_SCAN.getCode());
                     unionPay.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.EASY_PAY.getCode().equals(payAccount.getAccountType())) {
                     //EASY_PAY("13", "易收付"),
                     payAccount.setDepositWay(DepositWayEnum.EASY_PAY.getCode());
                     payAccount.setPayType(AppDepositPayEnum.SCAN_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.EASY_PAY.getCode());
                     easyPay.add(createAppPayAccount(payAccount));
 
                 } else if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType())) {
                     //线上支付
                     payAccount.setDepositWay(DepositWayEnum.ONLINE_DEPOSIT.getCode());
                     payAccount.setPayType(AppDepositPayEnum.ONLINE_PAY.getCode());
+                    payAccount.setRechargeType(RechargeTypeEnum.ONLINE_DEPOSIT.getCode());
                     online.add(createAppPayAccount(payAccount));
                 }
             }
@@ -216,7 +235,7 @@ public class DepositAppController extends BaseDepositController {
         //公司入款　快充中心
         fastRecharge(payData);
         //公司入款　快选金额
-        quickSelection(payData);
+//        quickSelection(payData);
         //是否展示多个账号
         boolean isMultipleAccount = isMultipleAccount();
         payData.put("isMultipleAccount", isMultipleAccount);
@@ -227,6 +246,30 @@ public class DepositAppController extends BaseDepositController {
 //        payData.put("isHideAccount", isHideAccount());
 
         deleteMaintainChannel(online);
+        if(CollectionTool.isNotEmpty(online)){
+            List<Bank> banks = searchBank(BankEnum.TYPE_BANK.getCode());
+            List<AppBank> appBanks = new ArrayList<>();
+
+            if(CollectionTool.isNotEmpty(banks)){
+                for (Bank bank : banks) {
+                    if(bank.getIsUse() != null || bank.getIsUse()) {
+                        AppBank appBank = new AppBank();
+                        //bankName国际化处理
+                        String interlingua = LocaleTool.tranDict(DictEnum.BANKNAME, bank.getBankName());
+                        if (StringTool.isNotEmpty(interlingua)) {
+                            appBank.setInterlinguaBankName(interlingua);
+                        } else {
+                            appBank.setInterlinguaBankName(bank.getBankShortName());
+                        }
+                        appBank.setId(bank.getId());
+                        appBank.setBankName(bank.getBankName());
+                        appBank.setOrderNum(bank.getOrderNum());
+                        appBanks.add(appBank);
+                    }
+                }
+            }
+            payData.put("bankList", appBanks);
+        }
 
         List<DepositPayApp> pays = new ArrayList<>();
         if (!CollectionTool.isEmpty(online)) {
@@ -401,6 +444,18 @@ public class DepositAppController extends BaseDepositController {
      * 比特币　查询优惠
      */
     public String bitcoinSeachDiscount(PlayerRechargeVo playerRechargeVo) {
+        if(StringTool.isNotBlank(playerRechargeVo.getResult().getBankOrder())){
+            boolean isExistsTxId = checkTxId(playerRechargeVo.getResult().getBankOrder());
+            if(!isExistsTxId){
+                return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEXISTS.getCode(),
+                        AppErrorCodeEnum.TXIDISEXISTS.getMsg(),
+                        null, APP_VERSION);
+            }
+        }else{
+             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEMPTY.getCode(),
+                    AppErrorCodeEnum.TXIDISEMPTY.getMsg(),
+                    null, APP_VERSION);
+        }
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
         listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());

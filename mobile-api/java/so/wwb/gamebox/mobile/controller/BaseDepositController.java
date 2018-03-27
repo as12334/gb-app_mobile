@@ -44,6 +44,7 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
+import so.wwb.gamebox.model.company.enums.BankEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
@@ -99,7 +100,7 @@ public class BaseDepositController {
         appPayAccount.setId(payAccount.getId());
         appPayAccount.setAccount(payAccount.getAccount());
         appPayAccount.setBankCode(payAccount.getBankCode());
-        appPayAccount.setAccountType(payAccount.getAccountType());
+//        appPayAccount.setAccountType(payAccount.getAccountType());
         appPayAccount.setType(payAccount.getType());
         appPayAccount.setAliasName(payAccount.getAliasName());
         appPayAccount.setRandomAmount(payAccount.getRandomAmount());
@@ -107,9 +108,11 @@ public class BaseDepositController {
         appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax() == null ? Const.MAX_MONEY : payAccount.getSingleDepositMax());
         appPayAccount.setDepositWay(payAccount.getDepositWay());
         appPayAccount.setPayType(payAccount.getPayType());
-        if(StringTool.isNotBlank(payAccount.getType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType()) && !PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType())){
+        appPayAccount.setRechargeType(payAccount.getRechargeType());
+        /*if(StringTool.isNotBlank(payAccount.getType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType()) && !PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType())){
             scanPay(appPayAccount);
-        }
+        }*/
+        appPayAccount.setBankName(LocaleTool.tranMessage(Module.COMMON, "recharge_type."+payAccount.getRechargeType()));
         if (StringTool.isNotBlank(payAccount.getType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             appPayAccount.setSingleDepositMin(getRank().getOnlinePayMin());
             appPayAccount.setSingleDepositMax(getRank().getOnlinePayMax());
@@ -120,13 +123,15 @@ public class BaseDepositController {
             appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
             appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl());
             appPayAccount.setRemark(payAccount.getRemark());
-            appPayAccount.setRechargeType(payAccount.getRechargeType());
-            if(!PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
+            if(PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
+                companyBankName(appPayAccount);
+            }
+            /*if(!PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
                 electronicPay(appPayAccount);
                 getCompanyPayAccounts(payAccount,payAccount.getRechargeType());
             }else{
                 companyBankName(appPayAccount);
-            }
+            }*/
         }
         return appPayAccount;
     }
@@ -137,72 +142,93 @@ public class BaseDepositController {
      * @param
      * @return
      */
-    public void getCompanyPayAccounts(PayAccount payAccount, String rechargeType) {
+    /*public void getCompanyPayAccounts(PayAccount payAccount, String rechargeType) {
         Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.FUND_RECHARGE_TYPE);
         String bankName = i18n.get(rechargeType);
         if (isMultipleAccount()) {
-//            int size = AppPayAccountList.size();
+            int size = AppPayAccountList.size();
             int count = 1;
             String other = RechargeTypeEnum.OTHER_FAST.getCode();
             if (StringTool.isBlank(payAccount.getAliasName())) {
                 if (other.equals(rechargeType)) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
-                } else /*if (size > 1)*/ {
+                } else *//*if (size > 1)*//* {
                     payAccount.setAliasName(bankName + count);
                     count++;
-                /*} else {
-                    payAccount.setAliasName(bankName);*/
+                } else {
+                    payAccount.setAliasName(bankName);
                 }
             }
         }else{
             payAccount.setAliasName(i18n.get(rechargeType));
         }
-    }
+    }*/
 
-    private void scanPay(AppPayAccount appPayAccount) {
-        String bankCode = appPayAccount.getBankCode();
+    /*private void scanPay(AppPayAccount appPayAccount) {
+        String bankName = appPayAccount.getBankName();
         String payAccountType = appPayAccount.getAccountType();
         if (PayAccountAccountType.WECHAT.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.FAST_WECHAT.getTrans();
+            bankName = AppDepositPayEnum.WECHAT_SCAN.getTrans();
         } else if (PayAccountAccountType.ALIPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.FAST_ALIPAY.getTrans();
+            bankName = AppDepositPayEnum.WECHAT_SCAN.getTrans();
         } else if (PayAccountAccountType.QQWALLET.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.QQWALLET.getTrans();
+            bankName = AppDepositPayEnum.QQ_SCAN.getTrans();
         } else if (PayAccountAccountType.JD_PAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.JDWALLET.getTrans();
+            bankName = AppDepositPayEnum.JD_SCAN.getTrans();
         } else if (PayAccountAccountType.BAIFU_PAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.BDWALLET.getTrans();
+            bankName = AppDepositPayEnum.BD_SCAN.getTrans();
         } else if (PayAccountAccountType.WECHAT_MICROPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.WECHAT_MICROPAY.getTrans();
+            bankName = AppDepositPayEnum.WECHAT_MICROPAY.getTrans();
         } else if (PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.ALIPAY_MICROPAY.getTrans();
+            bankName = AppDepositPayEnum.WECHAT_MICROPAY.getTrans();
         } else if (PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.QQ_MICROPAY.getTrans();
+            bankName = AppDepositPayEnum.QQ_MICROPAY.getTrans();
         } else if (PayAccountAccountType.EASY_PAY.getCode().equals(payAccountType)) {
-            bankCode = BankCodeEnum.EASY_PAY.getTrans();
-        } else if(PayAccountAccountType.UNION_PAY.getCode().equals(payAccountType)){
-            bankCode = BankCodeEnum.UNIONPAY.getTrans();
+            bankName = AppDepositPayEnum.EASY_PAY.getTrans();
         }
-        appPayAccount.setBankCode(bankCode);
-    }
+        appPayAccount.setBankName(bankName);
+    }*/
 
-    private void electronicPay(AppPayAccount appPayAccount) {
+    /*private void electronicPay(AppPayAccount appPayAccount) {
         String bankCode = appPayAccount.getBankCode();
         if (AppConstant.WECHAT_PAY.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.WECHATPAY_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.WECHATPAY_FAST.getTrans());
         } else if (AppConstant.ALI_PAY.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.ALIPAY_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.ALIPAY_FAST.getTrans());
         } else if (AppConstant.QQ_WALLET.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.QQWALLET_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.QQWALLET_FAST.getTrans());
         } else if (AppConstant.JD_WALLET.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.JDWALLET_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.JDWALLET_FAST.getTrans());
         } else if (AppConstant.BD_WALLET.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.BDWALLET_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.BDWALLET_FAST.getTrans());
         } else if (AppConstant.ONE_CODE_PAY.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.ONECODEPAY_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.ONECODEPAY_FAST.getTrans());
         } else if (AppConstant.OTHER.equals(bankCode)) {
             appPayAccount.setRechargeType(RechargeTypeEnum.OTHER_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.OTHER_FAST.getTrans());
+        } else if (AppConstant.BITCOIN.equals(bankCode)){
+            appPayAccount.setRechargeType(RechargeTypeEnum.BITCOIN_FAST.getCode());
+            appPayAccount.setBankName(AppDepositPayEnum.BITCOIN_FAST.getTrans());
         }
+    }*/
+
+    /**
+     * 查询玩家可选择的存款渠道
+     *
+     * @param
+     */
+    public List<Bank> searchBank(String type) {
+        Map<String, Bank> bankMap = Cache.getBank();
+        if (bankMap == null || bankMap.size() <= 0) {
+            return null;
+        }
+        return CollectionQueryTool.query(bankMap.values(), Criteria.add(Bank.PROP_TYPE, Operator.EQ, type));
     }
 
     //公司入款快选金额
@@ -475,9 +501,7 @@ public class BaseDepositController {
      * @param txId
      * @return
      */
-    @RequestMapping("/checkTxId")
-    @ResponseBody
-    public boolean checkTxId(@RequestParam("result.bankOrder") String txId) {
+    public boolean checkTxId(String txId) {
         PlayerRechargeListVo listVo = new PlayerRechargeListVo();
         listVo.getSearch().setBankOrder(txId);
         listVo.getSearch().setRechargeStatus(RechargeStatusEnum.FAIL.getCode());
@@ -491,7 +515,7 @@ public class BaseDepositController {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
+                    LocaleTool.tranMessage(Module.VALID, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
@@ -653,7 +677,7 @@ public class BaseDepositController {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
+                    LocaleTool.tranMessage(Module.VALID, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());

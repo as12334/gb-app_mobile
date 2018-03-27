@@ -1,5 +1,7 @@
 package so.wwb.gamebox.mobile.app.model;
 
+import java.util.List;
+
 /**
  * Created by ed on 17-12-29.
  */
@@ -86,6 +88,32 @@ public class AppPayAccount {
      * 支付类型
      */
     private String payType;
+
+    /**
+     *图标url
+     */
+    private String iconUrl;
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+
+    public List<AppBank> getBanks() {
+        return banks;
+    }
+
+    public void setBanks(List<AppBank> banks) {
+        this.banks = banks;
+    }
+
+    /**
+     *银行列表
+     */
+    private List<AppBank> banks;
 
     public Integer getId() {
         return id;
