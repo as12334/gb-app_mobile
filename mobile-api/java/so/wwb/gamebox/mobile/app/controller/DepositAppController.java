@@ -2,8 +2,8 @@ package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.currency.CurrencyTool;
-import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -13,10 +13,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.AppModelVo;
-import so.wwb.gamebox.mobile.app.model.AppPayAccount;
-import so.wwb.gamebox.mobile.app.model.AppSale;
-import so.wwb.gamebox.mobile.app.model.DepositPayApp;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.validateForm.*;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -37,12 +34,14 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_ENTRY_URL;
 
 @Controller
 @RequestMapping("/depositOrigin")
@@ -53,7 +52,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/index")
     @ResponseBody
-    public String recharge() {
+    public String recharge(AppRequestModelVo modelVo,HttpServletRequest request) {
         PayAccountListVo listVo = new PayAccountListVo();
         Map<String, Object> map = new HashMap<>(3, 1f);
         map.put("playerId", SessionManager.getUserId());
@@ -61,7 +60,7 @@ public class DepositAppController extends BaseDepositController {
         map.put("terminal", TerminalEnum.MOBILE.getCode()); //手机端
         listVo.setConditions(map);
         List<PayAccount> payAccounts = ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
-        Map<String, Object> payAccountMap = arrangePayAccounts(payAccounts);
+        Map<String, Object> payAccountMap = arrangePayAccounts(payAccounts, modelVo,request);
         if (payAccountMap.isEmpty()) {
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.NO_AVAILABLE_CHANNELS.getMsg(),
@@ -75,7 +74,7 @@ public class DepositAppController extends BaseDepositController {
     /**
      * 存款渠道分类
      */
-    private Map arrangePayAccounts(List<PayAccount> payAccounts) {
+    private Map arrangePayAccounts(List<PayAccount> payAccounts, AppRequestModelVo modelVo,HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> payData = new HashMap<>();
         if (CollectionTool.isEmpty(payAccounts) && payAccounts.size() <= 0) {
@@ -230,55 +229,56 @@ public class DepositAppController extends BaseDepositController {
 
         List<DepositPayApp> pays = new ArrayList<>();
         if (!CollectionTool.isEmpty(online)) {
-            pays.add(getDepositApp("online", online));
+            pays.add(getDepositApp("online", online, modelVo,request));
         }
         if (!CollectionTool.isEmpty(company)) {
-            pays.add(getDepositApp("company", company));
+            pays.add(getDepositApp("company", company, modelVo,request));
         }
         if (!CollectionTool.isEmpty(wechat)) {
-            pays.add(getDepositApp("wechat", wechat));
+            pays.add(getDepositApp("wechat", wechat, modelVo,request));
         }
         if (!CollectionTool.isEmpty(alipay)) {
-            pays.add(getDepositApp("alipay", alipay));
+            pays.add(getDepositApp("alipay", alipay, modelVo,request));
         }
         if (!CollectionTool.isEmpty(qqWallet)) {
-            pays.add(getDepositApp("qqWallet", qqWallet));
+            pays.add(getDepositApp("qqWallet", qqWallet, modelVo,request));
         }
         if (!CollectionTool.isEmpty(jdPay)) {
-            pays.add(getDepositApp("jdPay", jdPay));
+            pays.add(getDepositApp("jdPay", jdPay, modelVo,request));
         }
         if (!CollectionTool.isEmpty(baifuPay)) {
-            pays.add(getDepositApp("baifuPay", baifuPay));
+            pays.add(getDepositApp("baifuPay", baifuPay, modelVo,request));
         }
         if (!CollectionTool.isEmpty(bitcoin)) {
-            pays.add(getDepositApp("bitcoin", bitcoin));
+            pays.add(getDepositApp("bitcoin", bitcoin, modelVo,request));
         }
         if (!CollectionTool.isEmpty(oneCodePay)) {
-            pays.add(getDepositApp("oneCodePay", oneCodePay));
+            pays.add(getDepositApp("oneCodePay", oneCodePay, modelVo,request));
         }
         if (!CollectionTool.isEmpty(unionPay)) {
-            pays.add(getDepositApp("unionPay", unionPay));
+            pays.add(getDepositApp("unionPay", unionPay, modelVo,request));
         }
         if (!CollectionTool.isEmpty(counter)) {
-            pays.add(getDepositApp("counter", counter));
+            pays.add(getDepositApp("counter", counter, modelVo,request));
         }
         if (!CollectionTool.isEmpty(easyPay)) {
-            pays.add(getDepositApp("easyPay", easyPay));
+            pays.add(getDepositApp("easyPay", easyPay, modelVo,request));
         }
         if (!CollectionTool.isEmpty(other)) {
-            pays.add(getDepositApp("other", other));
+            pays.add(getDepositApp("other", other, modelVo,request));
         }
         map.put("pay", pays);
         map.put("payData", payData);
         return map;
     }
 
-    private DepositPayApp getDepositApp(String code, List<AppPayAccount> payAccounts) {
+    private DepositPayApp getDepositApp(String code, List<AppPayAccount> payAccounts, AppRequestModelVo modelVo,HttpServletRequest request) {
         DepositPayApp depositPay = new DepositPayApp();
         if (CollectionTool.isEmpty(payAccounts)) {
             return depositPay;
         }
 
+        depositPay.setUrl(String.format(DEPOSIT_ENTRY_URL, MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()), modelVo.getTerminal(), modelVo.getResolution(), code));
         depositPay.setCode(code);
         for (AppDepositPayEnum payEnum : AppDepositPayEnum.values()) {
             if (payEnum.getCode().equals(code)) {
@@ -294,7 +294,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/seachSale")
     @ResponseBody
-    public String seachSale(PlayerRechargeVo playerRechargeVo,@FormModel @Valid DepositForm form,BindingResult result) {
+    public String seachSale(PlayerRechargeVo playerRechargeVo, @FormModel @Valid DepositForm form, BindingResult result) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:获取优惠活动，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -429,14 +429,14 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/onlinePay")
     @ResponseBody
-    public String onlinePay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result,HttpServletRequest request) {
-        return onlineCommonDeposit(playerRechargeVo,result, request);
+    public String onlinePay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result, HttpServletRequest request) {
+        return onlineCommonDeposit(playerRechargeVo, result, request);
     }
 
     //扫码支付　存款
     @RequestMapping("/scanPay")
     @ResponseBody
-    public String scanPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result,HttpServletRequest request) {
+    public String scanPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result, HttpServletRequest request) {
         return onlineCommonDeposit(playerRechargeVo, result, request);
     }
 
