@@ -102,14 +102,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="mui-input-row" style="display:${rechargeType.value eq 'atm_money'?'block':'none'}" id="address">
+                                    <div class="mui-input-row">
                                         <label>${views.deposit_auto['交易地点']}</label>
                                         <div class="ct">
-                                            <input type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" onchange="this.value=this.value.trim()">
+                                            <input type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" maxlength="20" onchange="this.value=this.value.trim()">
                                         </div>
                                     </div>
 
-                                    <div class="mui-input-row" style="display:${rechargeType.value ne 'atm_money'?'block':'none'}" id="payerName">
+                                    <div class="mui-input-row">
                                         <label>${views.deposit_auto['存款人']}</label>
                                         <div class="ct">
                                             <input type="text" name="result.payerName" placeholder="${views.deposit_auto['您转账时使用的银行卡姓名']}" onchange="this.value=this.value.trim()">

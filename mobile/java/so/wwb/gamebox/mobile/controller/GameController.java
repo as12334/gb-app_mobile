@@ -151,7 +151,6 @@ public class GameController extends BaseApiController {
         Map<String, List<Integer>> tagGames = new HashedMap();
         Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
         for (String tagStr : tagName.keySet()) {
-            games = new ArrayList<>();
             games = getGamesByTagId(gameTagMap, tagStr);
             tagGames.put(tagStr, games);
         }

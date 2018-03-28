@@ -335,7 +335,7 @@ public class UserInfoAppController extends BaseUserInfoController {
             map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
-                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
+                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getMsg(),
                     map,
                     APP_VERSION);
         }
@@ -446,9 +446,9 @@ public class UserInfoAppController extends BaseUserInfoController {
         map.put("status", getApiStatus(apiMap, siteApiMap, apiId.toString()));
         map.put("apiId", apiId);
         if (playerApi != null) {
-            map.put("apiMoney", playerApi.getMoney());
+            map.put("balance", playerApi.getMoney());
         } else {
-            map.put("apiMoney", "0.00");
+            map.put("balance", "0.00");
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
