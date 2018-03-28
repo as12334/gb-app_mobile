@@ -79,20 +79,20 @@
                                             </div>
                                         </div>
                                     </div>
-                                <div class="mui-input-row" style="display:${rechargeType.value ne 'atm_money'?'block':'none'}" id="payerName">
+                                <div class="mui-input-row">
                                     <label for="result.payerName">${views.deposit_auto['存款人']}</label>
                                     <div class="ct">
                                         <input type="text" id="result.payerName" name="result.payerName" placeholder="${views.deposit_auto['您转账时使用的银行卡姓名']}" onchange="this.value=this.value.trim()"/>
                                     </div>
                                 </div>
-                                 <%--存款金额--%>
-                                <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
-                                <div class="mui-input-row" style="display:${rechargeType.value eq 'atm_money'?'block':'none'}" id="address">
+                                <div class="mui-input-row">
                                     <label for="result.rechargeAddress">${views.deposit_auto['交易地点']}</label>
                                     <div class="ct">
-                                        <input type="text" id="result.rechargeAddress" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" onchange="this.value=this.value.trim()"/>
+                                        <input type="text" id="result.rechargeAddress" name="result.rechargeAddress" maxlength="20" placeholder="${views.deposit_auto['请输入地点']}" onchange="this.value=this.value.trim()"/>
                                     </div>
                                 </div>
+                                 <%--存款金额--%>
+                                <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
                                 <input type="hidden" name="activityId" id="activityId"/>
                             </div>
                         </div>
