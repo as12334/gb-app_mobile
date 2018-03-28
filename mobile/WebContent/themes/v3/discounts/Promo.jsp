@@ -16,6 +16,7 @@
     <%@ include file="../common/LeftMenu.jsp" %>
     <c:set var="defaultSaleImg" value="${resRoot}/images/img-sale1.jpg"/>
     <input type="hidden" value="${defaultSaleImg}" name="defaultSaleImg"/>
+    <input type="hidden" value="${fn:length(messageVo.typeMessageMap)}" name="len"/>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <%@include file="../discounts/PromoHead.jsp" %>
