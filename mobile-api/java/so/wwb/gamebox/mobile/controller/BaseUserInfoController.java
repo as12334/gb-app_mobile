@@ -960,6 +960,7 @@ public class BaseUserInfoController {
         map.put("apiId", playerTransferVo.getResult().getApiId());
         map.put("orderId", playerTransferVo.getSearch().getTransactionNo());
         map.put("result", playerTransferVo.getResultCode());
+        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return getMessage(playerTransferVo.isSuccess(), null, map);
     }
 
@@ -979,7 +980,6 @@ public class BaseUserInfoController {
             msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
         }
         map.put("msg", msg);
-        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return map;
     }
 

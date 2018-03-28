@@ -312,6 +312,9 @@ public class RegisterAppController {
         if (!ParamTool.isOnlyFiled("realName")) {
             return "true";
         }
+        if(StringTool.isBlank(realName)){
+            return "true";
+        }
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setRealName(realName);
         sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
@@ -329,6 +332,9 @@ public class RegisterAppController {
         if (!ParamTool.isOnlyFiled(ContactWayType.QQ.getCode())) {
             return "true";
         }
+        if(StringTool.isBlank(qqContactValue)){
+            return "true";
+        }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
         listVo.getSearch().setContactType(ContactWayType.QQ.getCode());
         listVo.getSearch().setContactValue(qqContactValue);
@@ -342,6 +348,9 @@ public class RegisterAppController {
      */
     public String checkPhoneExist(@RequestParam("phone.contactValue") String phoneContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.CELLPHONE.getCode())) {
+            return "true";
+        }
+        if(StringTool.isBlank(phoneContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
@@ -359,6 +368,9 @@ public class RegisterAppController {
         if (!ParamTool.isOnlyFiled(ContactWayType.EMAIL.getCode())) {
             return "true";
         }
+        if(StringTool.isBlank(mailContactValue)){
+            return "true";
+        }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
         listVo.getSearch().setContactType(ContactWayType.EMAIL.getCode());
         listVo.getSearch().setContactValue(mailContactValue);
@@ -372,6 +384,9 @@ public class RegisterAppController {
      */
     public String checkWeixinExist(@RequestParam("weixin.contactValue") String weixinContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.WEIXIN.getCode())) {
+            return "true";
+        }
+        if(StringTool.isBlank(weixinContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
