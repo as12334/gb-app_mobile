@@ -335,7 +335,7 @@ public class UserInfoAppController extends BaseUserInfoController {
             map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
-                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
+                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getMsg(),
                     map,
                     APP_VERSION);
         }
