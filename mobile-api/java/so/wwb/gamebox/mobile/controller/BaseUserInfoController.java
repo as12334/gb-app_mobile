@@ -979,9 +979,7 @@ public class BaseUserInfoController {
             msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
         }
         map.put("msg", msg);
-        if (!isSuccess) {
-            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        }
+        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return map;
     }
 
