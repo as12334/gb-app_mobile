@@ -21,6 +21,10 @@ public class AppPayAccount {
      */
     private String fullName;
     /**
+     * 代号
+     */
+    private String code;
+    /**
      * 类型（1公司入款；2线上支付）(字典表pay_account_type)
      */
     private String type;
@@ -92,28 +96,8 @@ public class AppPayAccount {
     /**
      *图标url
      */
-    private String iconUrl;
+    private String imgUrl;
 
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
-    public List<AppBank> getBanks() {
-        return banks;
-    }
-
-    public void setBanks(List<AppBank> banks) {
-        this.banks = banks;
-    }
-
-    /**
-     *银行列表
-     */
-    private List<AppBank> banks;
 
     public Integer getId() {
         return id;
@@ -281,5 +265,21 @@ public class AppPayAccount {
 
     public void setPayType(String payType) {
         this.payType = payType;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }

@@ -6,17 +6,7 @@ import java.util.Map;
 public class DepositPayApp {
     private String code;
     private String name;
-
-    private List<AppPayAccount> payAccounts;
-    private String url;
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    private String icoUrl;
 
     public String getCode() {
         return code;
@@ -34,13 +24,12 @@ public class DepositPayApp {
         this.name = name;
     }
 
-    public List<AppPayAccount> getPayAccounts() {
-        return payAccounts;
+    public String getIcoUrl() {
+        return icoUrl;
     }
 
-    public void setPayAccounts(List<AppPayAccount> payAccounts) {
-        this.payAccounts = payAccounts;
+    public void setIcoUrl(String icoUrl) {
+        this.icoUrl = icoUrl;
     }
-
 }
 
