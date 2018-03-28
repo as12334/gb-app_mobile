@@ -1084,7 +1084,7 @@ public class MineAppController extends BaseMineController {
         if (isSuccess == null || !isSuccess) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
-                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
+                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.SUCCESS.getMsg(),
                     null,
                     APP_VERSION);
         }
@@ -1092,7 +1092,7 @@ public class MineAppController extends BaseMineController {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                new HashMap<>(0),
+                null,
                 APP_VERSION);
     }
 
