@@ -1080,18 +1080,52 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         Map map = appRecovery(playerApiVo);
+        if(map == null){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (map.get("msg") != null) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    map.get("msg").toString(),
+                    null,
+                    APP_VERSION);
+        } else if (map.get("resultStatus") != null) {
+            if (StringTool.equals(map.get("resultStatus").toString(), "SUCCESS")) {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        null,
+                        APP_VERSION);
+            } else if (StringTool.equals(map.get("resultCode").toString(), "1")) {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.RECOVER_FIAL.getCode(),
+                        AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
+                        null,
+                        APP_VERSION);
+            } else {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
+                        null,
+                        APP_VERSION);
+            }
+        }
         Boolean isSuccess = (Boolean) map.get("isSuccess");
         if (isSuccess == null || !isSuccess) {
             return AppModelVo.getAppModeVoJson(true,
                     map.get("msg") != null ? AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode() : AppErrorCodeEnum.SUCCESS.getCode(),
-                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.SUCCESS.getMsg(),
+                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
                     null,
                     APP_VERSION);
         }
 
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
+                AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
                 null,
                 APP_VERSION);
     }

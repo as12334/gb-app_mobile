@@ -1,13 +1,15 @@
 package so.wwb.gamebox.mobile.app.model;
 
-import java.util.List;
-
 /**
  * Created by ed on 17-12-29.
  */
 public class AppPayAccount {
     /**  */
     private Integer id;
+    /**
+     * 加密后的收款账号Id
+     */
+    private String searchId;
     /**
      * 账户名称
      */
@@ -92,7 +94,6 @@ public class AppPayAccount {
      * 支付类型
      */
     private String payType;
-
     /**
      *图标url
      */
@@ -281,5 +282,13 @@ public class AppPayAccount {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public String getSearchId() {
+        return searchId;
+    }
+
+    public void setSearchId(String searchId) {
+        this.searchId = searchId;
     }
 }

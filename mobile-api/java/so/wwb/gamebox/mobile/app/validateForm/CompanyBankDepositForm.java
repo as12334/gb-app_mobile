@@ -19,21 +19,23 @@ import javax.validation.constraints.Pattern;
 @Comment("网银存款,银行柜台存款,柜员机转账,柜员机现金存款")
 public class CompanyBankDepositForm implements IForm {
 
-    private String result_payAccountId;
     private String result_payerName;
     private String result_rechargeAddress;
     private String result_rechargeAmount;
 
 //    private String $code;
 
-    @Comment("存入银行")
-    @NotBlank(message = "rechargeForm.payAccountIdNotBlank")
-    public String getResult_payAccountId() {
-        return result_payAccountId;
+
+    private String account;
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getAccount() {
+        return account;
     }
 
-    public void setResult_payAccountId(String result_payAccountId) {
-        this.result_payAccountId = result_payAccountId;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     @Comment("存款人")

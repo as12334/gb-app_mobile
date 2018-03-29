@@ -87,6 +87,9 @@ public interface AppConstant {
     String ONE_CODE_PAY = "onecodepay";
     String OTHER = "other";
     String BITCOIN = "bitcoin";
+    String WECHAT_MICROPAY = "pay_name.wechat_micropay";
+    String ALIPAY_MICROPAY = "pay_name.alipay_micropay";
+    String QQ_MICROPAY = "pay_name.qq_micropay";
 
     String MCENTER_ONLINE_RECHARGE_URL = "/fund/deposit/online/list.html"; //站长中心-线上支付链接
     String ONLINE_PAY_URL ="/wallet/deposit/online/pay.html?pay=online&search.transactionNo=";

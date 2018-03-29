@@ -46,6 +46,8 @@ public enum AppErrorCodeEnum {
     NOT_RECOVER("1402", "非免转不能一键回收"),
     SYSTEM_READ("1403", "消息已读"),
     NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),
+    RECOVER_FIAL("1405","回收失败"),
+    RECOVER_PROCESS("1406","正在回收中"),
     REGISTER_FAIL("1500","注册失败，请联系客服！"),
     NOT_ALLOW_REGISTER("1501","禁止注册，请联系客服！"),
     REGISTER_SUCCESS("1502","注册成功"),
