@@ -1080,6 +1080,13 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         Map map = appRecovery(playerApiVo);
+        if(map == null){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
         if (map.get("msg") != null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
