@@ -31,7 +31,7 @@ import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
-import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
+import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
@@ -41,7 +41,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.model.master.enums.AppTypeEnum;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.MessageFormat;
@@ -50,8 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_ENTRY_URL;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 @Controller
 @RequestMapping("/depositOrigin")
@@ -75,6 +74,8 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         List<DepositPayApp> depositPayApps = new ArrayList<>();
+
+        //拼接入口图片地址
         StringBuilder depositImgUrl = new StringBuilder();
         depositImgUrl.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
@@ -114,7 +115,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/online")
     @ResponseBody
-    public String online() {
+    public String online(AppRequestModelVo model, HttpServletRequest request) {
         //可用银行
         List<Bank> banks = searchBank(BankEnum.TYPE_BANK.getCode());
         //层级
@@ -131,7 +132,6 @@ public class DepositAppController extends BaseDepositController {
 
         AppRechargePay appRechargePay = new AppRechargePay();
         List<PayAccount> list = new ArrayList<>();
-        PayAccountVo payAccountVo = new PayAccountVo();
         if (MapTool.isNotEmpty(payBankMap)) {
             for (Map.Entry<String, PayAccount> bankPayAccount : payBankMap.entrySet()) {
                 PayAccount payAccount = new PayAccount();
@@ -146,7 +146,7 @@ public class DepositAppController extends BaseDepositController {
                 list.add(payAccount);
             }
         }
-        return fillAttr(appRechargePay, null, list, DepositWayEnum.ONLINE_DEPOSIT.getCode(), null);
+        return fillAttr(appRechargePay, null, list, DepositWayEnum.ONLINE_DEPOSIT.getCode(), null, depositImgUrl(model, request, null));
     }
 
     /**
@@ -157,7 +157,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/wechat")
     @ResponseBody
-    public String wechat() {
+    public String wechat(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, null, new String[]{PayAccountAccountType.WECHAT.getCode(), PayAccountAccountType.WECHAT_MICROPAY.getCode()});
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.FAST_WECHAT.getCode(), RechargeTypeEnum.WECHATPAY_FAST.getCode());
@@ -165,7 +165,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.WECHATPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.WECHAT.getCode()));
     }
 
     /**
@@ -176,7 +176,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/alipay")
     @ResponseBody
-    public String alipay() {
+    public String alipay(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, null, new String[]{PayAccountAccountType.ALIPAY.getCode(), PayAccountAccountType.ALIPAY_MICROPAY.getCode()});
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.FAST_ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_FAST.getCode());
@@ -184,7 +184,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.ALIPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.ALIPAY.getCode()));
     }
 
     /**
@@ -192,7 +192,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/qq")
     @ResponseBody
-    public String qq() {
+    public String qq(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, null, new String[]{PayAccountAccountType.QQWALLET.getCode(), PayAccountAccountType.QQ_MICROPAY.getCode()});
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_FAST.getCode());
@@ -200,7 +200,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.QQWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.QQ.getCode()));
     }
 
     /**
@@ -208,7 +208,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/jd")
     @ResponseBody
-    public String jd() {
+    public String jd(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, PayAccountAccountType.JD_PAY.getCode(), null);
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.JDWALLET.getCode(), RechargeTypeEnum.JDWALLET_FAST.getCode());
@@ -216,7 +216,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.JDWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.JD.getCode()));
     }
 
     /**
@@ -224,7 +224,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/bd")
     @ResponseBody
-    public String bd() {
+    public String bd(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, PayAccountAccountType.BAIFU_PAY.getCode(), null);
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.BDWALLET.getCode(), RechargeTypeEnum.BDWALLET_FAST.getCode());
@@ -232,21 +232,21 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.BDWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.BD.getCode()));
     }
 
     /**
      * 银联支付
      */
-    @RequestMapping("/union")
+    @RequestMapping("/unionpay")
     @ResponseBody
-    public String union() {
+    public String union(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, PayAccountAccountType.UNION_PAY.getCode(), null);
         String onliineWay = DepositWayEnum.UNION_PAY_SCAN.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null);
+        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null, depositImgUrl(model, request, AppDepositPayEnum.UNIONPAY.getCode()));
     }
 
     /**
@@ -254,13 +254,13 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/onecodepay")
     @ResponseBody
-    public String onecodepay() {
+    public String onecodepay(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.ONECODEPAY.getCode(), RechargeTypeEnum.ONECODEPAY_FAST.getCode());
         String companyWay = DepositWayEnum.ONECODEPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, AppDepositPayEnum.ONECODEPAY.getCode()));
     }
 
     /**
@@ -268,13 +268,13 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/other")
     @ResponseBody
-    public String other() {
+    public String other(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.OTHER.getCode(), RechargeTypeEnum.OTHER_FAST.getCode());
         String companyWay = DepositWayEnum.OTHER_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, AppDepositPayEnum.OTHER.getCode()));
     }
 
     /**
@@ -282,13 +282,13 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/easy")
     @ResponseBody
-    public String easy() {
+    public String easy(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         Map<String, PayAccount> scanAccount = getScanAccount(rank, PayAccountAccountType.EASY_PAY.getCode(), null);
         String onliineWay = DepositWayEnum.EASY_PAY.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null);
+        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null, depositImgUrl(model, request, AppDepositPayEnum.EASYPAY.getCode()));
     }
 
     /**
@@ -296,7 +296,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/bitcoin")
     @ResponseBody
-    public String bitcoin() {
+    public String bitcoin(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         List<PayAccount> electronicAccount = searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.THIRTY.getCode(), null);
         Map<String, List<PayAccount>> payAccountMap = CollectionTool.groupByProperty(getCompanyPayAccount(electronicAccount), PayAccount.PROP_BANK_CODE, String.class);
@@ -311,7 +311,7 @@ public class DepositAppController extends BaseDepositController {
         playerRechargeVo.setResult(playerRecharge);
         String lastPayerBankcard = ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
         appRechargePay.setPayerBankcard(lastPayerBankcard);
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, AppDepositPayEnum.BITCONIT.getCode()));
     }
 
     /**
@@ -319,7 +319,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/company")
     @ResponseBody
-    public String company() {
+    public String company(AppRequestModelVo model, HttpServletRequest request) {
         PlayerRank rank = getRank();
         List<PayAccount> electronicAccount = searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), null);
         //获取公司入款收款账号
@@ -332,7 +332,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING));
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, null));
     }
 
     /**
@@ -340,7 +340,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/counter")
     @ResponseBody
-    public String counter() {
+    public String counter(AppRequestModelVo model, HttpServletRequest request) {
         List<PayAccount> electronicAccount = searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), true);
         //获取公司入款收款账号
         if (!isMultipleAccount()) {
@@ -351,9 +351,8 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_ATM_COUNTER));
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, null));
     }
-
 
     /**
      * 存款　优惠查询

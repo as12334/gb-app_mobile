@@ -23,6 +23,7 @@ import org.soul.model.pay.vo.OnlinePayVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
@@ -34,6 +35,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.AppPayAccount;
 import so.wwb.gamebox.mobile.app.model.AppRechargePay;
+import so.wwb.gamebox.mobile.app.model.AppRequestModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.Const;
@@ -68,9 +70,11 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.MessageFormat;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_IMG_URL;
 
 /**
  * Created by ed on 17-12-31.
@@ -121,23 +125,27 @@ public class BaseDepositController {
         if (StringTool.isNotBlank(url) && !url.contains("http")) {
             url = "http://" + url;
         }
-        return url.replace("\r\n","");
+        return url.replace("\r\n", "");
     }
 
     /**
      * 实体替换
+     *
      * @param payAccounts
-     * @param onlineWay　线上支付获取优惠类型
-     * @param companyWay　公司入款获取优惠类型
+     * @param onlineWay   　线上支付获取优惠类型
+     * @param companyWay  　公司入款获取优惠类型
      * @return
      */
-    public List<AppPayAccount> changeModel(List<PayAccount> payAccounts,String onlineWay,String companyWay){
-        if(!CollectionTool.isNotEmpty(payAccounts)){
+    public List<AppPayAccount> changeModel(List<PayAccount> payAccounts,
+                                           String onlineWay,
+                                           String companyWay, String depositImgUrl) {
+        if (!CollectionTool.isNotEmpty(payAccounts)) {
             return null;
         }
         List<AppPayAccount> appPayAccounts = new ArrayList<>();
         PayAccountVo payAccountVo = new PayAccountVo();
-        for(PayAccount payAccount : payAccounts){
+
+        for (PayAccount payAccount : payAccounts) {
             AppPayAccount appPayAccount = new AppPayAccount();
             appPayAccount.setSearchId(payAccountVo.getSearchId(payAccount.getId()));
             appPayAccount.setPayName(payAccount.getPayName());
@@ -165,11 +173,34 @@ public class BaseDepositController {
             }
             boolean isOnlineBank = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType());
             appPayAccount.setRechargeType(isOnlineBank ? RechargeTypeEnum.ONLINE_BANK.getCode() : appPayAccount.getDepositWay());
+            appPayAccount.setImgUrl(isOnlineBank ? String.format(depositImgUrl, appPayAccount.getBankCode()) : depositImgUrl);
             appPayAccounts.add(appPayAccount);
         }
         return appPayAccounts;
     }
 
+    /**
+     * 拼接渠道图片地址
+     *
+     * @param model
+     * @param request
+     * @return
+     */
+    protected String depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
+        if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
+            sb.append(AppTypeEnum.ANDROID.getCode());
+        }
+        if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
+            sb.append(AppTypeEnum.IOS.getCode());
+        }
+        if(StringTool.isNotBlank(code)){
+            return String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code);
+        }else{
+            return String.format(DEPOSIT_IMG_URL, sb, model.getResolution());
+        }
+    }
 
     /**
      * 是否隐藏收款账号
@@ -185,13 +216,14 @@ public class BaseDepositController {
 
         // 判断是否隐藏收款账号
         if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
-           return true;
+            return true;
         }
         return false;
     }
 
     /**
-     * 线上支付查询可用渠道　
+     * 线上支付查询可用渠道
+     *
      * @param rank
      * @param accountType
      * @param accountTypes
@@ -207,7 +239,6 @@ public class BaseDepositController {
     }
 
     /**
-     *
      * @param rank
      * @param bankCode
      * @param rechargeType
@@ -250,6 +281,7 @@ public class BaseDepositController {
         payAccountListVo.setSearch(payAccountSo);
         return searchPayAccount(payAccountListVo, null, null);
     }
+
     /**
      * 查询收款账号
      */
@@ -300,6 +332,7 @@ public class BaseDepositController {
 
     /**
      * 填充　AppRechargePay　属性
+     *
      * @param appRechargePay
      * @param scanAccount
      * @param electronicAccount
@@ -307,36 +340,41 @@ public class BaseDepositController {
      * @param companyWay
      * @return
      */
-    public String fillAttr(AppRechargePay appRechargePay, Map<String, PayAccount> scanAccount, List<PayAccount> electronicAccount, String onliineWay, String companyWay){
+    public String fillAttr(AppRechargePay appRechargePay,
+                           Map<String, PayAccount> scanAccount,
+                           List<PayAccount> electronicAccount,
+                           String onliineWay,
+                           String companyWay,
+                           String depositImgUrl) {
         List<AppPayAccount> scanAppPayAccounts = null;
         List<AppPayAccount> electronicAppPayAccounts = null;
-        if(MapTool.isNotEmpty(scanAccount)){
+        if (MapTool.isNotEmpty(scanAccount)) {
             List<PayAccount> list = new ArrayList<>();
-            for(Map.Entry<String, PayAccount> payAccountEntry : scanAccount.entrySet()){
+            for (Map.Entry<String, PayAccount> payAccountEntry : scanAccount.entrySet()) {
                 PayAccount payAccount = payAccountEntry.getValue();
-                if(StringTool.isNotBlank(onliineWay)) {
+                if (StringTool.isNotBlank(onliineWay)) {
                     payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + onliineWay));
                 }
-                if(PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccount.getAccountType())){
+                if (PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccount.getAccountType())) {
                     payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.QQ_MICROPAY));
-                }else if(PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccount.getAccountType())){
+                } else if (PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccount.getAccountType())) {
                     payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.ALIPAY_MICROPAY));
-                }else if(PayAccountAccountType.WECHAT_MICROPAY.getCode().equals(payAccount.getAccountType())){
+                } else if (PayAccountAccountType.WECHAT_MICROPAY.getCode().equals(payAccount.getAccountType())) {
                     payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.WECHAT_MICROPAY));
                 }
                 list.add(payAccount);
             }
-            scanAppPayAccounts = changeModel(list, onliineWay, null);
+            scanAppPayAccounts = changeModel(list, onliineWay, null, depositImgUrl);
             appRechargePay.setArrayList(scanAppPayAccounts);
         }
 
-        if(CollectionTool.isNotEmpty(electronicAccount)){
-            electronicAppPayAccounts = changeModel(electronicAccount, null , companyWay);
-            if(CollectionTool.isNotEmpty(scanAppPayAccounts)){
+        if (CollectionTool.isNotEmpty(electronicAccount)) {
+            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, depositImgUrl);
+            if (CollectionTool.isNotEmpty(scanAppPayAccounts)) {
                 electronicAppPayAccounts.addAll(scanAppPayAccounts);
             }
             appRechargePay.setArrayList(electronicAppPayAccounts);
-        }else if(!CollectionTool.isNotEmpty(scanAppPayAccounts)){
+        } else if (!CollectionTool.isNotEmpty(scanAppPayAccounts)) {
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
@@ -346,7 +384,7 @@ public class BaseDepositController {
         appRechargePay.setCustomerService(getCustomerService());
         appRechargePay.setQuickMoneys(quickSelection());
         appRechargePay.setMultipleAccount(isMultipleAccount());
-        return  AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 appRechargePay, APP_VERSION);
     }
@@ -484,6 +522,7 @@ public class BaseDepositController {
             }
         }
     }
+
     /**
      * 获取主货币符号
      *
@@ -640,7 +679,8 @@ public class BaseDepositController {
 
     /**
      * 根据searchId获取收款账号
-     *searchId 加密后的 payAccountId
+     * searchId 加密后的 payAccountId
+     *
      * @param
      * @return
      */
@@ -682,7 +722,7 @@ public class BaseDepositController {
     /**
      * 线上支付（含扫码支付）提交公共方法
      */
-    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,HttpServletRequest request) {
+    public String onlineCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -703,7 +743,7 @@ public class BaseDepositController {
             onlineToneWarn();
             //设置session相关存款数据
             //setRechargeCount();
-            return ThirdPartyPay(playerRechargeVo,request);
+            return ThirdPartyPay(playerRechargeVo, request);
         } else {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
                     playerRechargeVo.getErrMsg(),
@@ -711,7 +751,7 @@ public class BaseDepositController {
         }
     }
 
-    public String ThirdPartyPay(PlayerRechargeVo playerRechargeVo,HttpServletRequest request) {
+    public String ThirdPartyPay(PlayerRechargeVo playerRechargeVo, HttpServletRequest request) {
         LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getResult().getTransactionNo());
         if (StringTool.isBlank(playerRechargeVo.getResult().getTransactionNo())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),
@@ -720,7 +760,7 @@ public class BaseDepositController {
         }
         try {
             playerRechargeVo.getSearch().setTransactionNo(playerRechargeVo.getResult().getTransactionNo());
-            if(playerRechargeVo.getResult().getId() != null){
+            if (playerRechargeVo.getResult().getId() != null) {
                 playerRechargeVo.getSearch().setId(playerRechargeVo.getResult().getId());
             }
             playerRechargeVo._setDataSourceId(null);
@@ -748,8 +788,8 @@ public class BaseDepositController {
                 playerRecharge.setPayUrl(domain);
                 playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
                 ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
-                Map<String,Object> map = new HashMap<>();
-                map.put("payLink",url);
+                Map<String, Object> map = new HashMap<>();
+                map.put("payLink", url);
                 return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
                         map, APP_VERSION);
@@ -846,7 +886,7 @@ public class BaseDepositController {
         return ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
     }
 
-    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,String type) {
+    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, String type) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -860,11 +900,11 @@ public class BaseDepositController {
                     null, APP_VERSION);
         }
 
-        if(AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)){
+        if (AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)) {
             playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount);
-        }else if(AppDepositPayEnum.ELECTRONIC_PAY.getCode().equals(type)){
+        } else if (AppDepositPayEnum.ELECTRONIC_PAY.getCode().equals(type)) {
             playerRechargeVo = electronicSaveRecharge(playerRechargeVo, payAccount);
-        }else if(AppDepositPayEnum.BITCOIN_PAY.getCode().equals(type)){
+        } else if (AppDepositPayEnum.BITCOIN_PAY.getCode().equals(type)) {
             playerRechargeVo = bitcoinSaveRecharge(playerRechargeVo, payAccount);
         }
         //保存订单
@@ -883,7 +923,7 @@ public class BaseDepositController {
      * @return
      */
     public String getVoMessage(PlayerRechargeVo playerRechargeVo) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         String code;
         if (!playerRechargeVo.isSuccess()) {
             map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
