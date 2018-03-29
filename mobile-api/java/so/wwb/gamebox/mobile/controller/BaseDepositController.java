@@ -173,7 +173,7 @@ public class BaseDepositController {
             }
             boolean isOnlineBank = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType());
             appPayAccount.setRechargeType(isOnlineBank ? RechargeTypeEnum.ONLINE_BANK.getCode() : appPayAccount.getDepositWay());
-            appPayAccount.setImgUrl(isOnlineBank ? String.format(depositImgUrl, appPayAccount.getBankCode()) : depositImgUrl);
+            appPayAccount.setImgUrl(isOnlineBank ? depositImgUrl.replace("null", appPayAccount.getBankCode()) : depositImgUrl);
             appPayAccounts.add(appPayAccount);
         }
         return appPayAccounts;
@@ -195,11 +195,7 @@ public class BaseDepositController {
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
             sb.append(AppTypeEnum.IOS.getCode());
         }
-        if(StringTool.isNotBlank(code)){
-            return String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code);
-        }else{
-            return String.format(DEPOSIT_IMG_URL, sb, model.getResolution());
-        }
+        return String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code);
     }
 
     /**

@@ -705,6 +705,7 @@ public class BaseUserInfoController {
         }
         map.put("select", queryApis());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+        map.put("autoPay", SessionManagerCommon.isAutoPay());
         return map;
     }
 
