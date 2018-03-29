@@ -217,7 +217,7 @@ public class RegisterAppController {
                     APP_VERSION);
         }
         return AppModelVo.getAppModeVoJson(true,
-                AppErrorCodeEnum.REGISTER_SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.REGISTER_SUCCESS.getMsg(),
                 null,
                 APP_VERSION);
