@@ -97,6 +97,7 @@ public class DepositAppController extends BaseDepositController {
             DepositPayApp depositPayApp = new DepositPayApp();
             depositPayApp.setCode(fastRecharge);
             depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, AppConstant.IS_FAST_RECHARGE));
+            depositPayApp.setIcoUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), AppConstant.IS_FAST_RECHARGE));
             depositPayApps.add(depositPayApp);
         }
 
