@@ -2,12 +2,8 @@ package so.wwb.gamebox.mobile.app.validateForm;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.soul.commons.query.enums.Operator;
-import org.soul.commons.validation.form.constraints.Depends;
-import org.soul.commons.validation.form.constraints.Remote;
 import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
-import so.wwb.gamebox.mobile.controller.BaseDepositController;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
@@ -22,7 +18,7 @@ public class BitcoinDepositForm implements IForm {
     private String result_bitAmount;
 //    private String $code;
     private String result_returnTime;
-    private String result_payAccountId;
+    private String account;
 
     @Comment("玩家比特币钱包地址")
     @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
@@ -33,16 +29,6 @@ public class BitcoinDepositForm implements IForm {
 
     public void setResult_payerBankcard(String result_payerBankcard) {
         this.result_payerBankcard = result_payerBankcard;
-    }
-
-    @Comment("存款渠道")
-    @NotBlank(message = "rechargeForm.payAccountNotBlank")
-    public String getResult_payAccountId() {
-        return result_payAccountId;
-    }
-
-    public void setResult_payAccountId(String result_payAccountId) {
-        this.result_payAccountId = result_payAccountId;
     }
 
     @Comment("txId")
@@ -88,5 +74,15 @@ public class BitcoinDepositForm implements IForm {
 
     public void setResult_returnTime(String result_returnTime) {
         this.result_returnTime = result_returnTime;
+    }
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 }

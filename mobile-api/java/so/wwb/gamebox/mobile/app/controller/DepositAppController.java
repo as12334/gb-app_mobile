@@ -5,7 +5,6 @@ import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,7 +14,10 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.*;
+import so.wwb.gamebox.mobile.app.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.model.AppRechargePay;
+import so.wwb.gamebox.mobile.app.model.AppSale;
+import so.wwb.gamebox.mobile.app.model.DepositPayApp;
 import so.wwb.gamebox.mobile.app.validateForm.*;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -31,7 +33,7 @@ import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
-import so.wwb.gamebox.model.master.enums.AppTypeEnum;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
@@ -41,7 +43,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-
+import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.MessageFormat;
@@ -131,21 +133,21 @@ public class DepositAppController extends BaseDepositController {
 
         AppRechargePay appRechargePay = new AppRechargePay();
         List<PayAccount> list = new ArrayList<>();
+        PayAccountVo payAccountVo = new PayAccountVo();
         if (MapTool.isNotEmpty(payBankMap)) {
             for (Map.Entry<String, PayAccount> bankPayAccount : payBankMap.entrySet()) {
                 PayAccount payAccount = new PayAccount();
                 PayAccount bankPayAccountValue = bankPayAccount.getValue();
-                payAccount.setId(bankPayAccountValue.getId());
                 payAccount.setPayName(LocaleTool.tranDict(DictEnum.BANKNAME, bankPayAccount.getKey()));
                 payAccount.setSingleDepositMin(bankPayAccountValue.getSingleDepositMin());
                 payAccount.setSingleDepositMax(bankPayAccountValue.getSingleDepositMax());
                 payAccount.setPayType(bankPayAccountValue.getPayType());
                 payAccount.setType(bankPayAccountValue.getType());
                 payAccount.setBankCode(bankPayAccount.getKey());
+                payAccount.setSearchId(payAccountVo.getSearchId(bankPayAccountValue.getId()));
                 list.add(payAccount);
             }
         }
-        appRechargePay.setCommand(payAccountListVo);
         return fillAttr(appRechargePay, null, list, DepositWayEnum.ONLINE_DEPOSIT.getCode(), null);
     }
 
@@ -367,7 +369,7 @@ public class DepositAppController extends BaseDepositController {
                     LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
-        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+        PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),

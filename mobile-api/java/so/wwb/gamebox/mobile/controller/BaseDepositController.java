@@ -6,7 +6,6 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
@@ -25,11 +24,7 @@ import org.soul.model.security.privilege.vo.SysResourceListVo;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.session.SessionManagerBase;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
@@ -38,7 +33,6 @@ import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.AppPayAccount;
-import so.wwb.gamebox.mobile.app.model.AppPlayerRechange;
 import so.wwb.gamebox.mobile.app.model.AppRechargePay;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
@@ -46,7 +40,6 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
-import so.wwb.gamebox.model.company.enums.BankEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
@@ -67,17 +60,14 @@ import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
-import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.cache.Cache;
-import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
@@ -146,9 +136,10 @@ public class BaseDepositController {
             return null;
         }
         List<AppPayAccount> appPayAccounts = new ArrayList<>();
+        PayAccountVo payAccountVo = new PayAccountVo();
         for(PayAccount payAccount : payAccounts){
             AppPayAccount appPayAccount = new AppPayAccount();
-            appPayAccount.setId(payAccount.getId());
+            appPayAccount.setSearchId(payAccountVo.getSearchId(payAccount.getId()));
             appPayAccount.setPayName(payAccount.getPayName());
             appPayAccount.setAccount(payAccount.getAccount());
             appPayAccount.setType(payAccount.getType());
@@ -321,8 +312,20 @@ public class BaseDepositController {
         List<AppPayAccount> electronicAppPayAccounts = null;
         if(MapTool.isNotEmpty(scanAccount)){
             List<PayAccount> list = new ArrayList<>();
-            Collection<PayAccount> values = scanAccount.values();
-            list.addAll(values);
+            for(Map.Entry<String, PayAccount> payAccountEntry : scanAccount.entrySet()){
+                PayAccount payAccount = payAccountEntry.getValue();
+                if(StringTool.isNotBlank(onliineWay)) {
+                    payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + onliineWay));
+                }
+                if(PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccount.getAccountType())){
+                    payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.QQ_MICROPAY));
+                }else if(PayAccountAccountType.ALIPAY_MICROPAY.getCode().equals(payAccount.getAccountType())){
+                    payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.ALIPAY_MICROPAY));
+                }else if(PayAccountAccountType.WECHAT_MICROPAY.getCode().equals(payAccount.getAccountType())){
+                    payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.WECHAT_MICROPAY));
+                }
+                list.add(payAccount);
+            }
             scanAppPayAccounts = changeModel(list, onliineWay, null);
             appRechargePay.setArrayList(scanAppPayAccounts);
         }
@@ -636,6 +639,24 @@ public class BaseDepositController {
     }
 
     /**
+     * 根据searchId获取收款账号
+     *searchId 加密后的 payAccountId
+     * @param
+     * @return
+     */
+    public PayAccount getPayAccountBySearchId(String searchId) {
+        PayAccountVo payAccountVo = new PayAccountVo();
+        payAccountVo.setSearchId(searchId);
+        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
+        PayAccount payAccount = payAccountVo.getResult();
+        if (payAccount != null && !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+            LOG.info("账号{0}已停用,故返回收款账号null", payAccount.getPayName());
+            return null;
+        }
+        return payAccount;
+    }
+
+    /**
      * 获取玩家信息
      */
     public UserPlayer getUserPlayer() {
@@ -668,7 +689,7 @@ public class BaseDepositController {
                     LocaleTool.tranMessage(Module.VALID, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
-        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+        PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
@@ -830,7 +851,7 @@ public class BaseDepositController {
                     LocaleTool.tranMessage(Module.VALID, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
-        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+        PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
