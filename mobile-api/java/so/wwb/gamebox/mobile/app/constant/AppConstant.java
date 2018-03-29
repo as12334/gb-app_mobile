@@ -65,7 +65,7 @@ public interface AppConstant {
     String API_LOGO_URL = "%s/api/api_logo_%s.png";
 
     /**存款渠道图片路径：/终端/common/deposit/分辨率/deposit_entry*/
-    String DEPOSIT_ENTRY_URL = "%s/%s/common/deposit/%s/deposit_entry/%s.png";
+    String DEPOSIT_ENTRY_URL = "%s/common/deposit/%s/deposit_entry/%s.png";
 
     String SUCCESS = "success";    //4 , 2 ,success代表已发放
     String SUCCESS_4 = "4";

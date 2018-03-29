@@ -43,15 +43,17 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-
+import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_ENTRY_URL;
 
 @Controller
 @RequestMapping("/depositOrigin")
@@ -61,7 +63,7 @@ public class DepositAppController extends BaseDepositController {
      */
     @RequestMapping("/index")
     @ResponseBody
-    public String index() {
+    public String index(AppRequestModelVo model, HttpServletRequest request) {
         PayAccountListVo payAccountListVo = new PayAccountListVo();
         payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
         payAccountListVo.setPlayerId(SessionManager.getUserId());
@@ -75,19 +77,29 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         List<DepositPayApp> depositPayApps = new ArrayList<>();
+        StringBuilder depositImgUrl = new StringBuilder();
+        depositImgUrl.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
+        if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
+            depositImgUrl.append(AppTypeEnum.ANDROID.getCode());
+        }
+        if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
+            depositImgUrl.append(AppTypeEnum.IOS.getCode());
+        }
+
         for (Map.Entry<String, Long> depositPay : channelCountMap.entrySet()) {
             if (depositPay.getValue() > 0) {
                 DepositPayApp depositPayApp = new DepositPayApp();
                 depositPayApp.setCode(depositPay.getKey());
                 depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, depositPay.getKey()));
+                depositPayApp.setIcoUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), depositPay.getKey()));
                 depositPayApps.add(depositPayApp);
             }
-
         }
         if (isFastRecharge) {
             DepositPayApp depositPayApp = new DepositPayApp();
             depositPayApp.setCode(fastRecharge);
             depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, AppConstant.IS_FAST_RECHARGE));
+            depositPayApp.setIcoUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), AppConstant.IS_FAST_RECHARGE));
             depositPayApps.add(depositPayApp);
         }
 
