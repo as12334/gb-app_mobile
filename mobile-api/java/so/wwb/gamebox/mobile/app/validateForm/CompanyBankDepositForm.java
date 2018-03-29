@@ -51,8 +51,7 @@ public class CompanyBankDepositForm implements IForm {
     }
 
     @Comment("交易地点")
-    @Depends(message = "rechargeForm.result.rechargeAddress.notBlank", property = "result.rechargeType", operator = Operator.EQ, value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
-    @Length(max = 50, message = "fund.rechargeForm.result.rechargeAddress.length")
+    @Length(max = 20)
     public String getResult_rechargeAddress() {
         return result_rechargeAddress;
     }
