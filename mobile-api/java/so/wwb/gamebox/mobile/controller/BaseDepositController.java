@@ -748,9 +748,11 @@ public class BaseDepositController {
                 playerRecharge.setPayUrl(domain);
                 playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
                 ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
+                Map<String,Object> map = new HashMap<>();
+                map.put("payLink",url);
                 return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.SUCCESS.getMsg(),
-                        url, APP_VERSION);
+                        map, APP_VERSION);
             }
         } catch (Exception e) {
             LOG.error(e, "调用第三方pay出错交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
@@ -1066,5 +1068,4 @@ public class BaseDepositController {
         playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
         return playerRechargeVo;
     }
-
 }
