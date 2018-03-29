@@ -730,7 +730,7 @@ public class BaseDepositController {
                     null, APP_VERSION);
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
-        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+        if (payAccount == null) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
@@ -894,7 +894,7 @@ public class BaseDepositController {
                     null, APP_VERSION);
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
-        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+        if (payAccount == null) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
