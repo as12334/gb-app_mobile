@@ -1,8 +1,5 @@
 package so.wwb.gamebox.mobile.app.model;
 
-import so.wwb.gamebox.model.boss.deposit.po.PayAccountDisableLog;
-import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
-
 import java.util.List;
 
 public class AppRechargePay {
@@ -10,8 +7,6 @@ public class AppRechargePay {
     private String currency;
     /**在线客服路径*/
     private String customerService;
-    /**PayAccountListVo*/
-    private PayAccountListVo command;
     /**存款渠道集合*/
     private List<AppPayAccount> arrayList;
     /**快选金额*/
@@ -69,14 +64,6 @@ public class AppRechargePay {
 
     public void setHide(boolean hide) {
         isHide = hide;
-    }
-
-    public PayAccountListVo getCommand() {
-        return command;
-    }
-
-    public void setCommand(PayAccountListVo command) {
-        this.command = command;
     }
 
     public String getPayerBankcard() {

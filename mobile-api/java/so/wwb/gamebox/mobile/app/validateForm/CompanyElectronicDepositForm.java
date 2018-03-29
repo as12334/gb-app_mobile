@@ -21,8 +21,20 @@ public class CompanyElectronicDepositForm implements IForm {
     private String result_payerBankcard;
     private String result_bankOrder;
     private String result_payerName;
-    private String result_payAccountId;
+
 //    private String $code;
+
+    private String account;
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
 
     @Comment("存款金额")
     @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
@@ -68,15 +80,6 @@ public class CompanyElectronicDepositForm implements IForm {
         this.result_payerName = result_payerName;
     }
 
-    @Comment("存款渠道")
-    @NotBlank(message = "rechargeForm.payAccountNotBlank")
-    public String getResult_payAccountId() {
-        return result_payAccountId;
-    }
-
-    public void setResult_payAccountId(String result_payAccountId) {
-        this.result_payAccountId = result_payAccountId;
-    }
 
 //    @Comment("验证码")
 //    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})

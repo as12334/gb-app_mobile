@@ -1,29 +1,30 @@
 package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.validation.form.annotation.FormModel;
-import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.*;
+import so.wwb.gamebox.mobile.app.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.model.AppRechargePay;
+import so.wwb.gamebox.mobile.app.model.AppSale;
+import so.wwb.gamebox.mobile.app.model.DepositPayApp;
 import so.wwb.gamebox.mobile.app.validateForm.*;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.*;
+import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -33,28 +34,24 @@ import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
-import so.wwb.gamebox.model.master.digiccy.po.DigiccyAccountInfo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
-import so.wwb.gamebox.model.master.operation.po.ActivityDepositWay;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.web.common.demomodel.DemoMenuEnum;
-import so.wwb.gamebox.web.common.demomodel.DemoModel;
-import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_ENTRY_URL;
 
 @Controller
 @RequestMapping("/depositOrigin")
@@ -72,25 +69,25 @@ public class DepositAppController extends BaseDepositController {
         Map<String, Long> channelCountMap = ServiceSiteTool.payAccountService().queryChannelCount(payAccountListVo);
         String fastRecharge = fastRecharge();
         boolean isFastRecharge = StringTool.isNotBlank(fastRecharge);
-        if(!MapTool.isNotEmpty(channelCountMap) && !isFastRecharge){
+        if (!MapTool.isNotEmpty(channelCountMap) && !isFastRecharge) {
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                     AppErrorCodeEnum.NO_AVAILABLE_CHANNELS.getMsg(),
                     null, APP_VERSION);
         }
         List<DepositPayApp> depositPayApps = new ArrayList<>();
         for (Map.Entry<String, Long> depositPay : channelCountMap.entrySet()) {
-            if(depositPay.getValue() > 0){
+            if (depositPay.getValue() > 0) {
                 DepositPayApp depositPayApp = new DepositPayApp();
                 depositPayApp.setCode(depositPay.getKey());
-                depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON,depositPay.getKey()));
+                depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, depositPay.getKey()));
                 depositPayApps.add(depositPayApp);
             }
 
         }
-        if(isFastRecharge){
+        if (isFastRecharge) {
             DepositPayApp depositPayApp = new DepositPayApp();
             depositPayApp.setCode(fastRecharge);
-            depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON,AppConstant.IS_FAST_RECHARGE));
+            depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, AppConstant.IS_FAST_RECHARGE));
             depositPayApps.add(depositPayApp);
         }
 
@@ -120,26 +117,26 @@ public class DepositAppController extends BaseDepositController {
         payAccountListVo.setPlayerRank(rank);
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         payAccountListVo.setBanks(banks);
-        Map<String,PayAccount> payBankMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
+        Map<String, PayAccount> payBankMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
 
         AppRechargePay appRechargePay = new AppRechargePay();
         List<PayAccount> list = new ArrayList<>();
-        if(MapTool.isNotEmpty(payBankMap)) {
+        PayAccountVo payAccountVo = new PayAccountVo();
+        if (MapTool.isNotEmpty(payBankMap)) {
             for (Map.Entry<String, PayAccount> bankPayAccount : payBankMap.entrySet()) {
                 PayAccount payAccount = new PayAccount();
                 PayAccount bankPayAccountValue = bankPayAccount.getValue();
-                payAccount.setId(bankPayAccountValue.getId());
-                payAccount.setPayName(LocaleTool.tranDict(DictEnum.BANKNAME,bankPayAccount.getKey()));
+                payAccount.setPayName(LocaleTool.tranDict(DictEnum.BANKNAME, bankPayAccount.getKey()));
                 payAccount.setSingleDepositMin(bankPayAccountValue.getSingleDepositMin());
                 payAccount.setSingleDepositMax(bankPayAccountValue.getSingleDepositMax());
                 payAccount.setPayType(bankPayAccountValue.getPayType());
                 payAccount.setType(bankPayAccountValue.getType());
                 payAccount.setBankCode(bankPayAccount.getKey());
+                payAccount.setSearchId(payAccountVo.getSearchId(bankPayAccountValue.getId()));
                 list.add(payAccount);
             }
         }
-        appRechargePay.setCommand(payAccountListVo);
-        return fillAttr(appRechargePay,null,list,DepositWayEnum.ONLINE_DEPOSIT.getCode(),null);
+        return fillAttr(appRechargePay, null, list, DepositWayEnum.ONLINE_DEPOSIT.getCode(), null);
     }
 
     /**
@@ -158,7 +155,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.WECHATPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,electronicAccount,onliineWay,companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
     }
 
     /**
@@ -177,7 +174,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.ALIPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,electronicAccount,onliineWay,companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
     }
 
     /**
@@ -193,7 +190,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.QQWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,electronicAccount,onliineWay,companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
     }
 
     /**
@@ -209,7 +206,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.JDWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,electronicAccount,onliineWay,companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
     }
 
     /**
@@ -225,7 +222,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.BDWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,electronicAccount,onliineWay,companyWay);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay);
     }
 
     /**
@@ -239,7 +236,7 @@ public class DepositAppController extends BaseDepositController {
         String onliineWay = DepositWayEnum.UNION_PAY_SCAN.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,null,onliineWay,null);
+        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null);
     }
 
     /**
@@ -253,12 +250,11 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.ONECODEPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,null,electronicAccount,null,companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
     }
 
     /**
      * 其他电子支付
-     *
      */
     @RequestMapping("/other")
     @ResponseBody
@@ -268,7 +264,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.OTHER_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,null,electronicAccount,null,companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
     }
 
     /**
@@ -282,12 +278,11 @@ public class DepositAppController extends BaseDepositController {
         String onliineWay = DepositWayEnum.EASY_PAY.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay,scanAccount,null,onliineWay,null);
+        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null);
     }
 
     /**
      * 比特币支付步奏1-选择收款账号
-     *
      */
     @RequestMapping("/bitcoin")
     @ResponseBody
@@ -306,12 +301,11 @@ public class DepositAppController extends BaseDepositController {
         playerRechargeVo.setResult(playerRecharge);
         String lastPayerBankcard = ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
         appRechargePay.setPayerBankcard(lastPayerBankcard);
-        return fillAttr(appRechargePay,null,electronicAccount,null,companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
     }
 
     /**
      * 网银存款步奏1-选择收款账户
-     *
      */
     @RequestMapping("/company")
     @ResponseBody
@@ -328,12 +322,11 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING));
-        return fillAttr(appRechargePay,null,electronicAccount,null,companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
     }
 
     /**
      * 柜员机/柜台存款步奏1-选择收款账号
-     *
      */
     @RequestMapping("/counter")
     @ResponseBody
@@ -348,10 +341,8 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_ATM_COUNTER));
-        return fillAttr(appRechargePay,null,electronicAccount,null,companyWay);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay);
     }
-
-
 
 
     /**
@@ -366,7 +357,7 @@ public class DepositAppController extends BaseDepositController {
                     LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
-        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+        PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
@@ -466,15 +457,15 @@ public class DepositAppController extends BaseDepositController {
      * 比特币　查询优惠
      */
     public String bitcoinSeachDiscount(PlayerRechargeVo playerRechargeVo) {
-        if(StringTool.isNotBlank(playerRechargeVo.getResult().getBankOrder())){
+        if (StringTool.isNotBlank(playerRechargeVo.getResult().getBankOrder())) {
             boolean isExistsTxId = checkTxId(playerRechargeVo.getResult().getBankOrder());
-            if(!isExistsTxId){
+            if (!isExistsTxId) {
                 return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEXISTS.getCode(),
                         AppErrorCodeEnum.TXIDISEXISTS.getMsg(),
                         null, APP_VERSION);
             }
-        }else{
-             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEMPTY.getCode(),
+        } else {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEMPTY.getCode(),
                     AppErrorCodeEnum.TXIDISEMPTY.getMsg(),
                     null, APP_VERSION);
         }
