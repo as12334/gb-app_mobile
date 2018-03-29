@@ -136,13 +136,13 @@ public class DepositAppController extends BaseDepositController {
             for (Map.Entry<String, PayAccount> bankPayAccount : payBankMap.entrySet()) {
                 PayAccount payAccount = new PayAccount();
                 PayAccount bankPayAccountValue = bankPayAccount.getValue();
+                payAccount.setId(bankPayAccountValue.getId());
                 payAccount.setPayName(LocaleTool.tranDict(DictEnum.BANKNAME, bankPayAccount.getKey()));
                 payAccount.setSingleDepositMin(bankPayAccountValue.getSingleDepositMin());
                 payAccount.setSingleDepositMax(bankPayAccountValue.getSingleDepositMax());
                 payAccount.setPayType(bankPayAccountValue.getPayType());
                 payAccount.setType(bankPayAccountValue.getType());
                 payAccount.setBankCode(bankPayAccount.getKey());
-                payAccount.setSearchId(payAccountVo.getSearchId(bankPayAccountValue.getId()));
                 list.add(payAccount);
             }
         }
