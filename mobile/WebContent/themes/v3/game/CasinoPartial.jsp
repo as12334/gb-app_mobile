@@ -85,7 +85,7 @@
                                             <div class="mui-row">
                                                 <c:forEach items="${t.value}" var="g">
                                                     <c:if test="${not empty allGames[g.toString()]}">
-                                                        <div class="mui-col-xs-3">
+                                                        <div class="mui-col-xs-3" apiName="${allGames[g.toString()].name}">
                                                             <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g.toString()].apiId}","dataStatus":"${allGames[g.toString()].status}",
                                                             "dataGameCode":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].code : ''}","dataGameId":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].gameId : ''}",
                                                             "dataApiName":"${allGames[g.toString()].name}","target":"goGame","opType":"function"}' class="" >
