@@ -90,7 +90,7 @@ public class DepositAppController extends BaseDepositController {
                 DepositPayApp depositPayApp = new DepositPayApp();
                 depositPayApp.setCode(depositPay.getKey());
                 depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, depositPay.getKey()));
-                depositPayApp.setIcoUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), depositPay.getKey()));
+                depositPayApp.setIconUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), depositPay.getKey()));
                 depositPayApps.add(depositPayApp);
             }
         }
@@ -98,7 +98,7 @@ public class DepositAppController extends BaseDepositController {
             DepositPayApp depositPayApp = new DepositPayApp();
             depositPayApp.setCode(fastRecharge);
             depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, AppConstant.IS_FAST_RECHARGE));
-            depositPayApp.setIcoUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), AppConstant.IS_FAST_RECHARGE));
+            depositPayApp.setIconUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), AppConstant.IS_FAST_RECHARGE));
             depositPayApps.add(depositPayApp);
         }
 
@@ -367,7 +367,7 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
-        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
+        if (payAccount == null ) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);

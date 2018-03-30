@@ -6,7 +6,7 @@ import java.util.Map;
 public class DepositPayApp {
     private String code;
     private String name;
-    private String icoUrl;
+    private String iconUrl;
 
     public String getCode() {
         return code;
@@ -24,12 +24,12 @@ public class DepositPayApp {
         this.name = name;
     }
 
-    public String getIcoUrl() {
-        return icoUrl;
+    public String getIconUrl() {
+        return iconUrl;
     }
 
-    public void setIcoUrl(String icoUrl) {
-        this.icoUrl = icoUrl;
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
     }
 }
 
