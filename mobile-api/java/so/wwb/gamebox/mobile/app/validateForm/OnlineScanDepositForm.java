@@ -49,8 +49,8 @@ public class OnlineScanDepositForm implements IForm {
 
     @Comment("授权码")
     @Depends(property = {"$isAuthCode"}, operator = {Operator.EQ}, value = {"true"},jsValueExp = "$(\"[name=isAuthCode]\").val() == 'true'")
-    @Length(max = 20, min = 12)
-    @Digits(fraction = 0, integer = 20)
+    @Digits(fraction = 0, integer = 20,message = "rechargeForm.result.bitAmount")
+    @Length(max = 20, min = 12,message = "rechargeForm.rechargeAmountLength")
     public String getResult_payerBankcard() {
         return result_payerBankcard;
     }
