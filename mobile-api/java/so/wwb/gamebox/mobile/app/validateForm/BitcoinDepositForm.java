@@ -33,7 +33,7 @@ public class BitcoinDepositForm implements IForm {
 
     @Comment("txId")
     @NotBlank(message = "rechargeForm.payerTxIdNotBlank")
-    @Length(max = 64)
+    @Length(max = 64,message = "rechargeForm.result.IntegerMax")
     public String getResult_bankOrder() {
         return result_bankOrder;
     }
@@ -56,8 +56,8 @@ public class BitcoinDepositForm implements IForm {
     @Comment("比特币")
     @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
-    @DecimalMin(value = "0.00010001")
-    @Digits(integer = 8, fraction = 8)
+    @DecimalMin(value = "0.00010001",message = "rechargeForm.result.bitAmountMin")
+    @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmount")
     public String getResult_bitAmount() {
         return result_bitAmount;
     }
