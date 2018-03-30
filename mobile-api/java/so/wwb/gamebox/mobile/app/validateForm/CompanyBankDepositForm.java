@@ -41,7 +41,7 @@ public class CompanyBankDepositForm implements IForm {
     @Comment("存款人")
     @Pattern(message = "rechargeForm.payerName.pattern", regexp = RegExpConstants.PAYERNAME)
     @Depends(message = "deposit_auto.存款人不能为空",property = "result.rechargeType",operator = Operator.NE,value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
-    @Length(min = 2, max = 30,message = "rechargeForm.payAccountIdNotBlank")
+    @Length(min = 2, max = 30)
     public String getResult_payerName() {
         return result_payerName;
     }
@@ -51,7 +51,7 @@ public class CompanyBankDepositForm implements IForm {
     }
 
     @Comment("交易地点")
-    @Length(max = 20,message = "rechargeForm.result.StringMax")
+    @Length(max = 20 ,message = "rechargeForm.result.rechargeAddress")
     public String getResult_rechargeAddress() {
         return result_rechargeAddress;
     }

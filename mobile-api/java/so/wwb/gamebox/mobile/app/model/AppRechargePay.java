@@ -10,7 +10,7 @@ public class AppRechargePay {
     /**存款渠道集合*/
     private List<AppPayAccount> arrayList;
     /**快选金额*/
-    private double[] quickMoneys;
+    private int[] quickMoneys;
     /**是否展示多个收款账号*/
     private boolean isMultipleAccount;
     /**是否影藏收款账号*/
@@ -42,14 +42,6 @@ public class AppRechargePay {
         this.arrayList = arrayList;
     }
 
-    public double[] getQuickMoneys() {
-        return quickMoneys;
-    }
-
-    public void setQuickMoneys(double[] quickMoneys) {
-        this.quickMoneys = quickMoneys;
-    }
-
     public boolean isMultipleAccount() {
         return isMultipleAccount;
     }
@@ -72,6 +64,14 @@ public class AppRechargePay {
 
     public void setPayerBankcard(String payerBankcard) {
         this.payerBankcard = payerBankcard;
+    }
+
+    public int[] getQuickMoneys() {
+        return quickMoneys;
+    }
+
+    public void setQuickMoneys(int[] quickMoneys) {
+        this.quickMoneys = quickMoneys;
     }
 }
 
