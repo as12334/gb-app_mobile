@@ -1097,7 +1097,7 @@ public class MineAppController extends BaseMineController {
             if (StringTool.equals(map.get("resultStatus").toString(), "SUCCESS")) {
                 return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
-                        AppErrorCodeEnum.SUCCESS.getMsg(),
+                        AppErrorCodeEnum.RECOVER_SUCCESS.getMsg(),
                         null,
                         APP_VERSION);
             } else if (StringTool.equals(map.get("resultCode").toString(), "1")) {
