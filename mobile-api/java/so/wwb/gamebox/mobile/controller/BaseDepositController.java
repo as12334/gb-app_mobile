@@ -25,6 +25,7 @@ import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
+import org.soul.web.tag.ImageTag;
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
@@ -138,7 +139,7 @@ public class BaseDepositController {
      */
     public List<AppPayAccount> changeModel(List<PayAccount> payAccounts,
                                            String onlineWay,
-                                           String companyWay, String depositImgUrl) {
+                                           String companyWay, Map<String,String> imgUrl) {
         if (!CollectionTool.isNotEmpty(payAccounts)) {
             return null;
         }
@@ -167,13 +168,14 @@ public class BaseDepositController {
                 appPayAccount.setAccountInformation(payAccount.getAccountInformation());
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
-                appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl());
+                appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
+                        ImageTag.getThumbPath(imgUrl.get("serverName"),payAccount.getQrCodeUrl(),AppConstant.QRHEIGHT,AppConstant.QRWIDTH));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
             }
             boolean isOnlineBank = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType());
             appPayAccount.setRechargeType(isOnlineBank ? RechargeTypeEnum.ONLINE_BANK.getCode() : appPayAccount.getDepositWay());
-            appPayAccount.setImgUrl(isOnlineBank ? depositImgUrl.replace("null", appPayAccount.getBankCode()) : depositImgUrl);
+            appPayAccount.setImgUrl(isOnlineBank ? imgUrl.get("depositImgUrl").replace("null", appPayAccount.getBankCode()) : imgUrl.get("depositImgUrl"));
             appPayAccounts.add(appPayAccount);
         }
         return appPayAccounts;
@@ -186,8 +188,10 @@ public class BaseDepositController {
      * @param request
      * @return
      */
-    protected String depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
+    protected Map<String,String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
+        Map<String,String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
+
         sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append(AppTypeEnum.ANDROID.getCode());
@@ -195,7 +199,9 @@ public class BaseDepositController {
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
             sb.append(AppTypeEnum.IOS.getCode());
         }
-        return String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code);
+        map.put("depositImgUrl",String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
+        map.put("serverName",request.getServerName());
+        return map;
     }
 
     /**
@@ -341,7 +347,7 @@ public class BaseDepositController {
                            List<PayAccount> electronicAccount,
                            String onliineWay,
                            String companyWay,
-                           String depositImgUrl) {
+                           Map<String,String> imgUrl) {
         List<AppPayAccount> scanAppPayAccounts = null;
         List<AppPayAccount> electronicAppPayAccounts = null;
         if (MapTool.isNotEmpty(scanAccount)) {
@@ -360,12 +366,12 @@ public class BaseDepositController {
                 }
                 list.add(payAccount);
             }
-            scanAppPayAccounts = changeModel(list, onliineWay, null, depositImgUrl);
+            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl);
             appRechargePay.setArrayList(scanAppPayAccounts);
         }
 
         if (CollectionTool.isNotEmpty(electronicAccount)) {
-            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, depositImgUrl);
+            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl);
             if (CollectionTool.isNotEmpty(scanAppPayAccounts)) {
                 electronicAppPayAccounts.addAll(scanAppPayAccounts);
             }
