@@ -146,7 +146,7 @@ public class DepositAppController extends BaseDepositController {
                 list.add(payAccount);
             }
         }
-        return fillAttr(appRechargePay, null, list, DepositWayEnum.ONLINE_DEPOSIT.getCode(), null, depositImgUrl(model, request, null));
+        return fillAttr(appRechargePay, null, list, null, DepositWayEnum.ONLINE_DEPOSIT.getCode(), depositImgUrl(model, request, null));
     }
 
     /**
