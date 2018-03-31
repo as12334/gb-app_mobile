@@ -497,9 +497,15 @@ public class DepositAppController extends BaseDepositController {
                 }
             }
         }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
+        map.put("sales", saleList);
+        map.put("counterFee", null);
+        map.put("fee", null);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                saleList, APP_VERSION);
+                map, APP_VERSION);
     }
 
     /**
