@@ -28,7 +28,6 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.company.enums.BankEnum;
 import so.wwb.gamebox.model.company.po.Bank;
-import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
@@ -50,7 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_ENTRY_URL;
 
 @Controller
 @RequestMapping("/depositOrigin")
@@ -364,11 +364,11 @@ public class DepositAppController extends BaseDepositController {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:获取优惠活动，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    LocaleTool.tranMessage(Module.FUND, result.getAllErrors().get(0).getDefaultMessage()),
+                    LocaleTool.tranMessage(Module.VALID, result.getAllErrors().get(0).getDefaultMessage()),
                     null, APP_VERSION);
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
-        if (payAccount == null ) {
+        if (payAccount == null) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
@@ -480,7 +480,7 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         VActivityMessageListVo listVo = new VActivityMessageListVo();
-        listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
+        listVo.getSearch().setDepositWay(playerRechargeVo.getDepositWay());
         listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
         List<AppSale> saleList = new ArrayList<>();
         if (CollectionTool.isEmpty(listVo.getResult())) {
