@@ -19,6 +19,7 @@ public class BitcoinDepositForm implements IForm {
 //    private String $code;
     private String result_returnTime;
     private String account;
+    private String result_rechargeType;
 
     @Comment("玩家比特币钱包地址")
     @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
@@ -84,5 +85,14 @@ public class BitcoinDepositForm implements IForm {
 
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 }

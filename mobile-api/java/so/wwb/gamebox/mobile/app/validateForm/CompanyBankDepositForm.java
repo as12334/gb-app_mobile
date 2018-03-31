@@ -11,7 +11,6 @@ import so.wwb.gamebox.model.common.RegExpConstants;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -23,6 +22,7 @@ public class CompanyBankDepositForm implements IForm {
     private String result_payerName;
     private String result_rechargeAddress;
     private String result_rechargeAmount;
+    private String result_rechargeType;
 
 //    private String $code;
 
@@ -78,12 +78,20 @@ public class CompanyBankDepositForm implements IForm {
     @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyBankDepositController.class, checkMethod = "checkAmount")
     @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
-    @Min(message = "rechargeForm.rechargeAmountMin", value = 0)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }
 
     public void setResult_rechargeAmount(String result_rechargeAmount) {
         this.result_rechargeAmount = result_rechargeAmount;
+    }
+
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 }

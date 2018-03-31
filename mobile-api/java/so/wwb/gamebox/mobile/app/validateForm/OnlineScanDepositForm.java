@@ -20,9 +20,10 @@ import javax.validation.constraints.Pattern;
 @Comment("扫码支付验证")
 public class OnlineScanDepositForm implements IForm {
     private String result_rechargeAmount;
+    private String account;
+    private String result_rechargeType;
 //    private String result_payerBankcard;
 //    private String $code;
-    private String account;
 
     @Comment("存款渠道")
     @NotBlank(message = "rechargeForm.payAccountNotBlank")
@@ -46,6 +47,15 @@ public class OnlineScanDepositForm implements IForm {
 
     public void setResult_rechargeAmount(String result_rechargeAmount) {
         this.result_rechargeAmount = result_rechargeAmount;
+    }
+
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 
 //    @Comment("授权码")
