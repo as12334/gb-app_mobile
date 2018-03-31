@@ -141,6 +141,7 @@ public class DepositAppController extends BaseDepositController {
                 payAccount.setSingleDepositMin(bankPayAccountValue.getSingleDepositMin());
                 payAccount.setSingleDepositMax(bankPayAccountValue.getSingleDepositMax());
                 payAccount.setPayType(bankPayAccountValue.getPayType());
+                payAccount.setAccountType(bankPayAccountValue.getAccountType());
                 payAccount.setType(bankPayAccountValue.getType());
                 payAccount.setBankCode(bankPayAccount.getKey());
                 list.add(payAccount);
