@@ -430,17 +430,20 @@ public class DepositAppController extends BaseDepositController {
         List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRechargeVo.getDepositWay());
 
         if (!isFee && !isReturnFee && CollectionTool.isEmpty(activityMessages)) {
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.NOT_SALE.getCode(),
-                    AppErrorCodeEnum.NOT_SALE.getMsg(),
-                    null, APP_VERSION);
+            map.put("counterFee", null);
+            map.put("fee", null);
+            map.put("sales", null);
+            map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
         } else {
             List<AppSale> saleList = new ArrayList<>();
-            for (VActivityMessage vActivityMessage : activityMessages) {
-                if (vActivityMessage.isPreferential()) {
-                    AppSale appSale = new AppSale();
-                    appSale.setId(vActivityMessage.getId());
-                    appSale.setActivityName(vActivityMessage.getActivityName());
-                    saleList.add(appSale);
+            if(CollectionTool.isNotEmpty(activityMessages)) {
+                for (VActivityMessage vActivityMessage : activityMessages) {
+                    if (vActivityMessage.isPreferential()) {
+                        AppSale appSale = new AppSale();
+                        appSale.setId(vActivityMessage.getId());
+                        appSale.setActivityName(vActivityMessage.getActivityName());
+                        saleList.add(appSale);
+                    }
                 }
             }
             String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
@@ -482,12 +485,14 @@ public class DepositAppController extends BaseDepositController {
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(playerRechargeVo.getDepositWay());
         listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
-        List<AppSale> saleList = new ArrayList<>();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("counterFee", null);
+        map.put("fee", null);
+        map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
         if (CollectionTool.isEmpty(listVo.getResult())) {
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.NOT_SALE.getCode(),
-                    AppErrorCodeEnum.NOT_SALE.getMsg(),
-                    null, APP_VERSION);
+            map.put("sales", null);
         } else {
+            List<AppSale> saleList = new ArrayList<>();
             for (VActivityMessage vActivityMessage : listVo.getResult()) {
                 if (vActivityMessage.isPreferential()) {
                     AppSale appSale = new AppSale();
@@ -496,13 +501,9 @@ public class DepositAppController extends BaseDepositController {
                     saleList.add(appSale);
                 }
             }
+            map.put("sales", saleList);
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
-        map.put("sales", saleList);
-        map.put("counterFee", null);
-        map.put("fee", null);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map, APP_VERSION);
