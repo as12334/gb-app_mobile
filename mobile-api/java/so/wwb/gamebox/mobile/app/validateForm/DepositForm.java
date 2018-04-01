@@ -22,7 +22,7 @@ public class DepositForm implements IForm {
     //region your codes
     private String account;
     private String result_rechargeAmount;
-    private String depositWay;
+    private String $depositWay;
     private String result_bitAmount;
     private String result_bankOrder;
 //    private String $code;
@@ -54,13 +54,14 @@ public class DepositForm implements IForm {
     }
 
     @NotBlank(message = "rechargeForm.depositWayNotBlank")
-    public String getDepositWay() {
-        return depositWay;
+    public String get$depositWay() {
+        return $depositWay;
     }
 
-    public void setDepositWay(String depositWay) {
-        this.depositWay = depositWay;
+    public void set$depositWay(String $depositWay) {
+        this.$depositWay = $depositWay;
     }
+
 
     @Depends(message = "rechargeForm.result.bitAmount",property = "depositWay",operator = Operator.EQ,value = DepositWayEnum.DEPOSIT_WAY_BITCOIN_FAST)
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)

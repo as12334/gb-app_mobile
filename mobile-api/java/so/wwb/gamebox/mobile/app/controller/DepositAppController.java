@@ -371,6 +371,9 @@ public class DepositAppController extends BaseDepositController {
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
         }
+        if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())) {
+            return bitcoinSeachDiscount(playerRechargeVo);
+        }
         Map<String, Object> map = new HashMap<String, Object>();
         //统计该渠道连续存款失败次数
         Double rechargeAmount = null;
@@ -384,9 +387,7 @@ public class DepositAppController extends BaseDepositController {
         }
         Integer min = Const.MIN_MONEY;
         Integer max = Const.MAX_MONEY;
-        if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())) {
-            return bitcoinSeachDiscount(playerRechargeVo);
-        } else if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
+        if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             PlayerRank rank = getRank();
             max = rank.getOnlinePayMax();
             min = rank.getOnlinePayMin();
