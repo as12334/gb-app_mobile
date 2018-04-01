@@ -55,9 +55,9 @@ public class BitcoinDepositForm implements IForm {
 //    }
 
     @Comment("比特币")
-    @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
+    @NotBlank(message = "rechargeForm.result.bitAmount")
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
-    @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmount")
+    @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmountFormat")
     @DecimalMin(value = "0.00010001",message = "rechargeForm.result.bitAmountMin")
     public String getResult_bitAmount() {
         return result_bitAmount;
