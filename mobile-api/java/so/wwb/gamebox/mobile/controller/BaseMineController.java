@@ -302,17 +302,21 @@ public class BaseMineController {
      *
      * @param playerGameOrderListVo
      */
-    protected void initQueryDate(PlayerGameOrderListVo playerGameOrderListVo) {
+    protected void initQueryDateForgetBetting(PlayerGameOrderListVo playerGameOrderListVo) {
         Date minDate = SessionManager.getDate().addDays(TIME_INTERVAL);
         playerGameOrderListVo.setMinDate(minDate);
         PlayerGameOrderSo playerGameOrderSo = playerGameOrderListVo.getSearch();
-        if (playerGameOrderSo.getBeginBetTime() == null) {
-            playerGameOrderListVo.getSearch().setBeginBetTime(DateTool.addDays(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME)); //拿到明天在-1相当于拿到今天时间00:00:00
-        } else if (playerGameOrderSo.getBeginBetTime().getTime() < minDate.getTime()) {
-            playerGameOrderListVo.getSearch().setBeginBetTime(minDate);
+        if (playerGameOrderSo.getBeginBetTime() == null && playerGameOrderSo.getEndBetTime() == null) {
+            playerGameOrderSo.setBeginBetTime(SessionManager.getDate().getYestoday());//默认查询昨天至今天
+        } else if (playerGameOrderSo.getBeginBetTime() != null && playerGameOrderSo.getBeginBetTime().getTime() < minDate.getTime()) {//开始时间不能小于最小时间
+            playerGameOrderSo.setBeginBetTime(minDate);
         }
-        if (playerGameOrderListVo.getSearch().getEndBetTime() == null || playerGameOrderListVo.getSearch().getBeginBetTime().after(playerGameOrderListVo.getSearch().getEndBetTime())) {
-            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(SessionManager.getDate().getTomorrow(), -DEFAULT_TIME));
+        if (playerGameOrderSo.getEndBetTime() == null || playerGameOrderSo.getBeginBetTime().after(playerGameOrderSo.getEndBetTime())) {
+            playerGameOrderSo.setEndBetTime(SessionManager.getDate().getTomorrow());
+        }
+        playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1), -1));
+        if (playerGameOrderListVo.getSearch().getBeginBetTime().getTime() == playerGameOrderListVo.getSearch().getEndBetTime().getTime()) { //如果两个时间一样，用户要查一天之内的数据
+            playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1));
         }
     }
 
