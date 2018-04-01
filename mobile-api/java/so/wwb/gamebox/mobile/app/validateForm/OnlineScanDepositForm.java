@@ -7,6 +7,7 @@ import org.soul.commons.validation.form.constraints.Depends;
 import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
@@ -19,9 +20,10 @@ import javax.validation.constraints.Pattern;
 @Comment("扫码支付验证")
 public class OnlineScanDepositForm implements IForm {
     private String result_rechargeAmount;
-    private String result_payerBankcard;
-//    private String $code;
     private String account;
+    private String result_rechargeType;
+//    private String result_payerBankcard;
+//    private String $code;
 
     @Comment("存款渠道")
     @NotBlank(message = "rechargeForm.payAccountNotBlank")
@@ -34,10 +36,10 @@ public class OnlineScanDepositForm implements IForm {
     }
 
     @Comment("存款金额")
-    @NotBlank(message = "deposit_auto.请输入存款金额")
+    @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
     @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
-    //@Remote(message = "单笔存款最低为{0}，最高为{1}", checkClass = OnlineScanDepositController.class, checkMethod = "checkScanCodeAmount", additionalProperties = {"result.rechargeType"})
-    @Max(message = "deposit_auto.单笔存款最高为99", value = 99999999)
+    //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyElectronicDepositController.class, checkMethod = "checkAmount")
+    @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
     @Min(message = "rechargeForm.rechargeAmountMin", value = 0)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
@@ -47,17 +49,27 @@ public class OnlineScanDepositForm implements IForm {
         this.result_rechargeAmount = result_rechargeAmount;
     }
 
-    @Comment("授权码")
-    @Depends(property = {"$isAuthCode"}, operator = {Operator.EQ}, value = {"true"},jsValueExp = "$(\"[name=isAuthCode]\").val() == 'true'")
-    @Digits(fraction = 0, integer = 20,message = "rechargeForm.result.bitAmount")
-    @Length(max = 20, min = 12,message = "rechargeForm.rechargeAmountLength")
-    public String getResult_payerBankcard() {
-        return result_payerBankcard;
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
     }
 
-    public void setResult_payerBankcard(String result_payerBankcard) {
-        this.result_payerBankcard = result_payerBankcard;
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
+
+//    @Comment("授权码")
+//    @Depends(property = {"$isAuthCode"}, operator = {Operator.EQ}, value = {"true"},jsValueExp = "$(\"[name=isAuthCode]\").val() == 'true'")
+//    @Digits(fraction = 0, integer = 20,message = "rechargeForm.result.bitAmount")
+//    @Depends(message = "rechargeForm.alipayPayerNameNotBlank",property = "result.rechargeType", operator = {Operator.IN}, value = {RechargeTypeEnum.RECHARGE_TYPE_ALIPAY_FAST})
+//    @Length(max = 20, min = 12,message = "rechargeForm.rechargeAmountLength")
+//    public String getResult_payerBankcard() {
+//        return result_payerBankcard;
+//    }
+//
+//    public void setResult_payerBankcard(String result_payerBankcard) {
+//        this.result_payerBankcard = result_payerBankcard;
+//    }
 
 //
 //    @Comment("验证码")

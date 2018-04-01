@@ -19,6 +19,7 @@ public class BitcoinDepositForm implements IForm {
 //    private String $code;
     private String result_returnTime;
     private String account;
+    private String result_rechargeType;
 
     @Comment("玩家比特币钱包地址")
     @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
@@ -56,8 +57,8 @@ public class BitcoinDepositForm implements IForm {
     @Comment("比特币")
     @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
-    @DecimalMin(value = "0.00010001",message = "rechargeForm.result.bitAmountMin")
     @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmount")
+    @DecimalMin(value = "0.00010001",message = "rechargeForm.result.bitAmountMin")
     public String getResult_bitAmount() {
         return result_bitAmount;
     }
@@ -84,5 +85,14 @@ public class BitcoinDepositForm implements IForm {
 
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 }

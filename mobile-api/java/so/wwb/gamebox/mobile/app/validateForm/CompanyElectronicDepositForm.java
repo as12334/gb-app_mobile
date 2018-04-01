@@ -10,6 +10,7 @@ import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -21,10 +22,10 @@ public class CompanyElectronicDepositForm implements IForm {
     private String result_payerBankcard;
     private String result_bankOrder;
     private String result_payerName;
-
+    private String account;
+    private String result_rechargeType;
 //    private String $code;
 
-    private String account;
 
     @Comment("存款渠道")
     @NotBlank(message = "rechargeForm.payAccountNotBlank")
@@ -41,6 +42,7 @@ public class CompanyElectronicDepositForm implements IForm {
     @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyElectronicDepositController.class, checkMethod = "checkAmount")
     @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
+    @Min(message = "rechargeForm.rechargeAmountMin", value = 0)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }
@@ -71,7 +73,7 @@ public class CompanyElectronicDepositForm implements IForm {
     }
 
     @Comment("支付户名")
-    @Depends(property = "result.rechargeType", operator = {Operator.EQ}, value = {RechargeTypeEnum.RECHARGE_TYPE_ALIPAY_FAST})
+    @Depends(message = "rechargeForm.alipayPayerNameNotBlank",property = "result.rechargeType", operator = {Operator.EQ}, value = {RechargeTypeEnum.RECHARGE_TYPE_ALIPAY_FAST})
     public String getResult_payerName() {
         return result_payerName;
     }
@@ -80,6 +82,14 @@ public class CompanyElectronicDepositForm implements IForm {
         this.result_payerName = result_payerName;
     }
 
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
+    }
 
 //    @Comment("验证码")
 //    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})

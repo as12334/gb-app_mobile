@@ -17,11 +17,12 @@ import javax.validation.constraints.Pattern;
 public class DepositForm implements IForm {
 
     //region your codes
+    private String account;
     private String result_rechargeAmount;
     private String depositWay;
 //    private String $code;
 
-    private String account;
+
 
     @Comment("存款渠道")
     @NotBlank(message = "rechargeForm.payAccountNotBlank")

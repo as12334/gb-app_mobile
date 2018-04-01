@@ -170,7 +170,7 @@ public class BaseDepositController {
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
                 appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
-                        ImageTag.getThumbPath(imgUrl.get("serverName"),payAccount.getQrCodeUrl(),AppConstant.QRHEIGHT,AppConstant.QRWIDTH));
+                        ImageTag.getThumbPath(imgUrl.get("serverName"),payAccount.getQrCodeUrl(),AppConstant.QR_HEIGHT,AppConstant.QR_WIDTH));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
             }
