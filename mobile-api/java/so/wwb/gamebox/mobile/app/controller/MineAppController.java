@@ -821,6 +821,13 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
+        if(!checkWeakPassword(updatePasswordVo.getNewPassword())){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
 
         SysUserVo sysUserVo = new SysUserVo();
         SysUser sysUser = new SysUser();
@@ -1518,6 +1525,20 @@ public class MineAppController extends BaseMineController {
             }
         }
         return false;
+    }
+
+    /**
+     * 修改账户密码--检查密码规则是否弱密码
+     *
+     * @param password
+     * @return
+     */
+    private boolean checkWeakPassword(@RequestParam("newPassword") String password) {
+        // 弱密码过滤
+        if (PasswordRule.isWeak(password)) {
+            return false;
+        }
+        return true;
     }
 
 }
