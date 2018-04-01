@@ -48,6 +48,7 @@ import so.wwb.gamebox.model.common.RegisterConst;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.common.notice.enums.ContactWayType;
+import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
@@ -255,6 +256,15 @@ public class RegisterAppController {
             NoticeVo noticeVo = NoticeVo.autoNotify(AutoNoticeEvent.PLAYER_REGISTER_SUCCESS, userRegisterVo.getSysUser().getId());
             noticeVo.setSubscribeType(CometSubscribeType.READ_COUNT);
             noticeVo.setSendUserId(NoticeVo.SEND_USER_ID);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(SessionManager.getDate().getNow());
+            noticeVo.addParams(
+                    new Pair<String, String>(NoticeParamEnum.WEB_SITE.getCode(), request.getServerName()),
+                    new Pair<String, String>(NoticeParamEnum.CUSTOMER.getCode(), NoticeParamEnum.CUSTOMER.getDesc()),
+                    new Pair<String, String>(NoticeParamEnum.YEAR.getCode(), String.valueOf(calendar.get(Calendar.YEAR))),
+                    new Pair<String, String>(NoticeParamEnum.MONTH.getCode(), String.valueOf(calendar.get(Calendar.MONTH) + 1)),
+                    new Pair<String, String>(NoticeParamEnum.DAY.getCode(), String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)))
+                    );
             try {
                 ServiceTool.noticeService().publish(noticeVo);
             } catch (Exception ex) {
