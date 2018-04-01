@@ -156,6 +156,7 @@ public class BaseDepositController {
             appPayAccount.setCode(payAccount.getCode());
             appPayAccount.setBankCode(payAccount.getBankCode());
             appPayAccount.setAccountType(payAccount.getAccountType());
+            appPayAccount.setRandomAmount(payAccount.getRandomAmount());
             appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin() == null ? Const.MIN_MONEY : payAccount.getSingleDepositMin());
             appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax() == null ? Const.MAX_MONEY : payAccount.getSingleDepositMax());
             boolean isOnlinePay = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType());
@@ -165,7 +166,6 @@ public class BaseDepositController {
                 appPayAccount.setSingleDepositMin(getRank().getOnlinePayMin());
                 appPayAccount.setSingleDepositMax(getRank().getOnlinePayMax());
                 appPayAccount.setAliasName(payAccount.getAliasName());
-                appPayAccount.setRandomAmount(payAccount.getRandomAmount());
                 appPayAccount.setFullName(payAccount.getFullName());
                 appPayAccount.setAccountInformation(payAccount.getAccountInformation());
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());

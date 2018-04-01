@@ -1,13 +1,16 @@
 package so.wwb.gamebox.mobile.app.validateForm;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.soul.commons.query.enums.Operator;
+import org.soul.commons.validation.form.constraints.Depends;
 import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 
 /**
@@ -20,6 +23,8 @@ public class DepositForm implements IForm {
     private String account;
     private String result_rechargeAmount;
     private String depositWay;
+    private String result_bitAmount;
+    private String result_bankOrder;
 //    private String $code;
 
 
@@ -34,7 +39,7 @@ public class DepositForm implements IForm {
         this.account = account;
     }
 
-    @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
+    @Depends(message = "rechargeForm.rechargeAmountNotBlank",property = "depositWay",operator = Operator.NE,value = DepositWayEnum.DEPOSIT_WAY_BITCOIN_FAST)
     @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = OnlineDepositController.class, checkMethod = "checkAmount", additionalProperties = {"result.payerBank"})
     @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
@@ -57,6 +62,27 @@ public class DepositForm implements IForm {
         this.depositWay = depositWay;
     }
 
+    @Depends(message = "rechargeForm.result.bitAmount",property = "depositWay",operator = Operator.EQ,value = DepositWayEnum.DEPOSIT_WAY_BITCOIN_FAST)
+    //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
+    @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmountFormat")
+    @DecimalMin(value = "0.00010001",message = "rechargeForm.result.bitAmountMin")
+    public String getResult_bitAmount() {
+        return result_bitAmount;
+    }
+
+    public void setResult_bitAmount(String result_bitAmount) {
+        this.result_bitAmount = result_bitAmount;
+    }
+
+    @Depends(message = "rechargeForm.payerTxIdNotBlank",property = "depositWay",operator = Operator.EQ,value = DepositWayEnum.DEPOSIT_WAY_BITCOIN_FAST)
+    @Length(max = 64,message = "rechargeForm.result.bitTxIdMax")
+    public String getResult_bankOrder() {
+        return result_bankOrder;
+    }
+
+    public void setResult_bankOrder(String result_bankOrder) {
+        this.result_bankOrder = result_bankOrder;
+    }
 
 //    @Comment("验证码")
 //    @Depends(message = "fund.rechargeForm.code.notBlank", operator = {Operator.GE}, property = {"$rechargeCount"}, value = {"3"}, jsValueExp = {"parseInt($(\"[name=rechargeCount]\").val())"})

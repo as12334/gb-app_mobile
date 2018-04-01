@@ -22,8 +22,8 @@ public class BitcoinDepositForm implements IForm {
     private String result_rechargeType;
 
     @Comment("玩家比特币钱包地址")
-    @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
-    @Length(min = 26, max = 34,message = "rechargeForm.rechargeAmountLength")
+    @NotBlank(message = "rechargeForm.bitAddress")
+    @Length(min = 26, max = 34,message = "rechargeForm.bitAddressLength")
     public String getResult_payerBankcard() {
         return result_payerBankcard;
     }
@@ -34,7 +34,7 @@ public class BitcoinDepositForm implements IForm {
 
     @Comment("txId")
     @NotBlank(message = "rechargeForm.payerTxIdNotBlank")
-    @Length(max = 64,message = "rechargeForm.result.IntegerMax")
+    @Length(max = 64,message = "rechargeForm.result.bitTxIdMax")
     public String getResult_bankOrder() {
         return result_bankOrder;
     }

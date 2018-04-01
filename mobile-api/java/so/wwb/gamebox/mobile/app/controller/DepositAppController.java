@@ -320,7 +320,6 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/company")
     @ResponseBody
     public String company(AppRequestModelVo model, HttpServletRequest request) {
-        PlayerRank rank = getRank();
         List<PayAccount> electronicAccount = searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), null);
         //获取公司入款收款账号
         if (!isMultipleAccount()) {
@@ -469,16 +468,10 @@ public class DepositAppController extends BaseDepositController {
      * 比特币　查询优惠
      */
     public String bitcoinSeachDiscount(PlayerRechargeVo playerRechargeVo) {
-        if (StringTool.isNotBlank(playerRechargeVo.getResult().getBankOrder())) {
-            boolean isExistsTxId = checkTxId(playerRechargeVo.getResult().getBankOrder());
-            if (!isExistsTxId) {
-                return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEXISTS.getCode(),
-                        AppErrorCodeEnum.TXIDISEXISTS.getMsg(),
-                        null, APP_VERSION);
-            }
-        } else {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEMPTY.getCode(),
-                    AppErrorCodeEnum.TXIDISEMPTY.getMsg(),
+        boolean isExistsTxId = checkTxId(playerRechargeVo.getResult().getBankOrder());
+        if (!isExistsTxId) {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEXISTS.getCode(),
+                    AppErrorCodeEnum.TXIDISEXISTS.getMsg(),
                     null, APP_VERSION);
         }
         VActivityMessageListVo listVo = new VActivityMessageListVo();
