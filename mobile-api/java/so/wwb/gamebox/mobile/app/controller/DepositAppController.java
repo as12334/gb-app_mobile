@@ -129,7 +129,6 @@ public class DepositAppController extends BaseDepositController {
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         payAccountListVo.setBanks(banks);
         Map<String, PayAccount> payBankMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
-
         AppRechargePay appRechargePay = new AppRechargePay();
         List<PayAccount> list = new ArrayList<>();
         if (MapTool.isNotEmpty(payBankMap)) {

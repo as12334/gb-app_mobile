@@ -76,6 +76,7 @@ import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_IMG_URL;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.ACCOUNT_IMG_URL;
 
 /**
  * Created by ed on 17-12-31.
@@ -177,6 +178,7 @@ public class BaseDepositController {
             boolean isOnlineBank = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType());
             appPayAccount.setRechargeType(isOnlineBank ? RechargeTypeEnum.ONLINE_BANK.getCode() : appPayAccount.getDepositWay());
             appPayAccount.setImgUrl(isOnlineBank ? imgUrl.get("depositImgUrl").replace("null", appPayAccount.getBankCode()) : imgUrl.get("depositImgUrl"));
+            appPayAccount.setAccountImg(isOnlineBank ? imgUrl.get("accountImgUrl").replace("null", appPayAccount.getBankCode()) : imgUrl.get("accountImgUrl"));
             appPayAccounts.add(appPayAccount);
         }
         return appPayAccounts;
@@ -200,7 +202,9 @@ public class BaseDepositController {
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
             sb.append(AppTypeEnum.IOS.getCode());
         }
+
         map.put("depositImgUrl",String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
+        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL, sb, model.getResolution(), code));
         map.put("serverName",request.getServerName());
         return map;
     }

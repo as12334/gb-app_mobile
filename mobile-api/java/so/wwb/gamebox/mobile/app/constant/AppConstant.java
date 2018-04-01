@@ -69,6 +69,8 @@ public interface AppConstant {
 
     String DEPOSIT_IMG_URL = "%s/common/pay_bank_b/%s/%s.png";
 
+    String ACCOUNT_IMG_URL = "%s/common/account/%s/%s.png";
+
     String SUCCESS = "success";    //4 , 2 ,success代表已发放
     String SUCCESS_4 = "4";
     String SUCCESS_2 = "2";
