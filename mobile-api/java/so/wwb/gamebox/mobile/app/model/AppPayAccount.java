@@ -98,6 +98,10 @@ public class AppPayAccount {
      *图标url
      */
     private String imgUrl;
+    /**
+     *账号图片
+     */
+    private String accountImg;
 
 
     public Integer getId() {
@@ -290,5 +294,13 @@ public class AppPayAccount {
 
     public void setSearchId(String searchId) {
         this.searchId = searchId;
+    }
+
+    public String getAccountImg() {
+        return accountImg;
+    }
+
+    public void setAccountImg(String accountImg) {
+        this.accountImg = accountImg;
     }
 }
