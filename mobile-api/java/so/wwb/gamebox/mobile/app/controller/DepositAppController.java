@@ -143,6 +143,7 @@ public class DepositAppController extends BaseDepositController {
                 payAccount.setAccountType(bankPayAccountValue.getAccountType());
                 payAccount.setType(bankPayAccountValue.getType());
                 payAccount.setBankCode(bankPayAccount.getKey());
+                payAccount.setRandomAmount(bankPayAccountValue.getRandomAmount());
                 list.add(payAccount);
             }
         }
