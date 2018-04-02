@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <div class="desk">
-    <div class="mui-col-xs-2 logo"><img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" /></div>
+    <div class="mui-col-xs-2 logo"><img src="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" /></div>
     <div class="mui-col-xs-8 tip">
         <span class="desk-text">${views.game_auto['点击下方']}<em></em>${views.game_auto['添加到主屏幕']}</span>
     </div>

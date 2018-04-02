@@ -19,8 +19,8 @@
 <meta name="theme-color" content="#09102c">
 <%-- 添加到主屏 --%>
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="apple-touch-icon" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" />
-<link rel="icon" sizes="144x144" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" />
+<link rel="apple-touch-icon" href="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" />
+<link rel="icon" sizes="144x144" href="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" />
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui.min.css?v=${rcVersion}"/>
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/mui-icon-extra.css?v=${rcVersion}"/>
 <link rel="stylesheet" type="text/css" href="${resRoot}/themes/common.css?v=${rcVersion}" />

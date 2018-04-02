@@ -26,7 +26,7 @@
                             <span id="welcome" class="btn-back">${views.app_auto['访问主页']}</span>
                         </div>
                         <div class="load-bar-bottom">
-                            <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" width="110"/>
+                            <img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" width="110"/>
                             <div class="copy-right">
                                 Copyright © &nbsp;${siteName}&nbsp; Reserved.
                             </div>

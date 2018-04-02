@@ -13,8 +13,8 @@
 <!-- 优先使用 IE 最新版本和 Chrome -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-<link rel="bookmark" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
-<link rel="shortcut icon" href="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
+<link rel="bookmark" href="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
+<link rel="shortcut icon" href="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.ico">
 
 <link rel="stylesheet" href="${resRoot}/themes/mui.min.css?v=${rcVersion}" />
 <link rel="stylesheet" href="${resRoot}/themes/common.css?v=${rcVersion}" />
@@ -24,15 +24,15 @@
 <c:choose>
     <c:when test="${background_type eq 'black'}">
         <link rel="stylesheet" href="${resRoot}/themes/black/style.css" />
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+        <c:set var="appLogo" value="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:when>
     <c:when test="${background_type eq 'blue'}">
         <link rel="stylesheet" href="${resRoot}/themes/blue/style.css" />
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+        <c:set var="appLogo" value="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:when>
     <c:otherwise>
         <link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+        <c:set var="appLogo" value="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:otherwise>
 </c:choose>
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css?v=${rcVersion}" />
