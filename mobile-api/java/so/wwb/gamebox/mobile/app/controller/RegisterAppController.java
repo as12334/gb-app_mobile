@@ -41,7 +41,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
-import so.wwb.gamebox.mobile.app.validateForm.SignUpForm;
+import so.wwb.gamebox.mobile.app.form.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.RegisterConst;

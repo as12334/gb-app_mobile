@@ -16,7 +16,7 @@ import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppDepositPayEnum;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
-import so.wwb.gamebox.mobile.app.validateForm.*;
+import so.wwb.gamebox.mobile.app.form.*;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
