@@ -39,6 +39,7 @@
 
 <c:set var="cdnUrl" value="<%= ImageTag.getCndUrl(ImageTag.getCdnConf()) %>"/>
 <c:set var="root" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getRoot(),request.getServerName()) %>' />
+<c:set var="ftlRoot" value='${cdnUrl}${root}'/>
 <c:set var="resComRoot" value='<%=  MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
 <c:set var="resComRoot" value='${cdnUrl}${resComRoot}' />
 <c:set var="resRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(),request.getServerName()) %>' />
