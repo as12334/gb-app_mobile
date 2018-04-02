@@ -87,6 +87,7 @@ public class BitcoinDepositForm implements IForm {
         this.account = account;
     }
 
+    @Comment("存款类型")
     @NotBlank(message = "rechargeForm.rechargeType")
     public String getResult_rechargeType() {
         return result_rechargeType;

@@ -84,13 +84,13 @@ public class DepositAppController extends BaseDepositController {
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_IOS.getCode())) {
             depositImgUrl.append(AppTypeEnum.IOS.getCode());
         }
-
+        String resolution = model.getResolution();
         for (Map.Entry<String, Long> depositPay : channelCountMap.entrySet()) {
             if (depositPay.getValue() > 0) {
                 DepositPayApp depositPayApp = new DepositPayApp();
                 depositPayApp.setCode(depositPay.getKey());
                 depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, depositPay.getKey()));
-                depositPayApp.setIconUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), depositPay.getKey()));
+                depositPayApp.setIconUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, resolution, depositPay.getKey()));
                 depositPayApps.add(depositPayApp);
             }
         }
@@ -98,7 +98,7 @@ public class DepositAppController extends BaseDepositController {
             DepositPayApp depositPayApp = new DepositPayApp();
             depositPayApp.setCode(fastRecharge);
             depositPayApp.setName(LocaleTool.tranMessage(Module.COMMON, AppConstant.IS_FAST_RECHARGE));
-            depositPayApp.setIconUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, model.getResolution(), AppConstant.IS_FAST_RECHARGE));
+            depositPayApp.setIconUrl(String.format(DEPOSIT_ENTRY_URL, depositImgUrl, resolution, AppConstant.IS_FAST_RECHARGE));
             depositPayApps.add(depositPayApp);
         }
 

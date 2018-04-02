@@ -52,6 +52,7 @@ public class DepositForm implements IForm {
         this.result_rechargeAmount = result_rechargeAmount;
     }
 
+    @Comment("获取优惠类型")
     @NotBlank(message = "rechargeForm.depositWayNotBlank")
     public String get$depositWay() {
         return $depositWay;
@@ -61,7 +62,7 @@ public class DepositForm implements IForm {
         this.$depositWay = $depositWay;
     }
 
-
+    @Comment("比特币数量")
     @Depends(message = "rechargeForm.result.bitAmount",property = "depositWay",operator = Operator.EQ,value = DepositWayEnum.DEPOSIT_WAY_BITCOIN_FAST)
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
     @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmountFormat")
@@ -74,6 +75,7 @@ public class DepositForm implements IForm {
         this.result_bitAmount = result_bitAmount;
     }
 
+    @Comment("比特币Txid")
     @Depends(message = "rechargeForm.payerTxIdNotBlank",property = "depositWay",operator = Operator.EQ,value = DepositWayEnum.DEPOSIT_WAY_BITCOIN_FAST)
     @Length(max = 64,message = "rechargeForm.result.bitTxIdMax")
     public String getResult_bankOrder() {

@@ -171,7 +171,7 @@ public class BaseDepositController {
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
                 appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
-                        ImageTag.getThumbPath(imgUrl.get("serverName"),payAccount.getQrCodeUrl(),AppConstant.QR_HEIGHT,AppConstant.QR_WIDTH));
+                        ImageTag.getImagePath(imgUrl.get("serverName"),payAccount.getQrCodeUrl()));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
             }
@@ -194,8 +194,9 @@ public class BaseDepositController {
     protected Map<String,String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
         Map<String,String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
+        String serverName = request.getServerName();
 
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName)).append("/");
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append(AppTypeEnum.ANDROID.getCode());
         }
@@ -203,9 +204,11 @@ public class BaseDepositController {
             sb.append(AppTypeEnum.IOS.getCode());
         }
 
+        StringBuilder accountSb = new StringBuilder();
+        accountSb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName));
         map.put("depositImgUrl",String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
-        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL, sb, model.getResolution(), code));
-        map.put("serverName",request.getServerName());
+        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL,accountSb, code));
+        map.put("serverName", serverName);
         return map;
     }
 
