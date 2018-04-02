@@ -40,10 +40,6 @@
                                     <c:when test="${not empty t.value}">
                                         <div class="swiper-slide">${t.value}</div>
                                     </c:when>
-
-                                    <c:otherwise>
-                                        <div class="swiper-slide">${t.key}</div>
-                                    </c:otherwise>
                                 </c:choose>
                             </c:forEach>
                         </div>

@@ -260,7 +260,9 @@ public class GameController extends BaseApiController {
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
             if (!tags.contains(tagId)) {
-                gameTagMap.put(tagId, tagNameMap.get(tagId));
+                if(StringTool.isNotBlank(tagNameMap.get(tagId))){
+                    gameTagMap.put(tagId, tagNameMap.get(tagId));
+                }
             }
         }
         return gameTagMap;
