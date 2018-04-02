@@ -33,7 +33,9 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -57,8 +59,6 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.validation.Valid;
 import java.util.*;
-
-import static so.wwb.gamebox.common.dubbo.ServiceSiteTool.playerTransferService;
 
 /**
  * 转账
@@ -515,13 +515,14 @@ public class TransferController extends WalletBaseController {
         List<Map<String, Object>> playerApis = new ArrayList<>();
         Map<String, Api> apis = Cache.getApi();
         Map<String, SiteApi> siteApis = Cache.getSiteApi();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
         Api api;
         SiteApi siteApi;
         for (PlayerApi playerApi : playerApiList) {
             String apiId = String.valueOf(playerApi.getApiId());
             Map<String, Object> playerApiMap = new HashMap<>(3,1f);
-            String apiName = CacheBase.getSiteApiName(apiId);
-            playerApiMap.put("apiName", apiName);
+            playerApiMap.put("apiName", getApiName(apiI18nMap,siteApiI18nMap,apiId));
             if (playerApi.getMoney() == null) {
                 playerApiMap.put("balance", "0.00");
             } else {
@@ -534,6 +535,30 @@ public class TransferController extends WalletBaseController {
             playerApis.add(playerApiMap);
         }
         return playerApis;
+    }
+
+    /**
+     * 获取api名称
+     *
+     * @param apiI18nMap
+     * @param siteApiI18nMap
+     * @param apiId
+     * @return
+     */
+    private String getApiName(Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, String apiId) {
+        SiteApiI18n siteApiI18n = siteApiI18nMap.get(apiId);
+        String apiName = null;
+        if (siteApiI18n != null) {
+            apiName = siteApiI18n.getName();
+        }
+        if (StringTool.isNotBlank(apiName)) {
+            return apiName;
+        }
+        ApiI18n apiI18n = apiI18nMap.get(apiId);
+        if (apiI18n != null) {
+            apiName = apiI18n.getName();
+        }
+        return apiName;
     }
 
     private PlayerApiListVo fundRecord(boolean isRefreshAllApiBalance) {

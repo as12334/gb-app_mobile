@@ -109,7 +109,8 @@ public class BaseUserInfoController {
                 bankcardNumMap.put("btcNum", StringTool.overlay(userBtc.getBankcardNumber(), "*", 0, userBtc.getBankcardNumber().length()));
                 userInfo.setBtc(bankcardNumMap);
             }
-        } else if (userInfo.getIsCash()) { //用户银行卡信息
+        }
+        if (userInfo.getIsCash()) { //用户银行卡信息
             UserBankcard bankcard = BankHelper.getUserBankcard(userId, UserBankcardTypeEnum.TYPE_BANK);
             if (bankcard != null) {
                 Map<String, String> bankcardNumMap = new HashMap<>(7, 1f);
