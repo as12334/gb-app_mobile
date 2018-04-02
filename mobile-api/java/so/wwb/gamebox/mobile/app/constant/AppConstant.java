@@ -1,5 +1,7 @@
 package so.wwb.gamebox.mobile.app.constant;
 
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+
 public interface AppConstant {
     String APP_VERSION = "app_01";//版本号
 
@@ -69,4 +71,30 @@ public interface AppConstant {
     String CHECKING_1 = "1"; // 1代表 待审核
     String PROCESSING_0 = "0"; // 0代表 进行中
     String KEY_STATE = "state";
+    String TRANSFER_WALLET = "wallet";//转入转出选择我的钱包
+
+
+
+    String IS_FAST_RECHARGE = "isFastRecharge";//快速充值标记
+    String WECHAT_PAY = "wechatpay";
+    String ALI_PAY = "alipay";
+    String QQ_WALLET = "qqwallet";
+    String JD_WALLET = "jdwallet";
+    String BD_WALLET = "bdwallet";
+    String ONE_CODE_PAY = "onecodepay";
+    String OTHER = "other";
+    String BITCOIN = "bitcoin";
+
+    String MCENTER_ONLINE_RECHARGE_URL = "/fund/deposit/online/list.html"; //站长中心-线上支付链接
+    String ONLINE_PAY_URL ="/wallet/deposit/online/pay.html?pay=online&search.transactionNo=";
+    String SCAN_PAY_URL ="/wallet/deposit/online/scan/pay.html?pay=online&search.transactionNo=";
+    String MCENTER_COMPANY_RECHARGE_URL = "fund/deposit/company/confirmCheck.html";//公司入款地址
+
+    //公司入款支持的存款类型
+    String[] RECHARGE_TYPE = {
+            RechargeTypeEnum.ONLINE_BANK.getCode(),
+            RechargeTypeEnum.ATM_COUNTER.getCode(),
+            RechargeTypeEnum.ATM_MONEY.getCode(),
+            RechargeTypeEnum.ATM_RECHARGE.getCode()
+    };
 }
