@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -183,7 +184,7 @@ public class ApiController extends BaseApiController {
             map = new HashMap<>(4, 1f);
             String apiId = api.getApiId().toString();
             map.put("apiId", apiId);
-            map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
+            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap,apiI18nMap,apiId));
             map.put("balance", api.getMoney() == null ? 0.00 : api.getMoney());
             map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
             maps.add(map);
@@ -223,30 +224,6 @@ public class ApiController extends BaseApiController {
             return maintain;
         }
         return GameStatusEnum.NORMAL.getCode();//app判断空是正常
-    }
-
-    /**
-     * 获取api名称
-     *
-     * @param apiI18nMap
-     * @param siteApiI18nMap
-     * @param apiId
-     * @return
-     */
-    private String getApiName(Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, String apiId) {
-        SiteApiI18n siteApiI18n = siteApiI18nMap.get(apiId);
-        String apiName = null;
-        if (siteApiI18n != null) {
-            apiName = siteApiI18n.getName();
-        }
-        if (StringTool.isNotBlank(apiName)) {
-            return apiName;
-        }
-        ApiI18n apiI18n = apiI18nMap.get(apiId);
-        if (apiI18n != null) {
-            apiName = apiI18n.getName();
-        }
-        return apiName;
     }
 
     /**

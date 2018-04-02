@@ -156,46 +156,6 @@ public class RegisterAppController {
                     null,
                     APP_VERSION);
         }
-        //判断真实姓名的唯一性
-        if (StringTool.equals(checkRealNameExist(userRegisterVo.getSysUser().getRealName()), "false")) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_REAL_NAME_EXIST.getCode(),
-                    AppErrorCodeEnum.REGISTER_REAL_NAME_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        //QQ
-        if (StringTool.equals(checkQqExist(userRegisterVo.getQq().getContactValue()), "false")) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_QQ_EXIST.getCode(),
-                    AppErrorCodeEnum.REGISTER_QQ_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        //手机号码
-        if (StringTool.equals(checkPhoneExist(userRegisterVo.getPhone().getContactValue()), "false")) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_PHONE_EXIST.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        //邮箱唯一性
-        if (StringTool.equals(checkMailExist(userRegisterVo.getEmail().getContactValue()), "false")) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_EMAIL_EXIST.getCode(),
-                    AppErrorCodeEnum.REGISTER_EMAIL_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        //微信
-        if (StringTool.equals(checkWeixinExist(userRegisterVo.getWeixin().getContactValue()), "false")) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_WEIXIN_EXIST.getCode(),
-                    AppErrorCodeEnum.REGISTER_WEIXIN_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
         //站长中心是否允许注册
         if (!isAllowRegister()) {
             return AppModelVo.getAppModeVoJson(false,
@@ -234,6 +194,8 @@ public class RegisterAppController {
     }
 
     //验证码
+    @RequestMapping("/checkedCaptcha")
+    @ResponseBody
     public boolean checkedCaptcha(@RequestParam("captchaCode") String captchaCode) {
         if (StringTool.isEmpty(captchaCode)) {
             return false;
@@ -410,11 +372,10 @@ public class RegisterAppController {
      *
      * @return
      */
+    @RequestMapping("/checkRealNameExist")
+    @ResponseBody
     public String checkRealNameExist(@RequestParam("sysUser.realName") String realName) {
         if (!ParamTool.isOnlyFiled("realName")) {
-            return "true";
-        }
-        if(StringTool.isBlank(realName)){
             return "true";
         }
         SysUserVo sysUserVo = new SysUserVo();
@@ -430,11 +391,10 @@ public class RegisterAppController {
      * @param qqContactValue
      * @return
      */
+    @RequestMapping("/checkQqExist")
+    @ResponseBody
     public String checkQqExist(@RequestParam("qq.contactValue") String qqContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.QQ.getCode())) {
-            return "true";
-        }
-        if(StringTool.isBlank(qqContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
@@ -448,11 +408,10 @@ public class RegisterAppController {
      *
      * @return
      */
+    @RequestMapping("/checkPhoneExist")
+    @ResponseBody
     public String checkPhoneExist(@RequestParam("phone.contactValue") String phoneContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.CELLPHONE.getCode())) {
-            return "true";
-        }
-        if(StringTool.isBlank(phoneContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
@@ -466,11 +425,10 @@ public class RegisterAppController {
      *
      * @return
      */
+    @RequestMapping("/checkMailExist")
+    @ResponseBody
     public String checkMailExist(@RequestParam("email.contactValue") String mailContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.EMAIL.getCode())) {
-            return "true";
-        }
-        if(StringTool.isBlank(mailContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
@@ -484,11 +442,10 @@ public class RegisterAppController {
      *
      * @return
      */
+    @RequestMapping("/checkWeixinExist")
+    @ResponseBody
     public String checkWeixinExist(@RequestParam("weixin.contactValue") String weixinContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.WEIXIN.getCode())) {
-            return "true";
-        }
-        if(StringTool.isBlank(weixinContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
