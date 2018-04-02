@@ -140,7 +140,7 @@ public class BaseDepositController {
      */
     public List<AppPayAccount> changeModel(List<PayAccount> payAccounts,
                                            String onlineWay,
-                                           String companyWay, Map<String,String> imgUrl) {
+                                           String companyWay, Map<String,String> imgUrl,PlayerRank rank) {
         if (!CollectionTool.isNotEmpty(payAccounts)) {
             return null;
         }
@@ -163,15 +163,15 @@ public class BaseDepositController {
             appPayAccount.setDepositWay(isOnlinePay ? companyWay : onlineWay);
             appPayAccount.setPayType(payAccount.getPayType());
             if (StringTool.isNotBlank(payAccount.getType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
-                appPayAccount.setSingleDepositMin(getRank().getOnlinePayMin());
-                appPayAccount.setSingleDepositMax(getRank().getOnlinePayMax());
+                appPayAccount.setSingleDepositMin(rank.getOnlinePayMin());
+                appPayAccount.setSingleDepositMax(rank.getOnlinePayMax());
                 appPayAccount.setAliasName(payAccount.getAliasName());
                 appPayAccount.setFullName(payAccount.getFullName());
                 appPayAccount.setAccountInformation(payAccount.getAccountInformation());
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
                 appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
-                        ImageTag.getThumbPath(imgUrl.get("serverName"),payAccount.getQrCodeUrl(),AppConstant.QR_HEIGHT,AppConstant.QR_WIDTH));
+                        ImageTag.getImagePath(imgUrl.get("serverName"),payAccount.getQrCodeUrl()));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
             }
@@ -194,8 +194,8 @@ public class BaseDepositController {
     protected Map<String,String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
         Map<String,String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
-
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
+        String serverName = request.getServerName();
+        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName)).append("/");
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append(AppTypeEnum.ANDROID.getCode());
         }
@@ -203,9 +203,11 @@ public class BaseDepositController {
             sb.append(AppTypeEnum.IOS.getCode());
         }
 
+        StringBuilder accountSb = new StringBuilder();
+        accountSb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName));
         map.put("depositImgUrl",String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
-        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL, sb, model.getResolution(), code));
-        map.put("serverName",request.getServerName());
+        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL,accountSb, code));
+        map.put("serverName", serverName);
         return map;
     }
 
@@ -352,7 +354,8 @@ public class BaseDepositController {
                            List<PayAccount> electronicAccount,
                            String onliineWay,
                            String companyWay,
-                           Map<String,String> imgUrl) {
+                           Map<String,String> imgUrl,
+                           PlayerRank rank) {
         List<AppPayAccount> scanAppPayAccounts = null;
         List<AppPayAccount> electronicAppPayAccounts = null;
         if (MapTool.isNotEmpty(scanAccount)) {
@@ -371,12 +374,12 @@ public class BaseDepositController {
                 }
                 list.add(payAccount);
             }
-            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl);
+            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl,rank);
             appRechargePay.setArrayList(scanAppPayAccounts);
         }
 
         if (CollectionTool.isNotEmpty(electronicAccount)) {
-            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl);
+            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl,rank);
             if (CollectionTool.isNotEmpty(scanAppPayAccounts)) {
                 electronicAppPayAccounts.addAll(scanAppPayAccounts);
             }

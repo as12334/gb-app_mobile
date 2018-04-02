@@ -86,6 +86,7 @@ public class CompanyBankDepositForm implements IForm {
         this.result_rechargeAmount = result_rechargeAmount;
     }
 
+    @Comment("存款类型")
     @NotBlank(message = "rechargeForm.rechargeType")
     public String getResult_rechargeType() {
         return result_rechargeType;

@@ -24,10 +24,7 @@ import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SubSysCodeEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.SessionKey;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -127,7 +124,7 @@ public class BaseUserInfoController {
         }
         //推荐好友,昨日收益
         //userInfo.setRecomdAmount(getYesterdayRecommend(userId));
-        userInfo.setUsername(StringTool.overlayString(sysUser.getUsername()));
+        userInfo.setUsername(sysUser.getUsername());
         userInfo.setAvatarUrl(sysUser.getAvatarUrl());
         //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
         if (sysUser.getLastLoginTime() != null) {
@@ -168,7 +165,7 @@ public class BaseUserInfoController {
             map = new HashMap<>(4, 1f);
             String apiId = api.getApiId().toString();
             map.put("apiId", apiId);
-            map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
+            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap,apiI18nMap,apiId));
             map.put("balance", api.getMoney() == null ? 0.00 : api.getMoney());
             map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
             userInfo.addApi(map);
@@ -211,30 +208,6 @@ public class BaseUserInfoController {
         infoApp.setAssets(queryPlayerAssets(listVo, userId));
         infoApp.setUsername(player.getUsername());
         return infoApp;
-    }
-
-    /**
-     * 获取api名称
-     *
-     * @param apiI18nMap
-     * @param siteApiI18nMap
-     * @param apiId
-     * @return
-     */
-    private String getApiName(Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, String apiId) {
-        SiteApiI18n siteApiI18n = siteApiI18nMap.get(apiId);
-        String apiName = null;
-        if (siteApiI18n != null) {
-            apiName = siteApiI18n.getName();
-        }
-        if (StringTool.isNotBlank(apiName)) {
-            return apiName;
-        }
-        ApiI18n apiI18n = apiI18nMap.get(apiId);
-        if (apiI18n != null) {
-            apiName = apiI18n.getName();
-        }
-        return apiName;
     }
 
     /**
@@ -349,7 +322,7 @@ public class BaseUserInfoController {
             map = new HashMap<>(4, 1f);
             String apiId = api.getApiId().toString();
             map.put("apiId", apiId);
-            map.put("apiName", getApiName(apiI18nMap, siteApiI18nMap, apiId));
+            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap,apiI18nMap,apiId));
             map.put("balance", api.getMoney() == null ? 0.00 : api.getMoney());
             map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
             maps.add(map);
