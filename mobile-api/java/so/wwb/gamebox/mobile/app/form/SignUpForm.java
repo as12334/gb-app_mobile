@@ -234,7 +234,6 @@ public class SignUpForm implements IForm {
 
     @Comment("验证码")
     @NotBlank(message = "Register.captchaCode.notBlank")
-    @Remote(message = "Register.captchaCode.notRight", checkClass = RegisterAppController.class, checkMethod = "checkedCaptcha", additionalProperties = {"$editType"})
     public String get$captchaCode() {
         return $captchaCode;
     }
