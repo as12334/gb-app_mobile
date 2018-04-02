@@ -118,14 +118,12 @@ public class DepositAppController extends BaseDepositController {
     public String online(AppRequestModelVo model, HttpServletRequest request) {
         //可用银行
         List<Bank> banks = searchBank(BankEnum.TYPE_BANK.getCode());
-        //层级
-        PlayerRank rank = getRank();
         //玩家可用收款账号
         List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), PayAccountAccountType.THIRTY.getCode(), TerminalEnum.MOBILE.getCode(), null, null);
         deleteMaintainChannel(payAccounts);
         PayAccountListVo payAccountListVo = new PayAccountListVo();
         payAccountListVo.setResult(payAccounts);
-        payAccountListVo.setPlayerRank(rank);
+        payAccountListVo.setPlayerRank(getRank());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         payAccountListVo.setBanks(banks);
         Map<String, PayAccount> payBankMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
@@ -242,8 +240,7 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/unionpay")
     @ResponseBody
     public String union(AppRequestModelVo model, HttpServletRequest request) {
-        PlayerRank rank = getRank();
-        Map<String, PayAccount> scanAccount = getScanAccount(rank, PayAccountAccountType.UNION_PAY.getCode(), null);
+        Map<String, PayAccount> scanAccount = getScanAccount(getRank(), PayAccountAccountType.UNION_PAY.getCode(), null);
         String onliineWay = DepositWayEnum.UNION_PAY_SCAN.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
@@ -256,8 +253,7 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/onecodepay")
     @ResponseBody
     public String onecodepay(AppRequestModelVo model, HttpServletRequest request) {
-        PlayerRank rank = getRank();
-        List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.ONECODEPAY.getCode(), RechargeTypeEnum.ONECODEPAY_FAST.getCode());
+        List<PayAccount> electronicAccount = getElectronicAccount(getRank(), BankCodeEnum.ONECODEPAY.getCode(), RechargeTypeEnum.ONECODEPAY_FAST.getCode());
         String companyWay = DepositWayEnum.ONECODEPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
@@ -270,8 +266,7 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/other")
     @ResponseBody
     public String other(AppRequestModelVo model, HttpServletRequest request) {
-        PlayerRank rank = getRank();
-        List<PayAccount> electronicAccount = getElectronicAccount(rank, BankCodeEnum.OTHER.getCode(), RechargeTypeEnum.OTHER_FAST.getCode());
+        List<PayAccount> electronicAccount = getElectronicAccount(getRank(), BankCodeEnum.OTHER.getCode(), RechargeTypeEnum.OTHER_FAST.getCode());
         String companyWay = DepositWayEnum.OTHER_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
@@ -284,8 +279,7 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/easy")
     @ResponseBody
     public String easy(AppRequestModelVo model, HttpServletRequest request) {
-        PlayerRank rank = getRank();
-        Map<String, PayAccount> scanAccount = getScanAccount(rank, PayAccountAccountType.EASY_PAY.getCode(), null);
+        Map<String, PayAccount> scanAccount = getScanAccount(getRank(), PayAccountAccountType.EASY_PAY.getCode(), null);
         String onliineWay = DepositWayEnum.EASY_PAY.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
@@ -298,7 +292,6 @@ public class DepositAppController extends BaseDepositController {
     @RequestMapping("/bitcoin")
     @ResponseBody
     public String bitcoin(AppRequestModelVo model, HttpServletRequest request) {
-        PlayerRank rank = getRank();
         List<PayAccount> electronicAccount = searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.THIRTY.getCode(), null);
         Map<String, List<PayAccount>> payAccountMap = CollectionTool.groupByProperty(getCompanyPayAccount(electronicAccount), PayAccount.PROP_BANK_CODE, String.class);
         electronicAccount = payAccountMap.get(AppConstant.BITCOIN);
@@ -388,8 +381,8 @@ public class DepositAppController extends BaseDepositController {
         }
         Integer min = Const.MIN_MONEY;
         Integer max = Const.MAX_MONEY;
+        PlayerRank rank = getRank();
         if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
-            PlayerRank rank = getRank();
             max = rank.getOnlinePayMax();
             min = rank.getOnlinePayMin();
         } else if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType())) {
@@ -413,7 +406,6 @@ public class DepositAppController extends BaseDepositController {
                     LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max),
                     null, APP_VERSION);
         }
-        PlayerRank rank = getRank();
         Double fee = calculateFee(rank, rechargeAmount);
         fee = fee == null ? 0 : fee;
         if (rechargeAmount + fee <= 0) {
