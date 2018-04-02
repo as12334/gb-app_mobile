@@ -227,8 +227,8 @@ public class MineAppController extends BaseMineController {
         bettingDataApp.setList(buildBetting(gameOrderList));
 
         //设置默认时间
-        bettingDataApp.setMinDate(listVo.getSearch().getBeginBetTime());
-        bettingDataApp.setMaxDate(listVo.getSearch().getEndBetTime());
+        bettingDataApp.setMinDate(SessionManager.getDate().addDays(TIME_INTERVAL));
+        bettingDataApp.setMaxDate(SessionManager.getDate().getNow());
 
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
