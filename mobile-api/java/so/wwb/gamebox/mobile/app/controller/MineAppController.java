@@ -41,7 +41,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
-import so.wwb.gamebox.mobile.app.validateForm.PlayerAdvisoryAppForm;
+import so.wwb.gamebox.mobile.app.form.PlayerAdvisoryAppForm;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
@@ -215,7 +215,7 @@ public class MineAppController extends BaseMineController {
     public String getBettingList(PlayerGameOrderListVo listVo, Boolean isShowStatistics) {
         BettingDataApp bettingDataApp = new BettingDataApp();
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
-        initQueryDate(listVo);
+        initQueryDateForgetBetting(listVo);
 
         listVo = ServiceSiteTool.playerGameOrderService().search(listVo);
         List<PlayerGameOrder> gameOrderList = listVo.getResult();
@@ -821,6 +821,13 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
+        if(!checkWeakPassword(updatePasswordVo.getNewPassword())){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
+                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
 
         SysUserVo sysUserVo = new SysUserVo();
         SysUser sysUser = new SysUser();
@@ -1080,19 +1087,53 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         Map map = appRecovery(playerApiVo);
+        if(map == null){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (map.get("msg") != null) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
+                    map.get("msg").toString(),
+                    null,
+                    APP_VERSION);
+        } else if (map.get("resultStatus") != null) {
+            if (StringTool.equals(map.get("resultStatus").toString(), "SUCCESS")) {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.RECOVER_SUCCESS.getMsg(),
+                        null,
+                        APP_VERSION);
+            } else if (StringTool.equals(map.get("resultCode").toString(), "1")) {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.RECOVER_FIAL.getCode(),
+                        AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
+                        null,
+                        APP_VERSION);
+            } else {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.SUCCESS.getCode(),
+                        AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
+                        null,
+                        APP_VERSION);
+            }
+        }
         Boolean isSuccess = (Boolean) map.get("isSuccess");
         if (isSuccess == null || !isSuccess) {
             return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
-                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
+                    map.get("msg") != null ? AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode() : AppErrorCodeEnum.SUCCESS.getCode(),
+                    map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
                     null,
                     APP_VERSION);
         }
 
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
-                new HashMap<>(0),
+                AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
+                null,
                 APP_VERSION);
     }
 
@@ -1484,6 +1525,20 @@ public class MineAppController extends BaseMineController {
             }
         }
         return false;
+    }
+
+    /**
+     * 修改账户密码--检查密码规则是否弱密码
+     *
+     * @param password
+     * @return
+     */
+    private boolean checkWeakPassword(@RequestParam("newPassword") String password) {
+        // 弱密码过滤
+        if (PasswordRule.isWeak(password)) {
+            return false;
+        }
+        return true;
     }
 
 }

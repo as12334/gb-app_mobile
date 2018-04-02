@@ -40,10 +40,6 @@
                                     <c:when test="${not empty t.value}">
                                         <div class="swiper-slide">${t.value}</div>
                                     </c:when>
-
-                                    <c:otherwise>
-                                        <div class="swiper-slide">${t.key}</div>
-                                    </c:otherwise>
                                 </c:choose>
                             </c:forEach>
                         </div>
@@ -59,7 +55,7 @@
                                     <div class="casino-list">
                                         <div class="mui-row"><%--所有游戏--%>
                                             <c:forEach var="game" items="${allGames}" varStatus="tagMap">
-                                                    <div class="mui-col-xs-3">
+                                                    <div class="mui-col-xs-3" apiName="${game.value.name}">
                                                         <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
                                                             "dataGameCode":"${game.value.apiId!=10? game.value.code : ''}","dataGameId":"${game.value.apiId!=10? game.value.gameId : ''}",
                                                             "dataApiName":"${game.value.name}","target":"goGame","opType":"function"}'>
@@ -85,7 +81,7 @@
                                             <div class="mui-row">
                                                 <c:forEach items="${t.value}" var="g">
                                                     <c:if test="${not empty allGames[g.toString()]}">
-                                                        <div class="mui-col-xs-3">
+                                                        <div class="mui-col-xs-3" apiName="${allGames[g.toString()].name}">
                                                             <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g.toString()].apiId}","dataStatus":"${allGames[g.toString()].status}",
                                                             "dataGameCode":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].code : ''}","dataGameId":"${allGames[g.toString()].apiId!=10? allGames[g.toString()].gameId : ''}",
                                                             "dataApiName":"${allGames[g.toString()].name}","target":"goGame","opType":"function"}' class="" >

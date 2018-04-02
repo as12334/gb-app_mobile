@@ -46,6 +46,9 @@ public enum AppErrorCodeEnum {
     NOT_RECOVER("1402", "非免转不能一键回收"),
     SYSTEM_READ("1403", "消息已读"),
     NOT_SET_SAFE_PASSWORD("1404", "未设置安全密码"),
+    RECOVER_FIAL("1405","回收失败"),
+    RECOVER_PROCESS("1406","正在回收中"),
+    RECOVER_SUCCESS("1407","资金回收成功"),
     REGISTER_FAIL("1500","注册失败，请联系客服！"),
     NOT_ALLOW_REGISTER("1501","禁止注册，请联系客服！"),
     REGISTER_SUCCESS("1502","注册成功"),
@@ -57,14 +60,16 @@ public enum AppErrorCodeEnum {
     REGISTER_WEIXIN_EXIST("1508","微信已被注册"),
     TRANSFER_ERROR("1520","额度转换失败"),
     TRANSFER_ACCOUNT_NOT_ENOUGH("1521","当前钱包余额不足"),
-    NO_AVAILABLE_CHANNELS("1600","暂无可用渠道，请稍后刷新重试"),
+    NO_AVAILABLE_CHANNELS("1600","支付系统维护中，请稍后刷新重试"),
     SUBMIT_DATA_ERROR("1601","提交信息有误，请核对信息提交"),
     CHANNEL_CLOSURE("1602","渠道未在使用中，请刷新存款页面后重试"),
     MONEY_ERROR("1603","存款金额有误，请输入正确的存款金额"),
     NOT_SALE("1604","暂无优惠和手续费"),
     DEPOSIT_TYPE_ERROR("1605","存款渠道有误，建议您更换渠道或稍后刷新重试"),
     DEPOSIT_FAIL("1606","存款失败，请稍后重试"),
-    ORDER_ERROR("1607","订单号有误，请重新存款")
+    ORDER_ERROR("1607","订单号有误，请重新存款"),
+    TXIDISEMPTY("1608","比特币TxId不能为空，请重新输入"),
+    TXIDISEXISTS("1609","比特币TxId已存在，请重新输入")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

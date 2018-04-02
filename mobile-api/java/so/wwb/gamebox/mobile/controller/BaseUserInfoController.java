@@ -109,7 +109,8 @@ public class BaseUserInfoController {
                 bankcardNumMap.put("btcNum", StringTool.overlay(userBtc.getBankcardNumber(), "*", 0, userBtc.getBankcardNumber().length()));
                 userInfo.setBtc(bankcardNumMap);
             }
-        } else if (userInfo.getIsCash()) { //用户银行卡信息
+        }
+        if (userInfo.getIsCash()) { //用户银行卡信息
             UserBankcard bankcard = BankHelper.getUserBankcard(userId, UserBankcardTypeEnum.TYPE_BANK);
             if (bankcard != null) {
                 Map<String, String> bankcardNumMap = new HashMap<>(7, 1f);
@@ -705,6 +706,7 @@ public class BaseUserInfoController {
         }
         map.put("select", queryApis());
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
+        map.put("autoPay", SessionManagerCommon.isAutoPay());
         return map;
     }
 
@@ -815,8 +817,10 @@ public class BaseUserInfoController {
                 return getErrorMessage(TransferResultStatusEnum.TRANSFER_DEMO_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
             }
         }
+        //实时更新转账上限统计值，判断是否超出转账上限
+        boolean isOverTransfer = playerTransferService().transferLimit(playerTransferVo);
         //转账上限
-        if (ParamTool.getTransLimit() && playerTransferService().transferLimit(playerTransferVo) && FundTypeEnum.TRANSFER_OUT.getCode().equals(playerTransferVo.getResult().getTransferType())) {
+        if (FundTypeEnum.TRANSFER_OUT.getCode().equals(playerTransferVo.getResult().getTransferType()) && (ParamTool.getTransLimit() || isOverTransfer)) {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_LIMIT.getCode(), result.getApiId());
         }
         return null;
@@ -897,6 +901,7 @@ public class BaseUserInfoController {
         }
         resultMap.put("orderId", playerTransferVo.getResult().getTransactionNo());
         resultMap.put("result", playerTransferVo.getResultCode());
+        resultMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return resultMap;
     }
 
@@ -959,6 +964,7 @@ public class BaseUserInfoController {
         map.put("apiId", playerTransferVo.getResult().getApiId());
         map.put("orderId", playerTransferVo.getSearch().getTransactionNo());
         map.put("result", playerTransferVo.getResultCode());
+        map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return getMessage(playerTransferVo.isSuccess(), null, map);
     }
 
@@ -978,9 +984,6 @@ public class BaseUserInfoController {
             msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
         }
         map.put("msg", msg);
-        if (!isSuccess) {
-            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        }
         return map;
     }
 

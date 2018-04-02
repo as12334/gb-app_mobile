@@ -7,6 +7,10 @@ public class AppPayAccount {
     /**  */
     private Integer id;
     /**
+     * 加密后的收款账号Id
+     */
+    private String searchId;
+    /**
      * 账户名称
      */
     private String payName;
@@ -18,6 +22,10 @@ public class AppPayAccount {
      * 姓名
      */
     private String fullName;
+    /**
+     * 代号
+     */
+    private String code;
     /**
      * 类型（1公司入款；2线上支付）(字典表pay_account_type)
      */
@@ -86,6 +94,15 @@ public class AppPayAccount {
      * 支付类型
      */
     private String payType;
+    /**
+     *图标url
+     */
+    private String imgUrl;
+    /**
+     *账号图片
+     */
+    private String accountImg;
+
 
     public Integer getId() {
         return id;
@@ -253,5 +270,37 @@ public class AppPayAccount {
 
     public void setPayType(String payType) {
         this.payType = payType;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public String getSearchId() {
+        return searchId;
+    }
+
+    public void setSearchId(String searchId) {
+        this.searchId = searchId;
+    }
+
+    public String getAccountImg() {
+        return accountImg;
+    }
+
+    public void setAccountImg(String accountImg) {
+        this.accountImg = accountImg;
     }
 }

@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.app.validateForm;
+package so.wwb.gamebox.mobile.app.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -19,27 +19,30 @@ import javax.validation.constraints.Pattern;
 @Comment("网银存款,银行柜台存款,柜员机转账,柜员机现金存款")
 public class CompanyBankDepositForm implements IForm {
 
-    private String result_payAccountId;
     private String result_payerName;
     private String result_rechargeAddress;
     private String result_rechargeAmount;
+    private String result_rechargeType;
 
 //    private String $code;
 
-    @Comment("存入银行")
-    @NotBlank(message = "rechargeForm.payAccountIdNotBlank")
-    public String getResult_payAccountId() {
-        return result_payAccountId;
+
+    private String account;
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getAccount() {
+        return account;
     }
 
-    public void setResult_payAccountId(String result_payAccountId) {
-        this.result_payAccountId = result_payAccountId;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     @Comment("存款人")
+    @NotBlank(message = "rechargeForm.payerNameNotBlank")
     @Pattern(message = "rechargeForm.payerName.pattern", regexp = RegExpConstants.PAYERNAME)
-    @Depends(message = "deposit_auto.存款人不能为空",property = "result.rechargeType",operator = Operator.NE,value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
-    @Length(min = 2, max = 30)
+    @Length(min = 2, max = 30, message = "rechargeForm.payerNameSize")
     public String getResult_payerName() {
         return result_payerName;
     }
@@ -49,8 +52,8 @@ public class CompanyBankDepositForm implements IForm {
     }
 
     @Comment("交易地点")
-    @Depends(message = "rechargeForm.result.rechargeAddress.notBlank", property = "result.rechargeType", operator = Operator.EQ, value = RechargeTypeEnum.RECHARGE_TYPE_ATM_MONEY)
-    @Length(max = 50, message = "fund.rechargeForm.result.rechargeAddress.length")
+    @Length(max = 20 ,message = "rechargeForm.result.rechargeAddress")
+    @Depends(message = "rechargeForm.payerAddressNotBlank",property = "result.rechargeType",operator = Operator.NE,value = RechargeTypeEnum.RECHARGE_TYPE_ONLINE_BANK)
     public String getResult_rechargeAddress() {
         return result_rechargeAddress;
     }
@@ -81,5 +84,14 @@ public class CompanyBankDepositForm implements IForm {
 
     public void setResult_rechargeAmount(String result_rechargeAmount) {
         this.result_rechargeAmount = result_rechargeAmount;
+    }
+
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 }

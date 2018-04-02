@@ -16,9 +16,14 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.IpTool;
 import org.soul.commons.net.ServletTool;
+import org.soul.model.common.BaseObjectVo;
 import org.soul.model.ip.IpBean;
+import org.soul.model.msg.notice.enums.NoticePublishMethod;
+import org.soul.model.msg.notice.po.NoticeContactWay;
+import org.soul.model.msg.notice.po.NoticeTmpl;
 import org.soul.model.msg.notice.vo.EmailMsgVo;
 import org.soul.model.msg.notice.vo.NoticeContactWayListVo;
+import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
@@ -36,17 +41,21 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
-import so.wwb.gamebox.mobile.app.validateForm.SignUpForm;
+import so.wwb.gamebox.mobile.app.form.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.RegisterConst;
+import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
+import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.common.notice.enums.ContactWayType;
+import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.master.enums.CreateChannelEnum;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
+import so.wwb.gamebox.model.master.player.vo.UserAgentVo;
 import so.wwb.gamebox.model.master.player.vo.UserRegisterVo;
 import so.wwb.gamebox.model.master.setting.enums.FieldSortEnum;
 import so.wwb.gamebox.model.master.setting.enums.SiteCurrencyEnum;
@@ -207,6 +216,7 @@ public class RegisterAppController {
         }
         userRegisterVo.setEditType(userRegisterVo.EDIT_TYPE_PLAYER);
         userRegisterVo = doRegister(userRegisterVo, request);
+        sendRegSuccessMsg(request,userRegisterVo);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
         if (!userRegisterVo.isSuccess()) {
@@ -217,7 +227,7 @@ public class RegisterAppController {
                     APP_VERSION);
         }
         return AppModelVo.getAppModeVoJson(true,
-                AppErrorCodeEnum.REGISTER_SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.REGISTER_SUCCESS.getMsg(),
                 null,
                 APP_VERSION);
@@ -230,6 +240,98 @@ public class RegisterAppController {
         }
         return captchaCode.equalsIgnoreCase(SessionManager.getCaptcha(SessionKey.S_CAPTCHA_PREFIX +
                 CaptchaUrlEnum.CODE_PLAYER_REGISTER_MOBILE.getSuffix()));
+    }
+
+    /**
+     * 注册成功后发送站内消息
+     *
+     * @param request
+     * @param userRegisterVo
+     */
+    private void sendRegSuccessMsg(HttpServletRequest request, UserRegisterVo userRegisterVo) {
+        try {
+            NoticeContactWay email = userRegisterVo.getEmail();
+            //发送 注册成功 站内信
+            LOG.info("站长站：玩家注册成功发送站内信");
+            NoticeVo noticeVo = NoticeVo.autoNotify(AutoNoticeEvent.PLAYER_REGISTER_SUCCESS, userRegisterVo.getSysUser().getId());
+            noticeVo.setSubscribeType(CometSubscribeType.READ_COUNT);
+            noticeVo.setSendUserId(NoticeVo.SEND_USER_ID);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(SessionManager.getDate().getNow());
+            noticeVo.addParams(
+                    new Pair<String, String>(NoticeParamEnum.WEB_SITE.getCode(), request.getServerName()),
+                    new Pair<String, String>(NoticeParamEnum.CUSTOMER.getCode(), NoticeParamEnum.CUSTOMER.getDesc()),
+                    new Pair<String, String>(NoticeParamEnum.YEAR.getCode(), String.valueOf(calendar.get(Calendar.YEAR))),
+                    new Pair<String, String>(NoticeParamEnum.MONTH.getCode(), String.valueOf(calendar.get(Calendar.MONTH) + 1)),
+                    new Pair<String, String>(NoticeParamEnum.DAY.getCode(), String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)))
+                    );
+            try {
+                ServiceTool.noticeService().publish(noticeVo);
+            } catch (Exception ex) {
+                LogFactory.getLog(this.getClass()).error(ex, "发布消息不成功");
+            }
+
+            if (userRegisterVo.isSuccess() && email != null && StringTool.isNotBlank(email.getContactValue())) {
+                //发送 注册成功 邮件
+                NoticeTmpl noticeEmailTmpl = getNoticeTmplWherePublishMethodIsEmail(userRegisterVo);
+
+                if (noticeEmailTmpl != null) {
+                    LOG.info("站长站：玩家注册成功发送邮件 地址：{0}", email.getContactValue());
+                    EmailMsgVo emailMsgVo = replaceVarTagInEmailMsg(request, userRegisterVo, noticeEmailTmpl);
+                    emailMsgVo.setToAddressSet(SetTool.newHashSet(email.getContactValue()));
+                    ServiceTool.messageService().sendEmail(emailMsgVo);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error(e, "[玩家注册成功]消息发送失败!");
+        }
+    }
+
+    /**
+     * 根据发送类型 获取注册成功的通知模版
+     *
+     * @param baseObjectVo
+     * @return
+     */
+    private NoticeTmpl getNoticeTmplWherePublishMethodIsEmail(BaseObjectVo baseObjectVo) {
+        NoticeVo noticeVo = new NoticeVo();
+        noticeVo.setSubscribeType(CometSubscribeType.READ_COUNT);
+        noticeVo.setEventType(AutoNoticeEvent.PLAYER_REGISTER_SUCCESS);
+        noticeVo.setPublishMethod(NoticePublishMethod.EMAIL);
+        Map<NoticePublishMethod, Set<NoticeTmpl>> s = ServiceTool.noticeService().fetchTmpls(noticeVo);
+        Map<String, NoticeTmpl> noticeTmplHashMap = CollectionTool.toEntityMap(s.get(NoticePublishMethod.EMAIL), NoticeTmpl.PROP_LOCALE, String.class);
+        String locale = "";
+        if (baseObjectVo instanceof UserRegisterVo) {
+            locale = StringTool.isBlank(((UserRegisterVo) baseObjectVo).getSysUser().getDefaultLocale()) ? SessionManager.getLocale().toString() : ((UserRegisterVo) baseObjectVo).getSysUser().getDefaultLocale();
+        } else if (baseObjectVo instanceof UserAgentVo) {
+            locale = StringTool.isBlank(((UserAgentVo) baseObjectVo).getSysUser().getDefaultLocale()) ? SessionManager.getLocale().toString() : ((UserAgentVo) baseObjectVo).getSysUser().getDefaultLocale();
+        }
+        return noticeTmplHashMap.get(locale);
+    }
+
+    private EmailMsgVo replaceVarTagInEmailMsg(HttpServletRequest request, UserRegisterVo userRegisterVo, NoticeTmpl noticeEmailTmpl) {
+        String tmplContent = noticeEmailTmpl.getContent();
+        String tmplTitle = noticeEmailTmpl.getTitle();
+        EmailMsgVo emailMsgVo = new EmailMsgVo();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int mon = cal.get(Calendar.MONTH) + 1;//Calendar里取出来的month比实际的月份少1，所以要加上
+        int year = cal.get(Calendar.YEAR);
+        tmplTitle = StringTool.fillTemplate(tmplTitle, MapTool.newHashMap(
+                new Pair<String, String>("sitename", SessionManager.getSiteName(request))
+        ));
+        tmplContent = StringTool.fillTemplate(tmplContent, MapTool.newHashMap(
+                new Pair<String, String>("user", userRegisterVo.getSysUser().getUseLine()),
+                new Pair<String, String>("sitename", Cache.getSiteI18n(SiteI18nEnum.SETTING_SITE_NAME).get(noticeEmailTmpl.getLocale()).getValue()),
+                new Pair<String, String>("year", Integer.toString(year)),
+                new Pair<String, String>("month", Integer.toString(mon)),
+                new Pair<String, String>("day", Integer.toString(day)))
+        );
+
+        emailMsgVo.setContent(tmplContent);
+        emailMsgVo.setTitle(tmplTitle);
+        return emailMsgVo;
     }
 
     /***
@@ -312,6 +414,9 @@ public class RegisterAppController {
         if (!ParamTool.isOnlyFiled("realName")) {
             return "true";
         }
+        if(StringTool.isBlank(realName)){
+            return "true";
+        }
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setRealName(realName);
         sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
@@ -329,6 +434,9 @@ public class RegisterAppController {
         if (!ParamTool.isOnlyFiled(ContactWayType.QQ.getCode())) {
             return "true";
         }
+        if(StringTool.isBlank(qqContactValue)){
+            return "true";
+        }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
         listVo.getSearch().setContactType(ContactWayType.QQ.getCode());
         listVo.getSearch().setContactValue(qqContactValue);
@@ -342,6 +450,9 @@ public class RegisterAppController {
      */
     public String checkPhoneExist(@RequestParam("phone.contactValue") String phoneContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.CELLPHONE.getCode())) {
+            return "true";
+        }
+        if(StringTool.isBlank(phoneContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
@@ -359,6 +470,9 @@ public class RegisterAppController {
         if (!ParamTool.isOnlyFiled(ContactWayType.EMAIL.getCode())) {
             return "true";
         }
+        if(StringTool.isBlank(mailContactValue)){
+            return "true";
+        }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();
         listVo.getSearch().setContactType(ContactWayType.EMAIL.getCode());
         listVo.getSearch().setContactValue(mailContactValue);
@@ -372,6 +486,9 @@ public class RegisterAppController {
      */
     public String checkWeixinExist(@RequestParam("weixin.contactValue") String weixinContactValue) {
         if (!ParamTool.isOnlyFiled(ContactWayType.WEIXIN.getCode())) {
+            return "true";
+        }
+        if(StringTool.isBlank(weixinContactValue)){
             return "true";
         }
         NoticeContactWayListVo listVo = new NoticeContactWayListVo();

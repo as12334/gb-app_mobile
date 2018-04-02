@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.app.validateForm;
+package so.wwb.gamebox.mobile.app.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -10,6 +10,7 @@ import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -21,14 +22,27 @@ public class CompanyElectronicDepositForm implements IForm {
     private String result_payerBankcard;
     private String result_bankOrder;
     private String result_payerName;
-    private String result_payAccountId;
+    private String account;
+    private String result_rechargeType;
 //    private String $code;
+
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
 
     @Comment("存款金额")
     @NotBlank(message = "rechargeForm.rechargeAmountNotBlank")
     @Pattern(message = "rechargeForm.rechargeAmountCorrect", regexp = FormValidRegExps.MONEY)
     //@Remote(message = "valid.rechargeForm.rechargeAmountOver", checkClass = CompanyElectronicDepositController.class, checkMethod = "checkAmount")
     @Max(message = "rechargeForm.rechargeAmountMax", value = 99999999)
+    @Min(message = "rechargeForm.rechargeAmountMin", value = 0)
     public String getResult_rechargeAmount() {
         return result_rechargeAmount;
     }
@@ -38,7 +52,7 @@ public class CompanyElectronicDepositForm implements IForm {
     }
 
     @Comment("存款账号")
-    @Depends(property = "result.rechargeType", operator = {Operator.IN}, value = {RechargeTypeEnum.RECHARGE_TYPE_WECHATPAY_FAST, RechargeTypeEnum.RECHARGE_TYPE_BDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_JDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_QQWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_OTHER_FAST})
+    @Depends(message = "rechargeForm.payerBankcard",property = "result.rechargeType", operator = {Operator.IN}, value = {RechargeTypeEnum.RECHARGE_TYPE_WECHATPAY_FAST, RechargeTypeEnum.RECHARGE_TYPE_BDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_JDWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_QQWALLET_FAST, RechargeTypeEnum.RECHARGE_TYPE_OTHER_FAST})
     @Length(message = "rechargeForm.payerBankcardLength", max = 20)
     public String getResult_payerBankcard() {
         return result_payerBankcard;
@@ -59,7 +73,7 @@ public class CompanyElectronicDepositForm implements IForm {
     }
 
     @Comment("支付户名")
-    @Depends(property = "result.rechargeType", operator = {Operator.EQ}, value = {RechargeTypeEnum.RECHARGE_TYPE_ALIPAY_FAST})
+    @Depends(message = "rechargeForm.alipayPayerNameNotBlank",property = "result.rechargeType", operator = {Operator.EQ}, value = {RechargeTypeEnum.RECHARGE_TYPE_ALIPAY_FAST})
     public String getResult_payerName() {
         return result_payerName;
     }
@@ -68,14 +82,13 @@ public class CompanyElectronicDepositForm implements IForm {
         this.result_payerName = result_payerName;
     }
 
-    @Comment("存款渠道")
-    @NotBlank(message = "rechargeForm.payAccountNotBlank")
-    public String getResult_payAccountId() {
-        return result_payAccountId;
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
     }
 
-    public void setResult_payAccountId(String result_payAccountId) {
-        this.result_payAccountId = result_payAccountId;
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 
 //    @Comment("验证码")

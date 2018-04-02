@@ -1,13 +1,9 @@
-package so.wwb.gamebox.mobile.app.validateForm;
+package so.wwb.gamebox.mobile.app.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.soul.commons.query.enums.Operator;
-import org.soul.commons.validation.form.constraints.Depends;
-import org.soul.commons.validation.form.constraints.Remote;
 import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
-import so.wwb.gamebox.mobile.controller.BaseDepositController;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
@@ -22,11 +18,12 @@ public class BitcoinDepositForm implements IForm {
     private String result_bitAmount;
 //    private String $code;
     private String result_returnTime;
-    private String result_payAccountId;
+    private String account;
+    private String result_rechargeType;
 
     @Comment("玩家比特币钱包地址")
-    @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
-    @Length(min = 26, max = 34)
+    @NotBlank(message = "rechargeForm.bitAddress")
+    @Length(min = 26, max = 34,message = "rechargeForm.bitAddressLength")
     public String getResult_payerBankcard() {
         return result_payerBankcard;
     }
@@ -35,20 +32,9 @@ public class BitcoinDepositForm implements IForm {
         this.result_payerBankcard = result_payerBankcard;
     }
 
-    @Comment("存款渠道")
-    @NotBlank(message = "rechargeForm.payAccountNotBlank")
-    public String getResult_payAccountId() {
-        return result_payAccountId;
-    }
-
-    public void setResult_payAccountId(String result_payAccountId) {
-        this.result_payAccountId = result_payAccountId;
-    }
-
     @Comment("txId")
     @NotBlank(message = "rechargeForm.payerTxIdNotBlank")
-    @Length(max = 64)
-    @Remote(message = "deposit_auto.txId已存在", checkClass = BaseDepositController.class, checkMethod = "checkTxId")
+    @Length(max = 64,message = "rechargeForm.result.bitTxIdMax")
     public String getResult_bankOrder() {
         return result_bankOrder;
     }
@@ -69,10 +55,10 @@ public class BitcoinDepositForm implements IForm {
 //    }
 
     @Comment("比特币")
-    @NotBlank(message = "rechargeForm.returnTimeNotBlank")
+    @NotBlank(message = "rechargeForm.result.bitAmount")
     //@Pattern(message = "请输入大于0.00001且至多只有8位小数的数字", regexp = FormValidRegExps.BIT_AMOUNT)
-    @DecimalMin(value = "0.00010001")
-    @Digits(integer = 8, fraction = 8)
+    @Digits(integer = 8, fraction = 8,message = "rechargeForm.result.bitAmountFormat")
+    @DecimalMin(value = "0.00010001",message = "rechargeForm.result.bitAmountMin")
     public String getResult_bitAmount() {
         return result_bitAmount;
     }
@@ -82,12 +68,31 @@ public class BitcoinDepositForm implements IForm {
     }
 
     @Comment("交易时间")
-    @NotBlank(message = "rechargeForm.payerBankcardNotBlank")
+    @NotBlank(message = "rechargeForm.returnTimeNotBlank")
     public String getResult_returnTime() {
         return result_returnTime;
     }
 
     public void setResult_returnTime(String result_returnTime) {
         this.result_returnTime = result_returnTime;
+    }
+
+    @Comment("存款渠道")
+    @NotBlank(message = "rechargeForm.payAccountNotBlank")
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    @NotBlank(message = "rechargeForm.rechargeType")
+    public String getResult_rechargeType() {
+        return result_rechargeType;
+    }
+
+    public void setResult_rechargeType(String result_rechargeType) {
+        this.result_rechargeType = result_rechargeType;
     }
 }
