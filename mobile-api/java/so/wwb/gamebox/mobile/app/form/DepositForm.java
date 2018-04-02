@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.app.validateForm;
+package so.wwb.gamebox.mobile.app.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -8,7 +8,6 @@ import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
-import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.*;
 
