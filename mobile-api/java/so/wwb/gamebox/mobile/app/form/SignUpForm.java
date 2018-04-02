@@ -7,6 +7,7 @@ import org.soul.commons.validation.form.constraints.Compare;
 import org.soul.commons.validation.form.constraints.Depends;
 import org.soul.commons.validation.form.constraints.Remote;
 import org.soul.commons.validation.form.support.AndOr;
+import org.soul.commons.validation.form.support.Comment;
 import org.soul.commons.validation.form.support.CompareLogic;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.mobile.app.controller.RegisterAppController;
@@ -53,6 +54,7 @@ public class SignUpForm implements IForm {
     private String $recommendUserInputCode;
     private String requiredJson;
 
+    @Comment("用户名")
     @NotBlank(message = "Register.username.notBlank")
     @Pattern(regexp = FormValidRegExps.ACCOUNT, message = "Register.username.format")
     public String getSysUser_username() {
@@ -63,6 +65,7 @@ public class SignUpForm implements IForm {
         this.sysUser_username = sysUser_username;
     }
 
+    @Comment("注册密码")
     @NotBlank(message = "Register.password.notBlank")
     @Pattern(message = "Register.password.format", regexp = FormValidRegExps.LOGIN_PWD)
     @Remote(message = "Register.password.remote", checkClass = ValidateController.class, checkMethod = "passwordNotWeak", additionalProperties = "sysUser.username")
@@ -74,6 +77,7 @@ public class SignUpForm implements IForm {
         this.sysUser_password = sysUser_password;
     }
 
+    @Comment("安全码")
     @NotBlank(message = "Register.confirmPassword.notBlank")
     @Compare(message = "Register.confirmPassword.notEqWithPassword", anotherProperty = "sysUser.password", logic = CompareLogic.EQ)
     public String get$confirmPassword() {
@@ -84,6 +88,7 @@ public class SignUpForm implements IForm {
         this.$confirmPassword = $confirmPassword;
     }
 
+    @Comment("时区")
     @Depends(message = "Register.defaultTimezone.notBlank", operator = Operator.IN, value = "defaultTimezone", property = "$requiredJson")
     public String getSysUser_defaultTimezone() {
         return sysUser_defaultTimezone;
@@ -93,6 +98,7 @@ public class SignUpForm implements IForm {
         this.sysUser_defaultTimezone = sysUser_defaultTimezone;
     }
 
+    @Comment("货币")
     @Depends(message = "Register.defaultCurrency.notBlank", operator = Operator.IN, value = "mainCurrency", property = "$requiredJson")
     public String getSysUser_defaultCurrency() {
         return sysUser_defaultCurrency;
@@ -102,6 +108,7 @@ public class SignUpForm implements IForm {
         this.sysUser_defaultCurrency = sysUser_defaultCurrency;
     }
 
+    @Comment("语言")
     @Depends(message = "Register.defaultLocale.notBlank", operator = Operator.IN, value = "defaultLocale", property = "$requiredJson")
     public String getSysUser_defaultLocale() {
         return sysUser_defaultLocale;
@@ -111,6 +118,7 @@ public class SignUpForm implements IForm {
         this.sysUser_defaultLocale = sysUser_defaultLocale;
     }
 
+    @Comment("安全码")
     @Depends(message = "Register.permissionPwd.noBlank", operator = Operator.IN, value = "paymentPassword", property = "$requiredJson")
     @Pattern(message = "Register.permissionPwd.format", regexp = FormValidRegExps.SECURITY_PWD)
     @Remote(message = "Register.permissionPwd.remote", checkClass = ValidateController.class, checkMethod = "paymentPasswordNotWeak", additionalProperties = "sysUser.username")
@@ -122,6 +130,7 @@ public class SignUpForm implements IForm {
         this.sysUser_permissionPwd = sysUser_permissionPwd;
     }
 
+    @Comment("确认安全码")
     @Depends(message = "Register.confirmPermissionPwd.notBlank", operator = Operator.IN, value = "paymentPassword", property = "$requiredJson")
     @Compare(message = "Register.confirmPermissionPwd.notEqWithPermissionPwd", anotherProperty = "sysUser.permissionPwd", logic = CompareLogic.EQ)
     public String get$confirmPermissionPwd() {
@@ -132,6 +141,7 @@ public class SignUpForm implements IForm {
         this.$confirmPermissionPwd = $confirmPermissionPwd;
     }
 
+    @Comment("QQ")
     @Depends(message = "Register.qq.notBlank", operator = Operator.IN, value = "301", property = "$requiredJson")
     @Pattern(regexp = FormValidRegExps.QQ, message = "Register.qq.format")
     @Remote(message = "Register.qq.exist", checkClass = RegisterAppController.class, checkMethod = "checkQqExist")
@@ -143,6 +153,7 @@ public class SignUpForm implements IForm {
         this.qq_contactValue = qq_contactValue;
     }
 
+    @Comment("手机")
     @Depends(message = "Register.phone.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"110", ""}, property = {"$requiredJson", "$checkPhone"}, andOr = AndOr.OR)
     @Pattern(regexp = FormValidRegExps.NUMBER_PHONE, message = "Register.phone.format")
     @Remote(message = "Register.phone.exist", checkClass = RegisterAppController.class, checkMethod = "checkPhoneExist")
@@ -154,6 +165,7 @@ public class SignUpForm implements IForm {
         this.phone_contactValue = phone_contactValue;
     }
 
+    @Comment("Email")
     @Pattern(regexp = FormValidRegExps.EMAIL, message = "Register.email.format")
     @Depends(message = "Register.email.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"201", ""}, property = {"$requiredJson", "$checkEmail"}, andOr = AndOr.OR)
     @Remote(message = "Register.mail.exist", checkClass = RegisterAppController.class, checkMethod = "checkMailExist")
@@ -165,6 +177,7 @@ public class SignUpForm implements IForm {
         this.email_contactValue = email_contactValue;
     }
 
+    @Comment("微信")
     @Depends(message = "Register.weixin.notBlank", operator = Operator.IN, value = "304", property = "$requiredJson")
     @Length(min = 2, max = 20, message = "Register.weixin.format")
     @Remote(message = "Register.weixin.exist", checkClass = RegisterAppController.class, checkMethod = "checkWeixinExist")
@@ -176,6 +189,7 @@ public class SignUpForm implements IForm {
         this.weixin_contactValue = weixin_contactValue;
     }
 
+    @Comment("性别")
     @Depends(message = "Register.sex.notBlank", operator = Operator.IN, value = "sex", property = "$requiredJson")
     public String getSysUser_sex() {
         return sysUser_sex;
@@ -185,6 +199,7 @@ public class SignUpForm implements IForm {
         this.sysUser_sex = sysUser_sex;
     }
 
+    @Comment("真实姓名")
     @Depends(message = "Register.realname.notBlank", operator = Operator.IN, value = "realName", property = "$requiredJson")
     @Pattern(regexp = FormValidRegExps.NAME_D, message = "Register.realname.format")
     @Remote(message = "Register.realName.exist", checkMethod = "checkRealNameExist", checkClass = RegisterAppController.class)
@@ -196,6 +211,7 @@ public class SignUpForm implements IForm {
         this.sysUser_realName = sysUser_realName;
     }
 
+    @Comment("回答问题")
     @Depends(message = "Register.question.notBlank", operator = Operator.IN, value = "securityIssues", property = "$requiredJson")
     public String getSysUserProtection_question1() {
         return sysUserProtection_question1;
@@ -205,6 +221,7 @@ public class SignUpForm implements IForm {
         this.sysUserProtection_question1 = sysUserProtection_question1;
     }
 
+    @Comment("答案")
     @Pattern(regexp = FormValidRegExps.ANSWER, message = "Register.answer.format")
     @Depends(message = "Register.answer.notBlank", operator = {Operator.IN, Operator.IS_NOT_EMPTY}, value = {"securityIssues", ""}, property = {"$requiredJson", "sysUserProtection_question1"}, andOr = AndOr.OR)
     public String getSysUserProtection_answer1() {
@@ -215,6 +232,7 @@ public class SignUpForm implements IForm {
         this.sysUserProtection_answer1 = sysUserProtection_answer1;
     }
 
+    @Comment("验证码")
     @NotBlank(message = "Register.captchaCode.notBlank")
     @Remote(message = "Register.captchaCode.notRight", checkClass = RegisterAppController.class, checkMethod = "checkedCaptcha", additionalProperties = {"$editType"})
     public String get$captchaCode() {
@@ -225,6 +243,7 @@ public class SignUpForm implements IForm {
         this.$captchaCode = $captchaCode;
     }
 
+    @Comment("注册条款")
     @NotBlank(message = "Register.termsOfService.notBlank")
     @Depends(message = "Register.termsOfService.notBlank", operator = Operator.IN, property = "$requiredJson", value = "serviceTerms")
     public String get$termsOfService() {
@@ -235,6 +254,7 @@ public class SignUpForm implements IForm {
         this.$termsOfService = termsOfService;
     }
 
+    @Comment("生日")
     @Depends(message = "Register.birthday.notBlank", operator = Operator.IN, value = "birthday", property = "$requiredJson")
     public String getSysUser_birthday() {
         return sysUser_birthday;
@@ -244,6 +264,7 @@ public class SignUpForm implements IForm {
         this.sysUser_birthday = sysUser_birthday;
     }
 
+    @Comment("email验证码")
     @Depends(message = "Register.emailCode.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$checkEmail")
     @Remote(message = "Register.emailCode.remote", checkClass = RegisterAppController.class, checkMethod = "checkEmailCode", additionalProperties = "email.contactValue")
     public String get$emailCode() {
@@ -254,6 +275,7 @@ public class SignUpForm implements IForm {
         this.$emailCode = $emailCode;
     }
 
+    @Comment("手机验证码")
     @Depends(message = "Register.phoneCode.notBlank", operator = Operator.IS_NOT_EMPTY, property = "$checkPhone")
     @Remote(message = "Register.phoneCode.remote", checkClass = VerificationCodeController.class, checkMethod = "checkPhoneCode", additionalProperties = "phone.contactValue")
     public String get$phoneCode() {
@@ -264,6 +286,7 @@ public class SignUpForm implements IForm {
         this.$phoneCode = $phoneCode;
     }
 
+    @Comment("推荐码")
     @Depends(message = "Register.recomendUser.notBlank", operator = Operator.IN, value = "regCode", property = "$requiredJson")
     @Pattern(regexp = FormValidRegExps.REC_CODE, message = "Register.recomendUser.format")
     public String get$recommendUserInputCode() {
