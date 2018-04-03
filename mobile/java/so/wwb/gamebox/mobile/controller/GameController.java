@@ -151,7 +151,6 @@ public class GameController extends BaseApiController {
         Map<String, List<Integer>> tagGames = new HashedMap();
         Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
         for (String tagStr : tagName.keySet()) {
-            games = new ArrayList<>();
             games = getGamesByTagId(gameTagMap, tagStr);
             tagGames.put(tagStr, games);
         }
@@ -231,7 +230,9 @@ public class GameController extends BaseApiController {
                 continue;
             }
             siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
-            siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
+            if(siteGameI18nMap.get(siteGame.getGameId().toString()) != null){
+                siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
+            }
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }
@@ -259,7 +260,9 @@ public class GameController extends BaseApiController {
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
             if (!tags.contains(tagId)) {
-                gameTagMap.put(tagId, tagNameMap.get(tagId));
+                if(StringTool.isNotBlank(tagNameMap.get(tagId))){
+                    gameTagMap.put(tagId, tagNameMap.get(tagId));
+                }
             }
         }
         return gameTagMap;
@@ -357,6 +360,7 @@ public class GameController extends BaseApiController {
                 break;
             }
         }
+        map.put("timeZone",SessionManager.getTimeZone());
 
         return map;
     }

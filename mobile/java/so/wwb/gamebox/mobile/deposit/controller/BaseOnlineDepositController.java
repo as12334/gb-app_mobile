@@ -22,14 +22,12 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.CacheBase;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
-import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -48,8 +46,10 @@ import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bruce on 16-12-13.
@@ -134,17 +134,17 @@ public class BaseOnlineDepositController extends BaseDepositController {
      */
     Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
         if (result.hasErrors()) {
-            Map<String, Object> messageMap = new HashMap<>(2, 1f);
-            messageMap.put("state", false);
-            messageMap.put("msg", LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
-            return messageMap;
+            playerRechargeVo.setErrMsg(LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
+            return getResultMsg(false, playerRechargeVo.getErrMsg(), null);
         }
         PayAccount payAccount = null;
         if (StringTool.isNotBlank(playerRechargeVo.getAccount())) {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         }
         if (payAccount == null) {
-            return getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
+            Map<String, Object> resultMsg = getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
+            resultMsg.put("accountNotUsing", true);
+            return resultMsg;
         }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
@@ -282,13 +282,14 @@ public class BaseOnlineDepositController extends BaseDepositController {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         }
         if (payAccount == null) {
+            model.addAttribute("accountNotUsing", true);
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
         }
         //统计该渠道连续存款失败次数
         PlayerRechargeVo playerRechargeVo4Count = new PlayerRechargeVo();
         playerRechargeVo4Count.getSearch().setPayAccountId(payAccount.getId());
         Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo4Count, SessionManager.getUserId());
-        model.addAttribute("failureCount",failureCount);
+        model.addAttribute("failureCount", failureCount);
         Integer max = payAccount.getSingleDepositMax();
         Integer min = payAccount.getSingleDepositMin();
         if (min == null) {
@@ -299,13 +300,13 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
         //验证存款金额的合法性
         if (rechargeAmount == null || rechargeAmount <= 0) {
-            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER,min,max));
+            return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max));
         }
         if (max < rechargeAmount || min > rechargeAmount) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max));
         }
         Double fee = calculateFee(rank, rechargeAmount);
-        fee = fee == null ? 0 : fee ;
+        fee = fee == null ? 0 : fee;
         if (rechargeAmount + fee <= 0) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));
         }
@@ -332,7 +333,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee", counterFee);
             }
             model.addAttribute("msg", msg);
-            model.addAttribute("depositChannel",playerRechargeVo.getDepositChannel());
+            model.addAttribute("depositChannel", playerRechargeVo.getDepositChannel());
         }
         return submitReturn(model, unCheckSuccess, pop, rechargeAmount, "");
     }
@@ -357,7 +358,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         map.put("terminal", TerminalEnum.MOBILE.getCode());
         PayAccountListVo listVo = new PayAccountListVo();
         listVo.setConditions(map);
-        return  ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
+        return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
     }
 
     PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {

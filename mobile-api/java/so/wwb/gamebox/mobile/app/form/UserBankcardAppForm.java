@@ -1,14 +1,12 @@
-package so.wwb.gamebox.mobile.app.validateForm;
+package so.wwb.gamebox.mobile.app.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.validation.form.constraints.Depends;
-import org.soul.commons.validation.form.constraints.Remote;
 import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.model.common.RegExpConstants;
-import so.wwb.gamebox.web.fund.controller.UserBankcardController;
 
 import javax.validation.constraints.Pattern;
 

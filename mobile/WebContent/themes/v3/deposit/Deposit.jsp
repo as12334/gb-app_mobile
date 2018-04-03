@@ -10,7 +10,11 @@
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">
     <a id="depositBack" style="display: none" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
-    <%@include file="../common/Assert.jsp"%>
+    <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
+    <div id="login-info" class="mui-hidden login-info">
+        <div class="user_name"></div>
+        <div class="money"></div>
+    </div>
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
     <div class="mui-scroll">
@@ -160,4 +164,5 @@
 <script src="${resRoot}/js/deposit/OnlinePay.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 </html>

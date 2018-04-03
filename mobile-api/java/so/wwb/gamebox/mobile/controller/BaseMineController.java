@@ -19,7 +19,6 @@ import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.Base36;
-import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.msg.notice.po.VNoticeReceivedText;
 import org.soul.model.msg.notice.vo.NoticeReceiveVo;
 import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
@@ -47,7 +46,6 @@ import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
-import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.*;
@@ -56,9 +54,12 @@ import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
+import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
-import so.wwb.gamebox.model.master.player.po.*;
+import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
+import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
+import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.so.PlayerGameOrderSo;
 import so.wwb.gamebox.model.master.player.so.VPlayerAdvisorySo;
 import so.wwb.gamebox.model.master.player.vo.*;
@@ -68,7 +69,6 @@ import so.wwb.gamebox.model.master.report.vo.*;
 import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
-import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,7 +76,6 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static org.soul.commons.currency.CurrencyTool.formatCurrency;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 import static so.wwb.gamebox.model.CacheBase.getApiI18n;
 import static so.wwb.gamebox.model.CacheBase.getSiteApiI18n;
@@ -91,33 +90,6 @@ public class BaseMineController {
     private Log LOG = LogFactory.getLog(BaseMineController.class);
     private IPlayerTransferService playerTransferService;
     private static final int DEFAULT_MIN_TIME = -6;
-
-    protected PlayerApiListVo initPlayerApiListVo(Integer userId) {
-        PlayerApiListVo listVo = new PlayerApiListVo();
-        listVo.getSearch().setPlayerId(userId);
-        listVo.setApis(Cache.getApi());
-        listVo.setSiteApis(Cache.getSiteApi());
-        return listVo;
-    }
-
-    /**
-     * 刷新额度
-     *
-     * @param request
-     * @return
-     */
-    protected UserInfoApp appRefresh(HttpServletRequest request) {
-        Integer userId = SessionManager.getUserId();
-        PlayerApiListVo listVo = initPlayerApiListVo(userId);
-        VUserPlayer player = getVPlayer(userId);
-
-        UserInfoApp infoApp = new UserInfoApp();
-        infoApp.setApis(getSiteApis(listVo, request, true));
-        infoApp.setCurrSign(player.getCurrencySign());
-        infoApp.setAssets(queryPlayerAssets(listVo, userId));
-        infoApp.setUsername(player.getUsername());
-        return infoApp;
-    }
 
     /**
      * 组装数据 我的优惠
@@ -183,8 +155,7 @@ public class BaseMineController {
      *
      * @return
      */
-    protected Map appRecovery() {
-        PlayerApiVo playerApiVo = new PlayerApiVo();
+    protected Map appRecovery(PlayerApiVo playerApiVo) {
         playerApiVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
         Map map = doRecovery(playerApiVo);
         return map;
@@ -304,90 +275,12 @@ public class BaseMineController {
         }
     }
 
-    /**
-     * 查询玩家总资产
-     */
-    protected String queryPlayerAssets(PlayerApiListVo listVo, Integer userId) {
-        listVo.getSearch().setPlayerId(userId);
-        listVo.setApis(Cache.getApi());
-        listVo.setSiteApis(Cache.getSiteApi());
-        double assets = ServiceSiteTool.playerApiService().queryPlayerAssets(listVo);
-        return formatCurrency(assets);
-    }
-
-    protected List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
-        //同步余额
-        if (isFetch) {
-            IApiBalanceService service = (IApiBalanceService) SpringTool.getBean("apiBalanceService");
-            service.fetchPlayerAllApiBalance();
-            listVo.getSearch().setApiId(null);
-        }
-        listVo.setType(ApiQueryTypeEnum.ALL_API.getCode());
-        listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
-         /* 翻译api */
-        List<Map<String, Object>> maps = new ArrayList<>();
-        List<SiteApi> apis = getSiteApi();
-        for (SiteApi siteApi : apis) {
-            for (PlayerApi api : listVo.getResult()) {
-                if (siteApi.getApiId().intValue() == api.getApiId().intValue()) {
-                    Map<String, Object> map = new HashMap<>();
-                    String apiId = api.getApiId().toString();
-                    map.put("apiId", apiId);
-                    map.put("apiName", CacheBase.getSiteApiName(apiId));
-                    map.put("balance", api.getMoney() == null ? 0 : api.getMoney());
-                    map.put("status", siteApi.getStatus());
-
-                    maps.add(map);
-                }
-            }
-        }
-
-        //根据API余额降序 Add by Bruce.QQ
-        Collections.sort(maps, new Comparator<Map<String, Object>>() {
-            @Override
-            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                return ((Double) o2.get("balance")).compareTo((Double) o1.get("balance"));
-            }
-        });
-        return maps;
-    }
-
-    private List<SiteApi> getSiteApi() {
-        Map<String, SiteApi> siteApiMap = CacheBase.getSiteApi();
-        List<SiteApi> siteApis = new ArrayList<>();
-        Map<String, Api> apiMap = CacheBase.getApi();
-        String disable = GameStatusEnum.DISABLE.getCode();
-        String maintain = GameStatusEnum.MAINTAIN.getCode();
-        if (MapTool.isNotEmpty(siteApiMap)) {
-            for (SiteApi siteApi : siteApiMap.values()) {
-                Api api = apiMap.get(String.valueOf(siteApi.getApiId()));
-                if (api != null && !disable.equals(api.getSystemStatus()) && !disable.equals(siteApi.getSystemStatus())) {
-                    if (maintain.equals(api.getSystemStatus()) || maintain.equals(siteApi.getSystemStatus())) {
-                        siteApi.setStatus(maintain);
-                    }
-                    siteApis.add(siteApi);
-                }
-            }
-        }
-        return siteApis;
-    }
-
     private String getCurrencySign() {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());
         if (sysCurrency != null) {
             return sysCurrency.getCurrencySign();
         }
         return "";
-    }
-
-    protected VUserPlayer getVPlayer(Integer userId) {
-        VUserPlayerVo vo = new VUserPlayerVo();
-        vo.getSearch().setId(userId);
-        VUserPlayer player = ServiceSiteTool.vUserPlayerService().queryPlayer4App(vo);
-        if (player != null) {
-            player.setCurrencySign(getCurrencySign(player.getDefaultCurrency()));
-        }
-        return player;
     }
 
     /**
@@ -404,6 +297,11 @@ public class BaseMineController {
         return "";
     }
 
+    /**
+     * 设置app投注记录默认查询时间
+     *
+     * @param playerGameOrderListVo
+     */
     protected void initQueryDateForgetBetting(PlayerGameOrderListVo playerGameOrderListVo) {
         Date minDate = SessionManager.getDate().addDays(TIME_INTERVAL);
         playerGameOrderListVo.setMinDate(minDate);
@@ -412,7 +310,8 @@ public class BaseMineController {
             playerGameOrderSo.setBeginBetTime(SessionManager.getDate().getYestoday());//默认查询昨天至今天
         } else if (playerGameOrderSo.getBeginBetTime() != null && playerGameOrderSo.getBeginBetTime().getTime() < minDate.getTime()) {//开始时间不能小于最小时间
             playerGameOrderSo.setBeginBetTime(minDate);
-        } else if (playerGameOrderSo.getEndBetTime() == null || playerGameOrderSo.getBeginBetTime().after(playerGameOrderSo.getEndBetTime())) {
+        }
+        if (playerGameOrderSo.getEndBetTime() == null || playerGameOrderSo.getBeginBetTime().after(playerGameOrderSo.getEndBetTime())) {
             playerGameOrderSo.setEndBetTime(SessionManager.getDate().getTomorrow());
         }
         playerGameOrderListVo.getSearch().setEndBetTime(DateTool.addSeconds(DateTool.addDays(playerGameOrderListVo.getSearch().getEndBetTime(), 1), -1));
@@ -1024,6 +923,33 @@ public class BaseMineController {
         return listVo;
     }
 
+    protected VPlayerAdvisoryListVo getUnReadList(VPlayerAdvisoryListVo listVo) {
+
+        String tag = "";
+        for (VPlayerAdvisory obj : listVo.getResult()) {
+            //查询回复表每一条在已读表是否存在
+            PlayerAdvisoryReplyListVo parListVo = new PlayerAdvisoryReplyListVo();
+            parListVo.getSearch().setPlayerAdvisoryId(obj.getId());
+            parListVo = ServiceSiteTool.playerAdvisoryReplyService().searchByIdPlayerAdvisoryReply(parListVo);
+            for (PlayerAdvisoryReply replay : parListVo.getResult()) {
+                PlayerAdvisoryReadVo readVo = new PlayerAdvisoryReadVo();
+                readVo.setResult(new PlayerAdvisoryRead());
+                readVo.getSearch().setUserId(SessionManager.getUserId());
+                readVo.getSearch().setPlayerAdvisoryReplyId(replay.getId());
+                readVo = ServiceSiteTool.playerAdvisoryReadService().search(readVo);
+                //不存在未读+1，标记已读咨询Id
+                if (readVo.getResult() == null && !tag.contains(replay.getPlayerAdvisoryId().toString())) {
+                    obj.setIsRead(false);
+                } else {
+                    obj.setIsRead(true);
+                }
+            }
+        }
+
+        return listVo;
+    }
+
+
     /**
      * 获取玩家推荐信息
      */
@@ -1076,11 +1002,12 @@ public class BaseMineController {
 
     /**
      * 转换推荐记录到原生
+     *
      * @param records
      * @return
      */
-    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records){
-        for (PlayerRecommendAwardRecord record : records){
+    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records) {
+        for (PlayerRecommendAwardRecord record : records) {
             record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
             record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
         }
