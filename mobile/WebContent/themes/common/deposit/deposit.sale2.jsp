@@ -18,23 +18,26 @@
                             <div class="text-pro applysale">
                                 <p>${views.deposit_auto['优惠']}：</p>
                                 <ul>
-                                    <li>
-                                        <div class="text-warp">
-                                            <span>${views.deposit_auto['不参与优惠']}</span>
-                                            <input name="activityId" type="radio" value="" checked="checked"/>
-                                        </div>
-                                    </li>
-
-                                    <c:forEach items="${sales}" varStatus="vs" var="i">
-                                        <c:if test="${i.preferential}">
+                                    <div class="mui-scroll-wrapper">
+                                        <div class="mui-scroll">
                                             <li>
                                                 <div class="text-warp">
-                                                    <span>${i.activityName}</span>
-                                                    <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}"/>
+                                                    <span>${views.deposit_auto['不参与优惠']}</span>
+                                                    <input name="activityId" type="radio" value="" checked="checked"/>
                                                 </div>
                                             </li>
-                                        </c:if>
-                                    </c:forEach>
+                                            <c:forEach items="${sales}" varStatus="vs" var="i">
+                                                <c:if test="${i.preferential}">
+                                                    <li>
+                                                        <div class="text-warp">
+                                                            <span>${i.activityName}</span>
+                                                            <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}"/>
+                                                        </div>
+                                                    </li>
+                                                </c:if>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
                                 </ul>
                             </div>
                         </c:if>
