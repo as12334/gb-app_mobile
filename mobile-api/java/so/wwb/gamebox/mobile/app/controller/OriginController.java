@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.controller;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.string.RandomStringTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -10,18 +11,23 @@ import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.CryptoTool;
+import org.soul.model.sms.SmsMessageVo;
+import org.soul.model.sms_interface.po.SmsInterface;
+import org.soul.model.sms_interface.vo.SmsInterfaceVo;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SmsTypeEnum;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
@@ -37,6 +43,7 @@ import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -353,7 +360,80 @@ public class OriginController extends BaseOriginController {
                 map,
                 APP_VERSION);
     }
+
+    /**
+     * 获取帮助文档详情国际化
+     *
+     * @return
+     */
+    @RequestMapping("/sendPhoneCode")
+    @ResponseBody
+    public String sendPhoneCode(String phone, HttpServletRequest request) {
+
+        if (StringTool.isBlank(phone)) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //90秒后可以重新提交
+        if (!SessionManagerCommon.canSendRegisterPhone()) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        SessionManagerCommon.setSendRegisterPhone(new Date());
+        //保存手机和验证码匹配成对
+        String verificationCode = RandomStringTool.randomNumeric(6);
+        Map<String, String> param = new HashMap(2, 1f);
+        param.put("code", verificationCode);
+        param.put("phone", phone);
+        SessionManagerCommon.setCheckRegisterPhoneInfo(param);
+        LOG.info("手机{0}-验证码：{1}", phone, verificationCode);
+        SmsInterface smsInterface = getSiteSmsInterface();
+        SmsMessageVo smsMessageVo = new SmsMessageVo();
+        smsMessageVo.setUserIp(ServletTool.getIpAddr(request));
+        smsMessageVo.setProviderId(smsInterface.getId());
+        smsMessageVo.setProviderName(smsInterface.getUsername());
+        smsMessageVo.setProviderPwd(smsInterface.getPassword());
+        smsMessageVo.setProviderKey(smsInterface.getDataKey());
+        smsMessageVo.setPhoneNum(phone);
+        smsMessageVo.setType(SmsTypeEnum.YZM.getCode());
+        String siteName = SessionManagerCommon.getSiteName(request);
+        smsMessageVo.setContent("验证码：" + verificationCode + " 【" + siteName + "】");
+        try {
+            ServiceTool.messageService().sendSmsMessage(smsMessageVo);
+        } catch (Exception ex) {
+            LOG.error(ex, "发送手机验证码错误");
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
+    }
     //endregion mainIndex
+
+    /**
+     * 发送站点消息
+     *
+     * @return
+     */
+    private SmsInterface getSiteSmsInterface() {
+        SmsInterfaceVo smsInterfaceVo = new SmsInterfaceVo();
+        smsInterfaceVo._setDataSourceId(SessionManagerCommon.getSiteId());
+        smsInterfaceVo = ServiceTool.smsInterfaceService().search(smsInterfaceVo);
+        return (SmsInterface) smsInterfaceVo.getResult();
+    }
 
     private List<HelpParentTypeApp> getHelpType(List<Map<String, String>> getTypeI18n) {
         List<HelpParentTypeApp> helpParents = new ArrayList<>();
