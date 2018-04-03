@@ -25,7 +25,7 @@
     <div class="panel">
         <p>
             <span class="text">${views.themes_auto['下注内容']}:</span>
-                ${dicts.lottery.lottery_betting[array['bet_code']]}-${array['bet_num']}
+                ${dicts.lottery.lottery_betting[array['betCode']]}-${array['betNum']}
         </p>
     </div>
 </c:forEach>
