@@ -164,7 +164,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.WECHATPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.WECHAT.getCode()),rank);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, BankCodeEnum.FAST_WECHAT.getCode()),rank);
     }
 
     /**
@@ -183,7 +183,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.ALIPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.ALIPAY.getCode()),rank);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, BankCodeEnum.FAST_ALIPAY.getCode()),rank);
     }
 
     /**
@@ -199,7 +199,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.QQWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.QQ.getCode()),rank);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, BankCodeEnum.QQWALLET.getCode()),rank);
     }
 
     /**
@@ -215,7 +215,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.JDWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.JD.getCode()),rank);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, BankCodeEnum.JDWALLET.getCode()),rank);
     }
 
     /**
@@ -231,7 +231,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.BDWALLET_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, AppDepositPayEnum.BD.getCode()),rank);
+        return fillAttr(appRechargePay, scanAccount, electronicAccount, onliineWay, companyWay, depositImgUrl(model, request, BankCodeEnum.BDWALLET.getCode()),rank);
     }
 
     /**
@@ -245,7 +245,7 @@ public class DepositAppController extends BaseDepositController {
         String onliineWay = DepositWayEnum.UNION_PAY_SCAN.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null, depositImgUrl(model, request, AppDepositPayEnum.UNIONPAY.getCode()), rank);
+        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null, depositImgUrl(model, request, BankCodeEnum.UNIONPAY.getCode()), rank);
     }
 
     /**
@@ -259,7 +259,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.ONECODEPAY_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, AppDepositPayEnum.ONECODEPAY.getCode()),rank);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, BankCodeEnum.ONECODEPAY.getCode()),rank);
     }
 
     /**
@@ -273,7 +273,7 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.OTHER_FAST.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, AppDepositPayEnum.OTHER.getCode()),rank);
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, BankCodeEnum.OTHER.getCode()),rank);
     }
 
     /**
@@ -287,7 +287,7 @@ public class DepositAppController extends BaseDepositController {
         String onliineWay = DepositWayEnum.EASY_PAY.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT));
-        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null, depositImgUrl(model, request, AppDepositPayEnum.EASYPAY.getCode()),rank);
+        return fillAttr(appRechargePay, scanAccount, null, onliineWay, null, depositImgUrl(model, request, BankCodeEnum.EASY_PAY.getCode()),rank);
     }
 
     /**
@@ -309,7 +309,7 @@ public class DepositAppController extends BaseDepositController {
         playerRechargeVo.setResult(playerRecharge);
         String lastPayerBankcard = ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
         appRechargePay.setPayerBankcard(lastPayerBankcard);
-        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, AppDepositPayEnum.BITCONIT.getCode()),getRank());
+        return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, BankCodeEnum.BITCOIN.getCode()),getRank());
     }
 
     /**
@@ -425,11 +425,11 @@ public class DepositAppController extends BaseDepositController {
 
         List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRechargeVo.getDepositWay());
         List<AppSale> saleList = new ArrayList<>();
+        AppSale appSale = new AppSale();
+        appSale.setId(null);
+        appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
+        saleList.add(appSale);
         if (!isFee && !isReturnFee && CollectionTool.isEmpty(activityMessages)) {
-            AppSale appSale = new AppSale();
-            appSale.setId(null);
-            appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
-            saleList.add(appSale);
             map.put("counterFee", null);
             map.put("fee", null);
             map.put("sales",saleList );
@@ -438,18 +438,12 @@ public class DepositAppController extends BaseDepositController {
             if(CollectionTool.isNotEmpty(activityMessages)) {
                 for (VActivityMessage vActivityMessage : activityMessages) {
                     if (vActivityMessage.isPreferential()) {
-                        AppSale appSale = new AppSale();
-                        appSale.setId(vActivityMessage.getId());
-                        appSale.setActivityName(vActivityMessage.getActivityName());
-                        saleList.add(appSale);
+                        AppSale appSale4Activity = new AppSale();
+                        appSale4Activity.setId(vActivityMessage.getId());
+                        appSale4Activity.setActivityName(vActivityMessage.getActivityName());
+                        saleList.add(appSale4Activity);
                     }
                 }
-            }
-            if(!CollectionTool.isNotEmpty(saleList)){
-                AppSale appSale = new AppSale();
-                appSale.setId(null);
-                appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
-                saleList.add(appSale);
             }
             String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
             map.put("counterFee", counterFee);
@@ -486,24 +480,22 @@ public class DepositAppController extends BaseDepositController {
         listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
         Map<String, Object> map = new HashMap<String, Object>();
         List<AppSale> saleList = new ArrayList<>();
+        AppSale appSale = new AppSale();
+        appSale.setId(null);
+        appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
+        saleList.add(appSale);
         map.put("counterFee", null);
         map.put("fee", null);
         map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
         if (CollectionTool.isNotEmpty(listVo.getResult())) {
             for (VActivityMessage vActivityMessage : listVo.getResult()) {
                 if (vActivityMessage.isPreferential()) {
-                    AppSale appSale = new AppSale();
-                    appSale.setId(vActivityMessage.getId());
-                    appSale.setActivityName(vActivityMessage.getActivityName());
-                    saleList.add(appSale);
+                    AppSale appSale4Activity = new AppSale();
+                    appSale4Activity.setId(vActivityMessage.getId());
+                    appSale4Activity.setActivityName(vActivityMessage.getActivityName());
+                    saleList.add(appSale4Activity);
                 }
             }
-        }
-        if(!CollectionTool.isNotEmpty(saleList)){
-            AppSale appSale = new AppSale();
-            appSale.setId(null);
-            appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
-            saleList.add(appSale);
         }
         map.put("sales", saleList);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
