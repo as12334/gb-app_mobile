@@ -24,7 +24,7 @@
         <header class="mui-bar mui-bar-nav mui-hide _siteHeader" style="display:${myos eq 'app_android'?'none':'block'}">
             <div class="mui-pull-left">
                 <span class="index-action-menu mui-action-menu"></span>
-                <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
+                <div class="logo"><img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
             <!-- 资产 -->
             <%@include file="/themes/default/include/include.asset.jsp" %>
