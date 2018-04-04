@@ -270,8 +270,10 @@ public class SignUpController extends BaseDemoController {
         boolean isValid = false;
         SysParam param = ParamTool.getSysParam(paramEnum);
         if (param != null) {
-            isValid = "before".equals(param.getParamValue()) && param.getActive();
+            isValid = param.getActive();
         }
+
+
         return isValid;
     }
 
@@ -348,7 +350,7 @@ public class SignUpController extends BaseDemoController {
             return resultMap;
         }
         userRegisterVo = doRegister(userRegisterVo, request);
-        sendRegSuccessMsg(request,userRegisterVo);
+        sendRegSuccessMsg(request, userRegisterVo);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
         String messageCode = userRegisterVo.isSuccess() ? MessageI18nConst.REGISTER_SUCCESS : MessageI18nConst.REGISTER_FAIL;
