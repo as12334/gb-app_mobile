@@ -51,6 +51,8 @@ import java.util.Map;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_ENTRY_URL;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.RECHARGE_TYPE_STR;
+import static so.wwb.gamebox.mobile.app.model.AppSimpleModel.groupAppSimpleModel;
 
 @Controller
 @RequestMapping("/depositOrigin")
@@ -348,6 +350,11 @@ public class DepositAppController extends BaseDepositController {
         String companyWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
         AppRechargePay appRechargePay = new AppRechargePay();
         appRechargePay.setHide(isHide(SiteParamEnum.PAY_ACCOUNT_HIDE_ATM_COUNTER));
+        List<AppSimpleModel> appSimpleModels = new ArrayList<>();
+        appSimpleModels.add(groupAppSimpleModel(RechargeTypeEnum.ATM_MONEY.getCode(),LocaleTool.tranMessage(Module.COMMON, RECHARGE_TYPE_STR + RechargeTypeEnum.ATM_MONEY.getCode())));
+        appSimpleModels.add(groupAppSimpleModel(RechargeTypeEnum.ATM_RECHARGE.getCode(),LocaleTool.tranMessage(Module.COMMON, RECHARGE_TYPE_STR + RechargeTypeEnum.ATM_RECHARGE.getCode())));
+        appSimpleModels.add(groupAppSimpleModel(RechargeTypeEnum.ATM_COUNTER.getCode(),LocaleTool.tranMessage(Module.COMMON, RECHARGE_TYPE_STR + RechargeTypeEnum.ATM_COUNTER.getCode())));
+        appRechargePay.setCounterRechargeTypes(appSimpleModels);
         return fillAttr(appRechargePay, null, electronicAccount, null, companyWay, depositImgUrl(model, request, null),getRank());
     }
 

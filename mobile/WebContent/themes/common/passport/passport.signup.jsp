@@ -161,7 +161,7 @@
                                                         <div class="text gb-vcode" style="background: none;text-align:  left;">
                                                             <button id="sendPhoneCode" type="button" class="mui-btn mui-btn-primary mui-btn-outlined" style="float:  none; width: 100px; color: #007aff;">${views.passport_auto['发送验证码']}</button>
                                                         </div>
-                                                        <label><span class="red">*</span>请输入手机验证码</label>
+                                                        <label><span class="red">*</span>${views.register['signUp.phoneCode']}</label>
                                                         <input type="text" name="phoneCode" class="ico6 mui-input" maxlength="4" placeholder="${views.register['signUp.phoneCode']}">
                                             </div>
                                         </c:if>
