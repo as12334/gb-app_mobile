@@ -12,7 +12,11 @@
             <a class="enter-btn _api" data-api-type-id="3" data-api-id="${a.apiId}" data-game-id="0"
                data-status="${api.get(a.apiId.toString()).systemStatus eq 'maintain' ? 'maintain' : siteApi.get(a.apiId.toString()).systemStatus}">${views.game_auto['进入游戏']}</a>
             <div class="game-logo-wrap">
-                <img src="${resRoot}/images/game-${a.apiId}-logo.png" width="${a.apiId eq 12 || a.apiId eq 36 ?'36':'58'}" alt="">
+                <%---BC图片个性化--%>
+                <c:if test="${siteId == 119 || siteId == 270}">
+                    <c:set var="special" value="-${siteId}"/>
+                </c:if>
+                <img src="${resRoot}/images/game-${a.apiId}-logo${special}.png" width="${a.apiId eq 12 || a.apiId eq 36 ?'36':'58'}" alt="">
                 <div class="txt">${gbFn:getApiName(a.apiId)}</div>
             </div>
         </div>
