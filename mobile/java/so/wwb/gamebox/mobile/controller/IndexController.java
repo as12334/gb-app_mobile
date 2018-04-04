@@ -610,7 +610,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getApiType")
     public String getApiType(Model model) {
-        model.addAttribute("apiList", getApiType());
+        model.addAttribute("apiList", getSiteApiRelation(null));
         return "/game/include/include.api";
     }
 
