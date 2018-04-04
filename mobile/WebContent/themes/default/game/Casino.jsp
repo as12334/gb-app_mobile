@@ -1,4 +1,4 @@
-<%--@elvariable id="command" type="so.wwb.gamebox.model.company.site.vo.VSiteApiListVo"--%>
+<%--@elvariable id="command" type="java.util.List<so.wwb.gamebox.model.company.site.po.SiteApiRelation>"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
 
@@ -11,13 +11,13 @@
                     <input type="hidden" id="casino-id" value="${a.apiId}"/>
                 </c:if>
                 <a href="#casino${vs.count}" class="mui-control-item ${vs.index == 0 ? 'mui-active':''}"
-                   data-casino-id="${a.apiId}" data-status="${api.get(a.apiId.toString()).systemStatus eq 'maintain' ? 'maintain' : siteApi.get(a.apiId.toString()).systemStatus}">
-                    <c:if test="${api.get(a.apiId.toString()).systemStatus eq 'maintain' or siteApi.get(a.apiId.toString()).systemStatus eq 'maintain'}">
+                   data-casino-id="${a.apiId}" data-status="${a.apiStatus}">
+                    <c:if test="${a.apiStatus eq 'maintain'}">
                         <div class="mui-maintain casino"></div>
                     </c:if>
                     <c:set var="path" value="${resRoot}/images/api/api-casino-${a.apiId}.png"></c:set>
                     <img src="${soulFn:getImagePath(domain, path)}"/>
-                    ${gbFn:getApiName(a.apiId.toString())}
+                    ${a.name}
                 </a>
             </c:forEach>
         </div>

@@ -34,6 +34,7 @@ import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -80,7 +81,7 @@ public class GameController extends BaseApiController {
                 redirectUrl += "/Chess";
                 break;
         }
-        model.addAttribute("command", getSiteApiTypeRelationList(apiType));
+        model.addAttribute("command", CollectionQueryTool.sort(getSiteApiRelation(apiType), Order.asc(SiteApiTypeRelation.PROP_MOBILE_ORDER_NUM)));
         return redirectUrl;
     }
 
@@ -123,6 +124,7 @@ public class GameController extends BaseApiController {
 
     /**
      * mobile-v3 电子游戏访问这个方法
+     *
      * @param listVo
      * @param model
      * @return
@@ -136,7 +138,7 @@ public class GameController extends BaseApiController {
 
         Integer apiId = so.getApiId();
 
-        if(apiId == null) {
+        if (apiId == null) {
             return redirectUrl;
         }
 
@@ -176,7 +178,7 @@ public class GameController extends BaseApiController {
      * @param tagId
      * @return
      */
-    private List<Integer> getGamesByTagId(Map<String,SiteGameTag> gameTagMap, String tagId) {
+    private List<Integer> getGamesByTagId(Map<String, SiteGameTag> gameTagMap, String tagId) {
 
         List<Integer> gameIds = new ArrayList<>();
         for (SiteGameTag gameTag : gameTagMap.values()) {
@@ -248,6 +250,7 @@ public class GameController extends BaseApiController {
 
     /**
      * 获取全部游戏标签
+     *
      * @return
      */
     private Map<String, String> getGameTagMap() {
@@ -264,7 +267,6 @@ public class GameController extends BaseApiController {
         }
         return gameTagMap;
     }
-
 
 
     /**
@@ -357,7 +359,7 @@ public class GameController extends BaseApiController {
                 break;
             }
         }
-        map.put("timeZone",SessionManager.getTimeZone());
+        map.put("timeZone", SessionManager.getTimeZone());
 
         return map;
     }

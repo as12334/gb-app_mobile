@@ -16,6 +16,7 @@ import so.wwb.gamebox.mobile.common.consts.MobileConst;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.CacheBase;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -25,6 +26,8 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationVo;
+import so.wwb.gamebox.model.company.site.vo.SiteApiVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -45,6 +48,15 @@ import java.util.Map;
  */
 public abstract class BaseApiController extends BaseDemoController {
     private Log LOG = LogFactory.getLog(BaseApiController.class);
+
+    List<SiteApiRelation> getSiteApiRelation(Integer apiTypeId) {
+        SiteApiTypeRelationVo siteApiTypeRelationVo = new SiteApiTypeRelationVo();
+        siteApiTypeRelationVo.getSearch().setApiTypeId(apiTypeId);
+        siteApiTypeRelationVo.getSearch().setSiteId(SessionManager.getSiteId());
+        siteApiTypeRelationVo.setTerminal(SupportTerminal.PC.getCode());
+        List<SiteApiRelation> siteApiRelations = ServiceTool.siteApiTypeRelationService().queryApiTypeRelation(siteApiTypeRelationVo);
+        return siteApiRelations;
+    }
 
     List<Map<String, Object>> getApiType() {
         List<SiteApiTypeRelationI18n> relationI18ns;
