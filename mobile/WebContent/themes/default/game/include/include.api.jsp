@@ -30,7 +30,7 @@
                                 <c:set var="api_icon" value="${apiType.get('apiTypeRelation').apiTypeId}-${apiType.get('apiTypeRelation').apiId}" />
                             </c:otherwise>
                         </c:choose>
-                        <span class="api-icon api-icon-${api_icon}"></span>
+                        <span class="api-icon api-icon-${api_icon} site${siteId}"></span>
                         <span class="icon-text">
                             <c:choose>
                             <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
