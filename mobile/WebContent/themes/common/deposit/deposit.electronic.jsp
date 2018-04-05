@@ -144,7 +144,7 @@
                                             <c:set value="${payAccount.accountPrompt}" var="m"></c:set>
                                         </c:if>
 
-                                        <c:choose>
+                                        <%--<c:choose>
                                             <c:when test="${payAccount.bankCode eq 'onecodepay'}"></c:when>
                                             <c:when test="${payAccount.bankCode eq 'alipay'}">
                                                 <label>${n}</label>
@@ -158,7 +158,13 @@
                                                     <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
                                                 </div>
                                             </c:otherwise>
-                                        </c:choose>
+                                        </c:choose>--%>
+                                        <c:if test="${payAccount.bankCode ne 'onecodepay'}">
+                                            <label>${n}</label>
+                                            <div class="ct">
+                                                <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
+                                            </div>
+                                        </c:if>
                                     </div>
                                         <%--存款金额--%>
                                     <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
