@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.app.validateForm;
+package so.wwb.gamebox.mobile.app.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;

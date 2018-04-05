@@ -43,7 +43,8 @@
                     您的专属链接，<br>
                     复制后通过微信、QQ等方式发送给好友
                     <div class="input-wrap">
-                        <input type="text" value="${code}"> <a href="javascript:void(0)" data-rel='{"target":"copyCode","opType":"function"}' data-clipboard-text="${code}" class="btn-copy">${views.themes_auto['复制']}</a>
+                        <input type="text" value="${domain}${code}">
+                        <a href="#" data-clipboard-text="${domain}${code}" data-rel='{"target":"copyCode","opType":"function"}' class="btn-copy copy">${views.themes_auto['复制']}</a>
                         <input type="hidden" value="${activityRules}" id="activityRules"> <%--接收活动规则，在通过jQuery显示--%>
                     </div>
                 </div>
@@ -159,8 +160,8 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resComRoot}/js/dist/clipboard.js"></script>
 <script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
+<script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/recommend/Recommend.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

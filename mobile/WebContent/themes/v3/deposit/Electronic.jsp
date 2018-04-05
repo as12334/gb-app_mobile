@@ -5,7 +5,7 @@
 </head>
 <body class="exchange-wechat exchange-bank">
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"opType":"function","target":"goToLastPage"}'></a>
     <h1 class="mui-title">
         <c:if test="${payAccount.bankCode eq 'wechatpay'}">
             ${views.deposit_auto['转账到微信']}
@@ -120,6 +120,12 @@
                                 <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
                                 <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
                             </c:if>
+                            <c:if test="${not empty payAccount.accountInformation}">
+                                <c:set value="${payAccount.accountInformation}" var="n"></c:set>
+                            </c:if>
+                            <c:if test="${not empty payAccount.accountPrompt}">
+                                <c:set value="${payAccount.accountPrompt}" var="m"></c:set>
+                            </c:if>
                             <label for="result.payerBankcard">${n}</label>
                             <div class="ct">
                                 <input type="text" id="result.payerBankcard" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${payAccount.bankCode eq 'alipay'?'':m}" autocomplete="off">
@@ -138,20 +144,22 @@
                     </div>
                 </div>
             </div>
-            <c:if test="${empty payAccount.remark}">
-                <ul class="info">
-                    <li>* 请先搜索微信号或扫描二维码添加好友。</li>
-                    <li>* 为了系统快速完成转账，请输入订单号后5位，以加快系统入款速度。</li>
-                    <li>* 支付成功后，请等待几秒钟，提示[支付成功] 按确认</li>
-                </ul>
-            </c:if>
-            <c:if test="${not empty payAccount.remark}">
-                <div class="info">
+            <c:choose>
+                <c:when test="${empty payAccount.remark}">
+                    <ul class="info">
+                        <li>* ${views.deposit_auto['请先加好友']}</li>
+                        <li>* ${views.deposit_auto['请输入订单号后5位']}</li>
+                        <li>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</li>
+                    </ul>
+                </c:when>
+                <c:otherwise>
+                    <div class="info">
                     <ul>
-                        <li>* ${payAccount.remark}</li>
+                        <li> ${payAccount.remark}</li>
                     </ul>
                 </div>
-            </c:if>
+                </c:otherwise>
+            </c:choose>
         </form>
     </div>
 </div>

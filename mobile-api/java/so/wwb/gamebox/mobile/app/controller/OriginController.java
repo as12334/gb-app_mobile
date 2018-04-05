@@ -1,35 +1,49 @@
 package so.wwb.gamebox.mobile.app.controller;
 
+import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.string.RandomStringTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
+import org.soul.commons.query.Criteria;
+import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.CryptoTool;
+import org.soul.model.sms.SmsMessageVo;
+import org.soul.model.sms_interface.po.SmsInterface;
+import org.soul.model.sms_interface.vo.SmsInterfaceVo;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SmsTypeEnum;
+import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
+import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
+import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
 import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
-import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
+import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
-import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
-import so.wwb.gamebox.model.master.content.po.CttCarouselI18n;
-import so.wwb.gamebox.model.master.content.po.CttFloatPic;
-import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
+import so.wwb.gamebox.model.master.content.po.*;
+import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -190,11 +204,11 @@ public class OriginController extends BaseOriginController {
      */
     @RequestMapping(value = "/getGameTag")
     @ResponseBody
-    public String getGameTags() {
+    public String getGameTags(SiteGameListVo listVo) {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                getGameTag(),
+                getGameTag(listVo),
                 APP_VERSION);
     }
 
@@ -233,8 +247,271 @@ public class OriginController extends BaseOriginController {
                 map,
                 APP_VERSION);
     }
+
+    /**
+     * 关于我们
+     *
+     * @return
+     */
+    @RequestMapping("/about")
+    @ResponseBody
+    public String getAbout(HttpServletRequest request) {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                setAbout(request),
+                APP_VERSION);
+    }
+
+    /**
+     * 注册条款
+     *
+     * @return
+     */
+    @RequestMapping("/terms")
+    @ResponseBody
+    public String getRegisterRules() {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                Cache.getSiteI18n(SiteI18nEnum.MASTER_SERVICE_TERMS).get(SessionManager.getLocale().toString()),
+                APP_VERSION);
+    }
+
+    /**
+     * 获取帮助文档父类型
+     *
+     * @return
+     */
+    @RequestMapping("/helpFirstType")
+    @ResponseBody
+    public String getHelpParentType() {
+        //先查出帮助中心父菜单
+        Criteria criteria = Criteria.add(VHelpTypeAndDocument.PROP_PARENT_ID, Operator.IS_NULL, true);
+        List<VHelpTypeAndDocument> helpTypeAndDocumentList;
+        helpTypeAndDocumentList = CollectionQueryTool.query(Cache.getHelpTypeAndDocument().values(), criteria);
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                getHelpType(getTypeI18n(helpTypeAndDocumentList)),
+                APP_VERSION);
+    }
+
+    /**
+     * 获取帮助文档子类型
+     *
+     * @param vHelpTypeAndDocumentListVo
+     * @return
+     */
+    @RequestMapping("/secondType")
+    @ResponseBody
+    public String getHelpChildType(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
+        Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
+        if (searchId == null) {
+            return AppModelVo.getAppModeVoJson(false,
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
+                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        Criteria criteria = Criteria.add(VHelpTypeAndDocument.PROP_PARENT_ID, Operator.EQ, searchId);
+        List<VHelpTypeAndDocument> typeList;
+        typeList = CollectionQueryTool.query(Cache.getHelpTypeAndDocument().values(), criteria);
+        Map map = new HashMap(2, 1f);
+        map.put("list", getHelpType(getTypeI18n(typeList)));
+        map.put("name", getTypeName(searchId));
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
+    }
+
+    /**
+     * 获取帮助文档详情国际化
+     *
+     * @param vHelpTypeAndDocumentListVo
+     * @return
+     */
+    @RequestMapping("/helpDetail")
+    @ResponseBody
+    public String getHelpDetail(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
+        Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
+        VHelpTypeAndDocument vHelpTypeAndDocument = Cache.getHelpTypeAndDocument().get(searchId.toString());
+        List<Map<String, String>> list = JsonTool.fromJson(vHelpTypeAndDocument.getDocumentIdJson(), List.class);
+        List<HelpDocumentI18n> documentI18nList = new ArrayList<>();
+        if (list != null) {
+            for (Map<String, String> map : list) {
+                HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
+                if (helpDocumentI18n != null) {
+                    String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
+                    helpDocumentI18n.setHelpContent(content);
+                }
+                documentI18nList.add(helpDocumentI18n);
+            }
+        }
+        Map map = new HashMap(2, 1f);
+        map.put("list", documentI18nList);
+        map.put("name", getTypeName(searchId));
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
+    }
+
+    /**
+     * 获取帮助文档详情国际化
+     *
+     * @return
+     */
+    @RequestMapping("/sendPhoneCode")
+    @ResponseBody
+    public String sendPhoneCode(String phone, HttpServletRequest request) {
+
+        if (StringTool.isBlank(phone)) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //90秒后可以重新提交
+        if (!SessionManagerCommon.canSendRegisterPhone()) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        SessionManagerCommon.setSendRegisterPhone(new Date());
+        //保存手机和验证码匹配成对
+        String verificationCode = RandomStringTool.randomNumeric(6);
+        Map<String, String> param = new HashMap(2, 1f);
+        param.put("code", verificationCode);
+        param.put("phone", phone);
+        SessionManagerCommon.setCheckRegisterPhoneInfo(param);
+        LOG.info("手机{0}-验证码：{1}", phone, verificationCode);
+        SmsInterface smsInterface = getSiteSmsInterface();
+        SmsMessageVo smsMessageVo = new SmsMessageVo();
+        smsMessageVo.setUserIp(ServletTool.getIpAddr(request));
+        smsMessageVo.setProviderId(smsInterface.getId());
+        smsMessageVo.setProviderName(smsInterface.getUsername());
+        smsMessageVo.setProviderPwd(smsInterface.getPassword());
+        smsMessageVo.setProviderKey(smsInterface.getDataKey());
+        smsMessageVo.setPhoneNum(phone);
+        smsMessageVo.setType(SmsTypeEnum.YZM.getCode());
+        String siteName = SessionManagerCommon.getSiteName(request);
+        smsMessageVo.setContent("验证码：" + verificationCode + " 【" + siteName + "】");
+        try {
+            ServiceTool.messageService().sendSmsMessage(smsMessageVo);
+        } catch (Exception ex) {
+            LOG.error(ex, "发送手机验证码错误");
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
+    }
     //endregion mainIndex
 
+    /**
+     * 发送站点消息
+     *
+     * @return
+     */
+    private SmsInterface getSiteSmsInterface() {
+        SmsInterfaceVo smsInterfaceVo = new SmsInterfaceVo();
+        smsInterfaceVo._setDataSourceId(SessionManagerCommon.getSiteId());
+        smsInterfaceVo = ServiceTool.smsInterfaceService().search(smsInterfaceVo);
+        return (SmsInterface) smsInterfaceVo.getResult();
+    }
+
+    private List<HelpParentTypeApp> getHelpType(List<Map<String, String>> getTypeI18n) {
+        List<HelpParentTypeApp> helpParents = new ArrayList<>();
+        VHelpTypeAndDocumentListVo listVo = new VHelpTypeAndDocumentListVo();
+        for (Map map : getTypeI18n) {
+            HelpParentTypeApp parent = new HelpParentTypeApp();
+            parent.setId(listVo.getSearchId(map.get("id")));
+            if (map.get("name") != null) {
+                parent.setName(map.get("name").toString());
+            }
+            helpParents.add(parent);
+        }
+        return helpParents;
+    }
+
+    /**
+     * 通过id获取类型当前国际化信息
+     *
+     * @param id
+     * @return
+     */
+    public String getTypeName(Integer id) {
+        String typeName = "";
+        List<Map<String, String>> list = JsonTool.fromJson(Cache.getHelpTypeAndDocument().get(id.toString()).getHelpTypeNameJson(), List.class);
+        String local = SessionManager.getLocale().toString();
+        for (Map<String, String> map : list) {
+            if (map.get("language").equals(local)) {
+                typeName = map.get("name");
+            }
+        }
+        return typeName;
+    }
+
+    /**
+     * 在帮助类型和文档缓存中拿出 i18n信息
+     *
+     * @return
+     */
+    private List<Map<String, String>> getTypeI18n(List<VHelpTypeAndDocument> helpTypeAndDocumentList) {
+        List<Map<String, String>> typeList;
+        List<Map<String, String>> typeI18nList = new ArrayList<>();
+        String local = SessionManager.getLocale().toString();
+        for (VHelpTypeAndDocument document : helpTypeAndDocumentList) {
+            typeList = JsonTool.fromJson(document.getHelpTypeNameJson(), List.class);
+            Map<String, String> documentMap = new HashMap<>();
+            for (Map<String, String> map : typeList) {
+                if (map.get("language").equals(local)) {
+                    documentMap.put("id", document.getId().toString());
+                    documentMap.put("name", map.get("name"));
+                }
+            }
+            documentMap.put("ids", document.getDocumentIdJson());
+            typeI18nList.add(documentMap);
+        }
+        return typeI18nList;
+    }
+
+    //关于我们
+    private AboutApp setAbout(HttpServletRequest request) {
+        CttDocumentI18nListVo listVo = initDocument("aboutUs");
+        CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
+        if (cttDocumentI18n != null) {
+            cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+        }
+        AboutApp about = new AboutApp();
+        about.setTitle(cttDocumentI18n.getTitle());
+        about.setContent(cttDocumentI18n.getContent());
+        about.setContentDefault(cttDocumentI18n.getContentDefault());
+        return about;
+    }
+
+    private CttDocumentI18nListVo initDocument(String code) {
+        CttDocumentI18nListVo listVo = new CttDocumentI18nListVo();
+        listVo.getSearch().setStatus(CttDocumentEnum.ON.getCode());
+        listVo.getSearch().setCode(code);
+        listVo.getSearch().setLocal(SessionManager.getLocale().toString());
+        return listVo;
+    }
 
     /**
      * 获取轮播图和手机弹窗广告

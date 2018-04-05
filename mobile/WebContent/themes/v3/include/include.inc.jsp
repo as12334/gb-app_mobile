@@ -11,6 +11,7 @@
 <%@page import="so.wwb.gamebox.web.SupportLocale" %>
 <%@page import="so.wwb.gamebox.web.cache.Cache" %>
 <%@page import="java.text.MessageFormat" %>
+<%@ page import="org.soul.web.tag.ImageTag" %>
 <%@page trimDirectiveWhitespaces="true" %>
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -36,13 +37,26 @@
 <c:set var="rcVersion" value="<%= Cache.getRcVersion() %>"/>
 <c:set var="domain" value="<%= request.getServerName() %>"/>
 
+<c:set var="cdnUrl" value="<%= ImageTag.getCndUrl(ImageTag.getCdnConf()) %>"/>
 <c:set var="root" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getRoot(),request.getServerName()) %>' />
-<c:set var="resComRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
+<c:set var="ftlRoot" value='${cdnUrl}${root}'/>
+<c:set var="resComRoot" value='<%=  MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
+<c:set var="resComRoot" value='${cdnUrl}${resComRoot}' />
 <c:set var="resRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(),request.getServerName()) %>' />
+<c:set var="resRoot" value='${cdnUrl}${resRoot}' />
 <c:set var="resRoot" value='${resRoot}/../mobile-v3'/>
 <c:set var="fileRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getFileRoot(),request.getServerName()) %>' />
+<c:set var="fileRoot" value='${cdnUrl}${fileRoot}' />
 <c:set var="imgRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getImgRoot(),request.getServerName()) %>' />
+<c:set var="imgRoot" value='${cdnUrl}${imgRoot}' />
 <c:set var="mdRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getMdRoot(),request.getServerName()) %>' />
+
+<c:set var="imgRoot_origin" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getImgRoot(),request.getServerName()) %>' />
+<c:set var="resComRoot_origin" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
+<c:set var="resRoot_origin" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(),request.getServerName()) %>' />
+<c:set var="resRoot_origin" value='${resRoot_origin}/../mobile-v3'/>
+<c:set var="fileRoot_origin" value='<%=MessageFormat.format(BaseConfigManager.getConfigration().getFileRoot(),request.getServerName()) %>' />
+
 
 <%@ include file="../../../include/include.base.inc.i18n.jsp" %>
 <%@ include file="../../../include/include.base.inc.ext.jsp" %>

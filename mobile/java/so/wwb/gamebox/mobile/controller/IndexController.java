@@ -66,6 +66,7 @@ import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -188,7 +189,7 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/recommend")
     @Upgrade(upgrade = true)
-    public String recommend(Model model, PlayerRecommendAwardListVo listVo) {
+    public String recommend(Model model, PlayerRecommendAwardListVo listVo, HttpServletRequest request) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
@@ -235,6 +236,11 @@ public class IndexController extends BaseApiController {
         model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         //活动规则
         model.addAttribute("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue());
+        //是否是ajax请求
+        if (ServletTool.isAjaxSoulRequest(request)) {
+            return "/recommend/RecommendList";
+        }
+
         return "/recommend/Recommend";
     }
 
@@ -247,6 +253,7 @@ public class IndexController extends BaseApiController {
         for (PlayerRecommendAwardRecord record : records){
             record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
             record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
+            record.setRewardAmount(record.getRewardAmount() == null ? BigDecimal.ZERO : record.getRewardAmount());
         }
         return records;
     }
@@ -259,7 +266,8 @@ public class IndexController extends BaseApiController {
     private void initSearchDate(PlayerRecommendAwardListVo listVo) {
         if (listVo.getSearch().getStartTime() == null) {
             listVo.getSearch().setStartTime(SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
-        } else if (listVo.getSearch().getEndTime() == null) {
+        }
+        if (listVo.getSearch().getEndTime() == null) {
             listVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         }
 
@@ -602,7 +610,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getApiType")
     public String getApiType(Model model) {
-        model.addAttribute("apiList", getApiType());
+        model.addAttribute("apiList", getSiteApiRelation(null));
         return "/game/include/include.api";
     }
 
@@ -749,6 +757,13 @@ public class IndexController extends BaseApiController {
         if (sysUser == null) {
             map.put("isLogin", false);
         } else {
+            String defaultCurrency = sysUser.getDefaultCurrency();
+            if (StringTool.isNotBlank(defaultCurrency)) {
+                SysCurrency sysCurrency = Cache.getSysCurrency().get(defaultCurrency);
+                if (sysCurrency != null) {
+                    map.put("currencySign", sysCurrency.getCurrencySign());
+                }
+            }
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
