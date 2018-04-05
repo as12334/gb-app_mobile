@@ -17,6 +17,8 @@ public class AppRechargePay {
     private boolean isHide;
     /**上一次填写的账号/昵称*/
     private String payerBankcard;
+    /**添加柜台机存款类型list*/
+    private List<AppSimpleModel> counterRechargeTypes;
 
     public String getCurrency() {
         return currency;
@@ -72,6 +74,14 @@ public class AppRechargePay {
 
     public void setQuickMoneys(int[] quickMoneys) {
         this.quickMoneys = quickMoneys;
+    }
+
+    public List<AppSimpleModel> getCounterRechargeTypes() {
+        return counterRechargeTypes;
+    }
+
+    public void setCounterRechargeTypes(List<AppSimpleModel> counterRechargeTypes) {
+        this.counterRechargeTypes = counterRechargeTypes;
     }
 }
 

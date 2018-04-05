@@ -71,6 +71,8 @@ public interface AppConstant {
 
     String ACCOUNT_IMG_URL = "%s/common/pay_bank/%s.png";
 
+    String RECHARGE_TYPE_STR = "recharge_type.";
+
     String SUCCESS = "success";    //4 , 2 ,success代表已发放
     String SUCCESS_4 = "4";
     String SUCCESS_2 = "2";

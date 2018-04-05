@@ -18,7 +18,7 @@
     </listener>
 
     <listener>
-        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+        <listener-class>org.soul.web.init.RequestContextListener</listener-class>
     </listener>
     <!--HealthCheck  开始-->
     <filter>

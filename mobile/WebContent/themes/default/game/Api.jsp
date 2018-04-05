@@ -1,3 +1,4 @@
+<%--@elvariable id="apiList" type="java.util.List<so.wwb.gamebox.model.company.site.po.SiteApiRelation>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
 <c:set value="${apiDetail.get('apiI18n')}" var="apiI18n"></c:set>
@@ -71,11 +72,13 @@
                     <div class="mui-pull-left game-detail">
                         <h1 id="apiName">
                             <c:set var="flag" value="${apiList.size()}"/>
+                            <%--BBIN只显示一个--%>
+                            <c:set var="hasBBIN" value="false"/>
                             <c:forEach var="at" items="${apiList}" end="${flag}">
-                                <c:if test="${at.get('apiTypeRelation').apiId == apiI18n.apiId && apiDetail.get('apiTypeId') == at.get('apiTypeRelation').apiTypeId}">
+                                <c:if test="${at.apiId == apiI18n.apiId && apiDetail.get('apiTypeId') == at.apiTypeId}">
                                     <c:choose >
-                                        <c:when test="${at.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
-                                        <c:otherwise>${at.get("apiTypeRelation").name}</c:otherwise>
+                                        <c:when test="${at.apiId eq 10}">${at.siteApiName}</c:when>
+                                        <c:otherwise>${at.name}</c:otherwise>
                                     </c:choose>
                                     <c:set var="flag" value="0" />
                                 </c:if>
@@ -115,15 +118,21 @@
     <div class="mui-scroll-wrapper popover-scroll">
         <div class="mui-scroll">
             <ul class="mui-table-view" id="activityTypeLi">
-                <c:forEach var="apiType" items="${apiList}" varStatus="status">
-                    <c:set var="apiStatus" value="${api.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus}"></c:set>
-                    <li class="mui-table-view-cell">
-                        <a class="_api" data-api-id="${apiType.get("apiTypeRelation").apiId}" data-api-type-id="${apiType.get("apiTypeRelation").apiTypeId}"
-                           data-status="${apiStatus}"><c:choose >
-                            <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
-                            <c:otherwise>${apiType.get("apiTypeRelation").name}</c:otherwise>
-                        </c:choose></a>
-                    </li>
+                <%--BBIN只显示一个--%>
+                <c:set var="hasBBIN" value="false"/>
+                <c:forEach var="a" items="${apiList}" varStatus="status">
+                    <c:if test="${a.apiId==10&&hasBBIN eq 'false' || a.apiId!=10}">
+                        <c:set var="apiStatus" value="${a.apiStatus}"></c:set>
+                        <li class="mui-table-view-cell">
+                            <a class="_api" data-api-id="${a.apiId}" data-api-type-id="${a.apiTypeId}" data-status="${apiStatus}"><c:choose >
+                                <c:when test="${a.apiId eq 10}">${a.siteApiName}</c:when>
+                                <c:otherwise>${a.name}</c:otherwise>
+                            </c:choose></a>
+                        </li>
+                        <c:if test="${a.apiId==10}">
+                            <c:set var="hasBBIN" value="true"/>
+                        </c:if>
+                    </c:if>
                 </c:forEach>
 
             </ul>

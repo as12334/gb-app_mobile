@@ -107,19 +107,18 @@ public class ApiController extends BaseApiController {
     }
 
     private void getAppUserInfo(HttpServletRequest request, SysUser user, Map<String, Object> map) {
-        PlayerApiListVo listVo = initPlayerApiListVo(user.getId());
-        VUserPlayer player = getPlayer(user.getId());
+        Integer userId = user.getId();
+        map.put("username", StringTool.overlayName(user.getUsername()));
+        map.put("currSign", getCurrencySign(user.getDefaultCurrency()));
+
+        PlayerApiListVo listVo = new PlayerApiListVo();
+        listVo.getSearch().setPlayerId(userId);
+        listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
         // API 余额
-        map.put("apis", getSiteApis(listVo, request, false));
-        if (player != null) {
-            map.put("username", StringTool.overlayName(player.getUsername()));
-            map.put("currSign", player.getCurrencySign());
-            // 钱包余额
-            Double balance = player.getWalletBalance();
-            map.put("playerWallet", CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
-        }
-        // 总资产
-        map.put("playerAssets", queryPlayerAssets(listVo, user.getId()));
+        map.put("apis", handlePlayerApi(listVo.getResult()));
+        Double balance = listVo.getUserPlayer().getWalletBalance();
+        map.put("playerWallet", CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
+        map.put("playerAssets", CurrencyTool.formatCurrency(listVo.getTotalAssets()));
     }
 
     /**
@@ -128,16 +127,20 @@ public class ApiController extends BaseApiController {
     @RequestMapping("/refreshApi")
     @ResponseBody
     public Map<String, Object> refreshApi(HttpServletRequest request) {
-        Integer userId = SessionManager.getUserId();
-        PlayerApiListVo listVo = initPlayerApiListVo(userId);
+        SysUser sysUser = SessionManager.getUser();
+        Integer userId = sysUser.getId();
+        PlayerApiListVo listVo = new PlayerApiListVo();
+        listVo.getSearch().setPlayerId(userId);
+        fetchPlayerApiBalance(listVo);
+        listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
         Map<String, Object> map = new HashMap<>();
-        VUserPlayer player = getPlayer(userId);
-        map.put("currSign", player.getCurrencySign());
-        map.put("apis", getSiteApis(listVo, request, true));
+        map.put("currSign", getCurrencySign(sysUser.getDefaultCurrency()));
+        map.put("apis", handlePlayerApi(listVo.getResult()));
         // 钱包余额
-        map.put("playerWallet", CurrencyTool.formatCurrency(player.getWalletBalance()));
+        Double balance = listVo.getUserPlayer().getWalletBalance();
+        map.put("playerWallet", CurrencyTool.formatCurrency(balance == null ? 0.0d : balance));
         // 总资产
-        map.put("playerAssets", queryPlayerAssets(listVo, userId));
+        map.put("playerAssets", CurrencyTool.formatCurrency(listVo.getTotalAssets()));
         return map;
     }
 
@@ -159,6 +162,30 @@ public class ApiController extends BaseApiController {
         double assets = ServiceSiteTool.playerApiService().queryPlayerAssets(listVo);
         return CurrencyTool.formatCurrency(assets);
     }
+
+    private void fetchPlayerApiBalance(PlayerApiListVo listVo) {
+        IApiBalanceService service = (IApiBalanceService) SpringTool.getBean("apiBalanceService");
+        service.fetchPlayerAllApiBalance();
+        listVo.getSearch().setApiId(null);
+    }
+
+    private List<Map<String, Object>> handlePlayerApi(List<PlayerApi> playerApis) {
+          /* 翻译api */
+        List<Map<String, Object>> maps = new ArrayList<>();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        for (PlayerApi playerApi : playerApis) {
+            Map<String, Object> map = new HashMap<>(4, 1f);
+            String apiId = playerApi.getApiId().toString();
+            map.put("apiId", apiId);
+            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap, apiI18nMap, apiId));
+            map.put("balance", playerApi.getMoney() == null ? 0 : playerApi.getMoney());
+            map.put("status", playerApi.getStatus());
+            maps.add(map);
+        }
+        return maps;
+    }
+
 
     private List<Map<String, Object>> getSiteApis(PlayerApiListVo listVo, HttpServletRequest request, boolean isFetch) {
         //同步余额
@@ -275,7 +302,7 @@ public class ApiController extends BaseApiController {
     @Token(generate = true)
     @Upgrade(upgrade = true)
     public String apiDetail(Integer apiId, Integer apiTypeId, Model model) {
-        model.addAttribute("apiList", getApiType());
+        model.addAttribute("apiList", getSiteApiRelation(null));
         model.addAttribute("apiDetail", getApiDetail(apiId, apiTypeId));
         return "/game/Api";
     }
