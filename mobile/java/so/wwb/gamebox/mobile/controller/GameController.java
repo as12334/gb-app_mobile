@@ -19,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
@@ -34,7 +33,6 @@ import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
-import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -42,7 +40,6 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -232,7 +229,7 @@ public class GameController extends BaseApiController {
                 continue;
             }
             siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
-            if(siteGameI18nMap.get(siteGame.getGameId().toString()) != null){
+            if (siteGameI18nMap.get(siteGame.getGameId().toString()) != null) {
                 siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
             }
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
@@ -262,10 +259,8 @@ public class GameController extends BaseApiController {
         String tagId;
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
-            if (!tags.contains(tagId)) {
-                if(StringTool.isNotBlank(tagNameMap.get(tagId))){
-                    gameTagMap.put(tagId, tagNameMap.get(tagId));
-                }
+            if (!tags.contains(tagId) && StringTool.isNotBlank(tagNameMap.get(tagId)) && StringTool.equals("hot_game", tagId)) {
+                gameTagMap.put(tagId, tagNameMap.get(tagId));
             }
         }
         return gameTagMap;

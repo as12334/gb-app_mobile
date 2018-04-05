@@ -208,7 +208,7 @@ public abstract class BaseOriginController {
         List<AppGameTag> gameTags = new ArrayList<>();
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
-            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null) {
+            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null && StringTool.equals("hot_game", tagId)) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(tagId);
                 appGameTag.setValue(tagNameMap.get(tagId));
@@ -250,21 +250,21 @@ public abstract class BaseOriginController {
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
             sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-            if(siteGame.getGameId() != null){
+            if (siteGame.getGameId() != null) {
                 sb.append("&gameId=").append(siteGame.getGameId());
             }
-            if(StringTool.isNotBlank(siteGame.getCode())){
+            if (StringTool.isNotBlank(siteGame.getCode())) {
                 sb.append("&gameCode=").append(siteGame.getCode());
             }
         } else {
-            if(SessionManager.isAutoPay()){
+            if (SessionManager.isAutoPay()) {
                 sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
                 if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
                     sb.append("&gameId=").append(siteGame.getGameId());
                 } else if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
                     sb.append("&gameCode=").append(siteGame.getCode());
                 }
-            }else{
+            } else {
                 if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
                     sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
                 } else {
