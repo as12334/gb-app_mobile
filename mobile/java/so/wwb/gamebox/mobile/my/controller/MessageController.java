@@ -550,6 +550,7 @@ public class MessageController {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
+        listVo.getSearch().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
         listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
         Integer advisoryUnReadCount = 0;
         String tag  = "";

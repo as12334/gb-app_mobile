@@ -204,11 +204,11 @@ public class OriginController extends BaseOriginController {
      */
     @RequestMapping(value = "/getGameTag")
     @ResponseBody
-    public String getGameTags() {
+    public String getGameTags(SiteGameListVo listVo) {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                getGameTag(),
+                getGameTag(listVo),
                 APP_VERSION);
     }
 
