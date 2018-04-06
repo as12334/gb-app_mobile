@@ -57,7 +57,7 @@
                         <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                         <span class="_now_time" value="${nowTime}" type="hidden"></span>
                         <c:set var="activityCode" value="${activity.code}"/>
-                        <div class="gb-form-foot">
+                        <div class="gb-form-foot" style="margin-top: -10px;">
                             <c:choose>
                                 <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
                                     <c:set var="rankId" value="all" />
@@ -81,8 +81,10 @@
                                 </c:otherwise>
                             </c:choose>
                             <div class="gb-form-foot" style="margin-top: -10px;">
-                                <button class="mui-pull-right mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
-                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</button>
+                                <a class="mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
+                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</a>
+                                <%--<button class="mui-pull-right mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
+                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</button>--%>
                             </div>
                         </div>
                     </c:if>

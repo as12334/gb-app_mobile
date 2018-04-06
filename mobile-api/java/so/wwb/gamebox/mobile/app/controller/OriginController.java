@@ -421,6 +421,23 @@ public class OriginController extends BaseOriginController {
                 null,
                 APP_VERSION);
     }
+
+    /**
+     * 获取sid
+     *
+     * @return
+     */
+    @RequestMapping("/getSid")
+    @ResponseBody
+    public String getSid(HttpServletRequest request) {
+        Map map = new HashMap(1, 1f);
+        map.put("sid", request.getCookies());
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
+    }
     //endregion mainIndex
 
     /**
