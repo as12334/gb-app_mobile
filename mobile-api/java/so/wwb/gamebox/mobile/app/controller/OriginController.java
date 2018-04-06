@@ -427,15 +427,13 @@ public class OriginController extends BaseOriginController {
      *
      * @return
      */
-    @RequestMapping("/getSid")
+    @RequestMapping("/getHttpCookie")
     @ResponseBody
-    public String getSid(HttpServletRequest request) {
-        Map map = new HashMap(1, 1f);
-        map.put("sid", request.getCookies());
+    public String getSid() {
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,
+                null,
                 APP_VERSION);
     }
     //endregion mainIndex
