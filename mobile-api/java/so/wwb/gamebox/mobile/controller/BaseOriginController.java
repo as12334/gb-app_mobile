@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_SITE_SPECIAL;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.FISH_API_TYPE_ID;
 
 /**
@@ -307,7 +308,7 @@ public abstract class BaseOriginController {
             AppSiteApiTypeRelastionVo appApiType = new AppSiteApiTypeRelastionVo();
             apiTypeId = siteApiType.getApiTypeId();
             appApiType.setApiType(apiTypeId);
-            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getMobileName());
             appApiType.setCover(getApiTypeCover(apiLogUrl, apiTypeId));
             appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
             if (navApiTypes.contains(apiTypeId)) {
@@ -513,7 +514,12 @@ public abstract class BaseOriginController {
         appRelation.setName(apiTypeRelation.getApiName());
         appRelation.setApiId(apiTypeRelation.getApiId());
         appRelation.setApiTypeId(apiTypeRelation.getApiTypeId());
-        appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
+        List<Integer> siteIds = API_SITE_SPECIAL.get(apiTypeRelation.getApiId());
+        if (siteIds != null && siteIds.contains(SessionManager.getSiteId())) {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId() + "_site" + SessionManager.getSiteId()));
+        } else {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
+        }
         if (CollectionTool.isNotEmpty(games)) {
             appRelation.setGameList(CollectionQueryTool.sort(games, Order.asc(AppSiteGame.PROP_ORDER_NUM)));
         } else {
