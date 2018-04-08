@@ -244,7 +244,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<Integer, List<SiteApiTypeRelation>> apiTypeRelationGroupByType = apiTypeRelationGroupByType(siteApiTypeRelationMap, apiI18nMap, siteApiI18nMap);
         Map<String, SiteApiTypeI18n> siteApiTypeI18nMap = Cache.getSiteApiTypeI18n();
         for (SiteApiType siteApiType : siteApiTypes) {
-            siteApiType.setName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            siteApiType.setName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getMobileName());
             siteApiType.setApiTypeRelations(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(SiteApiTypeRelation.PROP_MOBILE_ORDER_NUM)));
         }
         model.addAttribute("siteApiTypes", siteApiTypes);
