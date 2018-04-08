@@ -128,7 +128,7 @@
                             </c:if>
                             <label for="result.payerBankcard">${n}</label>
                             <div class="ct">
-                                <input type="text" id="result.payerBankcard" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${payAccount.bankCode eq 'alipay'?'':m}" autocomplete="off">
+                                <input type="text" id="result.payerBankcard" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
                             </div>
                         </div>
                     </c:if>

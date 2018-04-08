@@ -726,7 +726,7 @@ public class RegisterAppController {
         boolean isValid = false;
         SysParam param = ParamTool.getSysParam(paramEnum);
         if (param != null) {
-            isValid = "before".equals(param.getParamValue()) && param.getActive();
+            isValid = param.getActive();
         }
         return isValid;
     }

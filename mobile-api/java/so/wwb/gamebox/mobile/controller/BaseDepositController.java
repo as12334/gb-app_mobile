@@ -74,9 +74,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.DEPOSIT_IMG_URL;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.ACCOUNT_IMG_URL;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 /**
  * Created by ed on 17-12-31.
@@ -210,6 +208,16 @@ public class BaseDepositController {
         map.put("serverName", serverName);
         return map;
     }
+
+
+    /**拼接字符窜*/
+   /* public String appendString(String...args){
+        StringBuilder sb = new StringBuilder();
+        for(String str : args){
+            sb.append(str);
+        }
+        return sb.toString();
+    }*/
 
     /**
      * 是否隐藏收款账号
@@ -363,7 +371,7 @@ public class BaseDepositController {
             for (Map.Entry<String, PayAccount> payAccountEntry : scanAccount.entrySet()) {
                 PayAccount payAccount = payAccountEntry.getValue();
                 if (StringTool.isNotBlank(onliineWay)) {
-                    payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, "recharge_type." + onliineWay));
+                    payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, RECHARGE_TYPE_STR + onliineWay));
                 }
                 if (PayAccountAccountType.QQ_MICROPAY.getCode().equals(payAccount.getAccountType())) {
                     payAccount.setPayName(LocaleTool.tranMessage(Module.COMMON, AppConstant.QQ_MICROPAY));
@@ -438,10 +446,15 @@ public class BaseDepositController {
     public List<PayAccount> getCompanyPayAccount(List<PayAccount> accounts) {
         List<String> bankCodes = new ArrayList<>();
         List<PayAccount> payAccounts = new ArrayList<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
         for (PayAccount payAccount : accounts) {
-            if (!bankCodes.contains(payAccount.getBankCode())) {
+            String bankCode = payAccount.getBankCode();
+            if (!bankCodes.contains(bankCode)) {
+                if (!StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
+                    payAccount.setCustomBankName(i18n.get(bankCode));
+                }
                 payAccounts.add(payAccount);
-                bankCodes.add(payAccount.getBankCode());
+                bankCodes.add(bankCode);
             }
         }
         return payAccounts;
