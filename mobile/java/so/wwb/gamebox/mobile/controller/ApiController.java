@@ -134,7 +134,6 @@ public class ApiController extends BaseApiController {
         fetchPlayerApiBalance(listVo);
         listVo = ServiceSiteTool.playerApiService().fundRecord(listVo);
         Map<String, Object> map = new HashMap<>();
-        VUserPlayer player = getPlayer(userId);
         map.put("currSign", getCurrencySign(sysUser.getDefaultCurrency()));
         map.put("apis", handlePlayerApi(listVo.getResult()));
         // 钱包余额

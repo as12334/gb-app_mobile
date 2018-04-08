@@ -30,7 +30,10 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.*;
+import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
+import so.wwb.gamebox.model.company.setting.po.Game;
+import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -52,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_SITE_SPECIAL;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.FISH_API_TYPE_ID;
 
 /**
@@ -208,7 +212,7 @@ public abstract class BaseOriginController {
         List<AppGameTag> gameTags = new ArrayList<>();
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
-            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null) {
+            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null && StringTool.equals("hot_game", tagId)) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(tagId);
                 appGameTag.setValue(tagNameMap.get(tagId));
@@ -250,21 +254,22 @@ public abstract class BaseOriginController {
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
             sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-            if(siteGame.getGameId() != null){
+            if (siteGame.getGameId() != null && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
                 sb.append("&gameId=").append(siteGame.getGameId());
             }
-            if(StringTool.isNotBlank(siteGame.getCode())){
+            if (StringTool.isNotBlank(siteGame.getCode()) && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
                 sb.append("&gameCode=").append(siteGame.getCode());
             }
         } else {
-            if(SessionManager.isAutoPay()){
+            if (SessionManager.isAutoPay()) {
                 sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
                 if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
                     sb.append("&gameId=").append(siteGame.getGameId());
-                } else if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
+                }
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
                     sb.append("&gameCode=").append(siteGame.getCode());
                 }
-            }else{
+            } else {
                 if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
                     sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
                 } else {
@@ -307,7 +312,7 @@ public abstract class BaseOriginController {
             AppSiteApiTypeRelastionVo appApiType = new AppSiteApiTypeRelastionVo();
             apiTypeId = siteApiType.getApiTypeId();
             appApiType.setApiType(apiTypeId);
-            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getMobileName());
             appApiType.setCover(getApiTypeCover(apiLogUrl, apiTypeId));
             appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
             if (navApiTypes.contains(apiTypeId)) {
@@ -513,7 +518,12 @@ public abstract class BaseOriginController {
         appRelation.setName(apiTypeRelation.getApiName());
         appRelation.setApiId(apiTypeRelation.getApiId());
         appRelation.setApiTypeId(apiTypeRelation.getApiTypeId());
-        appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
+        List<Integer> siteIds = API_SITE_SPECIAL.get(apiTypeRelation.getApiId());
+        if (siteIds != null && siteIds.contains(SessionManager.getSiteId())) {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId() + "_site" + SessionManager.getSiteId()));
+        } else {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
+        }
         if (CollectionTool.isNotEmpty(games)) {
             appRelation.setGameList(CollectionQueryTool.sort(games, Order.asc(AppSiteGame.PROP_ORDER_NUM)));
         } else {

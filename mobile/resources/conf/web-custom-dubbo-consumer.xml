@@ -12,7 +12,6 @@
 
     <dubbo:consumer id="dubboConsumer"
                     timeout="${dubbo.consumer.timeout}"
-                    loadbalance="datasource"
                     check="false" scope="remote"
                     registry="zookeeperClient"
                     application="dubboApplication"
