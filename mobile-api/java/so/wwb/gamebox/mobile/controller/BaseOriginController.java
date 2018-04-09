@@ -308,13 +308,17 @@ public abstract class BaseOriginController {
         String apiLogUrl = setApiLogoUrl(model, request);
         Integer apiTypeId;
         for (SiteApiType siteApiType : siteApiTypes) {
+            List<AppSiteApiTypeRelationI18n> siteApis = apiTypeRelationGroupByType.get(siteApiType.getApiTypeId());
+            if (CollectionTool.isEmpty(siteApis)) {
+                continue;
+            }
             //转换实体提供给app原生
             AppSiteApiTypeRelastionVo appApiType = new AppSiteApiTypeRelastionVo();
             apiTypeId = siteApiType.getApiTypeId();
             appApiType.setApiType(apiTypeId);
             appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getMobileName());
             appApiType.setCover(getApiTypeCover(apiLogUrl, apiTypeId));
-            appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
+            appApiType.setSiteApis(CollectionQueryTool.sort(siteApis, Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
             if (navApiTypes.contains(apiTypeId)) {
                 appApiType.setLevel(true);
             }
