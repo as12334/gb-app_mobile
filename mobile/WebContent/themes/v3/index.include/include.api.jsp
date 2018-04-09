@@ -48,7 +48,7 @@
                                 <c:forEach var="i" items="${apiTypeRelations}">
                                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                                         <a data-rel='{"dataApiId":"${i.apiId}","dataApiTypeId":"${i.apiTypeId}","dataApiName":"${i.apiName}","dataStatus":"${i.apiStatus}","target":"goApiGame","opType":"function"}'>
-                                            <span class="api-item api-icon-${apiTypeId}-${i.apiId}"></span>
+                                            <span class="api-item api-icon-${apiTypeId}-${i.apiId} site${siteId}"></span>
                                             <div class="mui-media-body">${i.apiName}</div>
                                         </a>
                                     </li>
