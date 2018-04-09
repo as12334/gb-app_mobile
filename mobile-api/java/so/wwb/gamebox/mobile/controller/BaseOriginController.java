@@ -260,10 +260,10 @@ public abstract class BaseOriginController {
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
             sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-            if (siteGame.getGameId() != null) {
+            if (siteGame.getGameId() != null && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
                 sb.append("&gameId=").append(siteGame.getGameId());
             }
-            if (StringTool.isNotBlank(siteGame.getCode())) {
+            if (StringTool.isNotBlank(siteGame.getCode()) && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
                 sb.append("&gameCode=").append(siteGame.getCode());
             }
         } else {
@@ -271,7 +271,8 @@ public abstract class BaseOriginController {
                 sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
                 if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
                     sb.append("&gameId=").append(siteGame.getGameId());
-                } else if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
+                }
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
                     sb.append("&gameCode=").append(siteGame.getCode());
                 }
             } else {
@@ -480,6 +481,7 @@ public abstract class BaseOriginController {
         String preMaintain = GameStatusEnum.PRE_MAINTAIN.getCode();
         String normal = GameStatusEnum.NORMAL.getCode();
         String disabled = GameStatusEnum.DISABLE.getCode();
+        String terminal = GameSupportTerminalEnum.PC.getCode();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = new HashMap<>();
         Map<Integer, List<AppSiteGame>> navApiGameMap;
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
@@ -487,7 +489,7 @@ public abstract class BaseOriginController {
             apiId = apiTypeRelation.getApiId();
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
-            if (api == null || siteApi == null || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
+            if (api == null || siteApi == null || terminal.equals(api.getTerminal()) || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
                 continue;
             }
             apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));

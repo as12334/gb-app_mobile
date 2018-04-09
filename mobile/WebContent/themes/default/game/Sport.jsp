@@ -13,9 +13,14 @@
                        data-status="${a.apiStatus}">${views.game_auto['进入游戏']}</a>
                     <div class="game-logo-wrap">
                         <%---BC图片个性化--%>
-                        <c:if test="${(siteId == 119 || siteId == 270) && a.apiId eq 37}">
-                            <c:set var="special" value="-${siteId}"/>
-                        </c:if>
+                        <c:choose>
+                            <c:when test="${(siteId == 119 || siteId == 270) && a.apiId eq 37}">
+                                <c:set var="special" value="-${siteId}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="special" value=""/>
+                            </c:otherwise>
+                        </c:choose>
                         <img src="${resRoot}/images/game-${a.apiId}-logo${special}.png" width="${a.apiId eq 12 || a.apiId eq 36 ||a.apiId eq 37 ?'36':'58'}" alt="">
                         <div class="txt">${a.name}</div>
                     </div>

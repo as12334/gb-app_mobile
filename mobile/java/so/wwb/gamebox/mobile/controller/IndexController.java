@@ -246,11 +246,12 @@ public class IndexController extends BaseApiController {
 
     /**
      * 推荐记录
+     *
      * @param records
      * @return
      */
-    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records){
-        for (PlayerRecommendAwardRecord record : records){
+    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records) {
+        for (PlayerRecommendAwardRecord record : records) {
             record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
             record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
             record.setRewardAmount(record.getRewardAmount() == null ? BigDecimal.ZERO : record.getRewardAmount());
@@ -623,10 +624,12 @@ public class IndexController extends BaseApiController {
      * @return
      */
     @RequestMapping("/app/download")
-    public String downloadApp(Model model, HttpServletRequest request) {
-
+    public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
-            return "redirect:/login/commonLogin.html";
+            String url = "/login/commonLogin.html";
+            response.setStatus(302);
+            response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
+            return "/passport/login";
         }
         getAppPath(model, request);
         return "/app/Index";
@@ -661,14 +664,14 @@ public class IndexController extends BaseApiController {
         if (StringTool.isBlank(appDomain)) {
             appDomain = ParamTool.appDmain(request.getServerName());
         }
-        if(isMobileUpgrade){
+        if (isMobileUpgrade) {
             SiteAppUpdate siteAppUpdate = Cache.getSiteAppUpdate(String.valueOf(siteId), AppTypeEnum.ANDROID.getCode());
-            if(siteAppUpdate!=null){
+            if (siteAppUpdate != null) {
                 String versionName = siteAppUpdate.getVersionName();
                 String appUrl = siteAppUpdate.getAppUrl();
                 fillAndroidInfo(model, code, appDomain, versionName, appUrl);
             }
-        }else {
+        } else {
             AppUpdate androidApp = Cache.getAppUpdate(AppTypeEnum.ANDROID.getCode());
             if (androidApp != null) {
                 String versionName = androidApp.getVersionName();
@@ -683,14 +686,14 @@ public class IndexController extends BaseApiController {
      */
     private void getIosInfo(Model model, String code, boolean isMobileUpgrade) {
         Integer siteId = CommonContext.get().getSiteId();
-        if(isMobileUpgrade){
+        if (isMobileUpgrade) {
             SiteAppUpdate siteAppUpdate = Cache.getSiteAppUpdate(String.valueOf(siteId), AppTypeEnum.IOS.getCode());
             if (siteAppUpdate != null) {
                 String versionName = siteAppUpdate.getVersionName();
                 String appUrl = siteAppUpdate.getAppUrl();
                 fillIosInfo(model, code, versionName, appUrl);
             }
-        }else {
+        } else {
             AppUpdate iosApp = Cache.getAppUpdate(AppTypeEnum.IOS.getCode());
             if (iosApp != null) {
                 String versionName = iosApp.getVersionName();
@@ -702,6 +705,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 填充android信息
+     *
      * @param model
      * @param code
      * @param appDomain
@@ -717,6 +721,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 填充ios信息
+     *
      * @param model
      * @param code
      * @param versionName

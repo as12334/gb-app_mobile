@@ -158,11 +158,8 @@ public class GameController extends BaseApiController {
         model.addAttribute("allGames", siteGamesMap);
         //全部标签
         model.addAttribute("tagName", tagName);
-
         model.addAttribute("tagGames", tagGames);
-
         model.addAttribute("apiId", apiId);
-
         model.addAttribute("command", listVo);
 
         return redirectUrl;
@@ -252,17 +249,19 @@ public class GameController extends BaseApiController {
      * @return
      */
     private Map<String, String> getGameTagMap() {
-        Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
+        Cache.refreshSiteGameTag();
+        //Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
         Map<String, String> tagNameMap = getTagNameMap();
         Map<String, String> gameTagMap = new HashedMap();
         List<String> tags = new ArrayList<>();
         String tagId;
-        for (SiteGameTag tag : siteGameTag.values()) {
+        gameTagMap.put("hot_game",tagNameMap.get("hot_game"));
+        /*for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
-            if (!tags.contains(tagId) && StringTool.isNotBlank(tagNameMap.get(tagId)) && StringTool.equals("hot_game", tagId)) {
+            if (!tags.contains(tagId) && StringTool.isNotBlank(tagNameMap.get(tagId))) {
                 gameTagMap.put(tagId, tagNameMap.get(tagId));
             }
-        }
+        }*/
         return gameTagMap;
     }
 
