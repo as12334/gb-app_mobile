@@ -21,7 +21,7 @@
                                 <c:set var="path" value="${resRoot}/images/api/api-lottery-${a.apiId}.png"></c:set>
                             </c:otherwise>
                         </c:choose>
-                        <img src="${soulFn:getImagePath(domain, path)}"/>
+                        <img src="${path}"/>
                         <span class="mui-tab-label api-name">
                               ${a.name}
                         </span>

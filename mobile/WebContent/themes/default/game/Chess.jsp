@@ -16,7 +16,7 @@
                         <div class="mui-maintain chess"></div>
                     </c:if>
                     <c:set var="path" value="${resRoot}/images/api/api-chess-${a.apiId}.png"></c:set>
-                    <img src="${soulFn:getImagePath(domain, path)}"/>
+                    <img src="${path}"/>
                     ${a.name}
                 </a>
             </c:forEach>
