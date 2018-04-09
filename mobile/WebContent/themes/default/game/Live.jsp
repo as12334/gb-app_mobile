@@ -11,7 +11,7 @@
                 <a class="item _api" data-api-type-id="1" data-api-id="${a.apiId}" data-status="${a.apiStatus}"
                     data-id="${a.apiId == 3 ? '30455' : ''}" data-game-code="${a.apiId == 3 ? '1183' : ''}" data-game-id="0">
                     <c:set var="path" value="${resRoot}/images/api/api-live-${a.apiId}.png"></c:set>
-                    <img src="${soulFn:getImagePath(domain, path)}"/>
+                    <img src="${path}"/>
                     <div class="ct">
                         <p>
                             <span>
