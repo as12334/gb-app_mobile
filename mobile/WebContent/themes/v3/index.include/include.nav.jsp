@@ -26,7 +26,7 @@
                 <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-${type} ${status.index == 0 ? ' mui-active':''}"><span>${apiType.name}</span></a>
             </c:forEach>
             <c:if test="${fn:length(fish)>0}">
-                <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-fish"><span>${views.themes_auto['捕鱼游戏']}</span></a>
+                <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-fish"><span>${dicts.game.game_type['Fish']}</span></a>
             </c:if>
         </div>
     </div>
