@@ -23,7 +23,10 @@
                         <c:set var="type" value="chess-and-card"/>
                     </c:when>
                 </c:choose>
-                <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-${type} ${status.index == 0 ? ' mui-active':''}"><span>${apiType.name}</span></a>
+                <c:set var="apiTypeRelations" value="${apiType.apiTypeRelations}"/>
+                <c:if test="${fn:length(apiTypeRelations)>0}">
+                    <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-${type} ${status.index == 0 ? ' mui-active':''}"><span>${apiType.name}</span></a>
+                </c:if>
             </c:forEach>
             <c:if test="${fn:length(fish)>0}">
                 <a data-rel='{"target":"slideHeight","opType":"function"}' class="swiper-slide item-fish"><span>${dicts.game.game_type['Fish']}</span></a>

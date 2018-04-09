@@ -24,13 +24,10 @@
                     <c:set var="type" value="chess-and-card"/>
                 </c:when>
             </c:choose>
-            <div class="swiper-slide slide-${type}">
-                <ul class="mui-table-view mui-grid-view mui-grid-9 active" data-list="${type}">
-                    <c:set var="apiTypeRelations" value="${apiType.apiTypeRelations}"/>
-                    <c:if test="${fn:length(apiTypeRelations)<=0}">
-                        <div class="deficiency-nots">没有找到符合的游戏</div>
-                    </c:if>
-                    <c:if test="${fn:length(apiTypeRelations)>0}">
+            <c:set var="apiTypeRelations" value="${apiType.apiTypeRelations}"/>
+            <c:if test="${fn:length(apiTypeRelations)>0}">
+                <div class="swiper-slide slide-${type}">
+                    <ul class="mui-table-view mui-grid-view mui-grid-9 active" data-list="${type}">
                         <c:choose>
                             <%--彩票棋牌类处理--%>
                             <c:when test="${apiTypeId==4 || apiTypeId == 5}">
@@ -58,9 +55,9 @@
                                 </c:forEach>
                             </c:otherwise>
                         </c:choose>
-                    </c:if>
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            </c:if>
         </c:forEach>
         <%--捕鱼游戏--%>
         <c:if test="${fn:length(fish)>0}">
