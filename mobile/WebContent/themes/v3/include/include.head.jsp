@@ -1,3 +1,4 @@
+<%@ page import="so.wwb.gamebox.model.SiteParamEnum" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <meta charset="utf-8"/>
 <!-- 宽度设置为设备实际宽度，初始化倍数为1，最小倍数为1，最大倍数为1，用户缩放为否 -->
@@ -20,13 +21,14 @@
 <link rel="stylesheet" href="${resRoot}/themes/common.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/index.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css?v=${rcVersion}"/>
+<c:set var="backgroundParam" value="<%=ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_BACKGROUND_COLOR)%>"/>
 <c:set var="background_type" value="${backgroundParam.paramValue}"/>
 <c:choose>
     <c:when test="${background_type eq 'black'||background_type eq 'blue'||background_type eq 'green'||background_type eq 'pink' ||background_type eq 'rainbow'}">
         <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css"/>
         <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:when>
-    <c:when test="${background_type eq 'white' || background_type eq 'gloden'}">
+    <c:when test="${background_type eq 'white' || background_type eq 'golden'}">
         <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css"/>
         <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
     </c:when>
