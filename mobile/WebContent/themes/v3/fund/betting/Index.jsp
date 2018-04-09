@@ -33,7 +33,7 @@
                                endTime="${soulFn:formatDateTz(maxDate, DateFormat.DAY,timeZone)}"
                                minDate="${soulFn:formatDateTz(minDate, DateFormat.DAY,timeZone)}">
 		            </span>
-                    <a data-reldata-rel='{"target":"selectData","opType":"function"}' class="btn mui-btn mui-btn-primary btn-ss" style="width: 15%;">${views.fund_auto['搜索']}</a>
+                    <a data-rel='{"target":"selectData","opType":"function"}' class="btn mui-btn mui-btn-primary btn-ss" style="width: 15%;">${views.fund_auto['搜索']}</a>
                     <div class="clearfix"></div>
                 </div>
             </div>
