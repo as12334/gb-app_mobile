@@ -25,7 +25,23 @@
     <div class="panel">
         <p>
             <span class="text">${views.themes_auto['下注内容']}:</span>
-                ${dicts.lottery.lottery_betting[array['betCode']]}-${array['betNum']}
+            <c:choose>
+                <c:when test="${!empty array['betCode']}">
+                    ${dicts.lottery.lottery_betting[array['betCode']]}
+                </c:when>
+                <c:otherwise>
+                    ${dicts.lottery.lottery_betting[array['bet_code']]}
+                </c:otherwise>
+            </c:choose>
+            -
+            <c:choose>
+                <c:when test="${!empty array['betNum']}">
+                    ${array['betNum']}
+                </c:when>
+                <c:otherwise>
+                    ${array['bet_num']}
+                </c:otherwise>
+            </c:choose>
         </p>
     </div>
 </c:forEach>
