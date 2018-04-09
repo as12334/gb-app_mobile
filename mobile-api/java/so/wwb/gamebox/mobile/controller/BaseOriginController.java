@@ -475,6 +475,7 @@ public abstract class BaseOriginController {
         String preMaintain = GameStatusEnum.PRE_MAINTAIN.getCode();
         String normal = GameStatusEnum.NORMAL.getCode();
         String disabled = GameStatusEnum.DISABLE.getCode();
+        String terminal = GameSupportTerminalEnum.PC.getCode();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = new HashMap<>();
         Map<Integer, List<AppSiteGame>> navApiGameMap;
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
@@ -482,7 +483,7 @@ public abstract class BaseOriginController {
             apiId = apiTypeRelation.getApiId();
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
-            if (api == null || siteApi == null || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
+            if (api == null || siteApi == null || terminal.equals(api.getTerminal()) || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
                 continue;
             }
             apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
