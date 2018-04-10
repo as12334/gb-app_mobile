@@ -14,7 +14,7 @@
     <a class="mui-icon  mui-icon-back mui-pull-left"></a>
     <h1 class="mui-title">${views.fund_auto['投注记录']}</h1>
 </header>
-<div class="mui-content mine-bet-record-content mui-scroll-wrapper">
+<div class="mui-content mine-bet-record-content mui-scroll-wrapper" id="refreshContainer">
     <div class="mui-scroll">
         <!-- 主界面具体展示内容 -->
         <div class="mui-row">
@@ -33,7 +33,7 @@
                                endTime="${soulFn:formatDateTz(maxDate, DateFormat.DAY,timeZone)}"
                                minDate="${soulFn:formatDateTz(minDate, DateFormat.DAY,timeZone)}">
 		            </span>
-                    <a href="#selectDate" class="btn mui-btn mui-btn-primary btn-ss" style="width: 15%;">${views.fund_auto['搜索']}</a>
+                    <a data-rel='{"target":"loadData","opType":"function"}' class="btn mui-btn mui-btn-primary btn-ss" style="width: 15%;">${views.fund_auto['搜索']}</a>
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -60,8 +60,8 @@
         <span>合计：</span>
         <div class="c">
             <div style="width: 50%;">投注总额：100.00</div>
-            <div style="width:50%">${views.fund_auto['彩池奖金']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
-            <div style="width: 50%;">${views.fund_auto['有效投注额']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
+            <div style="width:50%" id="statisticalDataWinning">${views.fund_auto['彩池奖金']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
+            <div style="width: 50%;" id="statisticalDataEffective">${views.fund_auto['有效投注额']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
             <div style="width:50%">投注笔数：2笔</div>
         </div>
     </div>
