@@ -100,7 +100,6 @@ public class TransferController extends WalletBaseController {
 
     @RequestMapping("/transferBack")
     @ResponseBody
-    @Token(generate = true)
     public Map<String, Object> transfer() {
         Map<String, Object> map = new HashMap<>(1,1f);
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
@@ -190,7 +189,7 @@ public class TransferController extends WalletBaseController {
      */
     @RequestMapping(value = "/transfersMoney", method = RequestMethod.POST)
     @ResponseBody
-    @Token(valid = true)
+    //@Token(valid = true)
     public Map transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid PlayerTransferForm form, BindingResult result) {
         LOG.info("【玩家[{0}]转账】:从[{1}]转到[{2}]", SessionManager.getUserName(), playerTransferVo.getTransferOut(), playerTransferVo.getTransferInto());
         if (!isTimeToTransfer()) {//是否已经过了允许转账的间隔
