@@ -16,7 +16,7 @@
                         <div class="mui-maintain casino"></div>
                     </c:if>
                     <c:set var="path" value="${resRoot}/images/api/api-casino-${a.apiId}.png"></c:set>
-                    <img src="${soulFn:getImagePath(domain, path)}"/>
+                    <img src="${path}"/>
                     ${a.name}
                 </a>
             </c:forEach>

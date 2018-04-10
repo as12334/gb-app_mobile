@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../../include/include.inc.jsp" %>
 <tr hidden="">
-    <td><span id="hiddenTotalCount" value="${command.paging.totalCount}"></span></td>
+    <td><input type="hidden" id="hiddenTotalCount" value="${command.paging.totalCount}" /></td>
 </tr>
 <c:choose>
     <c:when test="${fn:length(command.result)>0}">
