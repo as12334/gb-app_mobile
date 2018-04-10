@@ -446,10 +446,15 @@ public class BaseDepositController {
     public List<PayAccount> getCompanyPayAccount(List<PayAccount> accounts) {
         List<String> bankCodes = new ArrayList<>();
         List<PayAccount> payAccounts = new ArrayList<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
         for (PayAccount payAccount : accounts) {
-            if (!bankCodes.contains(payAccount.getBankCode())) {
+            String bankCode = payAccount.getBankCode();
+            if (!bankCodes.contains(bankCode)) {
+                if (!StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
+                    payAccount.setCustomBankName(i18n.get(bankCode));
+                }
                 payAccounts.add(payAccount);
-                bankCodes.add(payAccount.getBankCode());
+                bankCodes.add(bankCode);
             }
         }
         return payAccounts;

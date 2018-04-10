@@ -244,7 +244,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<Integer, List<SiteApiTypeRelation>> apiTypeRelationGroupByType = apiTypeRelationGroupByType(siteApiTypeRelationMap, apiI18nMap, siteApiI18nMap);
         Map<String, SiteApiTypeI18n> siteApiTypeI18nMap = Cache.getSiteApiTypeI18n();
         for (SiteApiType siteApiType : siteApiTypes) {
-            siteApiType.setName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            siteApiType.setName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getMobileName());
             siteApiType.setApiTypeRelations(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(SiteApiTypeRelation.PROP_MOBILE_ORDER_NUM)));
         }
         model.addAttribute("siteApiTypes", siteApiTypes);
@@ -352,6 +352,7 @@ public abstract class BaseApiController extends BaseDemoController {
         String maintain = GameStatusEnum.MAINTAIN.getCode();
         String preMaintain = GameStatusEnum.PRE_MAINTAIN.getCode();
         String normal = GameStatusEnum.NORMAL.getCode();
+        String terminal = GameSupportTerminalEnum.PC.getCode();
         Map<Integer, List<SiteApiTypeRelation>> apiTypeRelationGroupByType = new HashMap<>();
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
             apiTypeId = apiTypeRelation.getApiTypeId();
@@ -361,11 +362,14 @@ public abstract class BaseApiController extends BaseDemoController {
             apiId = apiTypeRelation.getApiId();
             apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
             api = apiMap.get(String.valueOf(apiId));
+            if (api == null || terminal.equals(api.getTerminal())) {
+                continue;
+            }
             siteApi = siteApiMap.get(String.valueOf(apiId));
-            if (api != null && maintain.equals(api.getSystemStatus()) || siteApi != null && maintain.equals(siteApi.getSystemStatus())) {
+            if (maintain.equals(api.getSystemStatus()) || siteApi != null && maintain.equals(siteApi.getSystemStatus())) {
                 apiTypeRelation.setApiStatus(maintain);
                 apiTypeRelationGroupByType.get(apiTypeId).add(apiTypeRelation);
-            } else if (api != null && siteApi != null && (normal.equals(api.getSystemStatus()) || preMaintain.equals(api.getSystemStatus())) && (normal.equals(siteApi.getSystemStatus()) || preMaintain.equals(siteApi.getSystemStatus()))) {
+            } else if (siteApi != null && (normal.equals(api.getSystemStatus()) || preMaintain.equals(api.getSystemStatus())) && (normal.equals(siteApi.getSystemStatus()) || preMaintain.equals(siteApi.getSystemStatus()))) {
                 apiTypeRelation.setApiStatus(normal);
                 apiTypeRelationGroupByType.get(apiTypeId).add(apiTypeRelation);
             }
