@@ -366,6 +366,7 @@ public class TransferController extends WalletBaseController {
         }
         resultMap.put("orderId", playerTransferVo.getResult().getTransactionNo());
         resultMap.put("result", playerTransferVo.getResultCode());
+        resultMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return resultMap;
     }
 
