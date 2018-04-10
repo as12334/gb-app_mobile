@@ -9,7 +9,19 @@
             <div class="mui-scroll">
                 <ul class="mui-list-unstyled mui-clearfix mui-bar-tab">
                     <c:forEach var="i" items="${apiTypeRelations}" varStatus="vs">
-                        <li><a data-rel='{"target":"changeNavGame","opType":"function","apiTypeId":"${i.apiTypeId}","apiId":"${i.apiId}"}' class="mui-tab-item ${vs.index==0?'mui-active':''} api-icon-${i.apiTypeId}-${i.apiId}">${i.apiName}</a></li>
+                        <c:set var="centerId" value="<%=CommonContext.get().getSiteParentId() %>"/>
+                        <c:choose>
+                            <c:when test="${centerId == -3 && i.apiId == 22}">
+                                <c:set var="api_icon" value="4-22-2" />
+                            </c:when>
+                            <c:when test="${i.apiId == 22}">
+                                <c:set var="api_icon" value="4-22-1" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="api_icon" value="${i.apiTypeId}-${i.apiId}" />
+                            </c:otherwise>
+                        </c:choose>
+                        <li><a data-rel='{"target":"changeNavGame","opType":"function","apiTypeId":"${i.apiTypeId}","apiId":"${i.apiId}"}' class="mui-tab-item ${vs.index==0?'mui-active':''} api-icon-${api_icon}">${i.apiName}</a></li>
                     </c:forEach>
                 </ul>
             </div>
