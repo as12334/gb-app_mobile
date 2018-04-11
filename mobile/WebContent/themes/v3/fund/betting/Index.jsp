@@ -11,7 +11,7 @@
 <body class="mine-bet-record-body">
 <!-- 主页面标题 -->
 <header class="mui-bar mui-bar-nav mine-bet-record-header">
-    <a class="mui-icon  mui-icon-back mui-pull-left"></a>
+    <a class="mui-icon  mui-icon-back mui-pull-left mui-action-back"></a>
     <h1 class="mui-title">${views.fund_auto['投注记录']}</h1>
 </header>
 <div class="mui-content mine-bet-record-content mui-scroll-wrapper" id="refreshContainer">
