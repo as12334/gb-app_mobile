@@ -72,8 +72,6 @@
                     <div class="mui-pull-left game-detail">
                         <h1 id="apiName">
                             <c:set var="flag" value="${apiList.size()}"/>
-                            <%--BBIN只显示一个--%>
-                            <c:set var="hasBBIN" value="false"/>
                             <c:forEach var="at" items="${apiList}" end="${flag}">
                                 <c:if test="${at.apiId == apiI18n.apiId && apiDetail.get('apiTypeId') == at.apiTypeId}">
                                     <c:choose >
@@ -124,10 +122,12 @@
                     <c:if test="${a.apiId==10&&hasBBIN eq 'false' || a.apiId!=10}">
                         <c:set var="apiStatus" value="${a.apiStatus}"></c:set>
                         <li class="mui-table-view-cell">
-                            <a class="_api" data-api-id="${a.apiId}" data-api-type-id="${a.apiTypeId}" data-status="${apiStatus}"><c:choose >
-                                <c:when test="${a.apiId eq 10}">${a.siteApiName}</c:when>
-                                <c:otherwise>${a.name}</c:otherwise>
-                            </c:choose></a>
+                            <a class="_api" data-api-id="${a.apiId}" data-api-type-id="${a.apiTypeId}" data-status="${apiStatus}">
+                                <c:choose >
+                                    <c:when test="${a.apiId eq 10}">${a.siteApiName}</c:when>
+                                    <c:otherwise>${a.name}</c:otherwise>
+                                </c:choose>
+                            </a>
                         </li>
                         <c:if test="${a.apiId==10}">
                             <c:set var="hasBBIN" value="true"/>

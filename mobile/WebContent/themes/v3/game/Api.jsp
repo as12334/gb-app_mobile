@@ -1,3 +1,4 @@
+<%--@elvariable id="apiList" type="java.util.List<so.wwb.gamebox.model.company.site.po.SiteApiRelation>"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
 <c:set value="${apiDetail.get('apiI18n')}" var="apiI18n"></c:set>
@@ -55,10 +56,10 @@
                                 <h1>
                                     <c:set var="flag" value="${apiList.size()}"/>
                                     <c:forEach var="at" items="${apiList}" end="${flag}">
-                                        <c:if test="${at.get('apiTypeRelation').apiId == apiI18n.apiId && apiDetail.get('apiTypeId') == at.get('apiTypeRelation').apiTypeId}">
-                                            <c:choose>
-                                                <c:when test="${at.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
-                                                <c:otherwise>${at.get("apiTypeRelation").name}</c:otherwise>
+                                        <c:if test="${at.apiId == apiI18n.apiId && apiDetail.get('apiTypeId') == at.apiTypeId}">
+                                            <c:choose >
+                                                <c:when test="${at.apiId eq 10}">${at.siteApiName}</c:when>
+                                                <c:otherwise>${at.name}</c:otherwise>
                                             </c:choose>
                                             <c:set var="flag" value="0"/>
                                         </c:if>
@@ -108,22 +109,24 @@
     <div class="mui-content mui-scroll-wrapper allgame-scroll popover-scroll">
         <div class="mui-scroll">
             <ul class="mui-table-view" id="activityTypeLi">
-                <c:forEach var="apiType" items="${apiList}" varStatus="status">
-                    <c:set var="apiStatus"
-                           value="${api.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus eq 'maintain' ?'maintain' : siteApi.get(apiType.get('apiTypeRelation').apiId.toString()).systemStatus}"></c:set>
-                    <li class="mui-table-view-cell">
-                        <soul:button text=""
-                                     target="${root}/api/detail.html?apiId=${apiType.get('apiTypeRelation').apiId}&apiTypeId=${apiType.get('apiTypeRelation').apiTypeId}"
-                                     opType="href"
-                                     cssClass="_api">
-                            <c:choose>
-                                <c:when test="${apiType.get('apiTypeRelation').apiId eq 10}">${gbFn:getApiName(10)}</c:when>
-                                <c:otherwise>${apiType.get("apiTypeRelation").name}</c:otherwise>
-                            </c:choose>
-                        </soul:button>
-                    </li>
+                <%--BBIN只显示一个--%>
+                <c:set var="hasBBIN" value="false"/>
+                <c:forEach var="a" items="${apiList}" varStatus="status">
+                    <c:if test="${a.apiId==10&&hasBBIN eq 'false' || a.apiId!=10}">
+                        <c:set var="apiStatus" value="${a.apiStatus}"></c:set>
+                        <li class="mui-table-view-cell">
+                            <soul:button text=""
+                                         target="${root}/api/detail.html?apiId=${a.apiId}&apiTypeId=${a.apiTypeId}"
+                                         opType="href"
+                                         cssClass="_api">
+                                <c:choose>
+                                    <c:when test="${a.apiId eq 10}">${a.siteApiName}</c:when>
+                                    <c:otherwise>${a.name}</c:otherwise>
+                                </c:choose>
+                            </soul:button>
+                        </li>
+                    </c:if>
                 </c:forEach>
-
             </ul>
         </div>
     </div>
