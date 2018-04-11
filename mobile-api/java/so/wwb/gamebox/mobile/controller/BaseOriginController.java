@@ -120,8 +120,12 @@ public abstract class BaseOriginController {
             if (gameIds != null && !gameIds.contains(gameId)) {  //搜索条件不符合游戏标签不包含
                 continue;
             }
+            SiteGameI18n siteGameI18n = siteGameI18nMap.get(siteGame.getGameId().toString());
+            if (siteGameI18n == null) {
+                continue;
+            }
             siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
-            siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
+            siteGame.setCover(siteGameI18n.getCover());
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }
