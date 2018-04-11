@@ -102,6 +102,32 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
     }
 
+    private String getOnlinePayUrl(PayAccount payAccount, PlayerRecharge playerRecharge, HttpServletRequest request) {
+        String url = "";
+        try {
+            List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
+            });
+
+            String domain = ServletTool.getDomainPath(request);
+            for (Map<String, String> map : accountJson) {
+                if (map.get("column").equals(CommonFieldsConst.PAYDOMAIN)) {
+                    domain = map.get("value");
+                    break;
+                }
+            }
+
+            if (domain != null && (RechargeStatusEnum.PENDING_PAY.getCode().equals(playerRecharge.getRechargeStatus())
+                    || RechargeStatusEnum.OVER_TIME.getCode().equals(playerRecharge.getRechargeStatus()))) {
+                String uri = "/onlinePay/abcefg.html?search.transactionNo=" + playerRecharge.getTransactionNo() + "&origin=" + TerminalEnum.PC.getCode();
+                domain = getDomain(domain, payAccount);
+                url = domain + uri;
+            }
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        return url;
+    }
+
     public String getDomain(String domain, PayAccount payAccount) {
         domain = domain.replace("http://", "");
         VSysSiteDomain siteDomain = Cache.getSiteDomain(domain);
@@ -132,7 +158,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     /**
      * 线上支付（含扫码支付）提交公共方法
      */
-    Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
+    Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors()) {
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
             return getResultMsg(false, playerRechargeVo.getErrMsg(), null);
@@ -162,7 +188,9 @@ public class BaseOnlineDepositController extends BaseDepositController {
             onlineToneWarn();
             //设置session相关存款数据
             //setRechargeCount();
-            return getResultMsg(true, null, playerRechargeVo.getResult().getTransactionNo());
+            Map<String, Object> resultMap = getResultMsg(true, null, playerRechargeVo.getResult().getTransactionNo());
+            resultMap.put("payUrl", getOnlinePayUrl(payAccount, playerRechargeVo.getResult(), request));
+            return resultMap;
         } else {
             return getResultMsg(false, playerRechargeVo.getErrMsg(), null);
         }
