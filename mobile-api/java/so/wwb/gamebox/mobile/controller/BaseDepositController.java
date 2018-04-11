@@ -138,7 +138,7 @@ public class BaseDepositController {
      */
     public List<AppPayAccount> changeModel(List<PayAccount> payAccounts,
                                            String onlineWay,
-                                           String companyWay, Map<String,String> imgUrl,PlayerRank rank) {
+                                           String companyWay, Map<String, String> imgUrl, PlayerRank rank) {
         if (!CollectionTool.isNotEmpty(payAccounts)) {
             return null;
         }
@@ -169,7 +169,7 @@ public class BaseDepositController {
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
                 appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
-                        ImageTag.getImagePath(imgUrl.get("serverName"),payAccount.getQrCodeUrl()));
+                        ImageTag.getImagePath(imgUrl.get("serverName"), payAccount.getQrCodeUrl()));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
             }
@@ -189,8 +189,8 @@ public class BaseDepositController {
      * @param request
      * @return
      */
-    protected Map<String,String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
-        Map<String,String> map = new HashMap<>();
+    protected Map<String, String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
+        Map<String, String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
         String serverName = request.getServerName();
         sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName)).append("/");
@@ -203,8 +203,8 @@ public class BaseDepositController {
 
         StringBuilder accountSb = new StringBuilder();
         accountSb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName));
-        map.put("depositImgUrl",String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
-        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL,accountSb, code));
+        map.put("depositImgUrl", String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
+        map.put("accountImgUrl", String.format(ACCOUNT_IMG_URL, accountSb, code));
         map.put("serverName", serverName);
         return map;
     }
@@ -362,7 +362,7 @@ public class BaseDepositController {
                            List<PayAccount> electronicAccount,
                            String onliineWay,
                            String companyWay,
-                           Map<String,String> imgUrl,
+                           Map<String, String> imgUrl,
                            PlayerRank rank) {
         List<AppPayAccount> scanAppPayAccounts = null;
         List<AppPayAccount> electronicAppPayAccounts = null;
@@ -382,12 +382,12 @@ public class BaseDepositController {
                 }
                 list.add(payAccount);
             }
-            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl,rank);
+            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl, rank);
             appRechargePay.setArrayList(scanAppPayAccounts);
         }
 
         if (CollectionTool.isNotEmpty(electronicAccount)) {
-            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl,rank);
+            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl, rank);
             if (CollectionTool.isNotEmpty(scanAppPayAccounts)) {
                 electronicAppPayAccounts.addAll(scanAppPayAccounts);
             }
@@ -766,7 +766,7 @@ public class BaseDepositController {
             onlineToneWarn();
             //设置session相关存款数据
             //setRechargeCount();
-            return ThirdPartyPay(playerRechargeVo, request);
+            return ThirdPartyPay(playerRechargeVo.getResult(), request, payAccount);
         } else {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
                     playerRechargeVo.getErrMsg(),
@@ -774,22 +774,14 @@ public class BaseDepositController {
         }
     }
 
-    public String ThirdPartyPay(PlayerRechargeVo playerRechargeVo, HttpServletRequest request) {
-        LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getResult().getTransactionNo());
-        if (StringTool.isBlank(playerRechargeVo.getResult().getTransactionNo())) {
+    public String ThirdPartyPay(PlayerRecharge playerRecharge, HttpServletRequest request, PayAccount payAccount) {
+        LOG.info("调用第三方pay：交易号：{0}", playerRecharge.getTransactionNo());
+        if (StringTool.isBlank(playerRecharge.getTransactionNo())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),
                     AppErrorCodeEnum.ORDER_ERROR.getMsg(),
                     null, APP_VERSION);
         }
         try {
-            playerRechargeVo.getSearch().setTransactionNo(playerRechargeVo.getResult().getTransactionNo());
-            if (playerRechargeVo.getResult().getId() != null) {
-                playerRechargeVo.getSearch().setId(playerRechargeVo.getResult().getId());
-            }
-            playerRechargeVo._setDataSourceId(null);
-            playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
-            PlayerRecharge playerRecharge = playerRechargeVo.getResult();
-            PayAccount payAccount = getPayAccountById(playerRecharge.getPayAccountId());
             List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
             });
 
@@ -809,6 +801,8 @@ public class BaseDepositController {
                 String url = domain + uri;
                 //添加支付网址
                 playerRecharge.setPayUrl(domain);
+                PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+                playerRechargeVo.setResult(playerRecharge);
                 playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
                 ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
                 Map<String, Object> map = new HashMap<>();
@@ -818,7 +812,7 @@ public class BaseDepositController {
                         map, APP_VERSION);
             }
         } catch (Exception e) {
-            LOG.error(e, "调用第三方pay出错交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
+            LOG.error(e, "调用第三方pay出错交易号：{0}", playerRecharge.getTransactionNo());
         }
         return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
                 AppErrorCodeEnum.DEPOSIT_FAIL.getMsg(),

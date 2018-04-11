@@ -82,6 +82,12 @@
                                 </c:if>
                             </c:forEach>
                         </h1>
+                        <div class="g-money">
+                            <div class="login-status">
+                                <span class="rmb-c">${apiDetail.get('currSign')}</span>${apiDetail.get('apiMoney')}<%--200.25--%>
+                                <%--<span class="icon-refresh"></span>--%>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
