@@ -512,9 +512,9 @@ public class OriginController extends BaseOriginController {
         CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
         if (cttDocumentI18n != null) {
             cttDocumentI18n.setContent(cttDocumentI18n.getContent()
-                                        .replace("${weburl}", request.getServerName())
-                                        .replace("${customerservice}","")
-                                        .replace("${company}",SessionManagerCommon.getSiteName(request)));
+                    .replace("${weburl}", request.getServerName())
+                    .replace("${customerservice}", "")
+                    .replace("${company}", SessionManagerCommon.getSiteName(request)));
         }
         AboutApp about = new AboutApp();
         about.setTitle(cttDocumentI18n.getTitle());
