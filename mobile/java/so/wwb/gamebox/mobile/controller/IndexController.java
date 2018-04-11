@@ -175,7 +175,10 @@ public class IndexController extends BaseApiController {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
             CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
             if (cttDocumentI18n != null) {
-                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent()
+                        .replace("${weburl}", request.getServerName())
+                        .replace("${customerservice}", "")
+                        .replace("${company}", SessionManagerCommon.getSiteName(request)));
             }
             model.addAttribute("about", cttDocumentI18n);
         }
