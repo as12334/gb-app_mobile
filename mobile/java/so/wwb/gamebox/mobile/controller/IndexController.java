@@ -780,7 +780,7 @@ public class IndexController extends BaseApiController {
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
-                map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), StringEscapeTool.unescapeHtml4(sysUser.getAvatarUrl()), 46, 46, null));
+                map.put("avatar", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null)));
             }
             map.put("isAutoPay", SessionManager.isAutoPay());//是否免转标识
             //查询总资产
