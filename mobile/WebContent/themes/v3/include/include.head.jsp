@@ -24,16 +24,16 @@
 <c:set var="backgroundParam" value="<%=ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_BACKGROUND_COLOR)%>"/>
 <c:set var="background_type" value="${backgroundParam.paramValue}"/>
 <c:choose>
-    <c:when test="${background_type eq 'black'||background_type eq 'blue'||background_type eq 'green'||background_type eq 'pink' ||background_type eq 'rainbow'}">
-        <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css"/>
+    <c:when test="${background_type eq 'black'||background_type eq 'blue'||background_type eq 'green'||background_type eq 'pink' ||background_type eq 'rainbow'||background_type eq 'blue_black'||background_type eq 'orange_black'||background_type eq 'red_black'}">
+        <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css?v=${rcVersion}"/>
         <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:when>
     <c:when test="${background_type eq 'white' || background_type eq 'golden'}">
-        <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css"/>
+        <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css?v=${rcVersion}"/>
         <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
     </c:when>
     <c:otherwise>
-        <link rel="stylesheet" href="${resRoot}/themes/default/style.css"/>
+        <link rel="stylesheet" href="${resRoot}/themes/default/style.css?v=${rcVersion}"/>
         <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:otherwise>
 </c:choose>

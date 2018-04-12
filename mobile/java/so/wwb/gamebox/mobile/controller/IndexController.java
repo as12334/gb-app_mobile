@@ -627,6 +627,7 @@ public class IndexController extends BaseApiController {
      * @return
      */
     @RequestMapping("/app/download")
+    @Upgrade(upgrade = true)
     public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             String url = "/login/commonLogin.html";
@@ -635,6 +636,9 @@ public class IndexController extends BaseApiController {
             return "/passport/login";
         }
         getAppPath(model, request);
+        if (ParamTool.isMobileUpgrade()) {
+            return "/download/DownLoad";
+        }
         return "/app/Index";
     }
 
