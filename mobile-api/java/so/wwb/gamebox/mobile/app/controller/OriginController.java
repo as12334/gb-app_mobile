@@ -26,7 +26,9 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.SmsTypeEnum;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
@@ -45,6 +47,7 @@ import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -71,6 +74,28 @@ public class OriginController extends BaseOriginController {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), SessionManager.getTimeZone(), APP_VERSION);
     }
 
+    /**
+     * 获取客户联系地址
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getCustomerService")
+    @ResponseBody
+    public String getCustomerService() {
+        Map map = new HashMap(2, 1f);
+        map.put("customerUrl", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
+        boolean inlay = true;
+        if (ParamTool.getSysParam(SiteParamEnum.SETTING_APP_CUSTOMER_INLAY) != null
+                && "false".equals(ParamTool.getSysParam(SiteParamEnum.SETTING_APP_CUSTOMER_INLAY).getParamCode())) {
+            inlay = false;
+        }
+        map.put("isInlay", inlay);
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
+    }
 
     /**
      * 请求首页，查询轮播图，公告，游戏类，红包活动
