@@ -81,10 +81,10 @@
                                 </c:otherwise>
                             </c:choose>
                             <div class="gb-form-foot" style="margin-top: -10px;">
-                                <a class="mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
+                                <c:if test="${activity.code ne 'content'}">
+                                    <a class="mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
                                 "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</a>
-                                <%--<button class="mui-pull-right mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
-                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</button>--%>
+                                </c:if>
                             </div>
                         </div>
                     </c:if>
