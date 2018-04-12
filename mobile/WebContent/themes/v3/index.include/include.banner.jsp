@@ -6,7 +6,7 @@
         <a data-rel='{"target":"downLoadApp","opType":"function"}' class="btn-download">立即下载</a>
         <div data-rel='{"target":"closeDownLoad","opType":"function"}' class="close-slide"></div>
     </div>
-    <div class="mui-slider-group">
+    <div class="mui-slider-group ${fn:length(carousels)>0?'mui-slider-loop':''}">
         <c:choose>
             <c:when test="${fn:length(carousels) > 0}">
                 <c:forEach items="${carousels}" var="carousel" varStatus="vs">
