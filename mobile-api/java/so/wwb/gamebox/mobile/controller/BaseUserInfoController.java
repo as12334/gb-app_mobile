@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.controller;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
+import org.soul.commons.lang.string.StringEscapeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
@@ -18,6 +19,7 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
+import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
@@ -125,7 +127,7 @@ public class BaseUserInfoController {
         //推荐好友,昨日收益
         //userInfo.setRecomdAmount(getYesterdayRecommend(userId));
         userInfo.setUsername(sysUser.getUsername());
-        userInfo.setAvatarUrl(sysUser.getAvatarUrl());
+        userInfo.setAvatarUrl(ImageTag.getImagePath(SessionManager.getDomain(request), StringEscapeTool.unescapeHtml4(sysUser.getAvatarUrl())));
         //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
         if (sysUser.getLastLoginTime() != null) {
             userInfo.setLastLoginTime(LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
