@@ -158,6 +158,7 @@
                                         <c:if test="${isPhone}">
                                             <div class="mui-input-row final y-code">
                                                         <input name="checkPhone" value="checkPhone" type="hidden">
+                                                        <input name="phone.status" value="11" type="hidden"/>
                                                         <div class="text gb-vcode" style="background: none;text-align:  left;">
                                                             <button id="sendPhoneCode" type="button" class="mui-btn mui-btn-primary mui-btn-outlined" style="float:  none; width: 100px; color: #007aff;">${views.passport_auto['发送验证码']}</button>
                                                         </div>
