@@ -127,7 +127,7 @@ public class BaseUserInfoController {
         //推荐好友,昨日收益
         //userInfo.setRecomdAmount(getYesterdayRecommend(userId));
         userInfo.setUsername(sysUser.getUsername());
-        userInfo.setAvatarUrl(StringEscapeTool.unescapeHtml4(ImageTag.getImagePath(SessionManager.getDomain(request), sysUser.getAvatarUrl())));
+        userInfo.setAvatarUrl(StringEscapeTool.unescapeHtml4(ImageTag.getImagePath(request.getServerName(), sysUser.getAvatarUrl())));
         //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
         if (sysUser.getLastLoginTime() != null) {
             userInfo.setLastLoginTime(LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
