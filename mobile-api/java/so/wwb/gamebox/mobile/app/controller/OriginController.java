@@ -14,6 +14,7 @@ import org.soul.commons.security.CryptoTool;
 import org.soul.model.sms.SmsMessageVo;
 import org.soul.model.sms_interface.po.SmsInterface;
 import org.soul.model.sms_interface.vo.SmsInterfaceVo;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
@@ -85,8 +86,8 @@ public class OriginController extends BaseOriginController {
         Map map = new HashMap(2, 1f);
         map.put("customerUrl", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
         boolean inlay = true;
-        if (ParamTool.getSysParam(SiteParamEnum.SETTING_APP_CUSTOMER_INLAY) != null
-                && "false".equals(ParamTool.getSysParam(SiteParamEnum.SETTING_APP_CUSTOMER_INLAY).getParamCode())) {
+        SysParam param = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_CUSTOMER_INLAY);
+        if (param != null && "false".equals(param.getParamValue())) {
             inlay = false;
         }
         map.put("isInlay", inlay);
