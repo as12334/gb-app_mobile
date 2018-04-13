@@ -3,7 +3,7 @@
 <!--红包html开始  通过改变hongbao-wrap的class来改变红包样式，一共三种（hb_type_1,hb_type_2,hb_type_3）-->
 <c:if test="${not empty floatList}">
     <div class="ads-slider hongbao-slide-wrap hongbao-wrap" id="hongbao">
-        <soul:button target="closeAds" text="" opType="function" cssClass="icon-close"/>
+        <span class="mui-icon mui-icon-close icon-close" data-rel='{"target":"closeAds","opType":"function"}'></span>
         <div class="mui-slider hongbao-slider">
             <div class="mui-slider-group">
                 <c:forEach var="item" items="${floatList}">
@@ -16,13 +16,13 @@
                                         <c:otherwise>3</c:otherwise>
                                      </c:choose>">
                                     <div class="img"></div>
-                                    <soul:button target="floatList" text="" cssClass="extra" opType="function" objectId="${item.activityId}" tag="div"/>
+                                    <div class="extra" data-rel='{"target":"floatList","opType":"function","objectId":"${item.activityId}"}'></div>
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <soul:button target="floatList" text="" opType="function" tag="div" cssClass="mui-slider-item" objectId="${item.activityId}">
+                                <div class="mui-slider-item" data-rel='{"target":"floatList","opType":"function","objectId":"${item.activityId}"}'>
                                     <img data-src="${soulFn:getImagePath(domain,item.floatItem.normalEffect)}" src="${soulFn:getThumbPath(domain,item.floatItem.normalEffect,0,0)}">
-                                </soul:button>
+                                </div>
                             </c:otherwise>
                         </c:choose>
                     </c:if>
@@ -45,10 +45,10 @@
     <input type="hidden" name="gb.token" value=""/>
 
     <div class="hongbao_inner">
-        <soul:button text="" opType="function" target="closePage" cssClass="icon-close"/>
+        <a class="icon-close" data-rel='{"target":"closePage","opType":"function"}'></a>
         <div class="hongbao"><!--未能拆时加disabled类名-->
             <div id="lotteryPages">
-                <soul:button target="lottery" opType="function" text="" cssClass="icon-open" tag="div"/>
+                <div class="icon-open" data-rel='{"target":"lottery","opType":"function"}'></div>
                 <div class="hongbao-time-txt">${views.themes_auto['下次拆红包开始时间为']}</div>
                 <div class="hongbao-time">2017-11-11  11:11:11</div>
                 <%--<soul:button opType="function" text="" target="openRule" cssClass="btn-rule"/>--%>
@@ -68,7 +68,7 @@
                              </c:if>
                         </div>
                     </div>
-                    <soul:button opType="function" target="closeRule" text="" cssClass="icon-close-rule"/>
+                    <a class="icon-close-rule" data-rel='{"target":"closeRule","opType":"function"}'></a>
                 </div>
             </div>
             <!--中奖时的提示-->
@@ -87,6 +87,6 @@
         <div class="caidai"></div>
         <div class="hongbao-light"></div>
         <!--关闭红包继续抽奖按钮-->
-        <soul:button opType="function" target="onceAgain" text="" cssClass="btn-ok"/>
+        <a class="btn-ok" data-rel='{"target":"onceAgain","opType":"function"}'></a>
     </div>
 </div>

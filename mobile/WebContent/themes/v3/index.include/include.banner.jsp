@@ -16,10 +16,10 @@
                             <c:set var="link" value="${fn:startsWith(link, 'http://')||fn:startsWith(link, 'https://')?link:'http://'.concat(link)}"/>
                         </c:when>
                     </c:choose>
-                    <c:if test="${fn:length(carousels)-1 == vs.index}">
+                    <c:if test="${vs.index==0}">
                         <div class="mui-slider-item mui-slider-item-duplicate">
                             <a data-rel='{"target":"${link}","opType":"href"}'>
-                                <img src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                                <img src="${soulFn:getImagePath(domain, carousels.get(carousels.size()-1)["cover"])}"/>
                             </a>
                         </div>
                     </c:if>
@@ -28,10 +28,10 @@
                             <img src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
                         </a>
                     </div>
-                    <c:if test="${vs.index==0}">
+                    <c:if test="${fn:length(carousels)-1 == vs.index}">
                         <div class="mui-slider-item mui-slider-item-duplicate">
                             <a data-rel='{"target":"${link}","opType":"href"}'>
-                                <img src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                                <img src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
                             </a>
                         </div>
                     </c:if>
