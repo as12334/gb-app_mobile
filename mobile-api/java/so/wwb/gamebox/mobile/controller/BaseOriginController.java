@@ -38,6 +38,7 @@ import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.company.site.vo.SiteGameTagVo;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -208,20 +209,25 @@ public abstract class BaseOriginController {
      *
      * @return
      */
-    protected List<AppGameTag> getGameTag() {
-        Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
-        Map<String, String> tagNameMap = getTagNameMap();
-        List<String> tags = new ArrayList<>();
-        String tagId;
+    protected List<AppGameTag> getGameTag(SiteGameListVo listVo) {
         List<AppGameTag> gameTags = new ArrayList<>();
-        for (SiteGameTag tag : siteGameTag.values()) {
-            tagId = tag.getTagId();
-            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null && StringTool.equals("hot_game", tagId)) {
+        if (listVo.getSearch().getApiId() == null || listVo.getSearch().getApiTypeId() == null) {
+            return gameTags;
+        }
+
+        SiteGameTagVo tagVo = new SiteGameTagVo();
+        tagVo.setApiId(listVo.getSearch().getApiId());
+        tagVo.setApiTypeId(listVo.getSearch().getApiTypeId());
+        tagVo.getSearch().setSiteId(SessionManager.getSiteId());
+        List<String> siteTagIds = ServiceSiteTool.searchTagIdService().searchTagId(tagVo);
+        Map<String, String> tagNameMap = getTagNameMap();
+
+        for (String tagId : siteTagIds) {
+            if (tagId != null && tagNameMap.get(tagId) != null) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(tagId);
                 appGameTag.setValue(tagNameMap.get(tagId));
                 gameTags.add(appGameTag);
-                tags.add(tag.getTagId());
             }
         }
         return gameTags;

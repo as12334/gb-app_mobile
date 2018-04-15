@@ -33,6 +33,7 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -93,8 +94,8 @@ public class OnlineDepositController extends BaseOnlineDepositController {
     @RequestMapping("/deposit")
     @ResponseBody
     @Token(valid = true)
-    public Map deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid DepositForm form, BindingResult result) {
-        return commonDeposit(playerRechargeVo, result);
+    public Map deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid DepositForm form, BindingResult result, HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result, request);
     }
 
     /**

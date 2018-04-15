@@ -57,6 +57,7 @@ import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
+import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
@@ -918,6 +919,7 @@ public class BaseMineController {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
+        listVo.getSearch().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
         listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
 
         return listVo;

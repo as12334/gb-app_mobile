@@ -144,7 +144,7 @@
 <div class="container">
     <div class="content">
         <div class="icon">
-            <img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png"/>
+            <img src="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png"/>
         </div>
         <c:choose>
             <c:when test="${os eq 'wechat'}">
@@ -166,10 +166,10 @@
                         <div class="par-1" style="display: none">
                             <img src="${resRoot}/images/ios/img01.png"/>
                             <div class="logo-big">
-                                <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+                                <img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
                             </div>
                             <div class="logo-small">
-                                <img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+                                <img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
                             </div>
                         </div>
 

@@ -185,7 +185,7 @@
                                     </div>
                                     <c:if test="${isPhone}">
                                         <div class="mui-input-row">
-                                            <input name="checkPhone" value="checkPhone" type="hidden">
+                                            <input name="checkPhone" value="checkPhone" type="hidden"/>
                                             <input name="phone.status" value="11" type="hidden"/>
                                             <input type="text" name="phoneCode" class=mui-input"
                                                    placeholder="*${views.register['signUp.phoneCode']}">
