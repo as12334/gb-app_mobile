@@ -36,7 +36,7 @@
                     <!-- banner -->
                     <div class="e-banner">
                         <img src="${resRoot}/images/api/banner/${apiI18n.apiId}-${apiI18n.apiId eq 10?'1':apiDetail.get('apiTypeId')}.jpg"
-                                 width="100%" alt="">
+                             width="100%" alt="">
                     </div>
                     <!-- 游戏项 -->
                     <div class="game-item api-grid " style="min-height: 0">
