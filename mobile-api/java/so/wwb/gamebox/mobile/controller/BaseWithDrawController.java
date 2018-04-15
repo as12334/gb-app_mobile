@@ -5,6 +5,7 @@ import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.DateQuickPicker;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -88,14 +89,15 @@ public class BaseWithDrawController {
         map.put("currencySign", getCurrencySign(SessionManagerCommon.getUser().getDefaultCurrency()));
         map.put("auditLogUrl", WITHDRAW_AUDIT_LOG_URL);//查看稽核地址
         map.put("isSafePassword", isSafePassword());
-        map.put("rank",getPlayerRank());
+        map.put("rank", getPlayerRank());
     }
 
     /**
      * 获取玩家层级取款金额最大小值
+     *
      * @return
      */
-    private AppPlayerRank getPlayerRank(){
+    private AppPlayerRank getPlayerRank() {
         PlayerRank rank = getRank();
         AppPlayerRank appRank = new AppPlayerRank();
         appRank.setWithdrawMinNum(rank.getWithdrawMinNum());
@@ -402,7 +404,7 @@ public class BaseWithDrawController {
         Integer freeCount = rank.getWithdrawFreeCount();
         Double poundage = 0.0d; // 手续费
         // 有设置取款次数限制
-        if (rank.getWithdrawTimeLimit() != null && freeCount != null) {
+        if ((rank.getIsWithdrawFeeZeroReset() || rank.getWithdrawTimeLimit() != null) && freeCount != null) {
             hasCount = getHasCount(rank);
             // 超过免手续费次数(n+1次:即已取款次数+当前取款次数)时需要扣除手续费
             if (hasCount >= freeCount) {
@@ -449,8 +451,13 @@ public class BaseWithDrawController {
         if (SessionManagerCommon.getUserId() == null) {
             throw new RuntimeException("玩家ID不存在");
         }
-        Date date = new Date();
-        Date lastTime = DateTool.addHours(date, -rank.getWithdrawTimeLimit());
+        Date date = SessionManager.getDate().getNow();
+        Date lastTime;
+        if (rank.getIsWithdrawFeeZeroReset()) {
+            lastTime = DateQuickPicker.getInstance().getToday();
+        } else {
+            lastTime = DateTool.addHours(date, -rank.getWithdrawTimeLimit());
+        }
         PlayerWithdrawVo withdrawVo = new PlayerWithdrawVo();
         withdrawVo.setResult(new PlayerWithdraw());
         withdrawVo.getSearch().setPlayerId(SessionManagerCommon.getUserId());

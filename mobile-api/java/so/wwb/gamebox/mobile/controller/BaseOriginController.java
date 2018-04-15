@@ -492,12 +492,18 @@ public abstract class BaseOriginController {
         String terminal = GameSupportTerminalEnum.PC.getCode();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = new HashMap<>();
         Map<Integer, List<AppSiteGame>> navApiGameMap;
+        int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
+        int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
             apiTypeId = apiTypeRelation.getApiTypeId();
             apiId = apiTypeRelation.getApiId();
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
             if (api == null || siteApi == null || terminal.equals(api.getTerminal()) || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
+                continue;
+            }
+            //BB体育不展示
+            if (apiTypeId == sportType && apiId == bb) {
                 continue;
             }
             apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));

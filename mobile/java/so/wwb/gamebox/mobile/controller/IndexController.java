@@ -8,6 +8,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.I18nTool;
+import org.soul.commons.lang.string.StringEscapeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -627,6 +628,7 @@ public class IndexController extends BaseApiController {
      * @return
      */
     @RequestMapping("/app/download")
+    @Upgrade(upgrade = true)
     public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             String url = "/login/commonLogin.html";
@@ -635,6 +637,9 @@ public class IndexController extends BaseApiController {
             return "/passport/login";
         }
         getAppPath(model, request);
+        if (ParamTool.isMobileUpgrade()) {
+            return "/download/DownLoad";
+        }
         return "/app/Index";
     }
 
@@ -742,12 +747,12 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/sysUser")
     @ResponseBody
-    public String getSysUser() {
+    public String getSysUser(HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         if (sysUser != null) {
             Map<String, Object> map = new HashMap<>(2);
             map.put("username", StringTool.overlayName(sysUser.getUsername()));
-            map.put("avatarUrl", sysUser.getAvatarUrl());
+            map.put("avatarUrl", ImageTag.getImagePath(SessionManager.getDomain(request), StringEscapeTool.unescapeHtml4(sysUser.getAvatarUrl())));
             return JsonTool.toJson(map);
         } else {
             return "unLogin";
@@ -775,7 +780,7 @@ public class IndexController extends BaseApiController {
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
-                map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
+                map.put("avatar", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null)));
             }
             map.put("isAutoPay", SessionManager.isAutoPay());//是否免转标识
             //查询总资产
