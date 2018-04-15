@@ -24,8 +24,7 @@
 <c:set var="backgroundParam" value="<%=ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_BACKGROUND_COLOR)%>"/>
 <c:set var="background_type" value="${backgroundParam.paramValue}"/>
 <c:choose>
-    <c:when test="${background_type eq 'black'
-                  ||background_type eq 'blue'
+    <c:when test="${background_type eq 'blue'
                   ||background_type eq 'green'
                   ||background_type eq 'pink'
                   ||background_type eq 'rainbow'
