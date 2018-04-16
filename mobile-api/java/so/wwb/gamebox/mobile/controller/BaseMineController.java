@@ -426,11 +426,15 @@ public class BaseMineController {
                 app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
             } else if (map.get("bankCode") != null && StringTool.equals(String.valueOf(map.get("bankCode")), "bitcoin")) {
                 app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            } else {
+                app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(0));
             }
 
             if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
                 if ((Double) map.get("bitAmount") > 0 && vplayer.getTransactionMoney() == 0 && StringTool.isNotBlank((String) map.get("bankCode"))) {
                     app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+                } else {
+                    app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(0));
                 }
             }
 

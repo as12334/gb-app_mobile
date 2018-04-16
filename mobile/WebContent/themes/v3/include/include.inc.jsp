@@ -33,6 +33,7 @@
 <c:set var="curTheme" value="<%= SessionManagerCommon.getThemeFileName(request) %>"/>
 <c:set var="siteCurrency" value="<%=SupportLocale.querySiteCurrencyBySiteId() %>" />
 <c:set var="siteCurrencySign" value="<%=SupportLocale.querySiteCurrencySignBySiteId()  %>" />
+<c:set var="centerId" value="<%=CommonContext.get().getSiteParentId() %>"/>
 
 <c:set var="rcVersion" value="<%= Cache.getRcVersion() %>"/>
 <c:set var="domain" value="<%= request.getServerName() %>"/>

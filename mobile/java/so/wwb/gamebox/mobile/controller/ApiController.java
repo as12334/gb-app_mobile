@@ -211,7 +211,7 @@ public class ApiController extends BaseApiController {
             map = new HashMap<>(4, 1f);
             String apiId = api.getApiId().toString();
             map.put("apiId", apiId);
-            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap,apiI18nMap,apiId));
+            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap, apiI18nMap, apiId));
             map.put("balance", api.getMoney() == null ? 0.00 : api.getMoney());
             map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
             maps.add(map);
@@ -229,6 +229,7 @@ public class ApiController extends BaseApiController {
 
     /**
      * api状态
+     *
      * @param apiMap
      * @param siteApiMap
      * @param apiId
@@ -348,19 +349,15 @@ public class ApiController extends BaseApiController {
     private Map<String, Object> getApiDetail(Integer apiId, Integer apiTypeId) {
         Map<String, Object> apiDetail = new HashMap<>();
         Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
-        for (ApiI18n apiI18n : apiI18nMap.values()) {
-            if (apiI18n.getApiId().equals(apiId)) {
-                PlayerApi playerApi = getPlayerApi(apiId);
-                VUserPlayer player = getPlayer(SessionManager.getUserId());
-                apiDetail.put("apiI18n", apiI18n);
-                apiDetail.put("apiTypeId", apiTypeId);
-                apiDetail.put("currSign", player.getCurrencySign());
-                if (playerApi != null) {
-                    apiDetail.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
-                } else {
-                    apiDetail.put("apiMoney", "0.00");
-                }
-            }
+        PlayerApi playerApi = getPlayerApi(apiId);
+        SysUser user = SessionManager.getUser();
+        apiDetail.put("apiI18n", apiI18nMap.get(String.valueOf(apiId)));
+        apiDetail.put("apiTypeId", apiTypeId);
+        apiDetail.put("currSign", getCurrencySign(user.getDefaultCurrency()));
+        if (playerApi != null) {
+            apiDetail.put("apiMoney", CurrencyTool.formatCurrency(playerApi.getMoney()));
+        } else {
+            apiDetail.put("apiMoney", "0.00");
         }
         return apiDetail;
     }

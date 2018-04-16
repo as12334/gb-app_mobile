@@ -56,6 +56,7 @@ public class BettingControler {
      * @return
      */
     @RequestMapping("/index")
+    @Upgrade(upgrade = true)
     public String getBettingList(PlayerGameOrderListVo listVo, Model model, HttpServletRequest request){
         String url=BETTING_URL;
         listVo.getSearch().setPlayerId(SessionManager.getUserId());

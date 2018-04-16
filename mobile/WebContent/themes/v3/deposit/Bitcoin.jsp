@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <c:if test="${not empty payAccount.qrCodeUrl}">
+                            <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
                                 <div class="wechat-code">
                                     <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">
                                     <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}'><p class="tit">${views.deposit_auto['保存到手机']}</p></a>

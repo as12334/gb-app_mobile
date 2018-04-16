@@ -16,6 +16,7 @@
                 </c:when>
                 <c:when test="${apiTypeId == 3}">
                     <c:set var="type" value="sports"/>
+
                 </c:when>
                 <c:when test="${apiTypeId == 4}">
                     <c:set var="type" value="lottery"/>
@@ -46,12 +47,14 @@
                             </c:when>
                             <c:otherwise>
                                 <c:forEach var="i" items="${apiTypeRelations}">
-                                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                                        <a data-rel='{"dataApiId":"${i.apiId}","dataApiTypeId":"${i.apiTypeId}","dataApiName":"${i.apiName}","dataStatus":"${i.apiStatus}","target":"goApiGame","opType":"function"}'>
-                                            <span class="api-item api-icon-${apiTypeId}-${i.apiId} site${siteId}"></span>
-                                            <div class="mui-media-body">${i.apiName}</div>
-                                        </a>
-                                    </li>
+                                    <c:if test="${apiTypeId!=3 || i.apiId!=10}">
+                                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                                            <a data-rel='{"dataApiId":"${i.apiId}","dataApiTypeId":"${i.apiTypeId}","dataApiName":"${i.apiName}","dataStatus":"${i.apiStatus}","target":"goApiGame","opType":"function"}'>
+                                                <span class="api-item api-icon-${apiTypeId}-${i.apiId} site${siteId}"></span>
+                                                <div class="mui-media-body">${i.apiName}</div>
+                                            </a>
+                                        </li>
+                                    </c:if>
                                 </c:forEach>
                             </c:otherwise>
                         </c:choose>

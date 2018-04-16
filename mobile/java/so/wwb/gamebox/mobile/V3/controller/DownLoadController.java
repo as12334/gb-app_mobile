@@ -23,9 +23,11 @@ import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
 import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/downLoad")
-public class DownLoadController extends BaseDemoController{
+public class DownLoadController extends BaseDemoController {
 
     private static final Log LOG = LogFactory.getLog(DownLoadController.class);
 
@@ -53,9 +55,12 @@ public class DownLoadController extends BaseDemoController{
 
     @RequestMapping("/downLoad")
     @Upgrade(upgrade = true)
-    public String downLoad(Model model, HttpServletRequest request) {
+    public String downLoad(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
-            return "redirect:/login/commonLogin.html";
+            String url = "/login/commonLogin.html";
+            response.setStatus(302);
+            response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
+            return "/passport/login";
         }
         getAppPath(model, request);
         return "/download/DownLoad";
@@ -80,13 +85,13 @@ public class DownLoadController extends BaseDemoController{
         String os = OsTool.getOsInfo(request);
         if (OSTypeEnum.IOS.getCode().equals(os)) {
             // 获取IOS信息
-            getIosInfo(model, code, appUpdateService,siteAppUpdateService);
+            getIosInfo(model, code, appUpdateService, siteAppUpdateService);
         } else if (OSTypeEnum.ANDROID.getCode().equals(os)) {
             // 获取android APP信息
-            getAndroidInfo(model, request, code, appUpdateService,siteAppUpdateService);
+            getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
         } else {
-            getIosInfo(model, code, appUpdateService,siteAppUpdateService);
-            getAndroidInfo(model, request, code, appUpdateService,siteAppUpdateService);
+            getIosInfo(model, code, appUpdateService, siteAppUpdateService);
+            getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
         }
     }
 
@@ -99,7 +104,7 @@ public class DownLoadController extends BaseDemoController{
         if (StringTool.isBlank(appDomain)) {
             appDomain = ParamTool.appDmain(request.getServerName());
         }
-        if(isMobileUpgrade){
+        if (isMobileUpgrade) {
             Integer siteId = CommonContext.get().getSiteId();
             SiteAppUpdateVo androidVo = new SiteAppUpdateVo();
             androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
@@ -110,7 +115,7 @@ public class DownLoadController extends BaseDemoController{
                 String appUrl = androidApp.getAppUrl();
                 fillAndroidInfo(model, code, appDomain, versionName, appUrl);
             }
-        }else{
+        } else {
             AppUpdateVo androidVo = new AppUpdateVo();
             androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
             AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
@@ -124,6 +129,7 @@ public class DownLoadController extends BaseDemoController{
 
     /**
      * 填充ANDROID信息
+     *
      * @param model
      * @param code
      * @param appDomain
@@ -142,7 +148,7 @@ public class DownLoadController extends BaseDemoController{
      */
     private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService, ISiteAppUpdateService siteAppUpdateService) {
         boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
-        if(isMobileUpgrade){
+        if (isMobileUpgrade) {
             Integer siteId = CommonContext.get().getSiteId();
             SiteAppUpdateVo iosVo = new SiteAppUpdateVo();
             iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
@@ -153,7 +159,7 @@ public class DownLoadController extends BaseDemoController{
                 String appUrl = iosApp.getAppUrl();
                 fillIosInfo(model, code, versionName, appUrl);
             }
-        }else{
+        } else {
             AppUpdateVo iosVo = new AppUpdateVo();
             iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
             AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
@@ -168,6 +174,7 @@ public class DownLoadController extends BaseDemoController{
 
     /**
      * 填充IOS信息
+     *
      * @param model
      * @param code
      * @param versionName

@@ -39,14 +39,14 @@
 <%@include file="index.include/Envelope.jsp"%>
 </body>
 <%@include file="include/include.js.jsp"%>
-<script src="${resRoot}/js/mui/mui.lazyload.js"></script>
-<script src="${resRoot}/js/mui/mui.lazyload.img.js"></script>
-<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
-<script type="text/javascript" src="${resRoot}/js/jquery.marquee.min.js"></script>
-<script type="text/javascript" src="${resRoot}/js/swiper.min.js"></script>
-<script type="text/javascript" src="${resRoot}/js/Index.js"></script>
-<script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
-<script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
-<script type="text/javascript" src="${resRoot}/js/envelope/Envelope.js"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.img.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/jquery.marquee.min.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/Index.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/GoGame.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

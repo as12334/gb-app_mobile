@@ -121,8 +121,12 @@ public abstract class BaseOriginController {
             if (gameIds != null && !gameIds.contains(gameId)) {  //搜索条件不符合游戏标签不包含
                 continue;
             }
+            SiteGameI18n siteGameI18n = siteGameI18nMap.get(siteGame.getGameId().toString());
+            if (siteGameI18n == null) {
+                continue;
+            }
             siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
-            siteGame.setCover(siteGameI18nMap.get(siteGame.getGameId().toString()).getCover());
+            siteGame.setCover(siteGameI18n.getCover());
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }
@@ -488,12 +492,18 @@ public abstract class BaseOriginController {
         String terminal = GameSupportTerminalEnum.PC.getCode();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = new HashMap<>();
         Map<Integer, List<AppSiteGame>> navApiGameMap;
+        int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
+        int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
             apiTypeId = apiTypeRelation.getApiTypeId();
             apiId = apiTypeRelation.getApiId();
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
             if (api == null || siteApi == null || terminal.equals(api.getTerminal()) || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
+                continue;
+            }
+            //BB体育不展示
+            if (apiTypeId == sportType && apiId == bb) {
                 continue;
             }
             apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));

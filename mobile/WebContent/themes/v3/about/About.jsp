@@ -26,7 +26,7 @@
 
                         </strong>
                     </p>
-                    ${about.content}
+                    ${about.content.replace("${company}", siteName)}
                 </div>
             </div>
         </div>

@@ -1,9 +1,11 @@
 package so.wwb.gamebox.mobile.my.controller;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
+import org.soul.commons.lang.string.StringEscapeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.log.Log;
@@ -193,7 +195,7 @@ public class MineController{
         userInfo.put("unReadCount", number + advisoryUnReadCount);
         //用户个人信息
         userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
-        userInfo.put("avatarUrl", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
+        userInfo.put("avatarUrl", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(request.getServerName(), sysUser.getAvatarUrl(), 46, 46, null)));
         //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
         if (sysUser.getLastLoginTime() != null) {
             userInfo.put("lastLoginTime", LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));

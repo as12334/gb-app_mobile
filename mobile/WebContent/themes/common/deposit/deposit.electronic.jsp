@@ -76,8 +76,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" id="imgQrCodeUrl" value="${payAccount.qrCodeUrl}">
-                                    <c:if test="${not empty payAccount.qrCodeUrl}">
+                                    <input type="hidden" id="imgQrCodeUrl" value="${not empty payAccount.qrCodeUrl && !isHide}">
+                                    <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
                                         <div class="wechat-code">
                                             <div class="mui-row">
                                                 <div class="gb-panel" style="border-top-color: #fff;">
