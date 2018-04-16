@@ -454,6 +454,9 @@ public class BaseDepositController {
                 if (!StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     payAccount.setCustomBankName(i18n.get(bankCode));
                 }
+                if(StringTool.isBlank(payAccount.getAliasName())) {
+                    payAccount.setAliasName(payAccount.getCustomBankName());
+                }
                 payAccounts.add(payAccount);
                 bankCodes.add(bankCode);
             }
