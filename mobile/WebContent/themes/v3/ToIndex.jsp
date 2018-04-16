@@ -7,7 +7,7 @@
     <%@include file="include/include.head.jsp" %>
     <title>${siteName}</title>
 </head>
-<body class="gb-theme">
+<body class="load-body">
 <div class="load-bg loading-page">
     <div class="load-bar">
         <p>${views.app_auto['请耐心等待']}</p>
@@ -22,7 +22,7 @@
             Copyright © &nbsp;${siteName}&nbsp; Reserved.
         </div>
         <div class="tech-support">
-            ${views.app_auto['技术支持']}：<span class="icon-tech-support"></span>
+            ${views.app_auto['技术支持']}：<span class="icon-tech-support ${centerId==-3?'dbo':''}"></span>
         </div>
     </div>
 </div>
