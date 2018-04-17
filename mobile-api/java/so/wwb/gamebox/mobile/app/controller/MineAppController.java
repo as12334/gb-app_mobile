@@ -5,6 +5,7 @@ import org.apache.shiro.session.SessionException;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.dict.DictTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -513,6 +514,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String addNoticeSite(@FormModel @Valid PlayerAdvisoryAppForm form, BindingResult result, String code) {
         if (result.hasErrors()) {
+            LOG.info("申请优惠发送消息错误：{0}", JsonTool.toJson(result.getAllErrors()));
             return AppModelVo.getAppModeVoJson(false,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
@@ -821,7 +823,7 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
-        if(!checkWeakPassword(updatePasswordVo.getNewPassword())){
+        if (!checkWeakPassword(updatePasswordVo.getNewPassword())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
                     AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
@@ -1087,7 +1089,7 @@ public class MineAppController extends BaseMineController {
                     APP_VERSION);
         }
         Map map = appRecovery(playerApiVo);
-        if(map == null){
+        if (map == null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
                     AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
