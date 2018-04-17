@@ -166,6 +166,7 @@ public class BaseDepositController {
                 appPayAccount.setAliasName(payAccount.getAliasName());
                 appPayAccount.setFullName(payAccount.getFullName());
                 appPayAccount.setAccountInformation(payAccount.getAccountInformation());
+                appPayAccount.setAccountPrompt(payAccount.getAccountPrompt());
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
                 appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
@@ -452,6 +453,9 @@ public class BaseDepositController {
             if (!bankCodes.contains(bankCode)) {
                 if (!StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     payAccount.setCustomBankName(i18n.get(bankCode));
+                }
+                if(StringTool.isBlank(payAccount.getAliasName())) {
+                    payAccount.setAliasName(payAccount.getCustomBankName());
                 }
                 payAccounts.add(payAccount);
                 bankCodes.add(bankCode);

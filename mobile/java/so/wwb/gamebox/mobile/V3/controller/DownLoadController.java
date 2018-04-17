@@ -62,37 +62,21 @@ public class DownLoadController extends BaseDemoController {
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
         }
-        getAppPath(model, request);
+        String code = CommonContext.get().getSiteCode();
+        IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
+        ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
+        getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
         return "/download/DownLoad";
     }
 
     @RequestMapping("/downLoadIOS")
     @Upgrade(upgrade = true)
     public String downLoadIOS(Model model, HttpServletRequest request) {
-        getAppPath(model, request);
-        return "/download/DownLoadIOS";
-    }
-
-    /**
-     * 获取APP下载地址
-     */
-    private void getAppPath(Model model, HttpServletRequest request) {
-        //获取站点信息
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
         ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
-
-        String os = OsTool.getOsInfo(request);
-        if (OSTypeEnum.IOS.getCode().equals(os)) {
-            // 获取IOS信息
-            getIosInfo(model, code, appUpdateService, siteAppUpdateService);
-        } else if (OSTypeEnum.ANDROID.getCode().equals(os)) {
-            // 获取android APP信息
-            getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
-        } else {
-            getIosInfo(model, code, appUpdateService, siteAppUpdateService);
-            getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
-        }
+        getIosInfo(model, code, appUpdateService, siteAppUpdateService);
+        return "/download/DownLoadIOS";
     }
 
     /**
