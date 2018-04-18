@@ -24,36 +24,21 @@
                 <a class="mui-control-item" href="#bit_account">比特币账户</a>
             </div>
         </div>--%>
-        <div class="mui-clearfix">
-            <form name="withdrawform">
-                <div class="mui-scroll">
-                    <div class="withdraw-out">
-                        <div class="withdraw-not">
-                            <h1><i class="tipbig fail"></i></h1>
-                            <div class="tiptext">
-                                <p>${views.withdraw_auto['取款金额最少为'].replace('{0}', soulFn:formatCurrency(rank.withdrawMinNum))}</p>
-                                <c:if test="${!isLotterySite}">
-                                    <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
-                                </c:if>
-                            </div>
-                            <a class="mui-btn mui-btn-blue btn-deposit"
-                               data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.withdraw_auto['快速存款']}</a>
-                        </div>
-                    </div>
-                </div>
-                <c:choose>
-                    <c:when test="${isDemo}">
-                        <img src="${resRoot}/images/no_limit.png" width="90%" style="margin-top: 150px;"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="totalBalance"
-                               value="${not empty player.walletBalance?player.walletBalance:0}"></c:set>
-                        <c:if test="${not empty apiBalance}">
-                            <c:set var="totalBalance" value="${totalBalance + apiBalance}"></c:set>
-                        </c:if>
-                        <c:choose>
-                            <%--已经有取款订单---%>
-                            <c:when test="${hasOrder}">
+        <form name="withdrawform">
+            <c:choose>
+                <c:when test="${isDemo}">
+                    <img src="${resRoot}/images/no_limit.png" width="90%" style="margin-top: 150px;"/>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="totalBalance"
+                           value="${not empty player.walletBalance?player.walletBalance:0}"></c:set>
+                    <c:if test="${not empty apiBalance}">
+                        <c:set var="totalBalance" value="${totalBalance + apiBalance}"></c:set>
+                    </c:if>
+                    <c:choose>
+                        <%--已经有取款订单---%>
+                        <c:when test="${hasOrder}">
+                            <div class="mui-clearfix">
                                 <div class="mui-scroll">
                                     <div class="withdraw-out">
                                         <div class="withdraw-not">
@@ -65,9 +50,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </c:when>
-                            <%--玩家是否余额冻结--%>
-                            <c:when test="${hasFreeze}">
+                            </div>
+                        </c:when>
+                        <%--玩家是否余额冻结--%>
+                        <c:when test="${hasFreeze}">
+                            <div class="mui-clearfix">
                                 <div class="mui-scroll">
                                     <div class="withdraw-out">
                                         <div class="withdraw-not">
@@ -78,9 +65,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </c:when>
-                            <%--是否达到上限--%>
-                            <c:when test="${isFull}">
+                            </div>
+                        </c:when>
+                        <%--是否达到上限--%>
+                        <c:when test="${isFull}">
+                            <div class="mui-clearfix">
                                 <div class="mui-scroll">
                                     <div class="withdraw-out">
                                         <div class="withdraw-not">
@@ -91,9 +80,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </c:when>
-                            <%--余额是否充足--%>
-                            <c:when test="${rank.withdrawMinNum > totalBalance}">
+                            </div>
+                        </c:when>
+                        <%--余额是否充足--%>
+                        <c:when test="${rank.withdrawMinNum > totalBalance}">
+                            <div class="mui-clearfix">
                                 <div class="mui-scroll">
                                     <div class="withdraw-out">
                                         <div class="withdraw-not">
@@ -109,32 +100,34 @@
                                         </div>
                                     </div>
                                 </div>
-                            </c:when>
-                            <c:otherwise>
-                                <c:if test="${isBit&&isCash}">
-                                    <div class="account_tab">
-                                        <div class="mui-segmented-control">
-                                            <a class="mui-control-item mui-active" href="#bank_account">${views.themes_auto['银行卡账户']}</a>
-                                            <a class="mui-control-item" href="#bit_account">${views.themes_auto['比特币账户']}</a>
-                                        </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <c:if test="${isBit&&isCash}">
+                                <div class="account_tab">
+                                    <div class="mui-segmented-control">
+                                        <a class="mui-control-item mui-active" href="#bank_account">${views.themes_auto['银行卡账户']}</a>
+                                        <a class="mui-control-item" href="#bit_account">${views.themes_auto['比特币账户']}</a>
                                     </div>
-                                </c:if>
-                                <div class="mui-clearfix">
-                                    <div class="mui-control-content mui-active">
-                                        <div id="validateRule" style="display: none">${validate}</div>
-                                        <div class="mui-scroll">
-                                            <div class="mui-row">
-                                                <c:set var="bankType" value="<%=UserBankcardTypeEnum.TYPE_BANK%>"/>
-                                                <c:set var="btcType" value="<%=UserBankcardTypeEnum.TYPE_BTC%>"/>
-                                                <c:set var="bank" value="${bankcardMap.get(bankType)}"/>
-                                                <c:set var="btc" value="${bankcardMap.get(btcType)}"/>
-                                                <input type="hidden" name="noBank" value="${isCash && empty bank}"/>
-                                                <input type="hidden" name="noBtc" value="${isBit && empty btc}"/>
-                                                <input type="hidden" name="remittanceWay" value="${isCash?'1':'2'}">
-                                                <input id="sign" type="hidden" value="${currencySign}"/>
-                                                <c:if test="${isCash}">
-                                                    <div class="mui-input-group mine-form bankcard" id="bank_account">
-                                                        <div class="bankitem" data-rel='{"target":"${root}/bankCard/page/addCard.html?action=withdraw","opType":"href"}'>
+                                </div>
+                            </c:if>
+                            <div class="mui-clearfix">
+                                <div class="mui-control-content mui-active">
+                                    <div id="validateRule" style="display: none">${validate}</div>
+                                    <div class="mui-scroll">
+                                        <div class="mui-row">
+                                            <c:set var="bankType" value="<%=UserBankcardTypeEnum.TYPE_BANK%>"/>
+                                            <c:set var="btcType" value="<%=UserBankcardTypeEnum.TYPE_BTC%>"/>
+                                            <c:set var="bank" value="${bankcardMap.get(bankType)}"/>
+                                            <c:set var="btc" value="${bankcardMap.get(btcType)}"/>
+                                            <input type="hidden" name="noBank" value="${isCash && empty bank}"/>
+                                            <input type="hidden" name="noBtc" value="${isBit && empty btc}"/>
+                                            <input type="hidden" name="remittanceWay" value="${isCash?'1':'2'}">
+                                            <input id="sign" type="hidden" value="${currencySign}"/>
+                                            <c:if test="${isCash}">
+                                                <div class="mui-control-content mui-input-group mine-form bankcard mui-active" id="bank_account">
+                                                    <div class="bankitem"
+                                                         data-rel='{"target":"${root}/bankCard/page/addCard.html?action=withdraw","opType":"href"}'>
                                                     <span>
                                                     <c:if test="${!empty bank}">
                                                         <span class="pay-bank s ${bank.bankName}"></span>
@@ -144,13 +137,14 @@
                                                         <a>${views.withdraw_auto['请先绑定银行卡']}</a>
                                                     </c:if>
                                                      </span>
-                                                            <div class="clearfix"></div>
-                                                        </div>
+                                                        <div class="clearfix"></div>
                                                     </div>
-                                                </c:if>
-                                                <c:if test="${isBit}">
-                                                    <div class="mui-input-group mine-form bankcard" id="bit_account" style="${isCash?'display: none':''}">
-                                                        <div class="bankitem" data-rel='{"target":"${root}/bankCard/page/addBtc.html?action=withdraw","opType":"href"}'>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${isBit}">
+                                                <div class="mui-control-content mui-input-group mine-form bankcard" id="bit_account">
+                                                    <div class="bankitem"
+                                                         data-rel='{"target":"${root}/bankCard/page/addBtc.html?action=withdraw","opType":"href"}'>
                                                     <span>
                                                         <c:if test="${!empty btc}">
                                                             <span class="pay-bank bitcoin"></span>
@@ -160,36 +154,32 @@
                                                              <a>${views.themes_auto['请先绑定比特币地址']}</a>
                                                          </c:if>
                                                     </span>
-                                                            <div class="clearfix"></div>
-                                                        </div>
-                                                    </div>
-                                                </c:if>
-                                                    <%--<div class="mui-input-group mine-form">
-                                                        <div class="bankitem">
-                                                            <span><span class="pay-bank s cmb"></span>宋*宝 ***0945</span>
-                                                            <p>取款处理中<span class="text-green">￥1000</span></p>
-                                                            <div class="clearfix"></div>
-                                                        </div>
-                                                    </div>--%>
-                                                <div class="mui-input-group mine-form m-t-sm">
-                                                    <div class="mui-input-row"><label for="">${views.withdraw_auto['取款金额']}</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                <c:set var="minAmount" value="${rank.withdrawMinNum}" />
-                                                                <c:set var="maxAmount" value="${rank.withdrawMaxNum}" />
-                                                                <input type="hidden" name="walletBalance" value="${totalBalance}"/>
-                                                                <input type="text" class="gb-money" placeholder="${currencySign}${minAmount}-${currencySign}${maxAmount}"
-                                                                    ${hasBank? '' : 'disabled'}
-                                                                       step="1"
-                                                                       autocomplete="off"
-                                                                       name="withdrawAmount"
-                                                                       min="${minAmount}"
-                                                                       max="${maxAmount}"/>
-                                                            </p>
-                                                        </div>
+                                                        <div class="clearfix"></div>
                                                     </div>
                                                 </div>
-                                                <div class="mui-input-group mine-form m-t-sm">
+                                            </c:if>
+                                            <div class="mui-input-group mine-form m-t-sm">
+                                                <div class="mui-input-row"><label
+                                                        for="">${views.withdraw_auto['取款金额']}</label>
+                                                    <div class="ct">
+                                                        <p class="mui-text-right text-gray">
+                                                            <c:set var="minAmount" value="${rank.withdrawMinNum}"/>
+                                                            <c:set var="maxAmount" value="${rank.withdrawMaxNum}"/>
+                                                            <input type="hidden" name="walletBalance"
+                                                                   value="${totalBalance}"/>
+                                                            <input type="text" class="gb-money"
+                                                                   placeholder="${currencySign}${minAmount}-${currencySign}${maxAmount}"
+                                                                ${hasBank? '' : 'disabled'}
+                                                                   step="1"
+                                                                   autocomplete="off"
+                                                                   name="withdrawAmount"
+                                                                   min="${minAmount}"
+                                                                   max="${maxAmount}"/>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                <%--<div class="mui-input-group mine-form m-t-sm">
                                                     <div class="mui-input-row"><label for="">${views.withdraw_auto['手续费']}</label>
                                                         <div class="ct">
                                                             <p class="mui-text-right text-gray">
@@ -230,88 +220,30 @@
                                                             </p>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="mui-row">
-                                                <div class="gb-form-foot">
-                                                    <c:if test="${auditMap.recordList}">
-                                                        <div class="text">
-                                                            <p class="mui-text-right"><a data-rel='{"target":"${root}/wallet/withdraw/showAuditLog.html","opType":"href"}'>查看稽核</a></p>
-                                                        </div>
-                                                    </c:if>
-                                                    <gb:token/>
-                                                    <a id="confirmWithdraw" href="" class="mui-btn mui-btn-primary submit">${views.withdraw_auto['确认提交']}</a>
-                                                </div>
+                                                </div>--%>
+                                        </div>
+                                        <div class="mui-row">
+                                            <div class="gb-form-foot">
+                                                <c:if test="${auditMap.recordList}">
+                                                    <div class="text">
+                                                        <p class="mui-text-right"><a
+                                                                data-rel='{"target":"${root}/wallet/withdraw/showAuditLog.html","opType":"href"}'>查看稽核</a>
+                                                        </p>
+                                                    </div>
+                                                </c:if>
+                                                <gb:token/>
+                                                <a id="confirmWithdraw" href=""
+                                                   class="mui-btn mui-btn-primary submit">${views.withdraw_auto['确认提交']}</a>
                                             </div>
                                         </div>
                                     </div>
-                                        <%--<div class="mui-control-content" id="bit_account">
-                                            <div class="mui-scroll">
-                                                <div class="mui-row">
-                                                    <div class="mui-input-group mine-form">
-                                                        <div class="bankitem">
-                                                            <span><span class="pay-bank s cmb"></span>比特币 ***0945</span>
-                                                            <p>取款处理中<span class="text-green">￥1000</span></p>
-                                                            <div class="clearfix"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-group mine-form m-t-sm">
-                                                        <div class="mui-input-row"><label for="">取款金额</label>
-                                                            <div class="ct">
-                                                                <p class="mui-text-right text-gray">
-                                                                    ￥50~￥500
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-group mine-form m-t-sm">
-                                                        <div class="mui-input-row"><label for="">手续费</label>
-                                                            <div class="ct">
-                                                                <p class="mui-text-right text-gray">
-                                                                    --
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mui-input-row"><label for="">行政费</label>
-                                                            <div class="ct">
-                                                                <p class="mui-text-right text-gray">
-                                                                    -￥20.00
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mui-input-row"><label for="">扣除优惠</label>
-                                                            <div class="ct">
-                                                                <p class="mui-text-right text-gray">
-                                                                    -￥200.00
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mui-input-row"><label for="">最终可取</label>
-                                                            <div class="ct">
-                                                                <p class="mui-text-right text-green">
-                                                                    <span class="text-green">￥80.00</span>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="mui-row">
-                                                    <div class="gb-form-foot">
-                                                        <div class="text">
-                                                            <p class="mui-text-right"><a href="">查看稽核</a></p>
-                                                        </div>
-                                                        <a href="" class="mui-btn mui-btn-primary submit">下一步</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>--%>
                                 </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:otherwise>
-                </c:choose>
-            </form>
-        </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </c:otherwise>
+            </c:choose>
+        </form>
     </div>
 </div>
 <!--绑定银行卡弹窗-->
