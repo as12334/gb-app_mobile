@@ -454,7 +454,7 @@ public class BaseDepositController {
                 if (!StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     payAccount.setCustomBankName(i18n.get(bankCode));
                 }
-                if(StringTool.isBlank(payAccount.getAliasName())) {
+                if (StringTool.isBlank(payAccount.getAliasName())) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
                 }
                 payAccounts.add(payAccount);
@@ -664,6 +664,7 @@ public class BaseDepositController {
         vActivityMessageVo.setDepositAmount(rechargeAmount);
         vActivityMessageVo.setRankId(userPlayer.getRankId());
         vActivityMessageVo.setLocal(SessionManager.getLocale().toString());
+        vActivityMessageVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageVo = ServiceActivityTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
         if (CollectionTool.isEmpty(vActivityMessages)) {
