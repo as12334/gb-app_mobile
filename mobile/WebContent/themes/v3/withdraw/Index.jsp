@@ -238,66 +238,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                    <%--<div class="mui-control-content" id="bit_account">
-                                        <div class="mui-scroll">
-                                            <div class="mui-row">
-                                                <div class="mui-input-group mine-form">
-                                                    <div class="bankitem">
-                                                        <span><span class="pay-bank s cmb"></span>比特币 ***0945</span>
-                                                        <p>取款处理中<span class="text-green">￥1000</span></p>
-                                                        <div class="clearfix"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="mui-input-group mine-form m-t-sm">
-                                                    <div class="mui-input-row"><label for="">取款金额</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                ￥50~￥500
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="mui-input-group mine-form m-t-sm">
-                                                    <div class="mui-input-row"><label for="">手续费</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                --
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-row"><label for="">行政费</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                -￥20.00
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-row"><label for="">扣除优惠</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                -￥200.00
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-row"><label for="">最终可取</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-green">
-                                                                <span class="text-green">￥80.00</span>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="mui-row">
-                                                <div class="gb-form-foot">
-                                                    <div class="text">
-                                                        <p class="mui-text-right"><a href="">查看稽核</a></p>
-                                                    </div>
-                                                    <a href="" class="mui-btn mui-btn-primary submit">下一步</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>--%>
                             </div>
                         </c:otherwise>
                     </c:choose>
