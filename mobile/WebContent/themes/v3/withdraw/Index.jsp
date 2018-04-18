@@ -18,12 +18,6 @@
 </c:if>
 <div class="mui-content mui-scroll-wrapper widthdraw-content">
     <div class="mui-scroll">
-        <%--<div class="account_tab">
-            <div class="mui-segmented-control">
-                <a class="mui-control-item mui-active" href="#bank_account">银行卡账户</a>
-                <a class="mui-control-item" href="#bit_account">比特币账户</a>
-            </div>
-        </div>--%>
         <form name="withdrawform">
             <c:choose>
                 <c:when test="${isDemo}">
@@ -179,48 +173,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                                <%--<div class="mui-input-group mine-form m-t-sm">
-                                                    <div class="mui-input-row"><label for="">${views.withdraw_auto['手续费']}</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                <c:set var="poundage" value="${auditMap.counterFee}" />
-                                                                <c:set var="pouTip" value="${poundage == '0' ? '免手续费' : poundage}" />
-                                                                <span class="t-gray poundage mt-8">${poundage == '0'? '' : currencySign}${pouTip}</span>
-                                                                <input type="hidden" name="poundageHide" value="${poundage == '0'? '' : currencySign}${pouTip}" />
-                                                                <input type="hidden" name="withdrawFee" value="${poundage}" readonly>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-row"><label for="">${views.withdraw_auto['行政费']}</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                <c:set var="poundage" value="${auditMap.administrativeFee}" />
-                                                                <span class="t-gray">${currencySign}${poundage>0?'-':''}
-                                                                ${soulFn:formatInteger(poundage)}${soulFn:formatDecimals(poundage)}
-                                                            </span>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-row"><label for="">${views.withdraw_auto['扣除优惠']}</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-gray">
-                                                                <c:set var="deductFav" value="${auditMap.deductFavorable}" />
-                                                                <span class="t-gray deductFav">${currencySign}${deductFav > 0 ? '-' : ''}
-                                                                ${soulFn:formatInteger(deductFav)}${soulFn:formatDecimals(deductFav)}
-                                                            </span>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mui-input-row final"><label for="">${views.withdraw_auto['最终可取']}</label>
-                                                        <div class="ct">
-                                                            <p class="mui-text-right text-green">
-                                                                <span class="gb-money co-tomato actual mt-8">${currencySign}--</span>
-                                                                <input type="hidden" name="actualHide" value="${currencySign}--" />
-                                                                <input type="hidden" name="actualWithdraw" readonly>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>--%>
                                         </div>
                                         <div class="mui-row">
                                             <div class="gb-form-foot">
@@ -274,5 +226,6 @@
 <%@include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/game/inputNumber.js"></script>
 <script type="text/javascript" src="${resRoot}/js/withdraw/Index.js"></script>
+<script type="text/javascript" src="${resRoot}/js/password/UpdateSafePassword.js"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
