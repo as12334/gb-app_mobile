@@ -173,7 +173,7 @@ public class PromoController {
         Map map = new HashMap(2, 1f);
         String code = vPlayerActivityMessageVo.getCode();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(vPlayerActivityMessageVo.getResultId(), "PlayerActivityMessageListVo"));
-        PlayerActivityMessage activityMessage = Cache.getActivityMessageInfo(id.toString());
+        PlayerActivityMessage activityMessage = Cache.getMobileActivityMessageInfo(id.toString());
         activityMessage.setId(id);
         vPlayerActivityMessageVo.setId(id);
         if (StringTool.equals(code, ActivityTypeEnum.REGIST_SEND.getCode())) {
@@ -369,7 +369,7 @@ public class PromoController {
     }
 
     private String getPlayerActivitiesIdsJsonByRankId(Integer rankId, HttpServletRequest request) {
-        Map<String, PlayerActivityMessage> activities = Cache.getActivityMessages();
+        Map<String, PlayerActivityMessage> activities = Cache.getMobileActivityMessages();
         List<String> resultIdList = new ArrayList<>();
         String classifyKey = request.getParameter("classify");
         if (activities != null) {

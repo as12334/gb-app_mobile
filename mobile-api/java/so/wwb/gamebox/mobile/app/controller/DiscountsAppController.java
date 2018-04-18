@@ -53,7 +53,7 @@ public class DiscountsAppController {
     @RequestMapping(value = "/getActivityTypeList")
     @ResponseBody
     public String getActivityType(VActivityMessageListVo listVo, HttpServletRequest request) {
-        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getMobileActivityMessages();
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityMessages(listVo, activityMessageMap, ServletTool.getDomainFullAddress(request)), APP_VERSION);
     }
 
@@ -99,7 +99,7 @@ public class DiscountsAppController {
             types = getActivityTypes();
         }
         Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
-        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getActivityMessages();
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getMobileActivityMessages();
         String domain = ServletTool.getDomainFullAddress(request);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
