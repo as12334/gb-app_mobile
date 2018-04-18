@@ -106,8 +106,8 @@
                             <c:if test="${isBit&&isCash}">
                                 <div class="account_tab">
                                     <div class="mui-segmented-control">
-                                        <a class="mui-control-item mui-active" href="#bank_account">${views.themes_auto['银行卡账户']}</a>
-                                        <a class="mui-control-item" href="#bit_account">${views.themes_auto['比特币账户']}</a>
+                                        <a class="mui-control-item mui-active" data-rel='{"target":"changeBank","opType":"function","data":"bank_account"}' data="bank_account" href="#bank_account">${views.themes_auto['银行卡账户']}</a>
+                                        <a class="mui-control-item" data-rel='{"target":"changeBank","opType":"function","data":"bit_account"}' data="bit_account" href="#bit_account">${views.themes_auto['比特币账户']}</a>
                                     </div>
                                 </div>
                             </c:if>
@@ -232,8 +232,7 @@
                                                     </div>
                                                 </c:if>
                                                 <gb:token/>
-                                                <a id="confirmWithdraw" href=""
-                                                   class="mui-btn mui-btn-primary submit">${views.withdraw_auto['确认提交']}</a>
+                                                <a id="confirmWithdraw" data-rel='{"target":"confirmWithdraw","opType":"function"}' class="mui-btn mui-btn-primary submit">${views.withdraw_auto['确认提交']}</a>
                                             </div>
                                         </div>
                                     </div>
@@ -264,15 +263,16 @@
             </p>
         </div>
         <div class="pro-btn">
-            <a class="next-btn" id="submitWithdraw">${views.withdraw_auto['确认提交']}</a>
-            <a class="agin-btn" name="closeConfirmDialog">${views.deposit_auto['重新填写金额']}</a>
+            <a class="next-btn" id="submitWithdraw" data-rel='{"target":"submitWithdraw","opType":"function"}'>${views.withdraw_auto['确认提交']}</a>
+            <a class="agin-btn" name="closeConfirmDialog" data-rel='{"target":"closeConfirmDialog","opType":"function"}'>${views.deposit_auto['重新填写金额']}</a>
         </div>
-        <div class="close" name="closeConfirmDialog">
+        <div class="close" name="closeConfirmDialog" data-rel='{"target":"closeConfirmDialog","opType":"function"}'>
         </div>
     </div>
 </div>
 </body>
 <%@include file="../include/include.js.jsp" %>
+<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js"></script>
 <script type="text/javascript" src="${resRoot}/js/withdraw/Index.js"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
