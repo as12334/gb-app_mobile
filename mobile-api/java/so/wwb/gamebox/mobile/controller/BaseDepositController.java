@@ -138,7 +138,7 @@ public class BaseDepositController {
      */
     public List<AppPayAccount> changeModel(List<PayAccount> payAccounts,
                                            String onlineWay,
-                                           String companyWay, Map<String,String> imgUrl,PlayerRank rank) {
+                                           String companyWay, Map<String, String> imgUrl, PlayerRank rank) {
         if (!CollectionTool.isNotEmpty(payAccounts)) {
             return null;
         }
@@ -170,7 +170,7 @@ public class BaseDepositController {
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
                 appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
-                        ImageTag.getImagePath(imgUrl.get("serverName"),payAccount.getQrCodeUrl()));
+                        ImageTag.getImagePath(imgUrl.get("serverName"), payAccount.getQrCodeUrl()));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
             }
@@ -190,8 +190,8 @@ public class BaseDepositController {
      * @param request
      * @return
      */
-    protected Map<String,String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
-        Map<String,String> map = new HashMap<>();
+    protected Map<String, String> depositImgUrl(AppRequestModelVo model, HttpServletRequest request, String code) {
+        Map<String, String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
         String serverName = request.getServerName();
         sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName)).append("/");
@@ -204,8 +204,8 @@ public class BaseDepositController {
 
         StringBuilder accountSb = new StringBuilder();
         accountSb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName));
-        map.put("depositImgUrl",String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
-        map.put("accountImgUrl",String.format(ACCOUNT_IMG_URL,accountSb, code));
+        map.put("depositImgUrl", String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
+        map.put("accountImgUrl", String.format(ACCOUNT_IMG_URL, accountSb, code));
         map.put("serverName", serverName);
         return map;
     }
@@ -363,7 +363,7 @@ public class BaseDepositController {
                            List<PayAccount> electronicAccount,
                            String onliineWay,
                            String companyWay,
-                           Map<String,String> imgUrl,
+                           Map<String, String> imgUrl,
                            PlayerRank rank) {
         List<AppPayAccount> scanAppPayAccounts = null;
         List<AppPayAccount> electronicAppPayAccounts = null;
@@ -383,12 +383,12 @@ public class BaseDepositController {
                 }
                 list.add(payAccount);
             }
-            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl,rank);
+            scanAppPayAccounts = changeModel(list, onliineWay, null, imgUrl, rank);
             appRechargePay.setArrayList(scanAppPayAccounts);
         }
 
         if (CollectionTool.isNotEmpty(electronicAccount)) {
-            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl,rank);
+            electronicAppPayAccounts = changeModel(electronicAccount, null, companyWay, imgUrl, rank);
             if (CollectionTool.isNotEmpty(scanAppPayAccounts)) {
                 electronicAppPayAccounts.addAll(scanAppPayAccounts);
             }
@@ -454,7 +454,7 @@ public class BaseDepositController {
                 if (!StringTool.equals(BankCodeEnum.OTHER_BANK.getCode(), bankCode)) {
                     payAccount.setCustomBankName(i18n.get(bankCode));
                 }
-                if(StringTool.isBlank(payAccount.getAliasName())) {
+                if (StringTool.isBlank(payAccount.getAliasName())) {
                     payAccount.setAliasName(payAccount.getCustomBankName());
                 }
                 payAccounts.add(payAccount);
@@ -664,6 +664,7 @@ public class BaseDepositController {
         vActivityMessageVo.setDepositAmount(rechargeAmount);
         vActivityMessageVo.setRankId(userPlayer.getRankId());
         vActivityMessageVo.setLocal(SessionManager.getLocale().toString());
+        vActivityMessageVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageVo = ServiceActivityTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
         if (CollectionTool.isEmpty(vActivityMessages)) {
