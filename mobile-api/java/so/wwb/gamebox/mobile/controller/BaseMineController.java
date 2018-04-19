@@ -57,6 +57,7 @@ import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
 import so.wwb.gamebox.model.master.operation.po.PlayerAdvisoryRead;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.PlayerAdvisoryReadVo;
+import so.wwb.gamebox.model.master.player.enums.PlayerAdvisoryEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerAdvisoryReply;
 import so.wwb.gamebox.model.master.player.po.PlayerGameOrder;
 import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
@@ -425,11 +426,15 @@ public class BaseMineController {
                 app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
             } else if (map.get("bankCode") != null && StringTool.equals(String.valueOf(map.get("bankCode")), "bitcoin")) {
                 app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(vplayer.getTransactionMoney()));
+            } else {
+                app.setTransactionMoney(getCurrencySign(SessionManager.getUser().getDefaultCurrency()) + CurrencyTool.formatCurrency(0));
             }
 
             if (map.get("bitAmount") != null && map.get("bankCode") != null) {//针对于比特币存款
                 if ((Double) map.get("bitAmount") > 0 && vplayer.getTransactionMoney() == 0 && StringTool.isNotBlank((String) map.get("bankCode"))) {
                     app.setTransactionMoney("Ƀ" + map.get("bitAmount"));
+                } else {
+                    app.setTransactionMoney("Ƀ" + CurrencyTool.formatCurrency(0));
                 }
             }
 
@@ -918,6 +923,7 @@ public class BaseMineController {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         listVo.getSearch().setAdvisoryTime(DateTool.addDays(new Date(), -30));
         listVo.getSearch().setPlayerDelete(false);
+        listVo.getSearch().setQuestionType(PlayerAdvisoryEnum.QUESTION.getCode());
         listVo = ServiceSiteTool.vPlayerAdvisoryService().search(listVo);
 
         return listVo;

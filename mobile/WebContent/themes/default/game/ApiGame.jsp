@@ -18,7 +18,7 @@
         <c:if test="${os ne 'android' && os ne 'app_ios'}">
         <header class="mui-bar mui-bar-nav" style="padding-left: 10px">
             <div class="mui-pull-left">
-                <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
+                <div class="logo"><img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png" alt=""></div>
             </div>
             <!-- 资产 -->
             <%@include file="/themes/default/include/include.asset.jsp" %>

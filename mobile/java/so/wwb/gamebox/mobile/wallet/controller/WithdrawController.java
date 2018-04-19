@@ -62,6 +62,7 @@ public class WithdrawController extends BaseWithdrawController {
 
     @RequestMapping("/index")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     protected String index(Model model) {
         return withdraw(model);
     }

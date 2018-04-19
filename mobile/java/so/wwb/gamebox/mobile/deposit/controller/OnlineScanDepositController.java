@@ -23,6 +23,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.common.token.Token;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
 
@@ -116,8 +117,8 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     @RequestMapping("/scanCodeSubmit")
     @ResponseBody
     @Token(valid = true)
-    public Map<String, Object> ScanCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result) {
-        return commonDeposit(playerRechargeVo, result);
+    public Map<String, Object> ScanCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result, HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result, request);
     }
 
     /**
@@ -131,8 +132,8 @@ public class OnlineScanDepositController extends BaseOnlineDepositController {
     @RequestMapping("/scanRandomCodeSubmit")
     @ResponseBody
     @Token(valid = true)
-    public Map<String, Object> scanRandomCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDeposit2Form form, BindingResult result) {
-        return commonDeposit(playerRechargeVo, result);
+    public Map<String, Object> scanRandomCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDeposit2Form form, BindingResult result, HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result, request);
     }
 
 }

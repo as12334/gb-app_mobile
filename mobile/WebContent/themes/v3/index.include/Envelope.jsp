@@ -59,13 +59,13 @@
                 <div class="hongbao-rule">
                     <div class="txt">
                         <div class="nice-wrapper">
-                             <c:if test="${not empty floatList}">
-                                 <c:forEach items="${floatList}" var="item">
-                                     <c:if test="${item.type=='moneyActivity'}">
-                                         <c:out value="${item.description}"></c:out>
-                                     </c:if>
-                                 </c:forEach>
-                             </c:if>
+                            <c:if test="${not empty floatList}">
+                                <c:forEach items="${floatList}" var="item">
+                                    <c:if test="${item.type=='moneyActivity'}">
+                                        <c:out value="${item.description}"></c:out>
+                                    </c:if>
+                                </c:forEach>
+                            </c:if>
                         </div>
                     </div>
                     <a class="icon-close-rule" data-rel='{"target":"closeRule","opType":"function"}'></a>

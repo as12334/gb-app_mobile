@@ -591,7 +591,7 @@ public class IndexController extends BaseApiController {
         }
         if (StringTool.isBlank(defaultSite)) {
             //未设置的取当前域名
-            defaultSite = SessionManager.getDomain(request);
+            defaultSite = request.getServerName();
         }
         SessionManager.setAttribute("SESSION_DEFAULTSITE", defaultSite);
         return defaultSite;
@@ -636,7 +636,13 @@ public class IndexController extends BaseApiController {
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
         }
-        getAppPath(model, request);
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+        if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
+            model.addAttribute("iosUrl",sysParam.getParamValue());
+            model.addAttribute("androidUrl",sysParam.getParamValue());
+        }else{
+            getAppPath(model, request);
+        }
         if (ParamTool.isMobileUpgrade()) {
             return "/download/DownLoad";
         }
@@ -752,7 +758,7 @@ public class IndexController extends BaseApiController {
         if (sysUser != null) {
             Map<String, Object> map = new HashMap<>(2);
             map.put("username", StringTool.overlayName(sysUser.getUsername()));
-            map.put("avatarUrl", ImageTag.getImagePath(SessionManager.getDomain(request), StringEscapeTool.unescapeHtml4(sysUser.getAvatarUrl())));
+            map.put("avatarUrl", ImageTag.getImagePath(request.getServerName(), StringEscapeTool.unescapeHtml4(sysUser.getAvatarUrl())));
             return JsonTool.toJson(map);
         } else {
             return "unLogin";
@@ -780,7 +786,7 @@ public class IndexController extends BaseApiController {
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
-                map.put("avatar", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null)));
+                map.put("avatar", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(request.getServerName(), sysUser.getAvatarUrl(), 46, 46, null)));
             }
             map.put("isAutoPay", SessionManager.isAutoPay());//是否免转标识
             //查询总资产

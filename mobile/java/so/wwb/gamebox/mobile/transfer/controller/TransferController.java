@@ -366,6 +366,7 @@ public class TransferController extends WalletBaseController {
         }
         resultMap.put("orderId", playerTransferVo.getResult().getTransactionNo());
         resultMap.put("result", playerTransferVo.getResultCode());
+        resultMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         return resultMap;
     }
 
@@ -424,9 +425,6 @@ public class TransferController extends WalletBaseController {
             msg = LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED);
         }
         map.put("msg", msg);
-        if (!isSuccess) {
-            map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        }
         return map;
     }
 
