@@ -21,6 +21,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityEffectiveTime;
@@ -69,7 +70,7 @@ public class PromoController {
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
-        if(ServletTool.isAjaxSoulRequest(request)) {
+        if (ServletTool.isAjaxSoulRequest(request)) {
             vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         }
         model.addAttribute("command", vPreferentialRecodeListVo);
@@ -92,6 +93,7 @@ public class PromoController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
+        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         //首页只展示部分优惠
         if (isTwoCount) {
@@ -139,6 +141,7 @@ public class PromoController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
+        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
 
         model.addAttribute("command", vActivityMessageListVo);
@@ -195,7 +198,7 @@ public class PromoController {
             if (activityMessage.getCompareActivityTime() || activityMessage.getCompareRegisterAndActivityTime()) {
                 setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
             } else {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, REGIST_APPLIED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, REGIST_APPLIED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
                /* map.put("msg", LocaleTool.tranMessage("player","已申请"));*/
             }
         } else {
@@ -204,9 +207,9 @@ public class PromoController {
             } else {
                 setApplyFailReturnStates(map,
                         LocaleTool.tranMessage(Module.ACTIVITY, "apply.tip.qualified",
-                        ActivityEffectiveTime.getEffectiveTime(activityMessage.getEffectiveTime()),
-                        LocaleDateTool.formatDate(SessionManager.getUser().getCreateTime(),
-                        CommonContext.getDateFormat().getDAY_SECOND(), CommonContext.get().getSiteTimeZone())),
+                                ActivityEffectiveTime.getEffectiveTime(activityMessage.getEffectiveTime()),
+                                LocaleDateTool.formatDate(SessionManager.getUser().getCreateTime(),
+                                        CommonContext.getDateFormat().getDAY_SECOND(), CommonContext.get().getSiteTimeZone())),
                         LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
             }
         }
@@ -216,10 +219,10 @@ public class PromoController {
         LOG.debug("优惠活动申请：id：{0},code：{1}", activityMessage.getId(), activityMessage.getCode());
         setPlayerApplyCountAndTIime(activityMessage);
         if (activityMessage.getCompareActivityTime()) {
-            setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
+            setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
         } else {
             if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLIED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLIED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
             } else {
                 apply(vPlayerActivityMessageVo, map);
             }
@@ -242,17 +245,17 @@ public class PromoController {
         if (placesNumber > 0) {
             if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
 
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, PARTICIPATION),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));//参与中
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, PARTICIPATION), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));//参与中
             } else {
                 if (activityMessage.getCountPlaceNumber() >= placesNumber) {
-                    setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FULL),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
+                    setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FULL), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
                 } else {
                     apply(vPlayerActivityMessageVo, map);
                 }
             }
         } else {
             if ((Boolean) activityMessage.getDeadlineTime().get("hasApplyFor") && !(Boolean) activityMessage.getDeadlineTime().get("isRepeat")) {
-                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY,APPLIED),LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));//已申请
+                setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLIED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));//已申请
             } else {
                 apply(vPlayerActivityMessageVo, map);
             }
@@ -362,10 +365,10 @@ public class PromoController {
         activityMessage.setApplyTime((Timestamp) result.get("applytime"));
     }
 
-    private void setApplyFailReturnStates(Map map, String msg,String title) {
+    private void setApplyFailReturnStates(Map map, String msg, String title) {
         map.put("msg", msg);
         map.put("state", false);
-        map.put("title",title);
+        map.put("title", title);
     }
 
     private String getPlayerActivitiesIdsJsonByRankId(Integer rankId, HttpServletRequest request) {

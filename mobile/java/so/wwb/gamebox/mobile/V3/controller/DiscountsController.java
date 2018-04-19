@@ -11,6 +11,7 @@ import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
@@ -83,6 +84,7 @@ public class DiscountsController {
                 vActivityMessageListVo.getSearch().setRankId(playerRank.getId());
             }
         }
+        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageListVo.setPaging(null);
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         return vActivityMessageListVo;
