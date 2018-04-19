@@ -636,7 +636,13 @@ public class IndexController extends BaseApiController {
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
         }
-        getAppPath(model, request);
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+        if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
+            model.addAttribute("iosUrl",sysParam.getParamValue());
+            model.addAttribute("androidUrl",sysParam.getParamValue());
+        }else{
+            getAppPath(model, request);
+        }
         if (ParamTool.isMobileUpgrade()) {
             return "/download/DownLoad";
         }
