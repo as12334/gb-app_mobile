@@ -771,7 +771,7 @@ public class BaseDepositController {
             onlineToneWarn();
             //设置session相关存款数据
             //setRechargeCount();
-            return ThirdPartyPay(playerRechargeVo, request);
+            return ThirdPartyPay(playerRechargeVo.getResult(), request, payAccount);
         } else {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
                     playerRechargeVo.getErrMsg(),
@@ -779,22 +779,14 @@ public class BaseDepositController {
         }
     }
 
-    public String ThirdPartyPay(PlayerRechargeVo playerRechargeVo, HttpServletRequest request) {
-        LOG.info("调用第三方pay：交易号：{0}", playerRechargeVo.getResult().getTransactionNo());
-        if (StringTool.isBlank(playerRechargeVo.getResult().getTransactionNo())) {
+    public String ThirdPartyPay(PlayerRecharge playerRecharge, HttpServletRequest request, PayAccount payAccount) {
+        LOG.info("调用第三方pay：交易号：{0}", playerRecharge.getTransactionNo());
+        if (StringTool.isBlank(playerRecharge.getTransactionNo())) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),
                     AppErrorCodeEnum.ORDER_ERROR.getMsg(),
                     null, APP_VERSION);
         }
         try {
-            playerRechargeVo.getSearch().setTransactionNo(playerRechargeVo.getResult().getTransactionNo());
-            if (playerRechargeVo.getResult().getId() != null) {
-                playerRechargeVo.getSearch().setId(playerRechargeVo.getResult().getId());
-            }
-            playerRechargeVo._setDataSourceId(null);
-            playerRechargeVo = ServiceSiteTool.playerRechargeService().searchPlayerRecharge(playerRechargeVo);
-            PlayerRecharge playerRecharge = playerRechargeVo.getResult();
-            PayAccount payAccount = getPayAccountById(playerRecharge.getPayAccountId());
             List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
             });
 
@@ -814,6 +806,8 @@ public class BaseDepositController {
                 String url = domain + uri;
                 //添加支付网址
                 playerRecharge.setPayUrl(domain);
+                PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+                playerRechargeVo.setResult(playerRecharge);
                 playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
                 ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
                 Map<String, Object> map = new HashMap<>();
@@ -823,7 +817,7 @@ public class BaseDepositController {
                         map, APP_VERSION);
             }
         } catch (Exception e) {
-            LOG.error(e, "调用第三方pay出错交易号：{0}", playerRechargeVo.getSearch().getTransactionNo());
+            LOG.error(e, "调用第三方pay出错交易号：{0}", playerRecharge.getTransactionNo());
         }
         return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
                 AppErrorCodeEnum.DEPOSIT_FAIL.getMsg(),

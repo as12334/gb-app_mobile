@@ -23,7 +23,7 @@
         <div class="mui-content mui-scroll-wrapper mui-content-without-footer-address download-content">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
-                <img src="${root}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="app-logo" />
+                <img src="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="app-logo" />
                 <div class="tit">${siteName}</div>
                 <div class="des">下载APP 再也无需输入网址</div>
                 <div class="btn-wrap">

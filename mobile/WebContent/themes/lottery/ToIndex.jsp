@@ -16,7 +16,7 @@
 
 <body class="bg-color">
 <header class="mui-bar mui-bar-top mui-bar-nav" style="display:${os eq 'android'?'none':'block'}">
-    <span class="home-logo logo-center"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></span>
+    <span class="home-logo logo-center"><img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></span>
 </header>
 <div class="mui-scroll-wrapper middle-content bg-color">
     <div class="mui-scroll">

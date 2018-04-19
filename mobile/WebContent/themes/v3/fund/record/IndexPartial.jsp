@@ -9,9 +9,14 @@
                         <td><span class="text-gray">${soulFn:formatDateTz(s.createTime, DateFormat.DAY,timeZone)}</span></td>
                         <td>
                             <c:set value="${s._describe}" var="_describe"/>
-                            <c:if test="${s.transactionMoney!=0}">
-                                <span class="text-green2">${soulFn:formatCurrency(s.transactionMoney)}</span>
-                            </c:if>
+                            <c:choose>
+                                <c:when test="${s.transactionMoney!=0}">
+                                    <span class="text-green2">${soulFn:formatCurrency(s.transactionMoney)}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="text-green2">${soulFn:formatCurrency(0)}</span>
+                                </c:otherwise>
+                            </c:choose>
                             <c:if test="${_describe['bitAmount']>0}">
                                 <c:if test="${s.transactionMoney!=0}">
                                     <br/>

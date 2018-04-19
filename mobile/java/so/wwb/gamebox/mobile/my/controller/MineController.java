@@ -195,7 +195,7 @@ public class MineController{
         userInfo.put("unReadCount", number + advisoryUnReadCount);
         //用户个人信息
         userInfo.put("username", StringTool.overlayString(sysUser.getUsername()));
-        userInfo.put("avatarUrl", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null)));
+        userInfo.put("avatarUrl", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(request.getServerName(), sysUser.getAvatarUrl(), 46, 46, null)));
         //有上次登录时间就不展示本次登录时间，否则展示本次登录时间
         if (sysUser.getLastLoginTime() != null) {
             userInfo.put("lastLoginTime", LocaleDateTool.formatDate(sysUser.getLastLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));

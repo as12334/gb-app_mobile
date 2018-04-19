@@ -486,13 +486,12 @@ public class RegisterAppController {
      * @param request
      */
     private void checkRegisterFormAgentDomain(UserRegisterVo userRegisterVo, HttpServletRequest request) {
-        String domain = SessionManager.getDomain(request);
-        VSysSiteDomain sysDomain = Cache.getSiteDomain(domain);
+        VSysSiteDomain sysDomain = SessionManager.getSiteDomain(request);
         if (sysDomain != null && sysDomain.getAgentId() != null) {
             userRegisterVo.getSysUser().setOwnerId(sysDomain.getAgentId());
-            LOG.debug("【玩家注册】通过代理独立域名{0}－代理id{1}", domain, sysDomain.getAgentId());
+            LOG.debug("【玩家注册】通过代理独立域名{0}－代理id{1}", sysDomain.getDomain(), sysDomain.getAgentId());
         }
-        userRegisterVo.getSysUser().setRegisterSite(domain);
+        userRegisterVo.getSysUser().setRegisterSite(request.getServerName());
     }
 
     /**

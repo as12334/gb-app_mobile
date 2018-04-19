@@ -23,7 +23,7 @@
         <!--头部-->
         <header class="mui-bar mui-bar-nav _siteHeader" style="display: ${os == 'android' ? 'none' : ''}">
             <div class="mui-pull-left">
-                <div class="logo"><img src="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></div>
+                <div class="logo"><img src="${ftlRoot}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"></div>
             </div>
             <!-- 资产 -->
             <div class="mui-hide-bar"></div>
