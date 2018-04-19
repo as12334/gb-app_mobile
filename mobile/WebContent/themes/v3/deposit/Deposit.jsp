@@ -10,7 +10,11 @@
 <body class="deposit">
 <header class="mui-bar mui-bar-nav">
     <a id="depositBack" style="display: none" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
-    <%@include file="../common/Assert.jsp"%>
+    <h1 class="mui-title">${views.deposit_auto['存款']}</h1>
+    <div id="login-info" class="mui-hidden login-info">
+        <div class="user_name"></div>
+        <div class="money"></div>
+    </div>
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
     <div class="mui-scroll">
@@ -62,7 +66,7 @@
                                             </li>
                                         </c:if>
                                         <c:if test="${p.key eq 'bitcoin_fast'}">
-                                            <li key="${p.key}"><a data-rel='{"target":"/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}","opType":"href"}'
+                                            <li key="${p.key}"><a data-rel='{"target":"bitcoinPage","url":"/wallet/deposit/company/bitcoin/index.html?searchId=${command.getSearchId(p.value.id)}","opType":"function"}'
                                                     class="long"><i class="pay bitcoin"></i><span><div class="text-two-line">${views.deposit_auto['比特币支付']}</div></span></a>
                                             </li>
                                         </c:if>
@@ -160,4 +164,5 @@
 <script src="${resRoot}/js/deposit/OnlinePay.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 </html>

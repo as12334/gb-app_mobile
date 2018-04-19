@@ -9,7 +9,7 @@
 </head>
 <body class="exchange-bitcoin exchange-bank">
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
+    <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"opType":"function","target":"goToLastPage"}'></a>
     <h1 class="mui-title">${views.deposit_auto['比特币支付']}</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <c:if test="${not empty payAccount.qrCodeUrl}">
+                            <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
                                 <div class="wechat-code">
                                     <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">
                                     <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}'><p class="tit">${views.deposit_auto['保存到手机']}</p></a>

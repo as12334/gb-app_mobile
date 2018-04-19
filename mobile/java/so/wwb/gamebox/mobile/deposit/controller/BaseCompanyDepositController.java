@@ -21,6 +21,7 @@ import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
+import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
@@ -143,24 +144,29 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                 double fee = calculateFee(rank, rechargeAmount);
                 if (rechargeAmount + fee <= 0) {
                     model.addAttribute("tips", "存款金额加手续费必须大于0");
-                } else {
+                }else if("1".equals(playerRechargeVo.getStatusNum())){//状态为"1"，不显示优惠信息
+                    pop = false;
+                    unCheckSuccess = true;
+                    /*Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
+                    model.addAttribute("failureCount",failureCount);*/
+                }else{
                     unCheckSuccess = true;
                     //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
                     //手续费标志
                     boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
                     //返手续费标志
                     boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
-                    String depositWay = playerRechargeVo.getResult().getRechargeType();
+                    /*String depositWay = playerRechargeVo.getResult().getRechargeType();
                     if (RechargeTypeEnum.ONLINE_BANK.getCode().equals(depositWay)) {
+                        depositWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
+                    }*/
+                    String depositWay = playerRechargeVo.getResult().getRechargeType();
+                    if("company".equals(playerRechargeVo.getDepositChannel())){
                         depositWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
                     }
                     List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, depositWay);
                     if (!isFee && !isReturnFee && activityMessages.size() <= 0) {
                         pop = false;
-                    } else if ("1".equals(playerRechargeVo.getStatusNum())) { //状态为"1"，不显示优惠信息
-                        pop = false;
-                        /*Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
-                        model.addAttribute("failureCount",failureCount);*/
                     } else {
                         String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
                         model.addAttribute("counterFee", counterFee);
@@ -195,12 +201,13 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
             return getVoMessage(map, playerRechargeVo);
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
-        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
+//        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
 //        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
 //        map.put("failureCount",failureCount);
-        if (payAccount == null) {
+        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             playerRechargeVo.setSuccess(false);
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
+            map.put("accountNotUsing",true);
             return getVoMessage(map, playerRechargeVo);
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount);

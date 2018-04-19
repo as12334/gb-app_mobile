@@ -15,7 +15,7 @@
                     <div class="mui-row m-y-lg">
                         <div class="mui-col-xs-3"></div>
                         <div class="mui-col-xs-6 mui-text-center gb-error-img">
-                            <img src="${resRoot}images/error/ico-605.png">
+                            <img src="${resRoot}/images/error/ico-605.png">
                         </div>
                         <div class="mui-col-xs-3"></div>
                     </div>

@@ -8,6 +8,7 @@ import org.soul.model.session.SessionKey;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.token.Token;
@@ -32,6 +33,7 @@ class LoginController {
 
     @RequestMapping(value = "/commonLogin")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String commonLogin(Model model, HttpServletRequest request) {
         //如果已经登录
         SysUser sysUser = SessionManager.getUser();

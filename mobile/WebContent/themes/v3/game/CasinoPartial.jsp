@@ -34,17 +34,11 @@
                 <div class="casino-game-type">
                     <div class="swiper-container g-t-slide-indicators">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">所有游戏</div>
+                            <div class="swiper-slide all" data-rel='{"opType":"function","target":"changeTag"}'>所有游戏</div>
                             <c:forEach items="${tagName}" var="t">
-                                <c:choose>
-                                    <c:when test="${not empty t.value}">
-                                        <div class="swiper-slide">${t.value}</div>
-                                    </c:when>
-
-                                    <c:otherwise>
-                                        <div class="swiper-slide">${t.key}</div>
-                                    </c:otherwise>
-                                </c:choose>
+                                <c:if test="${fn:length(tagGames[t.key])>0}">
+                                    <div class="swiper-slide partial" data-rel='{"opType":"function","target":"changeTag"}'>${t.value}</div>
+                                </c:if>
                             </c:forEach>
                         </div>
                     </div>
@@ -59,16 +53,15 @@
                                     <div class="casino-list">
                                         <div class="mui-row"><%--所有游戏--%>
                                             <c:forEach var="game" items="${allGames}" varStatus="tagMap">
-                                                    <div class="mui-col-xs-3">
+                                                    <div class="mui-col-xs-3" apiName="${game.value.name}">
                                                         <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
                                                             "dataGameCode":"${game.value.apiId!=10? game.value.code : ''}","dataGameId":"${game.value.apiId!=10? game.value.gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(game.value.gameId)}","target":"goGame","opType":"function"}'>
+                                                            "dataApiName":"${game.value.name}","target":"goGame","opType":"function"}'>
 
                                                             <div class="img-wrap">
-                                                                <%--<img data-src="${soulFn:getImagePath(domain, game.value.cover)}" src="${soulFn:getImagePath(domain, game.value.cover)}">--%>
                                                                 <img data-lazyload="${soulFn:getImagePath(domain, game.value.cover)}">
                                                             </div>
-                                                            <p>${gbFn:getGameName(game.value.gameId)}</p>
+                                                            <p>${game.value.name}</p>
                                                         </a>
                                                     </div>
                                             </c:forEach>
@@ -76,35 +69,35 @@
                                     </div>
                                 </div>
                             </div>
+                            <c:forEach items="${tagName}" var="t">
+                                <c:if test="${fn:length(tagGames[t.key])>0}">
+                                    <div class="swiper-slide">
+                                        <div class="casino-wrap">
+                                            <div class="casino-list">
+                                                <div class="mui-row">
+                                                   <c:forEach items="${tagGames[t.key]}" var="i">
+                                                       <c:set var="game" value="${allGames[i.toString()]}"/>
+                                                       <c:if test="${!empty game}">
+                                                           <div class="mui-col-xs-3" apiName="${game.name}">
+                                                               <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
+                                                                            "dataGameCode":"${game.apiId!=10? game.code : ''}","dataGameId":"${game.apiId!=10? game.gameId : ''}",
+                                                                            "dataApiName":"${game.name}","target":"goGame","opType":"function"}' class="" >
 
-
-                            <c:forEach items="${tagGames}" var="t">
-                                <div class="swiper-slide">
-                                    <div class="casino-wrap">
-                                        <div class="casino-list">
-                                            <div class="mui-row">
-                                                <c:forEach items="${t.value}" var="g">
-                                                    <c:if test="${not empty allGames[g]}">
-                                                        <div class="mui-col-xs-3">
-                                                            <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${allGames[g].apiId}","dataStatus":"${allGames[g].status}",
-                                                            "dataGameCode":"${allGames[g].apiId!=10? allGames[g].code : ''}","dataGameId":"${allGames[g].apiId!=10? allGames[g].gameId : ''}",
-                                                            "dataApiName":"${gbFn:getGameName(allGames[g].gameId)}","target":"goGame","opType":"function"}' class="" >
-
-                                                                <div class="img-wrap">
-                                                                    <%--<img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">--%>
-                                                                    <img data-lazyload="${soulFn:getImagePath(domain, allGames[g].cover)}">
-                                                                </div>
-                                                                <p>${gbFn:getGameName(allGames[g].gameId)}</p>
-                                                            </a>
-                                                        </div>
-                                                    </c:if>
-                                                </c:forEach>
+                                                                   <div class="img-wrap">
+                                                                           <%--<img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">--%>
+                                                                       <img data-lazyload="${soulFn:getImagePath(domain, game.cover)}">
+                                                                   </div>
+                                                                   <p>${game.name}</p>
+                                                               </a>
+                                                           </div>
+                                                       </c:if>
+                                                   </c:forEach>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </c:if>
                             </c:forEach>
-
                         </div>
                     </div>
                 </div>
@@ -120,13 +113,13 @@
 
 <%@include file="../include/include.js.jsp" %>
 <%--<script src="${resComRoot}/js/mobile/layer.js"></script>--%>
-<script src="${resRoot}/js/mui/mui.lazyload.js"></script>
-<script src="${resRoot}/js/mui/mui.lazyload.img.js"></script>
-<script type="text/javascript" src="${resRoot}/js/swiper.min.js"></script>
-<script type="text/javascript" src="${resRoot}/js/game/Game.js"></script>
-<script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
-<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
-<script type="text/javascript" src="${resRoot}/js/casino/CasinoTemp.js"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.img.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/Game.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/GoGame.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/casino/CasinoTemp.js?v=${rcVersion}"></script>
 <%@ include file="/include/include.footer.jsp" %>
 </body>
 </html>

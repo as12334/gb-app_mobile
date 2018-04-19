@@ -9,7 +9,19 @@
             <div class="mui-scroll">
                 <ul class="mui-list-unstyled mui-clearfix mui-bar-tab">
                     <c:forEach var="i" items="${apiTypeRelations}" varStatus="vs">
-                        <li><a data-rel='{"target":"changeNavGame","opType":"function","apiTypeId":"${i.apiTypeId}","apiId":"${i.apiId}"}' class="mui-tab-item ${vs.index==0?'mui-active':''} api-icon-${i.apiTypeId}-${i.apiId}">${i.apiName}</a></li>
+                        <c:set var="centerId" value="<%=CommonContext.get().getSiteParentId() %>"/>
+                        <c:choose>
+                            <c:when test="${centerId == -3 && i.apiId == 22}">
+                                <c:set var="api_icon" value="4-22-2" />
+                            </c:when>
+                            <c:when test="${i.apiId == 22}">
+                                <c:set var="api_icon" value="4-22-1" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="api_icon" value="${i.apiTypeId}-${i.apiId}" />
+                            </c:otherwise>
+                        </c:choose>
+                        <li><a data-rel='{"target":"changeNavGame","opType":"function","apiTypeId":"${i.apiTypeId}","apiId":"${i.apiId}"}' class="mui-tab-item ${vs.index==0?'mui-active':''} api-icon-${api_icon}">${i.apiName}</a></li>
                     </c:forEach>
                 </ul>
             </div>
@@ -25,14 +37,36 @@
                 <div class="deficiency-nots">没有找到符合的游戏</div>
             </c:if>
             <c:forEach var="g" items="${navGames}">
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <%--<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                     <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
                         <img data-lazyload="${root}/${g.cover}" class="lottery-img">
                         <div class="mui-media-body">${g.name}</div>
                     </a>
-                </li>
+                </li>--%>
+                <c:choose>
+                    <c:when test="${g.apiTypeId == 5}">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                            <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
+                                            "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
+                                            "dataStatus":"${g.status}","target":"fishGameLogin","opType":"function"}' class="_api">
+                                <img data-lazyload="${root}/${g.cover}" class="lottery-img">
+                                <div class="mui-media-body">${g.name}</div>
+                            </a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                            <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
+                                            "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
+                                            "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
+                                <img data-lazyload="${root}/${g.cover}" class="lottery-img">
+                                <div class="mui-media-body">${g.name}</div>
+                            </a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
             </c:forEach>
         </div>
     </c:forEach>

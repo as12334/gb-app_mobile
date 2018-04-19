@@ -16,7 +16,8 @@
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
             <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
-            <%@include file="../common/Assert.jsp"%>
+            <%--<%@include file="../common/Assert.jsp"%>--%>
+            <a class="mui-icon mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}' data-href="/promo/myPromo.html"><i></i></a>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
         <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice content-without-footer">
@@ -44,7 +45,7 @@
                                         </a>
                                         <div class="ct" style="padding: 0;">
                                             <h5><i></i><span>${activity.activityName}</span></h5>
-                                            <p>${activity.activityDescription}</p>
+                                            <div>${activity.activityDescription}</div>
                                         </div>
                                     </li>
                                 </ul>
@@ -56,7 +57,7 @@
                         <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                         <span class="_now_time" value="${nowTime}" type="hidden"></span>
                         <c:set var="activityCode" value="${activity.code}"/>
-                        <div class="gb-form-foot">
+                        <div class="gb-form-foot" style="margin-top: -10px;">
                             <c:choose>
                                 <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
                                     <c:set var="rankId" value="all" />
@@ -80,8 +81,10 @@
                                 </c:otherwise>
                             </c:choose>
                             <div class="gb-form-foot" style="margin-top: -10px;">
-                                <button class="mui-pull-right mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
-                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</button>
+                                <c:if test="${activity.code ne 'content'}">
+                                    <a class="mui-btn mui-btn-primary submit" ${activityCode eq 'back_water'?'disabled':''} data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
+                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}"}'>${btnText}</a>
+                                </c:if>
                             </div>
                         </div>
                     </c:if>

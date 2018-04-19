@@ -30,7 +30,10 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.*;
+import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
+import so.wwb.gamebox.model.company.setting.po.Game;
+import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -52,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_SITE_SPECIAL;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.FISH_API_TYPE_ID;
 
 /**
@@ -116,7 +120,12 @@ public abstract class BaseOriginController {
             if (gameIds != null && !gameIds.contains(gameId)) {  //搜索条件不符合游戏标签不包含
                 continue;
             }
+            SiteGameI18n siteGameI18n = siteGameI18nMap.get(siteGame.getGameId().toString());
+            if (siteGameI18n == null) {
+                continue;
+            }
             siteGame.setName(ApiGameTool.getSiteGameName(siteGameI18nMap, gameI18nMap, String.valueOf(gameId)));
+            siteGame.setCover(siteGameI18n.getCover());
             if (StringTool.isNotBlank(name) && !siteGame.getName().contains(name)) {
                 continue;
             }
@@ -207,7 +216,7 @@ public abstract class BaseOriginController {
         List<AppGameTag> gameTags = new ArrayList<>();
         for (SiteGameTag tag : siteGameTag.values()) {
             tagId = tag.getTagId();
-            if (!tags.contains(tagId)) {
+            if (!tags.contains(tagId) && tagId != null && tagNameMap.get(tagId) != null && StringTool.equals("hot_game", tagId)) {
                 AppGameTag appGameTag = new AppGameTag();
                 appGameTag.setKey(tagId);
                 appGameTag.setValue(tagNameMap.get(tagId));
@@ -249,21 +258,27 @@ public abstract class BaseOriginController {
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
             sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
-            if(siteGame.getGameId() != null){
+            if (siteGame.getGameId() != null && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
                 sb.append("&gameId=").append(siteGame.getGameId());
             }
-            if(StringTool.isNotBlank(siteGame.getCode())){
+            if (StringTool.isNotBlank(siteGame.getCode()) && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
                 sb.append("&gameCode=").append(siteGame.getCode());
             }
         } else {
-            if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
-                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameId=").append(siteGame.getGameId());
-            } else if (SessionManager.isAutoPay() && NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
-                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId())).append("&gameCode=").append(siteGame.getCode());
-            } else if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
-                sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+            if (SessionManager.isAutoPay()) {
+                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
+                    sb.append("&gameId=").append(siteGame.getGameId());
+                }
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
+                    sb.append("&gameCode=").append(siteGame.getCode());
+                }
             } else {
-                sb.append(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                if (NumberTool.toInt(ApiProviderEnum.BSG.getCode()) == siteGame.getApiId()) {
+                    sb.append(String.format(API_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                } else {
+                    sb.append(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                }
             }
         }
         return sb.toString();
@@ -297,13 +312,17 @@ public abstract class BaseOriginController {
         String apiLogUrl = setApiLogoUrl(model, request);
         Integer apiTypeId;
         for (SiteApiType siteApiType : siteApiTypes) {
+            List<AppSiteApiTypeRelationI18n> siteApis = apiTypeRelationGroupByType.get(siteApiType.getApiTypeId());
+            if (CollectionTool.isEmpty(siteApis)) {
+                continue;
+            }
             //转换实体提供给app原生
             AppSiteApiTypeRelastionVo appApiType = new AppSiteApiTypeRelastionVo();
             apiTypeId = siteApiType.getApiTypeId();
             appApiType.setApiType(apiTypeId);
-            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getName());
+            appApiType.setApiTypeName(siteApiTypeI18nMap.get(String.valueOf(siteApiType.getApiTypeId())).getMobileName());
             appApiType.setCover(getApiTypeCover(apiLogUrl, apiTypeId));
-            appApiType.setSiteApis(CollectionQueryTool.sort(apiTypeRelationGroupByType.get(siteApiType.getApiTypeId()), Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
+            appApiType.setSiteApis(CollectionQueryTool.sort(siteApis, Order.asc(AppSiteApiTypeRelationI18n.PROP_ORDER_NUM)));
             if (navApiTypes.contains(apiTypeId)) {
                 appApiType.setLevel(true);
             }
@@ -464,14 +483,21 @@ public abstract class BaseOriginController {
         String preMaintain = GameStatusEnum.PRE_MAINTAIN.getCode();
         String normal = GameStatusEnum.NORMAL.getCode();
         String disabled = GameStatusEnum.DISABLE.getCode();
+        String terminal = GameSupportTerminalEnum.PC.getCode();
         Map<Integer, List<AppSiteApiTypeRelationI18n>> apiTypeRelationGroupByType = new HashMap<>();
         Map<Integer, List<AppSiteGame>> navApiGameMap;
+        int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
+        int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
         for (SiteApiTypeRelation apiTypeRelation : siteApiTypeRelationMap.values()) {
             apiTypeId = apiTypeRelation.getApiTypeId();
             apiId = apiTypeRelation.getApiId();
             api = apiMap.get(String.valueOf(apiId));
             siteApi = siteApiMap.get(String.valueOf(apiId));
-            if (api == null || siteApi == null || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
+            if (api == null || siteApi == null || terminal.equals(api.getTerminal()) || disabled.equals(api.getSystemStatus()) || disabled.equals(siteApi.getSystemStatus())) {
+                continue;
+            }
+            //BB体育不展示
+            if (apiTypeId == sportType && apiId == bb) {
                 continue;
             }
             apiTypeRelation.setApiName(ApiGameTool.getSiteApiName(map, siteApiI18nMap, apiI18nMap, apiId, apiTypeId));
@@ -507,7 +533,12 @@ public abstract class BaseOriginController {
         appRelation.setName(apiTypeRelation.getApiName());
         appRelation.setApiId(apiTypeRelation.getApiId());
         appRelation.setApiTypeId(apiTypeRelation.getApiTypeId());
-        appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
+        List<Integer> siteIds = API_SITE_SPECIAL.get(apiTypeRelation.getApiId());
+        if (siteIds != null && siteIds.contains(SessionManager.getSiteId())) {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId() + "_site" + SessionManager.getSiteId()));
+        } else {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiTypeRelation.getApiId()));
+        }
         if (CollectionTool.isNotEmpty(games)) {
             appRelation.setGameList(CollectionQueryTool.sort(games, Order.asc(AppSiteGame.PROP_ORDER_NUM)));
         } else {

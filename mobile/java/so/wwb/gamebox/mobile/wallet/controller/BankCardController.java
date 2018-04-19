@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.vo.BankListVo;
@@ -29,6 +30,7 @@ import java.util.Map;
 public class BankCardController {
     @RequestMapping("/page/addCard")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String addCard(Model model, HttpServletRequest request) {
         model.addAttribute("userBankCard", BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BANK));
         model.addAttribute("realName", SessionManager.getUser().getRealName());
@@ -53,6 +55,7 @@ public class BankCardController {
     }
 
     @RequestMapping("/page/addBtc")
+    @Upgrade(upgrade = true)
     @Token(generate = true)
     public String addBtc(Model model, HttpServletRequest request) {
         model.addAttribute("userBankCard", BankHelper.getUserBankcard(SessionManager.getUserId(), UserBankcardTypeEnum.TYPE_BTC));

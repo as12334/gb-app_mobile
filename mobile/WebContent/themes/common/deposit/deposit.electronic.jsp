@@ -76,8 +76,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" id="imgQrCodeUrl" value="${payAccount.qrCodeUrl}">
-                                    <c:if test="${not empty payAccount.qrCodeUrl}">
+                                    <input type="hidden" id="imgQrCodeUrl" value="${not empty payAccount.qrCodeUrl && !isHide}">
+                                    <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
                                         <div class="wechat-code">
                                             <div class="mui-row">
                                                 <div class="gb-panel" style="border-top-color: #fff;">
@@ -137,22 +137,34 @@
                                             <c:set value="${views.deposit_auto['您的其他方式账号']}" var="n"></c:set>
                                             <c:set value="${views.deposit_auto['请输入其他方式账号']}" var="m"></c:set>
                                         </c:if>
+                                        <c:if test="${not empty payAccount.accountInformation}">
+                                            <c:set value="${payAccount.accountInformation}" var="n"></c:set>
+                                        </c:if>
+                                        <c:if test="${not empty payAccount.accountPrompt}">
+                                            <c:set value="${payAccount.accountPrompt}" var="m"></c:set>
+                                        </c:if>
 
-                                        <c:choose>
-                                            <c:when test="${payAccount.bankCode eq 'onecodepay'}"></c:when>
-                                            <c:when test="${payAccount.bankCode eq 'alipay'}">
-                                                <label>${n}</label>
-                                                <div class="ct">
-                                                    <input type="text" id="payerBankcard1" name="result.payerBankcard" value="${lastTimeAccount}" autocomplete="off">
-                                                </div>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <label>${n}</label>
-                                                <div class="ct">
-                                                    <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
-                                                </div>
-                                            </c:otherwise>
-                                        </c:choose>
+                                            <%--<c:choose>
+                                                <c:when test="${payAccount.bankCode eq 'onecodepay'}"></c:when>
+                                                <c:when test="${payAccount.bankCode eq 'alipay'}">
+                                                    <label>${n}</label>
+                                                    <div class="ct">
+                                                        <input type="text" id="payerBankcard1" name="result.payerBankcard" value="${lastTimeAccount}" autocomplete="off">
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <label>${n}</label>
+                                                    <div class="ct">
+                                                        <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>--%>
+                                        <c:if test="${payAccount.bankCode ne 'onecodepay'}">
+                                            <label>${n}</label>
+                                            <div class="ct">
+                                                <input type="text" id="payerBankcard2" name="result.payerBankcard" value="${lastTimeAccount}" placeholder="${m}" autocomplete="off">
+                                            </div>
+                                        </c:if>
                                     </div>
                                         <%--存款金额--%>
                                     <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
@@ -164,20 +176,22 @@
                                             <input type="text" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
                                         </div>
                                     </div>
-                                    <c:if test="${empty payAccount.remark}">
-                                        <ul class="info">
-                                            <li>* 请先搜索微信号或扫描二维码添加好友。</li>
-                                            <li>* 为了系统快速完成转账，请输入订单号后5位，以加快系统入款速度。</li>
-                                            <li>* 支付成功后，请等待几秒钟，提示[支付成功] 按确认</li>
-                                        </ul>
-                                    </c:if>
-                                    <c:if test="${not empty payAccount.remark}">
-                                        <div class="gb-form-notice">
-                                            <p>
-                                                    ${payAccount.remark}
-                                            </p>
-                                        </div>
-                                    </c:if>
+                                    <c:choose>
+                                        <c:when test="${empty payAccount.remark}">
+                                            <ul class="info">
+                                                <li>* ${views.deposit_auto['请先加好友']}</li>
+                                                <li>* ${views.deposit_auto['请输入订单号后5位']}</li>
+                                                <li>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</li>
+                                            </ul>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="gb-form-notice">
+                                                <p>
+                                                        ${payAccount.remark}
+                                                </p>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </div>
                         </div>

@@ -18,21 +18,26 @@
                             <div class="text-pro applysale">
                                 <p>${views.deposit_auto['优惠']}：</p>
                                 <ul>
-                                    <li>
-                                        <div class="text-warp">
-                                            <span>${views.deposit_auto['不参与优惠']}</span>
-                                            <input name="activityId" type="radio" value="" checked="checked"/>
+                                    <div class="mui-scroll-wrapper">
+                                        <div class="mui-scroll">
+                                            <li>
+                                                <div class="text-warp">
+                                                    <span>${views.deposit_auto['不参与优惠']}</span>
+                                                    <input name="activityId" type="radio" value="" checked="checked"/>
+                                                </div>
+                                            </li>
+                                            <c:forEach items="${sales}" varStatus="vs" var="i">
+                                                <c:if test="${i.preferential}">
+                                                    <li>
+                                                        <div class="text-warp">
+                                                            <span>${i.activityName}</span>
+                                                            <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}"/>
+                                                        </div>
+                                                    </li>
+                                                </c:if>
+                                            </c:forEach>
                                         </div>
-                                    </li>
-
-                                    <c:forEach items="${sales}" varStatus="vs" var="i">
-                                        <li>
-                                            <div class="text-warp">
-                                                <span>${i.activityName}</span>
-                                                <input id="activitySubmitId"  name="activityId" type="radio" value="${i.id}"/>
-                                            </div>
-                                        </li>
-                                    </c:forEach>
+                                    </div>
                                 </ul>
                             </div>
                         </c:if>
@@ -59,4 +64,5 @@
 <span style="display: none" id="unCheckSuccess" unCheckSuccess="${unCheckSuccess}"></span>
 <span style="display: none" id="tips" tips="${tips}"></span>
 <span style="display: none" id="failureCount" failureCount="${failureCount}"></span>
+<span style="display: none" id="accountNotUsing" accountNotUsing="${accountNotUsing}"></span>
 </div>

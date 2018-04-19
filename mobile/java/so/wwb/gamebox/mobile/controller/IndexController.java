@@ -8,6 +8,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.I18nTool;
+import org.soul.commons.lang.string.StringEscapeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -66,6 +67,7 @@ import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -174,7 +176,10 @@ public class IndexController extends BaseApiController {
             CttDocumentI18nListVo listVo = initDocument("aboutUs");
             CttDocumentI18n cttDocumentI18n = ServiceSiteTool.cttDocumentI18nService().queryAboutDocument(listVo);
             if (cttDocumentI18n != null) {
-                cttDocumentI18n.setContent(cttDocumentI18n.getContent().replaceAll("\\$\\{weburl\\}", request.getServerName()));
+                cttDocumentI18n.setContent(cttDocumentI18n.getContent()
+                        .replace("${weburl}", request.getServerName())
+                        .replace("${customerservice}", "")
+                        .replace("${company}", SessionManagerCommon.getSiteName(request)));
             }
             model.addAttribute("about", cttDocumentI18n);
         }
@@ -188,7 +193,7 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/recommend")
     @Upgrade(upgrade = true)
-    public String recommend(Model model, PlayerRecommendAwardListVo listVo) {
+    public String recommend(Model model, PlayerRecommendAwardListVo listVo, HttpServletRequest request) {
         UserPlayerVo userPlayerVo = new UserPlayerVo();
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
@@ -235,18 +240,25 @@ public class IndexController extends BaseApiController {
         model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         //活动规则
         model.addAttribute("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue());
+        //是否是ajax请求
+        if (ServletTool.isAjaxSoulRequest(request)) {
+            return "/recommend/RecommendList";
+        }
+
         return "/recommend/Recommend";
     }
 
     /**
      * 推荐记录
+     *
      * @param records
      * @return
      */
-    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records){
-        for (PlayerRecommendAwardRecord record : records){
+    private List<PlayerRecommendAwardRecord> changeToApp(List<PlayerRecommendAwardRecord> records) {
+        for (PlayerRecommendAwardRecord record : records) {
             record.setRecommendUserName(StringTool.overlayString(record.getRecommendUserName()));
             record.setStatus(SysUserStatus.enumOf(record.getStatus()).getTrans());
+            record.setRewardAmount(record.getRewardAmount() == null ? BigDecimal.ZERO : record.getRewardAmount());
         }
         return records;
     }
@@ -259,7 +271,8 @@ public class IndexController extends BaseApiController {
     private void initSearchDate(PlayerRecommendAwardListVo listVo) {
         if (listVo.getSearch().getStartTime() == null) {
             listVo.getSearch().setStartTime(SessionManager.getDate().addDays(DEFAULT_MIN_TIME));
-        } else if (listVo.getSearch().getEndTime() == null) {
+        }
+        if (listVo.getSearch().getEndTime() == null) {
             listVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         }
 
@@ -602,7 +615,7 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index/getApiType")
     public String getApiType(Model model) {
-        model.addAttribute("apiList", getApiType());
+        model.addAttribute("apiList", getSiteApiRelation(null));
         return "/game/include/include.api";
     }
 
@@ -615,12 +628,18 @@ public class IndexController extends BaseApiController {
      * @return
      */
     @RequestMapping("/app/download")
-    public String downloadApp(Model model, HttpServletRequest request) {
-
+    @Upgrade(upgrade = true)
+    public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
-            return "redirect:/login/commonLogin.html";
+            String url = "/login/commonLogin.html";
+            response.setStatus(302);
+            response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
+            return "/passport/login";
         }
         getAppPath(model, request);
+        if (ParamTool.isMobileUpgrade()) {
+            return "/download/DownLoad";
+        }
         return "/app/Index";
     }
 
@@ -653,14 +672,14 @@ public class IndexController extends BaseApiController {
         if (StringTool.isBlank(appDomain)) {
             appDomain = ParamTool.appDmain(request.getServerName());
         }
-        if(isMobileUpgrade){
+        if (isMobileUpgrade) {
             SiteAppUpdate siteAppUpdate = Cache.getSiteAppUpdate(String.valueOf(siteId), AppTypeEnum.ANDROID.getCode());
-            if(siteAppUpdate!=null){
+            if (siteAppUpdate != null) {
                 String versionName = siteAppUpdate.getVersionName();
                 String appUrl = siteAppUpdate.getAppUrl();
                 fillAndroidInfo(model, code, appDomain, versionName, appUrl);
             }
-        }else {
+        } else {
             AppUpdate androidApp = Cache.getAppUpdate(AppTypeEnum.ANDROID.getCode());
             if (androidApp != null) {
                 String versionName = androidApp.getVersionName();
@@ -675,14 +694,14 @@ public class IndexController extends BaseApiController {
      */
     private void getIosInfo(Model model, String code, boolean isMobileUpgrade) {
         Integer siteId = CommonContext.get().getSiteId();
-        if(isMobileUpgrade){
+        if (isMobileUpgrade) {
             SiteAppUpdate siteAppUpdate = Cache.getSiteAppUpdate(String.valueOf(siteId), AppTypeEnum.IOS.getCode());
             if (siteAppUpdate != null) {
                 String versionName = siteAppUpdate.getVersionName();
                 String appUrl = siteAppUpdate.getAppUrl();
                 fillIosInfo(model, code, versionName, appUrl);
             }
-        }else {
+        } else {
             AppUpdate iosApp = Cache.getAppUpdate(AppTypeEnum.IOS.getCode());
             if (iosApp != null) {
                 String versionName = iosApp.getVersionName();
@@ -694,6 +713,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 填充android信息
+     *
      * @param model
      * @param code
      * @param appDomain
@@ -709,6 +729,7 @@ public class IndexController extends BaseApiController {
 
     /**
      * 填充ios信息
+     *
      * @param model
      * @param code
      * @param versionName
@@ -726,12 +747,12 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/sysUser")
     @ResponseBody
-    public String getSysUser() {
+    public String getSysUser(HttpServletRequest request) {
         SysUser sysUser = SessionManager.getUser();
         if (sysUser != null) {
             Map<String, Object> map = new HashMap<>(2);
             map.put("username", StringTool.overlayName(sysUser.getUsername()));
-            map.put("avatarUrl", sysUser.getAvatarUrl());
+            map.put("avatarUrl", ImageTag.getImagePath(SessionManager.getDomain(request), StringEscapeTool.unescapeHtml4(sysUser.getAvatarUrl())));
             return JsonTool.toJson(map);
         } else {
             return "unLogin";
@@ -749,10 +770,17 @@ public class IndexController extends BaseApiController {
         if (sysUser == null) {
             map.put("isLogin", false);
         } else {
+            String defaultCurrency = sysUser.getDefaultCurrency();
+            if (StringTool.isNotBlank(defaultCurrency)) {
+                SysCurrency sysCurrency = Cache.getSysCurrency().get(defaultCurrency);
+                if (sysCurrency != null) {
+                    map.put("currencySign", sysCurrency.getCurrencySign());
+                }
+            }
             map.put("isLogin", true);
             map.put("name", StringTool.overlayName(sysUser.getUsername()));
             if (StringTool.isNotBlank(sysUser.getAvatarUrl())) {
-                map.put("avatar", ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null));
+                map.put("avatar", StringEscapeTool.unescapeHtml4(ImageTag.getThumbPathWithDefault(SessionManager.getDomain(request), sysUser.getAvatarUrl(), 46, 46, null)));
             }
             map.put("isAutoPay", SessionManager.isAutoPay());//是否免转标识
             //查询总资产

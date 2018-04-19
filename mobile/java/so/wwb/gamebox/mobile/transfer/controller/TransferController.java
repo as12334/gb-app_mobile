@@ -33,7 +33,9 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.ApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
+import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -41,6 +43,7 @@ import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferSourceEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerTransfer;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.po.PlayerApi;
 import so.wwb.gamebox.model.master.player.po.PlayerApiAccount;
@@ -97,7 +100,6 @@ public class TransferController extends WalletBaseController {
 
     @RequestMapping("/transferBack")
     @ResponseBody
-    @Token(generate = true)
     public Map<String, Object> transfer() {
         Map<String, Object> map = new HashMap<>(1,1f);
         map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
@@ -187,7 +189,7 @@ public class TransferController extends WalletBaseController {
      */
     @RequestMapping(value = "/transfersMoney", method = RequestMethod.POST)
     @ResponseBody
-    @Token(valid = true)
+    //@Token(valid = true)
     public Map transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid PlayerTransferForm form, BindingResult result) {
         LOG.info("【玩家[{0}]转账】:从[{1}]转到[{2}]", SessionManager.getUserName(), playerTransferVo.getTransferOut(), playerTransferVo.getTransferInto());
         if (!isTimeToTransfer()) {//是否已经过了允许转账的间隔
@@ -270,6 +272,7 @@ public class TransferController extends WalletBaseController {
      * @return 为空则本次转账请求正常
      */
     private Map<String, Object> isAbleToTransfer(PlayerTransferVo playerTransferVo) {
+        PlayerTransfer result = playerTransferVo.getResult();
         if (playerTransferVo.getResult().getTransferAmount() <= 0) {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_ERROR_AMOUNT.getCode(), playerTransferVo.getResult().getApiId());
         }
@@ -295,6 +298,12 @@ public class TransferController extends WalletBaseController {
             } else {
                 return getErrorMessage(TransferResultStatusEnum.TRANSFER_DEMO_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
             }
+        }
+        //实时更新转账上限统计值，判断是否超出转账上限
+        boolean isOverTransfer = playerTransferService().transferLimit(playerTransferVo);
+        //转账上限
+        if ( FundTypeEnum.TRANSFER_OUT.getCode().equals(playerTransferVo.getResult().getTransferType()) && (ParamTool.getTransLimit() || isOverTransfer)) {
+            return getErrorMessage(TransferResultStatusEnum.TRANSFER_LIMIT.getCode(), playerTransferVo.getResult().getApiId());
         }
         return null;
     }
@@ -505,13 +514,14 @@ public class TransferController extends WalletBaseController {
         List<Map<String, Object>> playerApis = new ArrayList<>();
         Map<String, Api> apis = Cache.getApi();
         Map<String, SiteApi> siteApis = Cache.getSiteApi();
+        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
+        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
         Api api;
         SiteApi siteApi;
         for (PlayerApi playerApi : playerApiList) {
             String apiId = String.valueOf(playerApi.getApiId());
             Map<String, Object> playerApiMap = new HashMap<>(3,1f);
-            String apiName = CacheBase.getSiteApiName(apiId);
-            playerApiMap.put("apiName", apiName);
+            playerApiMap.put("apiName", getApiName(apiI18nMap,siteApiI18nMap,apiId));
             if (playerApi.getMoney() == null) {
                 playerApiMap.put("balance", "0.00");
             } else {
@@ -524,6 +534,30 @@ public class TransferController extends WalletBaseController {
             playerApis.add(playerApiMap);
         }
         return playerApis;
+    }
+
+    /**
+     * 获取api名称
+     *
+     * @param apiI18nMap
+     * @param siteApiI18nMap
+     * @param apiId
+     * @return
+     */
+    private String getApiName(Map<String, ApiI18n> apiI18nMap, Map<String, SiteApiI18n> siteApiI18nMap, String apiId) {
+        SiteApiI18n siteApiI18n = siteApiI18nMap.get(apiId);
+        String apiName = null;
+        if (siteApiI18n != null) {
+            apiName = siteApiI18n.getName();
+        }
+        if (StringTool.isNotBlank(apiName)) {
+            return apiName;
+        }
+        ApiI18n apiI18n = apiI18nMap.get(apiId);
+        if (apiI18n != null) {
+            apiName = apiI18n.getName();
+        }
+        return apiName;
     }
 
     private PlayerApiListVo fundRecord(boolean isRefreshAllApiBalance) {
