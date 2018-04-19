@@ -226,6 +226,6 @@
 <%@include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/game/inputNumber.js"></script>
 <script type="text/javascript" src="${resRoot}/js/withdraw/Index.js"></script>
-<script type="text/javascript" src="${resRoot}/js/password/UpdateSafePassword.js"></script>
+<script type="text/javascript" src="${resRoot}/js/password/SafePasswordCommon.js"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
