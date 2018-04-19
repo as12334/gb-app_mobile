@@ -174,6 +174,10 @@ public class RegisterAppController {
                     null,
                     APP_VERSION);
         }
+        //手机验证短信注册，手机号为已验证
+        if(isValid(SiteParamEnum.SETTING_REG_SETTING_PHONE_VERIFCATION)){
+            userRegisterVo.getPhone().setStatus("11");
+        }
         userRegisterVo.setEditType(userRegisterVo.EDIT_TYPE_PLAYER);
         userRegisterVo = doRegister(userRegisterVo, request);
         sendRegSuccessMsg(request,userRegisterVo);
