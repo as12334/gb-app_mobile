@@ -20,10 +20,8 @@ import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
 import org.soul.commons.validation.form.PasswordRule;
 import org.soul.model.log.audit.enums.OpMode;
-import org.soul.model.msg.notice.vo.NoticeReceiveVo;
-import org.soul.model.msg.notice.vo.NoticeVo;
-import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
-import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
+import org.soul.model.msg.notice.po.NoticeContactWay;
+import org.soul.model.msg.notice.vo.*;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
@@ -41,8 +39,8 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.form.PlayerAdvisoryAppForm;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
@@ -54,6 +52,8 @@ import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
+import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
+import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
@@ -1230,6 +1230,61 @@ public class MineAppController extends BaseMineController {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), null, APP_VERSION);
     }
 
+    /**
+     * 获取用户手机号码
+     *
+     * @param contactVo
+     * @return
+     */
+    @RequestMapping(value = "/getUserPhone")
+    @ResponseBody
+    public String getUserPhone(NoticeContactWayVo contactVo) {
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                contactWay != null ? StringTool.overlayTel(contactWay.getContactValue()) : "",
+                APP_VERSION);
+    }
+
+    /**
+     * 设置用户手机号码
+     *
+     * @return
+     */
+    @RequestMapping(value = "/updateUserPhone")
+    @ResponseBody
+    public String updateUserPhone(NoticeContactWayVo contactVo) {
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        contactVo.setResult(contactWay);
+        if (contactWay != null) {
+            contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
+            ServiceTool.noticeContactWayService().batchUpdate(contactVo);
+        } else {
+            contactVo.getResult().setUserId(SessionManager.getUserId());
+            contactVo.getResult().setContactType(ContactWayTypeEnum.MOBILE.getCode());
+            contactVo.getResult().setStatus(ContactWayStatusEnum.CONTENT_STATUS_USING.getCode());
+            ServiceTool.noticeContactWayService().insert(contactVo);
+        }
+        return null;
+    }
+
+    /**
+     * 获取用户手机号
+     *
+     * @param contactVo
+     * @return
+     */
+    private NoticeContactWay getUserPhoneNumber(NoticeContactWayVo contactVo) {
+        contactVo.setResult(new NoticeContactWay());
+        contactVo.getQuery().setCriterions(
+                new Criterion[]{
+                        new Criterion(NoticeContactWay.PROP_USER_ID, Operator.EQ, SessionManager.getUser().getId())
+                        , new Criterion(NoticeContactWay.PROP_CONTACT_TYPE, Operator.EQ, ContactWayTypeEnum.MOBILE.getCode())}
+        );
+        contactVo = ServiceTool.noticeContactWayService().search(contactVo);
+        return contactVo.getResult();
+    }
 
     /**
      * 验证吗remote验证
