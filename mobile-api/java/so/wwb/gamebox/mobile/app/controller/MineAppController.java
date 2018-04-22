@@ -1255,18 +1255,38 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/updateUserPhone")
     @ResponseBody
     public String updateUserPhone(NoticeContactWayVo contactVo) {
+        if(StringTool.isBlank(contactVo.getSearch().getContactValue())){
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
-        contactVo.setResult(contactWay);
         if (contactWay != null) {
+            contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
-            ServiceTool.noticeContactWayService().batchUpdate(contactVo);
+            contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
+            contactVo = ServiceTool.noticeContactWayService().updateOnly(contactVo);
         } else {
             contactVo.getResult().setUserId(SessionManager.getUserId());
             contactVo.getResult().setContactType(ContactWayTypeEnum.MOBILE.getCode());
             contactVo.getResult().setStatus(ContactWayStatusEnum.CONTENT_STATUS_USING.getCode());
-            ServiceTool.noticeContactWayService().insert(contactVo);
+            contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
+            contactVo = ServiceTool.noticeContactWayService().insert(contactVo);
         }
-        return null;
+        if (!contactVo.isSuccess()) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.DINDING_PHONE_FAIL.getCode(),
+                    AppErrorCodeEnum.DINDING_PHONE_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
     }
 
     /**
