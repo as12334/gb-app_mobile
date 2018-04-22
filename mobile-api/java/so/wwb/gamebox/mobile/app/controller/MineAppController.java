@@ -1254,11 +1254,26 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/updateUserPhone")
     @ResponseBody
-    public String updateUserPhone(NoticeContactWayVo contactVo) {
-        if(StringTool.isBlank(contactVo.getSearch().getContactValue())){
+    public String updateUserPhone(NoticeContactWayVo contactVo, String code) {
+        if (StringTool.isBlank(contactVo.getSearch().getContactValue())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
                     AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (StringTool.isBlank(code)) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //手机短信验证
+        if (!checkPhoneCode(code, contactVo.getSearch().getContactValue())) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
+                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
                     null,
                     APP_VERSION);
         }
@@ -1287,6 +1302,32 @@ public class MineAppController extends BaseMineController {
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 null,
                 APP_VERSION);
+    }
+
+    /**
+     * 验证手机短信验证码
+     *
+     * @param code
+     * @param phone
+     * @return
+     */
+    private Boolean checkPhoneCode(String code, String phone) {
+        if (StringTool.isBlank(phone) || StringTool.isBlank(code)) {
+            return false;
+        }
+        Map<String, String> params = SessionManagerCommon.getCheckRegisterPhoneInfo();
+        if (params == null) {
+            return false;
+        }
+        if (StringTool.isBlank(params.get("phone")) || StringTool.isBlank(params.get("code"))) {
+            return false;
+        }
+        //验证码30分钟内有效
+        if (DateTool.minutesBetween(SessionManagerCommon.getDate().getNow(), SessionManagerCommon.getSendRegisterPhone()) > 30) {
+            return false;
+        }
+
+        return (phone.equals(params.get("phone")) && params.get("code").equals(code));
     }
 
     /**
