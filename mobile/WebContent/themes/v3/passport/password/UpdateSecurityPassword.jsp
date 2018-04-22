@@ -39,18 +39,10 @@
                             <input type="password" placeholder="请再次输入新密码" maxlength="6" name="pwd2">
                         </div>
                     </div>
-                    <div class="mui-input-row _captcha final" ${isOpenCaptcha ? '' : 'style="display:none"'}>
-                        <div class="form-row">
-                            <div class="text">
-                                            <span class="vcode">
-                                                <img src="${root}/captcha/securityPwd.html"
-                                                     data-src="${root}/captcha/securityPwd.html" class="captcha_img">
-                                            </span>
-                            </div>
-                            <div class="cont">
-                                <input type="text" class="ico6" name="code"
-                                       placeholder="${views.passport_auto['请输入验证码']}" maxlength="4"/>
-                            </div>
+                    <div class="mui-input-row _captcha" ${isOpenCaptcha ? '' : 'style="display:none"'}><label for="">验证码</label>
+                        <div class="ct spcode">
+                            <input type="text" placeholder="请输入验证码" name="code" maxlength="4">
+                            <img src="${root}/captcha/securityPwd.html" alt="" data-rel={"opType":"function","target":"refreshCode","code":"${root}/captcha/securityPwd.html"}>
                         </div>
                     </div>
                 </div>
