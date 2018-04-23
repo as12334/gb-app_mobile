@@ -126,4 +126,7 @@ public interface AppConstant {
     Map<Integer, List<Integer>> API_SITE_SPECIAL = new HashMap() {{
         put(37, Arrays.asList(119, 270));
     }};
+
+    String USER_REGISTER = "玩家注册验证";
+    String FORGET_PASSWORD = "忘记密码验证";
 }
