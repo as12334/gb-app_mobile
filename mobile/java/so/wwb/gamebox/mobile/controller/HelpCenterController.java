@@ -131,4 +131,11 @@ public class HelpCenterController {
         }
         return typeName;
     }
+
+    @RequestMapping(value = "forgetPassword")
+    @Upgrade(upgrade = true)
+    public String gotoFindPassword(){
+        return "/help/forget/ForgetPassword";
+    }
+
 }
