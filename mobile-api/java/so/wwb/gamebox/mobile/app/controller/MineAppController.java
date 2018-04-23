@@ -45,6 +45,7 @@ import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -110,6 +111,7 @@ public class MineAppController extends BaseMineController {
         so.setActivityVersion(SessionManager.getLocale().toString());
         so.setUserId(SessionManager.getUserId());
         so.setCurrentDate(SessionManager.getDate().getNow());
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
 
         Map<String, Object> map = new HashMap<>(2, 1f);

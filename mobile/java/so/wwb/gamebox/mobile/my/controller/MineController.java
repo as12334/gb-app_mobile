@@ -24,6 +24,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
@@ -123,6 +124,7 @@ public class MineController{
         vPreferentialRecodeListVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
         userInfo.put("preferentialAmount", ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo));
 

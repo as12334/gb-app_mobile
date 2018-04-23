@@ -237,6 +237,7 @@ public class BaseUserInfoController {
         vPreferentialRecodeListVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
         Number preferential = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
         if (preferential == null) {
