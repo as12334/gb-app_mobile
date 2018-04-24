@@ -74,8 +74,6 @@ public class DownLoadController extends BaseDemoController {
     @RequestMapping("/downLoadIOS")
     @Upgrade(upgrade = true)
     public String downLoadIOS(Model model, HttpServletRequest request) {
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
-
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
         ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
@@ -117,13 +115,27 @@ public class DownLoadController extends BaseDemoController {
     }
 
     /**
-     * 获取参数表中app下载地址
+     * 获取参数表中android下载地址
      *
      * @return
      */
-    private String getAppDownloadUrl() {
+    private String getAndroidDownloadUrl() {
         String addressUrl = "";
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_ANDROID_DOWNLOAD_ADDRESS);
+        if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
+            addressUrl = sysParam.getParamValue();
+        }
+        return addressUrl;
+    }
+
+    /**
+     * 获取参数表中ios下载地址
+     *
+     * @return
+     */
+    private String getIosDownloadUrl() {
+        String addressUrl = "";
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_ISO_DOWNLOAD_ADDRESS);
         if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
             addressUrl = sysParam.getParamValue();
         }
@@ -141,7 +153,7 @@ public class DownLoadController extends BaseDemoController {
      */
     private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
         //获取参数表中下载地址
-        String addressUrl = getAppDownloadUrl();
+        String addressUrl = getAndroidDownloadUrl();
         String url;
         if (StringTool.isNotBlank(addressUrl)) {
             url = addressUrl;
@@ -193,7 +205,7 @@ public class DownLoadController extends BaseDemoController {
      */
     private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
         //获取参数表中下载地址
-        String addressUrl = getAppDownloadUrl();
+        String addressUrl = getIosDownloadUrl();
         String url;
         if (StringTool.isNotBlank(addressUrl)) {
             url = addressUrl;
