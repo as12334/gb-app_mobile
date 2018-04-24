@@ -48,17 +48,20 @@
                             <div class="swiper-slide" name="${type.key}">
                                 <div class="mui-scroll-wrapper">
                                     <div class="mui-scroll">
-                                        <c:forEach items="${messageVo.typeMessageMap.get(type.key)}" var="message">
-                                            <c:choose>
-                                                <c:when test="${!empty message.activityAffiliated}">
-                                                    <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityAffiliated)}" />
-                                                </c:when>
-                                                <c:when test="${!empty message.activityCover}">
-                                                    <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityCover)}" />
-                                                </c:when>
-                                            </c:choose>
-                                            <a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'><img src="${empty imgSrc?defaultSaleImg:''}" data-lazyload="${imgSrc}"/></a>
-                                        </c:forEach>
+                                        <c:set var="mapValue" value="${messageVo.typeMessageMap.get(type.key)}"></c:set>
+                                        <c:if test="${fn:length(mapValue) > 0}">
+                                            <c:forEach items="${mapValue}" var="message">
+                                                <c:choose>
+                                                    <c:when test="${!empty message.activityAffiliated}">
+                                                        <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityAffiliated)}" />
+                                                    </c:when>
+                                                    <c:when test="${!empty message.activityCover}">
+                                                        <c:set var="imgSrc" value="${soulFn:getImagePath(domain, message.activityCover)}" />
+                                                    </c:when>
+                                                </c:choose>
+                                                <a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'><img src="${empty imgSrc?defaultSaleImg:''}" data-lazyload="${imgSrc}"/></a>
+                                            </c:forEach>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>
