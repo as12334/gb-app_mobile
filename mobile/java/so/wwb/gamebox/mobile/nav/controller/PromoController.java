@@ -70,6 +70,7 @@ public class PromoController {
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         if (ServletTool.isAjaxSoulRequest(request)) {
             vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         }
@@ -177,7 +178,6 @@ public class PromoController {
         String code = vPlayerActivityMessageVo.getCode();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(vPlayerActivityMessageVo.getResultId(), "PlayerActivityMessageListVo"));
         PlayerActivityMessage activityMessage = Cache.getMobileActivityMessageInfo(id.toString());
-        activityMessage.setId(id);
         vPlayerActivityMessageVo.setId(id);
         if (StringTool.equals(code, ActivityTypeEnum.REGIST_SEND.getCode())) {
             applyRegisterSend(map, vPlayerActivityMessageVo, activityMessage);
