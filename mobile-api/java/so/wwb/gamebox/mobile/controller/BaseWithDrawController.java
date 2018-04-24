@@ -34,6 +34,7 @@ import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
 import so.wwb.gamebox.model.master.enums.RankFeeType;
+import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.WithdrawStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
@@ -410,16 +411,16 @@ public class BaseWithDrawController {
             if (hasCount >= freeCount) {
                 poundage = calPoundage(withdrawAmount, rank);
             }
+            LOG.info("玩家取款计算手续费:是否启用每日00:00重置取款手续费相关设置-{0},24小时取款次数-{1},免费次数-{2},已取款次数-{3},层级取款收费方式-{4},层级收取手续费金额-{5},最后计算取款手续费{6}", rank.getIsWithdrawFeeZeroReset(), rank.getWithdrawCount(), freeCount, hasCount, rank.getWithdrawFeeType(), rank.getWithdrawFeeNum(), poundage);
         } else {
             poundage = calPoundage(withdrawAmount, rank);
         }
-
         // 手续费上限
         Double maxFee = rank.getWithdrawMaxFee();
         if (maxFee != null && poundage > maxFee) {
             poundage = maxFee;
         }
-
+        LOG.info("玩家取款计算手续费:是否启用每日00:00重置取款手续费相关设置-{0},24小时取款次数-{1},层级取款收费方式-{2},层级收取手续费金额-{3},层级设置取款手续费最大值-{4},最后计算取款手续费{5}", rank.getIsWithdrawFeeZeroReset(), rank.getWithdrawCount(), rank.getWithdrawFeeType(), rank.getWithdrawFeeNum(), maxFee, poundage);
         return poundage;
     }
 
@@ -488,7 +489,7 @@ public class BaseWithDrawController {
         transaction.setDeductFavorable(deductFavorable);
         transaction.setPlayerId(SessionManagerCommon.getUserId());
         transaction.setTransactionMoney(vo.getWithdrawAmount());
-        transaction.setOrigin(SessionManagerCommon.withdrawTerminalOrigin(request));
+        transaction.setOrigin(TransactionOriginEnum.MOBILE.getCode());
         vo.setResult(transaction);
         vo.setIpWithdraw(SessionManagerBase.getIpDb().getIp());
         vo.setIpDictCode(SessionManagerBase.getIpDictCode());

@@ -6,6 +6,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.qrcode.QrcodeDisTool;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,13 +16,12 @@ import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.iservice.company.site.ISiteAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
 import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
-import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
@@ -62,20 +62,25 @@ public class DownLoadController extends BaseDemoController {
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
         }
+
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
         ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
         getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
+
         return "/download/DownLoad";
     }
 
     @RequestMapping("/downLoadIOS")
     @Upgrade(upgrade = true)
     public String downLoadIOS(Model model, HttpServletRequest request) {
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
         ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
         getIosInfo(model, code, appUpdateService, siteAppUpdateService);
+
         return "/download/DownLoadIOS";
     }
 
@@ -112,6 +117,20 @@ public class DownLoadController extends BaseDemoController {
     }
 
     /**
+     * 获取参数表中app下载地址
+     *
+     * @return
+     */
+    private String getAppDownloadUrl() {
+        String addressUrl = "";
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+        if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
+            addressUrl = sysParam.getParamValue();
+        }
+        return addressUrl;
+    }
+
+    /**
      * 填充ANDROID信息
      *
      * @param model
@@ -121,8 +140,16 @@ public class DownLoadController extends BaseDemoController {
      * @param appUrl
      */
     private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
-        String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
-                versionName, code, versionName);
+        //获取参数表中下载地址
+        String addressUrl = getAppDownloadUrl();
+        String url;
+        if (StringTool.isNotBlank(addressUrl)) {
+            url = addressUrl;
+        } else {
+            url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
+                    versionName, code, versionName);
+        }
+
         model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("androidUrl", url);
     }
@@ -165,8 +192,16 @@ public class DownLoadController extends BaseDemoController {
      * @param appUrl
      */
     private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
-        String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
-                versionName, code, code, versionName);
+        //获取参数表中下载地址
+        String addressUrl = getAppDownloadUrl();
+        String url;
+        if (StringTool.isNotBlank(addressUrl)) {
+            url = addressUrl;
+        } else {
+            url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
+                    versionName, code, code, versionName);
+        }
+
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("iosUrl", url);
     }

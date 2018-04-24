@@ -237,6 +237,7 @@ public class BaseUserInfoController {
         vPreferentialRecodeListVo.getSearch().setEndTime(SessionManager.getDate().getNow());
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         vPreferentialRecodeListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), PROMO_RECORD_DAYS));
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
         Number preferential = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
         if (preferential == null) {
@@ -792,10 +793,8 @@ public class BaseUserInfoController {
                 return getErrorMessage(TransferResultStatusEnum.TRANSFER_DEMO_UNSUPPORTED.getCode(), playerTransferVo.getResult().getApiId());
             }
         }
-        //实时更新转账上限统计值，判断是否超出转账上限
-        boolean isOverTransfer = playerTransferService().transferLimit(playerTransferVo);
         //转账上限
-        if (FundTypeEnum.TRANSFER_OUT.getCode().equals(playerTransferVo.getResult().getTransferType()) && (ParamTool.getTransLimit() || isOverTransfer)) {
+        if (FundTypeEnum.TRANSFER_OUT.getCode().equals(playerTransferVo.getResult().getTransferType()) && ParamTool.getTransLimit()) {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_LIMIT.getCode(), result.getApiId());
         }
         return null;

@@ -5,6 +5,7 @@ public enum AppErrorCodeEnum {
     UN_LOGIN("1001", "您还未登录,请重新登录"),
     USER_LOCK("1005", "您的账号已被系统冻结，请联系客服处理"),
     USER_INFO_NOT_EXIST("1008", "用户不存在"),
+    USER_NAME_NOT_NULL("1009","用户名不能为空"),
     PASSWORD_ERROR("1011", "当前密码错误"),
     PASSWORD_SAME("1016", "新密码不能和旧密码相同"),
     SYSTEM_INFO_NOT_EXIST("1017", "信息不存在"),
@@ -63,6 +64,8 @@ public enum AppErrorCodeEnum {
     REGISTER_PHONE_NOTNULL("1522","手机号不能为空"),
     REGISTER_PHONE_OFTEN("1523","手机发送验证码过于频繁"),
     REGISTER_PHONE_FAIL("1524","手机验证码发送失败"),
+    DINDING_PHONE_FAIL("1525","绑定手机号失败"),
+    UNBOUND_PHONE("1526","该账号未绑定手机号，请联系客户找回密码"),
     NO_AVAILABLE_CHANNELS("1600","支付系统维护中，请稍后刷新重试"),
     SUBMIT_DATA_ERROR("1601","提交信息有误，请核对信息提交"),
     CHANNEL_CLOSURE("1602","渠道未在使用中，请刷新存款页面后重试"),
@@ -72,7 +75,7 @@ public enum AppErrorCodeEnum {
     DEPOSIT_FAIL("1606","存款失败，请稍后重试"),
     ORDER_ERROR("1607","订单号有误，请重新存款"),
     TXIDISEMPTY("1608","比特币TxId不能为空，请重新输入"),
-    TXIDISEXISTS("1609","比特币TxId已存在，请重新输入")
+    TXIDISEXISTS("1609","比特币TxId已存在，请重新输入"),
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

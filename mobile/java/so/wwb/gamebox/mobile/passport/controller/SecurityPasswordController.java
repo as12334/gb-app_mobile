@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -71,6 +72,7 @@ public class SecurityPasswordController {
      * 跳转设置或修改安全密码页面
      */
     @RequestMapping("/edit")
+    @Upgrade(upgrade=true)
     public String gotoSetOrUpdatePassword(Model model) {
         SysUser user = SessionManager.getUser();
 

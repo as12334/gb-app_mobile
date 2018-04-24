@@ -11,6 +11,7 @@ import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.CryptoTool;
+import org.soul.model.msg.notice.po.NoticeContactWay;
 import org.soul.model.sms.SmsMessageVo;
 import org.soul.model.sms_interface.po.SmsInterface;
 import org.soul.model.sms_interface.vo.SmsInterfaceVo;
@@ -31,6 +32,7 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.SmsTypeEnum;
+import so.wwb.gamebox.model.common.notice.enums.ContactWayType;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
@@ -46,9 +48,11 @@ import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
+import sun.misc.Request;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -56,6 +60,8 @@ import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.FORGET_PASSWORD;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.USER_REGISTER;
 
 @Controller
 @RequestMapping("/origin")
@@ -411,29 +417,56 @@ public class OriginController extends BaseOriginController {
                     null,
                     APP_VERSION);
         }
-        SessionManagerCommon.setSendRegisterPhone(new Date());
-        //保存手机和验证码匹配成对
-        String verificationCode = RandomStringTool.randomNumeric(6);
-        Map<String, String> param = new HashMap(2, 1f);
-        param.put("code", verificationCode);
-        param.put("phone", phone);
-        SessionManagerCommon.setCheckRegisterPhoneInfo(param);
-        LOG.info("手机{0}-验证码：{1}", phone, verificationCode);
-        SmsInterface smsInterface = getSiteSmsInterface();
-        SmsMessageVo smsMessageVo = new SmsMessageVo();
-        smsMessageVo.setUserIp(ServletTool.getIpAddr(request));
-        smsMessageVo.setProviderId(smsInterface.getId());
-        smsMessageVo.setProviderName(smsInterface.getUsername());
-        smsMessageVo.setProviderPwd(smsInterface.getPassword());
-        smsMessageVo.setProviderKey(smsInterface.getDataKey());
-        smsMessageVo.setPhoneNum(phone);
-        smsMessageVo.setType(SmsTypeEnum.YZM.getCode());
-        String siteName = SessionManagerCommon.getSiteName(request);
-        smsMessageVo.setContent("验证码：" + verificationCode + " 【" + siteName + "】");
-        try {
-            ServiceTool.messageService().sendSmsMessage(smsMessageVo);
-        } catch (Exception ex) {
-            LOG.error(ex, "发送手机验证码错误");
+        //发送手机短信
+        if (!sendPhoneCode(phone, USER_REGISTER, request)) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
+    }
+
+    /**
+     * 找回密码发送手机短信
+     *
+     * @param userPlayerVo
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "sendFindPasswordPhone")
+    @ResponseBody
+    public String sendFindPasswordPhone(UserPlayerVo userPlayerVo, HttpServletRequest request) {
+        if (!SessionManagerCommon.canSendRegisterPhone()) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+
+        Integer id = userPlayerVo.getDecryptId();
+        userPlayerVo.getSearch().setId(id);
+        Map<String, NoticeContactWay> noticeContactWayMap = ServiceSiteTool.userPlayerService().findNormalNoticeContactWay(userPlayerVo);
+        NoticeContactWay phone = noticeContactWayMap.get(ContactWayType.CELLPHONE.getCode());
+
+        if (phone == null || StringTool.isBlank(phone.getContactValue())) {
+            LOG.info("手机号码为空或者验证码为空！");
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+
+        //发送手机短信
+        if (!sendPhoneCode(phone.getContactValue(), FORGET_PASSWORD, request)) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.REGISTER_PHONE_FAIL.getCode(),
                     AppErrorCodeEnum.REGISTER_PHONE_FAIL.getMsg(),
@@ -463,6 +496,58 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
     //endregion mainIndex
+
+    /**
+     * 发送短信验证码
+     *
+     * @param phone
+     * @param sendType
+     * @param request
+     * @return
+     */
+    private boolean sendPhoneCode(String phone, String sendType, HttpServletRequest request) {
+        if (StringTool.isBlank(phone)) {
+            return false;
+        }
+        //90秒后可以重新提交
+        if (!SessionManagerCommon.canSendRegisterPhone()) {
+            return false;
+        }
+
+        SessionManagerCommon.setSendRegisterPhone(new Date());
+        //保存手机和验证码匹配成对
+        String verificationCode = RandomStringTool.randomNumeric(6);
+        Map<String, String> param = new HashMap(2, 1f);
+        param.put("code", verificationCode);
+        param.put("phone", phone);
+        SessionManagerCommon.setCheckRegisterPhoneInfo(param);
+        LOG.info("手机{0}-验证码：{1}", phone, verificationCode);
+
+        SmsInterface smsInterface = getSiteSmsInterface();
+        SmsMessageVo smsMessageVo = new SmsMessageVo();
+        smsMessageVo.setUserIp(ServletTool.getIpAddr(request));
+        smsMessageVo.setProviderId(smsInterface.getId());
+        smsMessageVo.setProviderName(smsInterface.getUsername());
+        smsMessageVo.setProviderPwd(smsInterface.getPassword());
+        smsMessageVo.setProviderKey(smsInterface.getDataKey());
+        smsMessageVo.setPhoneNum(phone);
+        smsMessageVo.setType(SmsTypeEnum.YZM.getCode());
+        String signature = null;
+        if (StringTool.isNotEmpty(smsInterface.getSignature())) {
+            signature = smsInterface.getSignature();
+        } else {
+            signature = SessionManagerCommon.getSiteName(request);
+        }
+        smsMessageVo.setContent("验证码：" + verificationCode + " 【" + signature + "】");//【】为固定格式
+        LOG.info("{0}：手机号：{1}-验证码：{2}-签名：{3}", sendType, phone, verificationCode, signature);
+        try {
+            ServiceTool.messageService().sendSmsMessage(smsMessageVo);
+        } catch (Exception ex) {
+            LOG.error(ex, "发送手机验证码错误");
+            return false;
+        }
+        return true;
+    }
 
     /**
      * 发送站点消息

@@ -20,10 +20,8 @@ import org.soul.commons.query.enums.Operator;
 import org.soul.commons.support._Module;
 import org.soul.commons.validation.form.PasswordRule;
 import org.soul.model.log.audit.enums.OpMode;
-import org.soul.model.msg.notice.vo.NoticeReceiveVo;
-import org.soul.model.msg.notice.vo.NoticeVo;
-import org.soul.model.msg.notice.vo.VNoticeReceivedTextListVo;
-import org.soul.model.msg.notice.vo.VNoticeReceivedTextVo;
+import org.soul.model.msg.notice.po.NoticeContactWay;
+import org.soul.model.msg.notice.vo.*;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.session.SessionKey;
@@ -41,12 +39,13 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.form.PlayerAdvisoryAppForm;
+import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseMineController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
@@ -54,6 +53,8 @@ import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
+import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
+import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
@@ -110,6 +111,7 @@ public class MineAppController extends BaseMineController {
         so.setActivityVersion(SessionManager.getLocale().toString());
         so.setUserId(SessionManager.getUserId());
         so.setCurrentDate(SessionManager.getDate().getNow());
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
 
         Map<String, Object> map = new HashMap<>(2, 1f);
@@ -1230,6 +1232,122 @@ public class MineAppController extends BaseMineController {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), null, APP_VERSION);
     }
 
+    /**
+     * 获取用户手机号码
+     *
+     * @param contactVo
+     * @return
+     */
+    @RequestMapping(value = "/getUserPhone")
+    @ResponseBody
+    public String getUserPhone(NoticeContactWayVo contactVo) {
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                contactWay != null ? StringTool.overlayTel(contactWay.getContactValue()) : "",
+                APP_VERSION);
+    }
+
+    /**
+     * 设置用户手机号码
+     *
+     * @return
+     */
+    @RequestMapping(value = "/updateUserPhone")
+    @ResponseBody
+    public String updateUserPhone(NoticeContactWayVo contactVo, String code) {
+        if (StringTool.isBlank(contactVo.getSearch().getContactValue())) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
+                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        if (StringTool.isBlank(code)) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
+                    AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        //手机短信验证
+        if (!checkPhoneCode(code, contactVo.getSearch().getContactValue())) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
+                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        if (contactWay != null) {
+            contactVo.getResult().setId(contactWay.getId());
+            contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
+            contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
+            contactVo = ServiceTool.noticeContactWayService().updateOnly(contactVo);
+        } else {
+            contactVo.getResult().setUserId(SessionManager.getUserId());
+            contactVo.getResult().setContactType(ContactWayTypeEnum.MOBILE.getCode());
+            contactVo.getResult().setStatus(ContactWayStatusEnum.CONTENT_STATUS_USING.getCode());
+            contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
+            contactVo = ServiceTool.noticeContactWayService().insert(contactVo);
+        }
+        if (!contactVo.isSuccess()) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.DINDING_PHONE_FAIL.getCode(),
+                    AppErrorCodeEnum.DINDING_PHONE_FAIL.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                null,
+                APP_VERSION);
+    }
+
+    /**
+     * 验证手机短信验证码
+     *
+     * @param code
+     * @param phone
+     * @return
+     */
+    private Boolean checkPhoneCode(String code, String phone) {
+        if (StringTool.isBlank(phone) || StringTool.isBlank(code)) {
+            return false;
+        }
+        Map<String, String> params = SessionManagerCommon.getCheckRegisterPhoneInfo();
+        if (params == null) {
+            return false;
+        }
+        if (StringTool.isBlank(params.get("phone")) || StringTool.isBlank(params.get("code"))) {
+            return false;
+        }
+        //验证码30分钟内有效
+        if (DateTool.minutesBetween(SessionManagerCommon.getDate().getNow(), SessionManagerCommon.getSendRegisterPhone()) > 30) {
+            return false;
+        }
+
+        return (phone.equals(params.get("phone")) && params.get("code").equals(code));
+    }
+
+    /**
+     * 获取用户手机号
+     *
+     * @param contactVo
+     * @return
+     */
+    private NoticeContactWay getUserPhoneNumber(NoticeContactWayVo contactVo) {
+        contactVo.setResult(new NoticeContactWay());
+        contactVo.getQuery().setCriterions(
+                new Criterion[]{
+                        new Criterion(NoticeContactWay.PROP_USER_ID, Operator.EQ, SessionManager.getUser().getId())
+                        , new Criterion(NoticeContactWay.PROP_CONTACT_TYPE, Operator.EQ, ContactWayTypeEnum.MOBILE.getCode())}
+        );
+        contactVo = ServiceTool.noticeContactWayService().search(contactVo);
+        return contactVo.getResult();
+    }
 
     /**
      * 验证吗remote验证

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
@@ -34,6 +35,7 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.company.site.vo.SiteGameTagVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.web.cache.Cache;
@@ -145,7 +147,7 @@ public class GameController extends BaseApiController {
         List<Integer> games;
 
         //游戏标签
-        Map<String, String> tagName = getGameTagMap();
+        Map<String, String> tagName = getGameTagMap(listVo);
 
         Map<String, List<Integer>> tagGames = new HashedMap();
         Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
@@ -248,20 +250,24 @@ public class GameController extends BaseApiController {
      *
      * @return
      */
-    private Map<String, String> getGameTagMap() {
-        Cache.refreshSiteGameTag();
-        //Map<String, SiteGameTag> siteGameTag = Cache.getSiteGameTag();
-        Map<String, String> tagNameMap = getTagNameMap();
+    private Map<String, String> getGameTagMap(SiteGameListVo listVo) {
         Map<String, String> gameTagMap = new HashedMap();
-        List<String> tags = new ArrayList<>();
-        String tagId;
-        gameTagMap.put("hot_game",tagNameMap.get("hot_game"));
-        /*for (SiteGameTag tag : siteGameTag.values()) {
-            tagId = tag.getTagId();
-            if (!tags.contains(tagId) && StringTool.isNotBlank(tagNameMap.get(tagId))) {
+        if (listVo.getSearch().getApiId() == null || listVo.getSearch().getApiTypeId() == null) {
+            return gameTagMap;
+        }
+
+        SiteGameTagVo tagVo = new SiteGameTagVo();
+        tagVo.setApiId(listVo.getSearch().getApiId());
+        tagVo.setApiTypeId(listVo.getSearch().getApiTypeId());
+        tagVo.getSearch().setSiteId(SessionManager.getSiteId());
+        List<String> siteTagIds = ServiceSiteTool.searchTagIdService().searchTagId(tagVo);
+        Map<String, String> tagNameMap = getTagNameMap();
+
+        for (String tagId : siteTagIds) {
+            if (tagId != null && StringTool.isNotBlank(tagNameMap.get(tagId))) {
                 gameTagMap.put(tagId, tagNameMap.get(tagId));
             }
-        }*/
+        }
         return gameTagMap;
     }
 

@@ -292,6 +292,7 @@ public abstract class BaseApiController extends BaseDemoController {
         String fishGameType = GameTypeEnum.FISH.getCode();
         Integer apiTypeId;
         Map<Integer, List<SiteGame>> navGameMap;
+        StringBuffer fishName;
         for (SiteGame siteGame : siteGameMap.values()) {
             apiId = siteGame.getApiId();
             game = gameMap.get(String.valueOf(siteGame.getGameId()));
@@ -301,6 +302,9 @@ public abstract class BaseApiController extends BaseDemoController {
             setGameNameAndCover(siteGameI18nMap, gameI18nMap, siteGame, locale);
             apiTypeId = siteGame.getApiTypeId();
             if (fishGameType.equals(siteGame.getGameType()) && mobile.equals(siteGame.getSupportTerminal())) {
+                fishName = new StringBuffer();
+                fishName.append(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(apiId))).append(" ").append(siteGame.getName());
+                siteGame.setName(fishName.toString());
                 fish.add(siteGame);
             } else if (navType.contains(apiTypeId) && mobile.equals(siteGame.getSupportTerminal())) {
                 navGameMap = navApiGameMap.get(apiTypeId);

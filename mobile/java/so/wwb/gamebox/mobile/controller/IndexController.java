@@ -644,6 +644,20 @@ public class IndexController extends BaseApiController {
     }
 
     /**
+     * 获取参数表中app下载地址
+     *
+     * @return
+     */
+    private String getAppDownloadUrl() {
+        String addressUrl = "";
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+        if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
+            addressUrl = sysParam.getParamValue();
+        }
+        return addressUrl;
+    }
+
+    /**
      * 获取APP下载地址
      */
     private void getAppPath(Model model, HttpServletRequest request) {
@@ -721,8 +735,16 @@ public class IndexController extends BaseApiController {
      * @param appUrl
      */
     private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
-        String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
-                versionName, code, versionName);
+        //获取参数表中下载地址
+        String addressUrl = getAppDownloadUrl();
+        String url;
+        if (StringTool.isNotBlank(addressUrl)) {
+            url = addressUrl;
+        } else {
+            url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
+                    versionName, code, versionName);
+        }
+
         model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("androidUrl", url);
     }
@@ -736,8 +758,16 @@ public class IndexController extends BaseApiController {
      * @param appUrl
      */
     private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
-        String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
-                versionName, code, code, versionName);
+        //获取参数表中下载地址
+        String addressUrl = getAppDownloadUrl();
+        String url;
+        if (StringTool.isNotBlank(addressUrl)) {
+            url = addressUrl;
+        } else {
+            url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
+                    versionName, code, code, versionName);
+        }
+
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("iosUrl", url);
     }

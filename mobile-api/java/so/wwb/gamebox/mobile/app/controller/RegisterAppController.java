@@ -53,6 +53,7 @@ import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
 import so.wwb.gamebox.model.master.enums.CreateChannelEnum;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserAgentVo;
@@ -173,6 +174,10 @@ public class RegisterAppController {
                     MapTool.getString(resultMap, "msg"),
                     null,
                     APP_VERSION);
+        }
+        //手机验证短信注册，手机号为已验证
+        if(isValid(SiteParamEnum.SETTING_REG_SETTING_PHONE_VERIFCATION)){
+            userRegisterVo.getPhone().setStatus(ContactWayStatusEnum.CONTENT_STATUS_USING.getCode());
         }
         userRegisterVo.setEditType(userRegisterVo.EDIT_TYPE_PLAYER);
         userRegisterVo = doRegister(userRegisterVo, request);
