@@ -116,6 +116,9 @@
 <script src="${resRoot}/js/mui/mui.lazyload.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.lazyload.img.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
+<c:if test="${apiId == 6}">
+    <script type="text/javascript" src="${resRoot}/js/game/PtGame.js?v=${rcVersion}"></script>
+</c:if>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
