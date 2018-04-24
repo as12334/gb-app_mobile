@@ -144,7 +144,7 @@ public class DownLoadController extends BaseDemoController {
         String addressUrl = getAppDownloadUrl();
         String url;
         if (StringTool.isNotBlank(addressUrl)) {
-            url = String.format("https://%s/app_%s_%s.apk", addressUrl, code, versionName);
+            url = addressUrl;
         } else {
             url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
                     versionName, code, versionName);
@@ -196,7 +196,7 @@ public class DownLoadController extends BaseDemoController {
         String addressUrl = getAppDownloadUrl();
         String url;
         if (StringTool.isNotBlank(addressUrl)) {
-            url = String.format("itms-services://?action=download-manifest&url=https://%s/app_%s_%s.plist", addressUrl, code, versionName);
+            url = addressUrl;
         } else {
             url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
                     versionName, code, code, versionName);
