@@ -644,13 +644,27 @@ public class IndexController extends BaseApiController {
     }
 
     /**
-     * 获取参数表中app下载地址
+     * 获取参数表中android下载地址
      *
      * @return
      */
-    private String getAppDownloadUrl() {
+    private String getAndroidDownloadUrl() {
         String addressUrl = "";
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_APP_DOWNLOAD_ADDRESS);
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_ANDROID_DOWNLOAD_ADDRESS);
+        if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
+            addressUrl = sysParam.getParamValue();
+        }
+        return addressUrl;
+    }
+
+    /**
+     * 获取参数表中ios下载地址
+     *
+     * @return
+     */
+    private String getIosDownloadUrl() {
+        String addressUrl = "";
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_ISO_DOWNLOAD_ADDRESS);
         if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
             addressUrl = sysParam.getParamValue();
         }
@@ -736,10 +750,10 @@ public class IndexController extends BaseApiController {
      */
     private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
         //获取参数表中下载地址
-        String addressUrl = getAppDownloadUrl();
+        String addressUrl = getAndroidDownloadUrl();
         String url;
         if (StringTool.isNotBlank(addressUrl)) {
-            url = String.format("https://%s/app_%s_%s.apk", addressUrl, code, versionName);
+            url = addressUrl;
         } else {
             url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
                     versionName, code, versionName);
@@ -759,10 +773,10 @@ public class IndexController extends BaseApiController {
      */
     private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
         //获取参数表中下载地址
-        String addressUrl = getAppDownloadUrl();
+        String addressUrl = getIosDownloadUrl();
         String url;
         if (StringTool.isNotBlank(addressUrl)) {
-            url = String.format("itms-services://?action=download-manifest&url=https://%s/app_%s_%s.plist", addressUrl, code, versionName);
+            url = addressUrl;
         } else {
             url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
                     versionName, code, code, versionName);

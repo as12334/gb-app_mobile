@@ -70,7 +70,7 @@ public class FindPasswordAppController {
                     null,
                     APP_VERSION);
         }
-        if (map.get("phone") == null) {
+        if (map.get("phone") != null && StringTool.isBlank(map.get("phone").toString())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UNBOUND_PHONE.getCode(),
                     AppErrorCodeEnum.UNBOUND_PHONE.getMsg(),
