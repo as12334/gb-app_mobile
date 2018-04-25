@@ -29,7 +29,7 @@
                                 <div class="mui-scroll">
                                     <c:forEach var="map" items="${messageVo.typeMessageMap}">
                                         <c:forEach var="message" items="${map.value}">
-                                            <div href="javascript:void(0);" class="promo-item">
+                                            <div class="promo-item">
                                                     <%--<a href="${root}/promo/promoDetail.html?search.id=${message.id}"
                                                            data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'>--%>
                                                 <c:choose>
@@ -65,7 +65,7 @@
                                     <div class="mui-scroll-wrapper">
                                         <div class="mui-scroll">
                                             <c:forEach items="${mapValue}" var="message">
-                                                <div href="javascript:void(0);" class="promo-item">
+                                                <div class="promo-item">
                                                     <c:choose>
                                                         <c:when test="${!empty message.activityAffiliated}">
                                                             <c:set var="imgSrc"
