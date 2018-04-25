@@ -131,7 +131,7 @@
                             <li><a data-href="${root}/game.html?typeId=-3">${views.app_auto['关于我们']}</a></li>
                             <li><a data-href="${root}/game.html?typeId=-4">${views.app_auto['注册条款']}</a></li>
 
-                            <li class="_download mui-hide _downloadApp" data-download="/app/download.html">
+                            <li class="_download mui-hide _downloadApp" data-download="/app/download.html?userAgent=${os}">
                                 <a>${views.app_auto['客户端']}</a></li>
                             <li class="mui-hide" id="goPc"><a data-terminal="pc">${views.app_auto['电脑版']}</a></li>
                             <c:if test="${siteId eq 173}">
