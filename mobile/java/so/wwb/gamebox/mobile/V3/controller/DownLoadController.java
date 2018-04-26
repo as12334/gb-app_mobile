@@ -77,6 +77,18 @@ public class DownLoadController extends BaseDemoController {
                 }
             }
         }
+        //ios自定义下载地址
+        if (AppTypeEnum.IOS.getCode().contains(userAgent)) {
+            String ios = getIosDownloadUrl();
+            if (StringTool.isNotBlank(ios)) {
+                response.setStatus(302);
+                try {
+                    response.sendRedirect(ios);
+                } catch (IOException e) {
+                    LOG.error(String.format("ios请求外接地址：{0}", e));
+                }
+            }
+        }
 
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
