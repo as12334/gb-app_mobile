@@ -64,37 +64,25 @@ public class DownLoadController extends BaseDemoController {
             return "/passport/login";
         }
 
+        String url = null;
         //android自定义下载地址
         if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
-            String androidUrl = getAndroidDownloadUrl();
-            if (StringTool.isNotBlank(androidUrl)) {
-                response.setStatus(302);
-                response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, androidUrl));
-                try {
-                    response.sendRedirect(androidUrl);
-                } catch (IOException e) {
-                    LOG.error(String.format("android请求外接地址：{0}", e));
-                }
+            url = getAndroidDownloadUrl();
+        } else if (AppTypeEnum.IOS.getCode().contains(userAgent)) { //ios下载页面
+            url = getIosDownloadUrl();
+        }
+        if (StringTool.isBlank(url)) {
+            String code = CommonContext.get().getSiteCode();
+            IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
+            ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
+            getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
+        } else {
+            try {
+                response.sendRedirect(url);
+            } catch (IOException e) {
+                LOG.error(e, "app请求外接地址错误,地址:{0}", url);
             }
         }
-        //ios自定义下载地址
-        if (AppTypeEnum.IOS.getCode().contains(userAgent)) {
-            String ios = getIosDownloadUrl();
-            if (StringTool.isNotBlank(ios)) {
-                response.setStatus(302);
-                try {
-                    response.sendRedirect(ios);
-                } catch (IOException e) {
-                    LOG.error(String.format("ios请求外接地址：{0}", e));
-                }
-            }
-        }
-
-        String code = CommonContext.get().getSiteCode();
-        IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
-        ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
-        getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
-
         return "/download/DownLoad";
     }
 
