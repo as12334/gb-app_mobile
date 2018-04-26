@@ -25,7 +25,7 @@
                     <li class="mui-table-view-cell ${channel eq 'index'?'active':''}" data-skip="/" data-target="0" data-os="${os}">
                         <a><span class="icon-canvas ic-index"></span>${views.include_auto['首页2']}</a>
                     </li>
-                    <li class="mui-table-view-cell _download _downloadApp mui-hide" data-download="/app/download.html">
+                    <li class="mui-table-view-cell _download _downloadApp mui-hide" data-download="/app/download.html?userAgent=${os}">
                         <a><span class="icon-canvas ic-download"></span>${views.include_auto['客户端']}</a>
                     </li>
                     <li class="mui-table-view-cell" data-skip="/wallet/deposit/index.html" data-target="1" data-os="${os}">

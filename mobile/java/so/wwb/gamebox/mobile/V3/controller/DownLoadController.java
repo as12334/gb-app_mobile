@@ -28,6 +28,7 @@ import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,12 +56,26 @@ public class DownLoadController extends BaseDemoController {
 
     @RequestMapping("/downLoad")
     @Upgrade(upgrade = true)
-    public String downLoad(Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String downLoad(Model model, HttpServletRequest request, HttpServletResponse response, String userAgent) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             String url = "/login/commonLogin.html";
             response.setStatus(302);
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
+        }
+
+        //android自定义下载地址
+        if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
+            String androidUrl = getAndroidDownloadUrl();
+            if (StringTool.isNotBlank(androidUrl)) {
+                response.setStatus(302);
+                response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, androidUrl));
+                try {
+                    response.sendRedirect(androidUrl);
+                } catch (IOException e) {
+                    LOG.error(String.format("android请求外接地址：{0}", e));
+                }
+            }
         }
 
         String code = CommonContext.get().getSiteCode();
@@ -73,7 +88,19 @@ public class DownLoadController extends BaseDemoController {
 
     @RequestMapping("/downLoadIOS")
     @Upgrade(upgrade = true)
-    public String downLoadIOS(Model model, HttpServletRequest request) {
+    public String downLoadIOS(Model model, HttpServletRequest request, HttpServletResponse response) {
+        //ios自定义下载页面
+        String iosUrl = getIosDownloadUrl();
+        if (StringTool.isNotBlank(iosUrl)) {
+            response.setStatus(302);
+            response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, iosUrl));
+            try {
+                response.sendRedirect(iosUrl);
+            } catch (IOException e) {
+                LOG.error(String.format("ios请求外接地址：{0}", e));
+            }
+        }
+
         String code = CommonContext.get().getSiteCode();
         IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
         ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
@@ -152,15 +179,8 @@ public class DownLoadController extends BaseDemoController {
      * @param appUrl
      */
     private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
-        //获取参数表中下载地址
-        String addressUrl = getAndroidDownloadUrl();
-        String url;
-        if (StringTool.isNotBlank(addressUrl)) {
-            url = addressUrl;
-        } else {
-            url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
-                    versionName, code, versionName);
-        }
+        String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
+                versionName, code, versionName);
 
         model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("androidUrl", url);
@@ -204,15 +224,8 @@ public class DownLoadController extends BaseDemoController {
      * @param appUrl
      */
     private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
-        //获取参数表中下载地址
-        String addressUrl = getIosDownloadUrl();
-        String url;
-        if (StringTool.isNotBlank(addressUrl)) {
-            url = addressUrl;
-        } else {
-            url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
-                    versionName, code, code, versionName);
-        }
+        String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
+                versionName, code, code, versionName);
 
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("iosUrl", url);
