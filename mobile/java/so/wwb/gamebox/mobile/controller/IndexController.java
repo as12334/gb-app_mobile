@@ -664,7 +664,7 @@ public class IndexController extends BaseApiController {
      */
     private String getIosDownloadUrl() {
         String addressUrl = "";
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_ISO_DOWNLOAD_ADDRESS);
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_IOS_DOWNLOAD_ADDRESS);
         if (sysParam != null && StringTool.isNotBlank(sysParam.getParamValue())) {
             addressUrl = sysParam.getParamValue();
         }
