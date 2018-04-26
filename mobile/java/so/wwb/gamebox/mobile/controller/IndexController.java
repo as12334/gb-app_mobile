@@ -67,6 +67,7 @@ import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -629,12 +630,36 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     @Upgrade(upgrade = true)
-    public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response) {
+    public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response, String userAgent) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             String url = "/login/commonLogin.html";
             response.setStatus(302);
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
+        }
+        //android自定义下载地址
+        if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
+            String android = getAndroidDownloadUrl();
+            if (StringTool.isNotBlank(android)) {
+                response.setStatus(302);
+                try {
+                    response.sendRedirect(android);
+                } catch (IOException e) {
+                    LOG.error(String.format("android请求外接地址：{0}", e));
+                }
+            }
+        }
+        //ios自定义下载地址
+        if (AppTypeEnum.IOS.getCode().contains(userAgent)) {
+            String ios = getIosDownloadUrl();
+            if (StringTool.isNotBlank(ios)) {
+                response.setStatus(302);
+                try {
+                    response.sendRedirect(ios);
+                } catch (IOException e) {
+                    LOG.error(String.format("ios请求外接地址：{0}", e));
+                }
+            }
         }
         getAppPath(model, request);
         if (ParamTool.isMobileUpgrade()) {
@@ -749,15 +774,8 @@ public class IndexController extends BaseApiController {
      * @param appUrl
      */
     private void fillAndroidInfo(Model model, String code, String appDomain, String versionName, String appUrl) {
-        //获取参数表中下载地址
-        String addressUrl = getAndroidDownloadUrl();
-        String url;
-        if (StringTool.isNotBlank(addressUrl)) {
-            url = addressUrl;
-        } else {
-            url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
-                    versionName, code, versionName);
-        }
+        String url = String.format("https://%s%s%s/app_%s_%s.apk", appDomain, appUrl,
+                versionName, code, versionName);
 
         model.addAttribute("androidQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("androidUrl", url);
@@ -772,15 +790,8 @@ public class IndexController extends BaseApiController {
      * @param appUrl
      */
     private void fillIosInfo(Model model, String code, String versionName, String appUrl) {
-        //获取参数表中下载地址
-        String addressUrl = getIosDownloadUrl();
-        String url;
-        if (StringTool.isNotBlank(addressUrl)) {
-            url = addressUrl;
-        } else {
-            url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
-                    versionName, code, code, versionName);
-        }
+        String url = String.format("itms-services://?action=download-manifest&url=https://%s%s/%s/app_%s_%s.plist", appUrl,
+                versionName, code, code, versionName);
 
         model.addAttribute("iosQrcode", EncodeTool.encodeBase64(QrcodeDisTool.createQRCode(url, 6)));
         model.addAttribute("iosUrl", url);
