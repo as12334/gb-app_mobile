@@ -16,6 +16,7 @@ import so.wwb.gamebox.iservice.boss.IAppUpdateService;
 import so.wwb.gamebox.iservice.company.site.ISiteAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.mobile.tools.OsTool;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
@@ -56,14 +57,14 @@ public class DownLoadController extends BaseDemoController {
 
     @RequestMapping("/downLoad")
     @Upgrade(upgrade = true)
-    public String downLoad(Model model, HttpServletRequest request, HttpServletResponse response, String userAgent) {
+    public String downLoad(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             String url = "/login/commonLogin.html";
             response.setStatus(302);
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
         }
-
+        String userAgent = OsTool.getOsInfo(request);
         String url = null;
         //android自定义下载地址
         if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
