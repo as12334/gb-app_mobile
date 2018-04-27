@@ -6,8 +6,7 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css"/>
-    <link rel="stylesheet" href="${resRoot}/themes/otherpage.css"/>
+    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css" />
 </head>
 
 <body>
@@ -48,7 +47,7 @@
                                                 </div>
                                                 <div class="pro-txt">
                                                     <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'
+                                                    <a data-rel='{"target":"${root}/promo/goToPromoDetail.html?search.id=${message.id}","opType":"href"}'
                                                        class="mui-pull-right">查看详情</a>
                                                 </div>
                                                     <%--</a>--%>
@@ -83,7 +82,7 @@
                                                     </div>
                                                     <div class="pro-txt">
                                                         <div class="mui-pull-left">${message.activityName}</div>
-                                                        <a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'
+                                                        <a data-rel='{"target":"${root}/promo/goToPromoDetail.html?search.id=${message.id}","opType":"href"}'
                                                            class="mui-pull-right">查看详情</a>
                                                     </div>
                                                         <%--</a>--%>

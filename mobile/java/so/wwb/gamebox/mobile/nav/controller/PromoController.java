@@ -153,12 +153,23 @@ public class PromoController {
     @RequestMapping("/promoDetail")
     @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
+        getPromo(vActivityMessageVo, model);
+        return PROMO_RECORDS_DETAIL;
+    }
+
+    @RequestMapping(value = "/goToPromoDetail")
+    @Upgrade(upgrade = true)
+    public String goToPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
+        getPromo(vActivityMessageVo, model);
+        return "/promo/GoToPromoDetail";
+    }
+
+    private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
         vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);
 
         model.addAttribute("command", vActivityMessageVo);
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
-        return PROMO_RECORDS_DETAIL;
     }
 
     @ResponseBody
