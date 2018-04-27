@@ -22,7 +22,7 @@
             Copyright © &nbsp;${siteName}&nbsp; Reserved.
         </div>
         <div class="tech-support">
-            ${views.app_auto['技术支持']}：<span class="icon-tech-support ${centerId==-3?'dbo':''}"></span>
+            ${views.app_auto['技术支持']}：<span class="icon-tech-support ${centerId==-3?'bdo':''}"></span>
         </div>
     </div>
 </div>

@@ -630,38 +630,30 @@ public class IndexController extends BaseApiController {
      */
     @RequestMapping("/app/download")
     @Upgrade(upgrade = true)
-    public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response, String userAgent) {
+    public String downloadApp(Model model, HttpServletRequest request, HttpServletResponse response) {
         if (ParamTool.isLoginShowQrCode() && SessionManager.getUser() == null) {//是否登录才显示二维码
             String url = "/login/commonLogin.html";
             response.setStatus(302);
             response.setHeader("Location", SessionManagerCommon.getRedirectUrl(request, url));
             return "/passport/login";
         }
+        String userAgent = OsTool.getOsInfo(request);
+        String url = null;
         //android自定义下载地址
         if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
-            String android = getAndroidDownloadUrl();
-            if (StringTool.isNotBlank(android)) {
-                response.setStatus(302);
-                try {
-                    response.sendRedirect(android);
-                } catch (IOException e) {
-                    LOG.error(String.format("android请求外接地址：{0}", e));
-                }
+            url = getAndroidDownloadUrl();
+        } else if (AppTypeEnum.IOS.getCode().contains(userAgent)) { //ios下载页面
+            url = getIosDownloadUrl();
+        }
+        if (StringTool.isBlank(url)) {
+            getAppPath(model, request);
+        } else {
+            try {
+                response.sendRedirect(url);
+            } catch (IOException e) {
+                LOG.error(e, "ios请求外接地址错误,地址:{0}", url);
             }
         }
-        //ios自定义下载地址
-        if (AppTypeEnum.IOS.getCode().contains(userAgent)) {
-            String ios = getIosDownloadUrl();
-            if (StringTool.isNotBlank(ios)) {
-                response.setStatus(302);
-                try {
-                    response.sendRedirect(ios);
-                } catch (IOException e) {
-                    LOG.error(String.format("ios请求外接地址：{0}", e));
-                }
-            }
-        }
-        getAppPath(model, request);
         if (ParamTool.isMobileUpgrade()) {
             return "/download/DownLoad";
         }
