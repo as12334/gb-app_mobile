@@ -164,6 +164,13 @@ public class PromoController {
         return "/promo/GoToPromoDetail";
     }
 
+    @RequestMapping(value = "/applyPromoDetail")
+    @Upgrade(upgrade = true)
+    public String applyPromoDetail(String msg, String state, String error) {
+
+        return "/promo/ApplyPromoDetail";
+    }
+
     private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
         vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);
