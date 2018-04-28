@@ -26,6 +26,7 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.ApiTypeCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationVo;
 import so.wwb.gamebox.model.company.site.vo.SiteApiVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
@@ -236,7 +237,7 @@ public abstract class BaseApiController extends BaseDemoController {
     }
 
     protected void getApiTypeGame(Model model) {
-        //获取类型
+      /*  //获取类型
         List<SiteApiType> siteApiTypes = getApiTypes();
         Map<String, SiteApiTypeRelation> siteApiTypeRelationMap = CacheBase.siteApiTypeRelationMap(SessionManager.getSiteId());
         Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
@@ -249,7 +250,12 @@ public abstract class BaseApiController extends BaseDemoController {
         }
         model.addAttribute("siteApiTypes", siteApiTypes);
         //处理二级分类游戏数据
-        handleNavGame(model);
+        handleNavGame(model);*/
+        Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
+        for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
+            Cache.getMobileApiCacheEntity(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
+            apiTypeCacheEntity.getApiCacheEntityList();
+        }
     }
 
     /**
