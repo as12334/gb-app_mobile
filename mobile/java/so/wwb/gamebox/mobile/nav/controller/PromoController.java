@@ -4,6 +4,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
+import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
@@ -36,6 +37,7 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -166,7 +168,10 @@ public class PromoController {
 
     @RequestMapping(value = "/applyPromoDetail")
     @Upgrade(upgrade = true)
-    public String applyPromoDetail(String msg, String state, String error) {
+    public String applyPromoDetail(String msg, String state, String error, Model model, HttpServletResponse response, HttpServletRequest request) {
+        model.addAttribute("msg", EncodeTool.urlDecode(msg));
+        model.addAttribute("state", state);
+        model.addAttribute("error", error);
 
         return "/promo/ApplyPromoDetail";
     }
