@@ -21,7 +21,7 @@
                 <!-- 主界面具体展示内容 -->
                 <div class="top_title">
                     <div class="sub_tit">活动初审</div>
-                    <div class="tit">笔笔存送优笔笔存送优惠惠</div>
+                    <div class="tit">${activityName}</div>
                 </div>
                 <div class="promo_con_list">
                     <ul class="mui-table-view">

@@ -168,8 +168,9 @@ public class PromoController {
 
     @RequestMapping(value = "/applyPromoDetail")
     @Upgrade(upgrade = true)
-    public String applyPromoDetail(String msg, String state, String error, Model model, HttpServletResponse response, HttpServletRequest request) {
+    public String applyPromoDetail(String msg, String state, String error, String activityName, Model model) {
         model.addAttribute("msg", EncodeTool.urlDecode(msg));
+        model.addAttribute("activityName", EncodeTool.urlDecode(activityName));
         model.addAttribute("state", state);
         model.addAttribute("error", error);
 
