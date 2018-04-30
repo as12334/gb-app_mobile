@@ -15,8 +15,6 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.common.consts.MobileConst;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
-import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -26,10 +24,7 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
-import so.wwb.gamebox.model.company.site.vo.ApiTypeCacheEntity;
-import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationVo;
-import so.wwb.gamebox.model.company.site.vo.SiteApiVo;
-import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.company.site.vo.*;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
@@ -253,9 +248,50 @@ public abstract class BaseApiController extends BaseDemoController {
         handleNavGame(model);*/
         Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
-            Cache.getMobileApiCacheEntity(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
-            apiTypeCacheEntity.getApiCacheEntityList();
+            Map<String, ApiCacheEntity> apiMap = Cache.getMobileApiCacheEntity(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
+            apiTypeCacheEntity.setApis(apiMap.values());
         }
+        //处理二级分类游戏数据
+        handleNavGame(model, apiType);
+    }
+
+    protected void handleNavGame(Model model, Map<String, ApiTypeCacheEntity> apiTypeCacheEntityMap) {
+        //处理彩票、棋牌游戏
+        List<Integer> navType = getNavType();
+        ApiTypeCacheEntity apiTypeCacheEntity;
+        Map<String, GameCacheEntity> gameMap;
+        for (Integer apiTypeId : navType) {
+            apiTypeCacheEntity = apiTypeCacheEntityMap.get(String.valueOf(apiTypeId));
+            if (apiTypeCacheEntity == null || CollectionTool.isEmpty(apiTypeCacheEntity.getApis())) {
+                continue;
+            }
+            for (ApiCacheEntity apiCacheEntity : apiTypeCacheEntity.getApis()) {
+                gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiCacheEntity.getApiTypeId()), String.valueOf(apiCacheEntity.getApiId()));
+                if (MapTool.isNotEmpty(gameMap)) {
+                    apiCacheEntity.setGames(gameMap.values());
+                }
+            }
+        }
+        //处理捕鱼数据
+        ApiTypeCacheEntity casinoApiType = apiTypeCacheEntityMap.get(String.valueOf(ApiTypeEnum.CASINO.getCode()));
+        if (casinoApiType == null || CollectionTool.isEmpty(casinoApiType.getApis())) {
+            return;
+        }
+        List<GameCacheEntity> fishGames = new ArrayList<>();
+        String fishGameType = GameTypeEnum.FISH.getCode();
+        for (ApiCacheEntity apiCacheEntity : casinoApiType.getApis()) {
+            gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiCacheEntity.getApiTypeId()), String.valueOf(apiCacheEntity.getApiId()));
+            if (MapTool.isEmpty(gameMap)) {
+                continue;
+            }
+            for (GameCacheEntity game : gameMap.values()) {
+                if (fishGameType.equals(game.getGameType())) {
+                    fishGames.add(game);
+                }
+            }
+
+        }
+        model.addAttribute("fishGames", fishGames);
     }
 
     /**
@@ -276,8 +312,8 @@ public abstract class BaseApiController extends BaseDemoController {
      * @param model
      */
     protected void handleNavGame(Model model) {
-        //处理捕鱼、彩票游戏
-        Map<String, SiteGame> siteGameMap = CacheBase.getSiteGame();
+        // Map<String,GameCacheEntity> games = Cache.getMobileGameCacheEntity();
+       /* Map<String, SiteGame> siteGameMap = CacheBase.getSiteGame();
         if (MapTool.isEmpty(siteGameMap)) {
             return;
         }
@@ -325,7 +361,7 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
         model.addAttribute("navApiGameMap", navApiGameMap);
-        model.addAttribute("fish", fish);
+        model.addAttribute("fish", fish);*/
     }
 
     private void setGameNameAndCover(Map<String, SiteGameI18n> siteGameI18nMap, Map<String, GameI18n> gameI18nMap, SiteGame siteGame, String locale) {
