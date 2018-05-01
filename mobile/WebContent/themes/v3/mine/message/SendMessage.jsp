@@ -30,13 +30,22 @@
                 <div class="mui-input-row _captcha" id="captcha_div" style="${isOpenCaptcha ? "" :'display: none;'}">
                     <div class="form-row">
                         <div class="cont">
-                            <input type="text" class="mui-input ico6" maxlength="4"
+                            <label style="padding: 4px 10px;height:  40px;">
+                                <img id="_captcha_img" data-rel='{"target":"refreshCode","opType":"function","src":"${root}/captcha/feedback.html"}'
+                                     src="${root}/captcha/feedback.html" alt="" style=" width: 100%;"></label>
+                            <div class="ct">
+                                <input type="text" placeholder="${views.mine_auto['请输入验证码']}" name="captcha">
+                            </div>
+                        </div>
+
+                            <%--<input type="text" class="mui-input ico6" maxlength="4"
                                    placeholder="${views.mine_auto['请输入验证码']}" name="captcha" id="captcha">
                             <div class="gb-vcode">
-                                <img class="_captcha_img"
+                                <img id="_captcha_img"
                                      data-rel='{"target":"refreshCode","opType":"function","src":"${root}/captcha/feedback.html"}'
                                      src="${root}/captcha/feedback.html" alt="">
-                            </div>
+                            </div>--%>
+
                         </div>
                     </div>
 
