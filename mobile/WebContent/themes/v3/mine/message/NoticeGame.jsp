@@ -106,7 +106,7 @@
             </div>
         </div>
         <div id="noticeSite" class="mui-control-content ${empty unReadType?'':'mui-active'}" name="notice">
-            <%@include file="./NoticeSite.jsp" %>
+            <%@include file="NoticeSite.jsp" %>
         </div>
     </div>
 </div>
