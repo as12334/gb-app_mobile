@@ -103,7 +103,7 @@
                     <c:when test="${code == 'effective_transaction' || code == 'profit_loss'}">
                         <div class="promo_con_list">
                             <ul class="mui-table-view">
-                                <li class="mui-table-view-cell">条件一：盈利1230元
+                                <%--<li class="mui-table-view-cell">条件一：盈利1230元
                                     <span class="icon-pass-disa"></span>
                                 </li>
                                 <li class="mui-table-view-cell">条件一：盈利1230元
@@ -111,7 +111,7 @@
                                 </li>
                                 <li class="mui-table-view-cell">条件一：盈利1230元
                                     <span class="icon-fail"></span>
-                                </li>
+                                </li>--%>
                             </ul>
                         </div>
                         <div class="pro_mone">
