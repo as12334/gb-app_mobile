@@ -231,7 +231,7 @@ public class ActivityMoneyAppController {
      * @return
      */
     private PlayerActivityMessage findMoneyActivity() {
-        Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
+        Map<String, PlayerActivityMessage> activityMessages = Cache.getMobileActivityMessages();
         String lang = SessionManagerBase.getLocale().toString();
         Iterator<String> iter = activityMessages.keySet().iterator();
         Date justNow = new Date();

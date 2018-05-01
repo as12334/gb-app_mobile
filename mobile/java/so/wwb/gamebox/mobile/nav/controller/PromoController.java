@@ -4,6 +4,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
+import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
@@ -36,6 +37,7 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -166,9 +168,16 @@ public class PromoController {
 
     @RequestMapping(value = "/applyPromoDetail")
     @Upgrade(upgrade = true)
-    public String applyPromoDetail(String msg, String state, String error) {
-
-        return "/promo/ApplyPromoDetail";
+    public String applyPromoDetail(String resultId, String activityName, String code, String type, Model model) {
+        model.addAttribute("activityName", EncodeTool.urlDecode(activityName));
+        model.addAttribute("resultId", resultId);
+        model.addAttribute("code", code);
+        model.addAttribute("type", type);
+        if ("fetch".equals(type)) {
+            return "/promo/ProcessApplyDetail";
+        } else {
+            return "/promo/ApplyPromoDetail";
+        }
     }
 
     private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
