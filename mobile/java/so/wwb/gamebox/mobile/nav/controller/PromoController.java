@@ -168,13 +168,16 @@ public class PromoController {
 
     @RequestMapping(value = "/applyPromoDetail")
     @Upgrade(upgrade = true)
-    public String applyPromoDetail(String msg, String state, String error, String activityName, Model model) {
-        model.addAttribute("msg", EncodeTool.urlDecode(msg));
+    public String applyPromoDetail(String resultId, String activityName, String code, String type, Model model) {
         model.addAttribute("activityName", EncodeTool.urlDecode(activityName));
-        model.addAttribute("state", state);
-        model.addAttribute("error", error);
-
-        return "/promo/ApplyPromoDetail";
+        model.addAttribute("resultId", resultId);
+        model.addAttribute("code", code);
+        model.addAttribute("type", type);
+        if ("fetch".equals(type)) {
+            return "/promo/ProcessApplyDetail";
+        } else {
+            return "/promo/ApplyPromoDetail";
+        }
     }
 
     private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {

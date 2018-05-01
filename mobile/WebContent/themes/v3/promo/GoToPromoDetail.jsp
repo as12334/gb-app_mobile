@@ -92,14 +92,19 @@
                     <c:if test="${activity.code ne 'content'}">
                         <c:choose>
                             <c:when test="${isLogin}">
-                                <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
+                                <a class="mui-btn mui-btn-primary btn-deposit"
+                                   data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
                                 <a class="mui-btn mui-btn-primary btn-apply submit" ${activityCode eq 'back_water'?'disabled':''}
                                    data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
-                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}","activityName":"${activity.activityName}"}'>${btnText}</a>
+                                    "dataStates":"${activity.states}","dataType":"processing",
+                                    "dataSearchId":"${activity.searchId}","dataRankId":"${rankId}",
+                                    "activityName":"${activity.activityName}"}'>${btnText}</a>
                             </c:when>
                             <c:otherwise>
-                                <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply" data-rel='{"target":"login","opType":"function"}'>${views.promo_auto['登录账户']}</a>
+                                <a class="mui-btn mui-btn-primary btn-deposit"
+                                   data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
+                                <a class="mui-btn mui-btn-primary btn-apply"
+                                   data-rel='{"target":"login","opType":"function"}'>${views.promo_auto['登录账户']}</a>
                             </c:otherwise>
                         </c:choose>
                     </c:if>
