@@ -459,8 +459,8 @@ public class OriginController extends BaseOriginController {
         if (phone == null || StringTool.isBlank(phone.getContactValue())) {
             LOG.info("手机号码为空或者验证码为空！");
             return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
+                    AppErrorCodeEnum.UNBOUND_PHONE.getCode(),
+                    AppErrorCodeEnum.UNBOUND_PHONE.getMsg(),
                     null,
                     APP_VERSION);
         }
@@ -745,7 +745,7 @@ public class OriginController extends BaseOriginController {
      * @return
      */
     private PlayerActivityMessage findMoneyActivity() {
-        Map<String, PlayerActivityMessage> activityMessages = Cache.getActivityMessages(SessionManagerBase.getSiteId());
+        Map<String, PlayerActivityMessage> activityMessages = Cache.getMobileActivityMessages();
         String lang = SessionManagerBase.getLocale().toString();
         Iterator<String> iter = activityMessages.keySet().iterator();
         Date justNow = SessionManager.getDate().getNow();

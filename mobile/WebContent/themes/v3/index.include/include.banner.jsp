@@ -2,8 +2,8 @@
 <%@ include file="../include/include.inc.jsp" %>
 <section class="mui-slider banner-slide">
     <div class="banner-ads">
-        更多精彩游戏，请下载客户端！
-        <a data-rel='{"target":"downLoadApp","opType":"function"}' class="btn-download">立即下载</a>
+        ${views.themes_auto['更多精彩游戏']}
+        <a data-rel='{"target":"downLoadApp","opType":"function"}' class="btn-download">${views.themes_auto['立即下载']}</a>
         <div data-rel='{"target":"closeDownLoad","opType":"function"}' class="close-slide"></div>
     </div>
     <div class="mui-slider-group ${fn:length(carousels)>0?'mui-slider-loop':''}">
