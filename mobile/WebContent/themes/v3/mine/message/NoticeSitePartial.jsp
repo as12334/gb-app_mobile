@@ -6,10 +6,10 @@
         <c:forEach items="${command.result}" var="s">
             <li class="${s.receiveStatus=='12'?'':'no-read'}" >
                 <div class="i"><a  href="" class="gb-radio" value="${s.id}" name="site1_check"></a>
-                    <div class="ct" data-url="${root}/message/announcementDetail.html?searchId=${command.getSearchId(s.id)}">
+                    <div class="ct" data-rel='{"target":"${root}/message/announcementDetail.html?searchId=${command.getSearchId(s.id)}","opType":"href"}'>
                         <p>${s.shortTitle50}</p>
                     </div>
-                    <p data-url="${root}/message/announcementDetail.html?searchId=${command.getSearchId(s.id)}">
+                    <p data-rel='{"target":"${root}/message/announcementDetail.html?searchId=${command.getSearchId(s.id)}","opType":"href"}'>
                         &nbsp;${soulFn:formatDateTz(s.receiveTime, DateFormat.DAY_SECOND,timeZone)}</p>
                 </div>
             </li>

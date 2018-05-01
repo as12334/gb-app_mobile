@@ -7,7 +7,7 @@
             <c:forEach items="${command.result}" var="s" varStatus="dex">
                 <c:forEach items="${apiMap}" var="apis">
                     <c:if test="${apis.value.apiId==s.apiId}">
-                        <li data-url="${root}/message/gameNoticeDetail.html?searchId=${command.getSearchId(s.id)}">
+                        <li data-rel='{"target":"${root}/message/gameNoticeDetail.html?searchId=${command.getSearchId(s.id)}","opType":"href"}'>
                             <div class="i">
                                 <div class="ct">
                                     <p><c:if test="${not empty s.title}"> 【${s.shortTitle80}】</c:if>
