@@ -141,7 +141,7 @@
                                                          data-rel='{"target":"${root}/bankCard/page/addBtc.html?action=withdraw","opType":"href"}'>
                                                     <span>
                                                         <c:if test="${!empty btc}">
-                                                            <span class="pay-bank bitcoin"></span>
+                                                            <span class="pay-third BTC"></span>
                                                             ${views.themes_auto['比特币']}&nbsp;${gbFn:overlayBankcard(btc.bankcardNumber)}
                                                         </c:if>
                                                          <c:if test="${empty btc}">
