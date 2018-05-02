@@ -763,6 +763,17 @@ public class BaseDepositController {
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
         }
+        if(PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())){
+            String type ;
+            if(PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())){
+                type = AppDepositPayEnum.BITCOIN_PAY.getCode();
+            }else if(PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
+                type = AppDepositPayEnum.COMPANY_PAY.getCode();
+            }else{
+                type = AppDepositPayEnum.ELECTRONIC_PAY.getCode();
+            }
+            companyCommonDeposit(playerRechargeVo, result, type,request);
+        }
         PlayerRank rank = getRank();
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
                 playerRechargeVo.getResult().getRechargeType());
@@ -908,7 +919,7 @@ public class BaseDepositController {
         return ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
     }
 
-    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, String type) {
+    public String companyCommonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, String type, HttpServletRequest request) {
         if (result.hasErrors()) {
             LOG.debug("手机端存款:表单验证未通过，error:{0}", result.getAllErrors());
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
@@ -921,7 +932,9 @@ public class BaseDepositController {
                     AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
                     null, APP_VERSION);
         }
-
+        if(PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType())){
+            onlineCommonDeposit(playerRechargeVo, result, request);
+        }
         if (AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)) {
             playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount);
         } else if (AppDepositPayEnum.ELECTRONIC_PAY.getCode().equals(type)) {

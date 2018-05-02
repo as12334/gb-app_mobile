@@ -529,24 +529,24 @@ public class DepositAppController extends BaseDepositController {
     //网银支付　存款
     @RequestMapping("/companyPay")
     @ResponseBody
-    public String companyPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyBankDepositForm form, BindingResult result) {
+    public String companyPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyBankDepositForm form, BindingResult result, HttpServletRequest request) {
         String type = AppDepositPayEnum.COMPANY_PAY.getCode();
-        return companyCommonDeposit(playerRechargeVo, result, type);
+        return companyCommonDeposit(playerRechargeVo, result, type,request);
     }
 
     //电子支付 存款
     @RequestMapping("/electronicPay")
     @ResponseBody
-    public String electronicPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyElectronicDepositForm form, BindingResult result) {
+    public String electronicPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyElectronicDepositForm form, BindingResult result, HttpServletRequest request) {
         String type = AppDepositPayEnum.ELECTRONIC_PAY.getCode();
-        return companyCommonDeposit(playerRechargeVo, result, type);
+        return companyCommonDeposit(playerRechargeVo, result, type,request);
     }
 
     //比特币支付　存款
     @RequestMapping("/bitcoinPay")
     @ResponseBody
-    public String bitcoinPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid BitcoinDepositForm form, BindingResult result) {
+    public String bitcoinPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid BitcoinDepositForm form, BindingResult result, HttpServletRequest request) {
         String type = AppDepositPayEnum.BITCOIN_PAY.getCode();
-        return companyCommonDeposit(playerRechargeVo, result, type);
+        return companyCommonDeposit(playerRechargeVo, result, type,request);
     }
 }
