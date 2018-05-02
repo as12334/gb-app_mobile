@@ -35,7 +35,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 @Controller
 @RequestMapping("/discountsOrigin")
 public class DiscountsAppController {
-    private static final String ACTIVITY_DETAIL_URL = "/promo/promoDetail.html";
+    private static final String ACTIVITY_DETAIL_URL = "/promo/goToPromoDetail.html";
     private Log LOG = LogFactory.getLog(DiscountsAppController.class);
 
     /**
