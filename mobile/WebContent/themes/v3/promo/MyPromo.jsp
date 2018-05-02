@@ -17,13 +17,16 @@
             <soul:button text="" opType="href" target="${root}/discounts/index.html?skip=1"
                          cssClass="mui-icon mui-pull-right icon-gift"/>
         </header>
-        <input value="1" id="pageNumber" type="hidden"/>
+        <input value="1" id="AllPageNumber" type="hidden"/>
+        <input value="1" id="awardedPageNumber" type="hidden"/>
+        <input value="1" id="didNotPassPageNumber" type="hidden"/>
+        <input value="1" id="unauditedPageNumber" type="hidden"/>
         <div class="mui-content mui-scroll-wrapper content-without-notice content-without-footer promo-record-content"  <%--${os eq 'android'?'style="padding-top:0!important"':''}--%>>
             <!-- 主界面具体展示内容 -->
             <div class="promo-nav">
                 <div id="segmentedControl" class="mui-segmented-control">
                     <a class="mui-control-item mui-active"
-                       data-rel='{"target":"promotionCategory","opType":"function","code":""}'>
+                       data-rel='{"target":"promotionCategory","opType":"function","code":"All"}'>
                         全部优惠
                     </a>
                     <a class="mui-control-item"
