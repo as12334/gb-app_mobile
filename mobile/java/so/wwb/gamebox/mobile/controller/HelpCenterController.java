@@ -7,6 +7,7 @@ import org.soul.commons.query.enums.Operator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
@@ -138,4 +139,10 @@ public class HelpCenterController {
         return "/help/forget/ForgetPassword";
     }
 
+    @RequestMapping(value="/bindMobile")
+    @Upgrade(upgrade = true)
+    public String bindMobile(){
+//判断是否已绑定手机号然后跳相对应界面
+        return "/help/bind/BindMobile";
+    }
 }
