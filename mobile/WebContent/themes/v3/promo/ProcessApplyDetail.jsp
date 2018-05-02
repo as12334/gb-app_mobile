@@ -125,13 +125,13 @@
                         <div id="unCommit" class="mui-hidden"> <!--未参加状态-->
                             <a class="mui-btn mui-btn-block btn_apply" data-rel='{"target":"applyProfit","opType":"function"}'>参与报名</a>
                             <div class="app_num">
-                                已有 <span class="color-blue">3,290</span>人，报名成功
+                                <%--已有 <span class="color-blue">3,290</span>人，报名成功--%>
                             </div>
                         </div>
                         <div id="join" class="mui-hidden"> <!--已参加状态-->
                             <a class="mui-btn mui-btn-block btn_apply disabled">已参加</a>
                             <div class="app_num">
-                                派奖时间：<span class="color-blue">XXXX年X月X日X时X分</span>
+                                <%--派奖时间：<span class="color-blue">XXXX年X月X日X时X分</span>--%>
                             </div>
                         </div>
                     </c:when>
