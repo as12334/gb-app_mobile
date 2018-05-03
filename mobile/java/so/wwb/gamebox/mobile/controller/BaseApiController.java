@@ -35,10 +35,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LeTu on 2017/3/31.
@@ -248,7 +245,7 @@ public abstract class BaseApiController extends BaseDemoController {
         //处理二级分类游戏数据
         handleNavGame(model);*/
         Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
-        Map<String, Map<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
+        Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             Map<String, ApiCacheEntity> apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
             apiTypeCacheEntity.setApis(apiMap.values());
@@ -261,23 +258,45 @@ public abstract class BaseApiController extends BaseDemoController {
         //处理彩票、棋牌游戏
         List<Integer> navType = getNavType();
         ApiTypeCacheEntity apiTypeCacheEntity;
-        Map<String, GameCacheEntity> gameMap;
+        Map<String, LinkedHashMap<String, GameCacheEntity>> gameMap;
+        Map<String, GameCacheEntity> apiGameMap;
+        String locale = SessionManager.getLocale().toString();
+        List<GameCacheEntity> games;
+        //因为只是取彩票、棋牌类api游戏，相对数据量比较小，故循环取缓存数据
         for (Integer apiTypeId : navType) {
             apiTypeCacheEntity = apiTypeCacheEntityMap.get(String.valueOf(apiTypeId));
             if (apiTypeCacheEntity == null || CollectionTool.isEmpty(apiTypeCacheEntity.getApis())) {
                 continue;
             }
+            gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
             for (ApiCacheEntity apiCacheEntity : apiTypeCacheEntity.getApis()) {
-                gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiCacheEntity.getApiTypeId()), String.valueOf(apiCacheEntity.getApiId()));
-                if (MapTool.isNotEmpty(gameMap)) {
-                    apiCacheEntity.setGames(gameMap.values());
+                apiGameMap = gameMap.get(String.valueOf(apiCacheEntity.getApiId()));
+                if (MapTool.isEmpty(apiGameMap)) {
+                    continue;
                 }
+                games = new ArrayList<>();
+                for (GameCacheEntity game : apiGameMap.values()) {
+                    game.setCover(String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
+                    games.add(game);
+                }
+                apiCacheEntity.setGames(games);
             }
         }
+        model.addAttribute("siteApiTypes", apiTypeCacheEntityMap.values());
         //处理捕鱼数据
         Map<String, GameCacheEntity> fishGameMap = Cache.getMobileFishGameCache();
+        StringBuffer fishName;
+        List<GameCacheEntity> fishGames = new ArrayList<>();
+        for (GameCacheEntity game : fishGameMap.values()) {
+            game.setCover(String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
+            //捕鱼游戏名称=api名称 + 游戏名称
+            fishName = new StringBuffer();
+            fishName.append(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId()))).append(" ").append(game.getName());
+            game.setName(fishName.toString());
+            fishGames.add(game);
+        }
         if (MapTool.isNotEmpty(fishGameMap)) {
-            model.addAttribute("fishGames", fishGameMap.values());
+            model.addAttribute("fishGames", fishGames);
         }
     }
 
