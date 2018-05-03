@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.transfer.controller;
 
 import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.SystemTool;
+import org.soul.commons.net.ServletTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -22,12 +23,9 @@ public class AutoTransferController extends so.wwb.gamebox.web.fund.controller.A
 
     @Override
     public PlayerApiAccountVo doLogin(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request) {
-        String domain = request.getServerName();
-        if (SystemTool.isDebug()) {
-            domain = domain + "/mobile";
-        }
-        playerApiAccountVo.setTransfersUrl(domain + TRANSFERS_URL);
-        playerApiAccountVo.setLobbyUrl(domain);
+        String fullAddress = ServletTool.getDomainFullAddress(request);
+        playerApiAccountVo.setTransfersUrl(fullAddress + TRANSFERS_URL);
+        playerApiAccountVo.setLobbyUrl(fullAddress);
         playerApiAccountVo.setPlatformType(SupportTerminal.PHONE.getCode());
         playerApiAccountVo.setSysUser(SessionManager.getUser());
         return playerApiAccountVo;
