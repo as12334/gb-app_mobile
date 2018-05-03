@@ -158,11 +158,16 @@ public class HelpCenterController {
 
     @RequestMapping(value="/bindMobile")
     @Upgrade(upgrade = true)
-    public String bindMobile(Model model){
-        model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
+    public String bindMobile(Model model,NoticeContactWayVo contactVo){
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        if (contactWay != null){
+            return "/help/bind/UpdataMobile";
+        }else{
+            model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
 //判断是否已绑定手机号然后跳相对应界面
+            return "/help/bind/BindMobile";
+        }
 
-        return "/help/bind/BindMobile";
     }
     @RequestMapping(value="/updataMobile")
     @Upgrade(upgrade = true)
