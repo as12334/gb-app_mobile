@@ -275,25 +275,10 @@ public abstract class BaseApiController extends BaseDemoController {
             }
         }
         //处理捕鱼数据
-        ApiTypeCacheEntity casinoApiType = apiTypeCacheEntityMap.get(String.valueOf(ApiTypeEnum.CASINO.getCode()));
-        if (casinoApiType == null || CollectionTool.isEmpty(casinoApiType.getApis())) {
-            return;
+        Map<String, GameCacheEntity> fishGameMap = Cache.getMobileFishGameCache();
+        if (MapTool.isNotEmpty(fishGameMap)) {
+            model.addAttribute("fishGames", fishGameMap.values());
         }
-        List<GameCacheEntity> fishGames = new ArrayList<>();
-        String fishGameType = GameTypeEnum.FISH.getCode();
-        for (ApiCacheEntity apiCacheEntity : casinoApiType.getApis()) {
-            gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiCacheEntity.getApiTypeId()), String.valueOf(apiCacheEntity.getApiId()));
-            if (MapTool.isEmpty(gameMap)) {
-                continue;
-            }
-            for (GameCacheEntity game : gameMap.values()) {
-                if (fishGameType.equals(game.getGameType())) {
-                    fishGames.add(game);
-                }
-            }
-
-        }
-        model.addAttribute("fishGames", fishGames);
     }
 
     /**
