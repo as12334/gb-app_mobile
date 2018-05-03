@@ -4,16 +4,17 @@
 <c:choose>
     <c:when test="${fn:length(command.result) gt 0}">
         <c:forEach items="${command.result}" var="s">
-            <li class="${s.isRead==false?'no-read':''}" >
+            <li class="${s.isRead==false?'no-read':''}">
                 <div class="i"><a class="gb-radio" data-rel='{"target":"siteCheck","opType":"function"}'
                                   value="${s.id}" name="site2_check"></a>
-                    <div class="ct" data-rel='{"target":"${root}/message/playerAdvisoryDetail.html?id=${s.id}","opType":"href"}'>
-                        <p>提问标题:&nbsp;<c:if test="${not empty s.advisoryTitle}">${fn:substring(s.advisoryTitle,0,10)}</c:if><c:if
-                            test="${fn:length(s.advisoryTitle)>10}">...</c:if>
-                            <%--${fn:substring(s.advisoryContent,0,50)} --%></p>
+                    <div class="ct"
+                         data-rel='{"target":"${root}/message/playerAdvisoryDetail.html?id=${s.id}","opType":"href"}'>
+                        <p>提问标题:&nbsp;<c:if
+                                test="${not empty s.advisoryTitle}">${fn:substring(s.advisoryTitle,0,10)}</c:if><c:if
+                                test="${fn:length(s.advisoryTitle)>10}">...</c:if></p>
                         <c:if test="${not empty s.replyTitle}">
-                            <p >回复标题:&nbsp;${fn:substring(s.replyTitle,0,20).replace('【回复】','')}
-                            <c:if test="${fn:length(s.replyTitle)>20}">...</c:if>
+                            <p>回复标题:&nbsp;${fn:substring(s.replyTitle,0,20).replace('【回复】','')}
+                                <c:if test="${fn:length(s.replyTitle)>20}">...</c:if>
                             </p></c:if>
                     </div>
                     <p data-rel='{"target":"${root}/message/playerAdvisoryDetail.html?id=${s.id}","opType":"href"}'>

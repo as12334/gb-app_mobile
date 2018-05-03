@@ -116,22 +116,22 @@
                         </div>
                         <div class="pro_mone">
                             <div class="mui-pull-left">
-                                当前盈活亏损：<span class="color-green">¥ -2,300</span>
+                               <%-- 当前盈活亏损：<span class="color-green">¥ -2,300</span>--%>
                             </div>
-                            <div class="mui-pull-right">
+                            <%--<div class="mui-pull-right">
                                 有效投注额：<span class="color-gray">¥ 2,300</span>
+                            </div>--%>
+                        </div>
+                        <div id="unCommit" class="mui-hidden"> <!--未参加状态-->
+                            <a class="mui-btn mui-btn-block btn_apply" data-rel='{"target":"applyProfit","opType":"function"}'>参与报名</a>
+                            <div class="app_num">
+                                <%--已有 <span class="color-blue">3,290</span>人，报名成功--%>
                             </div>
                         </div>
-                        <div> <!--未参加状态-->
-                            <a href="javascript:" class="mui-btn mui-btn-block btn_apply">参与报名</a>
+                        <div id="join" class="mui-hidden"> <!--已参加状态-->
+                            <a class="mui-btn mui-btn-block btn_apply disabled">已参加</a>
                             <div class="app_num">
-                                已有 <span class="color-blue">3,290</span>人，报名成功
-                            </div>
-                        </div>
-                        <div> <!--已参加状态-->
-                            <a href="javascript:" class="mui-btn mui-btn-block btn_apply disabled">已参加</a>
-                            <div class="app_num">
-                                派奖时间：<span class="color-blue">XXXX年X月X日X时X分</span>
+                                <%--派奖时间：<span class="color-blue">XXXX年X月X日X时X分</span>--%>
                             </div>
                         </div>
                     </c:when>
