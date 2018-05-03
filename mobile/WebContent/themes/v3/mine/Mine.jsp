@@ -192,7 +192,7 @@
                     </ul>
                     <ul class="mui-list-unstyled list-mine-item"><!--第五行-->
                         <li class="mui-col-xs-4">
-                            <a data-rel='{"target":"${root}/help/bindMobile.html","opType":"href"}'>
+                            <a data-rel='{"target":"${root}/help/bindMobile.html?name=${siteName}","opType":"href"}'>
 						<span class="item-img-wrap">
 							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;" />
 						</span>

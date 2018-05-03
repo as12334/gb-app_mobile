@@ -37,7 +37,6 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -181,10 +180,9 @@ public class PromoController {
     }
 
     private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);
-
-        model.addAttribute("command", vActivityMessageVo);
+        /*vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);*/
+        model.addAttribute("command", Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString()));
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
     }
 

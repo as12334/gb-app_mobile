@@ -3,6 +3,7 @@
 <c:choose>
     <c:when test="${fn:length(command.result) gt 0}">
         <c:forEach items="${command.result}" var="s">
+
             <c:choose>
                 <c:when test="${s.checkState eq '2' || s.checkState eq 'success'}">
                     <c:set value="green" var="color"/>
@@ -63,4 +64,22 @@
         </div>
     </c:otherwise>
 </c:choose>
-<input value="${command.paging.lastPageNumber}" id="lastPageNumber" type="hidden"/>
+<c:choose>
+    <c:when test="${s.checkState eq '2' || s.checkState eq 'success'}">
+
+    </c:when>
+    <c:when test="${s.checkState eq '4'}">
+        <c:set value="gray" var="color"/>
+        <c:set value="${views.promo_auto['未通过']}" var="text"/>
+        <c:set value="didNotPass" var="recordName"/>
+    </c:when>
+    <c:when test="${s.checkState eq '1'}">
+        <c:set value="orange" var="color"/>
+        <c:set value="${views.promo_auto['待审核']}" var="text"/>
+        <c:set value="unaudited" var="recordName"/>
+    </c:when>
+</c:choose>
+<input value="${command.paging.lastPageNumber}" id="AllPageNumber" type="hidden"/>
+<input value="${command.paging.lastPageNumber}" id="awardedPageNumber" type="hidden"/>
+<input value="${command.paging.lastPageNumber}" id="didNotPassPageNumber" type="hidden"/>
+<input value="${command.paging.lastPageNumber}" id="unauditedPageNumber" type="hidden"/>

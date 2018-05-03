@@ -2,19 +2,34 @@ package so.wwb.gamebox.mobile.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.DateTool;
+import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.log.Log;
+import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
+import org.soul.commons.query.Criterion;
 import org.soul.commons.query.enums.Operator;
+import org.soul.model.msg.notice.po.NoticeContactWay;
+import org.soul.model.msg.notice.vo.NoticeContactWayVo;
+import org.soul.web.validation.form.annotation.FormModel;
+import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.form.BindMobileForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
 import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
+import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
+import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +41,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/help")
 public class HelpCenterController {
+
+    private static final Log LOG = LogFactory.getLog(HelpCenterController.class);
     /**
      * 获取帮助文档父类型
      * @param vHelpTypeAndDocumentListVo
@@ -141,8 +158,96 @@ public class HelpCenterController {
 
     @RequestMapping(value="/bindMobile")
     @Upgrade(upgrade = true)
-    public String bindMobile(){
+    public String bindMobile(Model model,NoticeContactWayVo contactVo){
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        if (contactWay != null){
+            return "/help/bind/UpdataMobile";
+        }else{
+            model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
 //判断是否已绑定手机号然后跳相对应界面
-        return "/help/bind/BindMobile";
+            return "/help/bind/BindMobile";
+        }
+
+    }
+    @RequestMapping(value="/updataMobile")
+    @Upgrade(upgrade = true)
+    public String UpdateMobile(){
+
+        return "/help/bind/UpdataMobile";
+    }
+
+    @RequestMapping(value = "/savePhone")
+    public Map savePhone(NoticeContactWayVo contactVo, String code, @FormModel @Valid BindMobileForm form, BindingResult result){
+        //手机短信验证
+        if (!checkPhoneCode(code, contactVo.getSearch().getContactValue())) {
+            return getMessage(false,"短信验证码不正确");
+        }
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        if (contactWay != null) {//修改
+            contactVo.getResult().setId(contactWay.getId());
+            contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
+            contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
+            contactVo = ServiceTool.noticeContactWayService().updateOnly(contactVo);
+        } else {//新增
+            contactVo.getResult().setUserId(SessionManager.getUserId());
+            contactVo.getResult().setContactType(ContactWayTypeEnum.MOBILE.getCode());
+            contactVo.getResult().setStatus(ContactWayStatusEnum.CONTENT_STATUS_USING.getCode());
+            contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
+            contactVo = ServiceTool.noticeContactWayService().insert(contactVo);
+        }
+        if (!contactVo.isSuccess()) {//不成功
+            return getMessage(false,"绑定手机失败");
+        }
+        return getMessage(true,"绑定成功");
+    }
+
+    /**
+     * 验证手机短信验证码
+     *
+     * @param code
+     * @param phone
+     * @return
+     */
+    private Boolean checkPhoneCode(String code, String phone) {
+        if (StringTool.isBlank(phone) || StringTool.isBlank(code)) {
+            return false;
+        }
+        Map<String, String> params = SessionManagerCommon.getCheckRegisterPhoneInfo();
+        if (params == null) {
+            return false;
+        }
+        if (StringTool.isBlank(params.get("phone")) || StringTool.isBlank(params.get("code"))) {
+            return false;
+        }
+        //验证码30分钟内有效
+        if (DateTool.minutesBetween(SessionManagerCommon.getDate().getNow(), SessionManagerCommon.getSendRegisterPhone()) > 30) {
+            return false;
+        }
+
+        return (phone.equals(params.get("phone")) && params.get("code").equals(code));
+    }
+
+    /**
+     * 获取用户手机号
+     *
+     * @param contactVo
+     * @return
+     */
+    private NoticeContactWay getUserPhoneNumber(NoticeContactWayVo contactVo) {
+        contactVo.setResult(new NoticeContactWay());
+        contactVo.getQuery().setCriterions(
+                new Criterion[]{
+                        new Criterion(NoticeContactWay.PROP_USER_ID, Operator.EQ, SessionManager.getUser().getId())
+                        , new Criterion(NoticeContactWay.PROP_CONTACT_TYPE, Operator.EQ, ContactWayTypeEnum.MOBILE.getCode())}
+        );
+        contactVo = ServiceTool.noticeContactWayService().search(contactVo);
+        return contactVo.getResult();
+    }
+
+    private Map<String, Object> getMessage(boolean isSuccess, String messageCode) {
+        Map<String, Object> resultMap = new HashMap<>(2, 1f);
+        resultMap.put("state", isSuccess);
+        resultMap.put("msg", messageCode);
+        return resultMap;
     }
 }
