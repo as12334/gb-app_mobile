@@ -18,9 +18,9 @@
                          cssClass="mui-icon mui-pull-right icon-gift"/>
         </header>
         <input value="1" id="AllPageNumber" type="hidden"/>
-        <input value="1" id="awardedPageNumber" type="hidden"/>
-        <input value="1" id="didNotPassPageNumber" type="hidden"/>
-        <input value="1" id="unauditedPageNumber" type="hidden"/>
+        <%--<input value="1" id="awardedPageNumber" type="hidden"/>--%>
+        <%--<input value="1" id="didNotPassPageNumber" type="hidden"/>--%>
+        <%--<input value="1" id="unauditedPageNumber" type="hidden"/>--%>
         <div class="mui-content mui-scroll-wrapper content-without-notice content-without-footer promo-record-content"  <%--${os eq 'android'?'style="padding-top:0!important"':''}--%>>
             <!-- 主界面具体展示内容 -->
             <div class="promo-nav">
