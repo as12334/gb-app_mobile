@@ -152,6 +152,6 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resRoot}/js/discounts/ApplyPromoDetail.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/discounts/ApplyPromoDetail.js?v=${rcVersion}"></script>
 </html>
