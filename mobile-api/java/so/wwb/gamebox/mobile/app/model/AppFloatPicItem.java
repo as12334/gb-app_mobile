@@ -13,6 +13,16 @@ public class AppFloatPicItem {
     private Integer distanceTop;
     /** 侧边距 */
     private Integer distanceSide;
+    /** 浮动图是否显示隐藏*/
+    private Boolean showEffect;
+
+    public Boolean isShowEffect() {
+        return showEffect;
+    }
+
+    public void setShowEffect(Boolean showEffect) {
+        this.showEffect = showEffect;
+    }
 
     public Integer getDistanceTop() {
         return distanceTop;
