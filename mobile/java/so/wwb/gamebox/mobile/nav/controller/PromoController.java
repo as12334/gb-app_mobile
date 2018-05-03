@@ -181,10 +181,9 @@ public class PromoController {
     }
 
     private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);
-
-        model.addAttribute("command", vActivityMessageVo);
+        /*vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);*/
+        model.addAttribute("command", Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString()));
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
     }
 

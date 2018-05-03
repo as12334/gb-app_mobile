@@ -12,7 +12,7 @@
 <div class="mui-off-canvas-wrap mui-draggable">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-        <c:set var="activity" value="${command.result}" />
+        <c:set var="activity" value="${command}" />
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
             <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
@@ -59,7 +59,7 @@
                         <c:set var="activityCode" value="${activity.code}"/>
                         <div class="gb-form-foot" style="margin-top: -10px;">
                             <c:choose>
-                                <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
+                                <c:when test="${(not empty activity.allRank) && activity.allRank}">
                                     <c:set var="rankId" value="all" />
                                 </c:when>
                                 <c:when test="${activityCode eq 'back_water'}">
