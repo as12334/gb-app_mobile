@@ -7,6 +7,7 @@ import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
@@ -390,19 +391,13 @@ public abstract class BaseApiController extends BaseDemoController {
 
     protected void setAccount(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request) {
         Integer apiId = playerApiAccountVo.getApiId();
-
-        StringBuilder domain = new StringBuilder();
-        domain.append(request.getServerName());
-        if (!domain.toString().contains("http")) {
-            domain.insert(0, "http://");
-        }
-
-        String transferUrl = domain + "/transfer/index.html"
+        String fullAddress = ServletTool.getDomainFullAddress(request);
+        String transferUrl = fullAddress + "/transfer/index.html"
                 + "?apiId=" + apiId
                 + "&apiTypeId=" + playerApiAccountVo.getApiTypeId();
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
-        playerApiAccountVo.setLobbyUrl(domain.toString());
+        playerApiAccountVo.setLobbyUrl(fullAddress);
         if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
         }
