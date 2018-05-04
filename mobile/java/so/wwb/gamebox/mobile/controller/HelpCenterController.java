@@ -172,7 +172,7 @@ public class HelpCenterController {
     }
 
     /**
-     * 判断用户是否绑定了手机
+     * 当前用户是否绑定了手机
      *
      * @param model
      * @param contactVo
@@ -185,18 +185,23 @@ public class HelpCenterController {
         model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
         if (contactWay != null) {
             model.addAttribute("phone", StringTool.overlayTel(contactWay.getContactValue()));
-//            return "/help/bind/PhoneNumber";
-            return "/help/bind/BindMobile";
+            return "/help/bind/PhoneNumber";
+//            return "/help/bind/BindMobile";
         } else {
             return "/help/bind/BindMobile";
         }
 
     }
 
+    /**
+     *
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/updataMobile")
     @Upgrade(upgrade = true)
-    public String UpdateMobile() {
-
+    public String UpdateMobile(Model model) {
+        model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
         return "/help/bind/UpDataMobile";
     }
 
@@ -225,17 +230,14 @@ public class HelpCenterController {
     @RequestMapping(value = "/savePhone")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public Boolean savePhone(NoticeContactWayVo contactVo, String phoneCode, @FormModel @Valid BindMobileForm form, BindingResult result) {
-//        String code = form.get$phoneCode();
-//        String phoneContactValue
-        //手机短信验证
-//        if (!checkPhoneCode(phoneCode, contactVo.getSearch().getContactValue())) {
-//            return false;
-//        }
+    public Boolean savePhone(NoticeContactWayVo contactVo, String oldPhone, @FormModel @Valid BindMobileForm form, BindingResult result) {
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        /*if (StringTool.isNotBlank(oldPhone)&&!oldPhone.equals(contactWay.getContactValue())){
+            return false;
+        }*/
         if(result.hasErrors()){
             return false;
         }
-        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         if (contactWay != null) {//修改
             contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
@@ -255,31 +257,6 @@ public class HelpCenterController {
     }
 
     /**
-     * 验证手机短信验证码
-     *
-     * @param code
-     * @param phone
-     * @return
-     */
-    /*private Boolean checkPhoneCode(String code, String phone) {
-        if (StringTool.isBlank(phone) || StringTool.isBlank(code)) {
-            return false;
-        }
-        Map<String, String> params = SessionManagerCommon.getCheckRegisterPhoneInfo();
-        if (params == null) {
-            return false;
-        }
-        if (StringTool.isBlank(params.get("phone")) || StringTool.isBlank(params.get("code"))) {
-            return false;
-        }
-        //验证码30分钟内有效
-        if (DateTool.minutesBetween(SessionManagerCommon.getDate().getNow(), SessionManagerCommon.getSendRegisterPhone()) > 30) {
-            return false;
-        }
-
-        return (phone.equals(params.get("phone")) && params.get("code").equals(code));
-    }*/
-    /**
      * 获取用户手机号
      *
      * @param contactVo
@@ -296,6 +273,12 @@ public class HelpCenterController {
         return contactVo.getResult();
     }
 
+    /**
+     * 远程验证手机号跟验证码
+     * @param code
+     * @param phone
+     * @return
+     */
     @RequestMapping("/checkPhoneCode")
     @ResponseBody
     public String checkPhoneCode(@RequestParam("phoneCode")String code , @RequestParam("search.contactValue")String phone){

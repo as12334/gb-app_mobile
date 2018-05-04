@@ -45,4 +45,5 @@ public class BindMobileForm implements IForm {
     public void set$phoneCode(String $phoneCode) {
         this.$phoneCode = $phoneCode;
     }
+
 }
