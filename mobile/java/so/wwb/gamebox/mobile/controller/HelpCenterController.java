@@ -218,6 +218,14 @@ public class HelpCenterController {
         return "/help/bind/PhoneNumber";
     }
 
+    @RequestMapping(value = "/bindNewMobile")
+    public Boolean bindNewMobile(NoticeContactWayVo contactVo, String oldPhone,BindMobileForm form, BindingResult result){
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
+        if (StringTool.isNotBlank(oldPhone)&&!oldPhone.equals(contactWay.getContactValue())){
+            return false;
+        }
+        return savePhone(contactVo,form,result);
+    }
 
     /**
      * 手机绑定
@@ -230,14 +238,11 @@ public class HelpCenterController {
     @RequestMapping(value = "/savePhone")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public Boolean savePhone(NoticeContactWayVo contactVo, String oldPhone, @FormModel @Valid BindMobileForm form, BindingResult result) {
-        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
-        /*if (StringTool.isNotBlank(oldPhone)&&!oldPhone.equals(contactWay.getContactValue())){
-            return false;
-        }*/
+    public Boolean savePhone(NoticeContactWayVo contactVo, @FormModel @Valid BindMobileForm form, BindingResult result) {
         if(result.hasErrors()){
             return false;
         }
+        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         if (contactWay != null) {//修改
             contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);

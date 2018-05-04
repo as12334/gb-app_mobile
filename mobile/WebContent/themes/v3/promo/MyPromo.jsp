@@ -18,7 +18,7 @@
             <h1 class="mui-title">${views.promo_auto['我的优惠记录']}</h1>
             <div class="top-info">
                 <div>累计获得优惠</div>
-                <span class="mone">¥1,236</span>
+                <span class="mone">${money}</span>
             </div>
         </header>
         <input value="1" id="AllPageNumber" type="hidden"/>
@@ -26,17 +26,17 @@
             <!-- 主界面具体展示内容 -->
             <div class="promo-nav">
                 <div id="segmentedControl" class="mui-segmented-control">
-                    <a class="mui-control-item mui-active" href="#item1">
+                    <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item mui-active" href="#item1">
                         全部优惠
                     </a>
-                    <a class="mui-control-item" href="#item2">
+                    <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item" href="#item2">
                         已派奖
                     </a>
-                    <a class="mui-control-item" href="#item3">
-                        未通过
+                    <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item" href="#item3">
+                        ${views.promo_auto['未通过']}
                     </a>
-                    <a class="mui-control-item" href="#item4">
-                        未审核
+                    <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item" href="#item4">
+                        ${views.promo_auto['待审核']}
                     </a>
                 </div>
             </div>
@@ -71,9 +71,11 @@
                                                         <div>
                                                             <span class="tit">申请时间：</span>${soulFn:formatDateTz(s.applyTime,DateFormat.DAY_SECOND ,timeZone )}
                                                         </div>
+                                                        <c:if test="${!empty s.transactionNo}">
                                                         <div>
                                                             <span class="tit">申请单号：</span>${s.transactionNo}
                                                         </div>
+                                                        </c:if>
                                                         <div>
                                                             <span class="tit">参与活动：</span>${s.activityName}
                                                         </div>
@@ -99,7 +101,7 @@
                             </c:choose>
                             <c:if test="${fn:length(itemAll) <= 0}">
                                 <div class="mui-row no-promo">
-                                    暂无优惠信息
+                                        ${views.promo_auto['暂无优惠信息']}
                                 </div>
                             </c:if>
                         </div>
@@ -122,9 +124,11 @@
                                                         <div>
                                                             <span class="tit">申请时间：</span>${soulFn:formatDateTz(s.applyTime,DateFormat.DAY_SECOND ,timeZone )}
                                                         </div>
-                                                        <div>
-                                                            <span class="tit">申请单号：</span>${s.transactionNo}
-                                                        </div>
+                                                        <c:if test="${!empty s.transactionNo}">
+                                                            <div>
+                                                                <span class="tit">申请单号：</span>${s.transactionNo}
+                                                            </div>
+                                                        </c:if>
                                                         <div>
                                                             <span class="tit">参与活动：</span>${s.activityName}
                                                         </div>
@@ -150,7 +154,7 @@
                             </c:choose>
                             <c:if test="${fn:length(itemSuccess) <= 0}">
                                 <div class="mui-row no-promo">
-                                    暂无优惠信息
+                                        ${views.promo_auto['暂无优惠信息']}
                                 </div>
                             </c:if>
                         </div>
@@ -173,9 +177,11 @@
                                                         <div>
                                                             <span class="tit">申请时间：</span>${soulFn:formatDateTz(s.applyTime,DateFormat.DAY_SECOND ,timeZone )}
                                                         </div>
-                                                        <div>
-                                                            <span class="tit">申请单号：</span>${s.transactionNo}
-                                                        </div>
+                                                        <c:if test="${!empty s.transactionNo}">
+                                                            <div>
+                                                                <span class="tit">申请单号：</span>${s.transactionNo}
+                                                            </div>
+                                                        </c:if>
                                                         <div>
                                                             <span class="tit">参与活动：</span>${s.activityName}
                                                         </div>
@@ -201,7 +207,7 @@
                             </c:choose>
                             <c:if test="${fn:length(itemNoPass) <= 0}">
                                 <div class="mui-row no-promo">
-                                    暂无优惠信息
+                                        ${views.promo_auto['暂无优惠信息']}
                                 </div>
                             </c:if>
                         </div>
@@ -224,9 +230,11 @@
                                                         <div>
                                                             <span class="tit">申请时间：</span>${soulFn:formatDateTz(s.applyTime,DateFormat.DAY_SECOND ,timeZone )}
                                                         </div>
-                                                        <div>
-                                                            <span class="tit">申请单号：</span>${s.transactionNo}
-                                                        </div>
+                                                        <c:if test="${!empty s.transactionNo}">
+                                                            <div>
+                                                                <span class="tit">申请单号：</span>${s.transactionNo}
+                                                            </div>
+                                                        </c:if>
                                                         <div>
                                                             <span class="tit">参与活动：</span>${s.activityName}
                                                         </div>
@@ -252,7 +260,7 @@
                             </c:choose>
                             <c:if test="${fn:length(itemUnAudit) <= 0}">
                                 <div class="mui-row no-promo">
-                                    暂无优惠信息
+                                        ${views.promo_auto['暂无优惠信息']}
                                 </div>
                             </c:if>
                         </div>
