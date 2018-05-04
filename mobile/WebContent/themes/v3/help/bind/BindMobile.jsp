@@ -16,29 +16,31 @@
     <h1 class="mui-title">手机绑定</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">
-    <div class="mui-scroll">
-      <div class="input">
-        <div class="mobile">
-          <i class="icon-mobile"></i>
-            <div class="form-group">
-          <input name="phone.contactValue" type="number" maxlength="12" placeholder="手机号码"/></div>
+    <form class="mui-input-group" id="regForm">
+        <div id="validateRule" style="display: none">${rule}</div>
+        <div class="mui-scroll">
+            <div class="input">
+                <div class="mobile">
+                    <i class="icon-mobile"></i>
+                    <input type="number" maxlength="12" placeholder="手机号码" name="search.contactValue"/>
+                </div>
+                <div class="yzm">
+                    <i class="icon-yzm"></i>
+                    <input type="number" maxlength="6" placeholder="验证码" id="phoneCode" name="phoneCode"/>
+                    <a id="sendPhoneCode" data-rel='{"target":"sendPhoneCode","opType":"function"}'>获取验证码</a>
+                </div>
+            </div>
+            <div class="btn-wrap">
+                <a data-rel='{"target":"bindMobile","opType":"function"}' class="mui-btn mui-btn-block btn-blo">立即绑定</a>
+            </div>
+            <ul class="cue">
+                <li>温馨提示</li>
+                <li>1.忘记密码时可以通过手机找回；</li>
+                <li>2.运营商发送短信可能有延迟，请耐心等待几分钟；</li>
+                <li>3.若几分钟后仍未收到验证码，请您重新获取或联系<a href="javascript:;">点击联系在线客服.</a></li>
+            </ul>
         </div>
-        <div class="yzm">
-          <i class="icon-yzm"></i>
-          <input id="phoneCode" type="number" maxlength="6" placeholder="验证码"/>
-          <a  id="sendPhoneCode" data-rel='{"target":"sendPhoneCode","opType":"function"}'>获取验证码</a>
-        </div>
-      </div>
-      <div class="btn-wrap">
-        <a data-rel='{"target":"bindMobile","opType":"function"}' class="mui-btn mui-btn-block btn-blo">立即绑定</a>
-      </div>
-      <ul class="cue">
-      	<li>温馨提示</li>
-      	<li>1.忘记密码时可以通过手机找回；</li>
-      	<li>2.运营商发送短信可能有延迟，请耐心等待几分钟；</li>
-      	<li>3.若几分钟后仍未收到验证码，请您重新获取或联系<a data-rel='{"target":"${root}/mine/index.html","opType":"href"}'>点击联系在线客服.</a></li>
-      </ul>
-    </div>
+    </form>
 </div>
 </body>
 <%@ include file="../../include/include.js.jsp" %>

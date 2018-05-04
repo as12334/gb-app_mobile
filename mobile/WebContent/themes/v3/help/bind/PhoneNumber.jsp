@@ -1,3 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="../../include/include.inc.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +8,6 @@
     <%@ include file="../../include/include.head.jsp" %>
     <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css"/>
     <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css"/>
-    <link rel="stylesheet" href="../../mobile-v3/themes/default/style.css" />
 </head>
 
 <body class="bind-mobile">
@@ -18,10 +19,10 @@
     <div class="mui-scroll">
       <div class="bind-success">
                          您已绑定手机号码<br/>
-         <a href="javascript:;">186****745</a>
+         <a href="javascript:;">${phone}</a>
       </div>
       <div class="btn-wrap">
-        <a href="bind-mobile-3.html" class="mui-btn mui-btn-block btn-blo">立即更换</a>
+        <a data-rel='{"target":"${root}/help/updataMobile.html","opType":"href"}' class="mui-btn mui-btn-block btn-blo">立即更换</a>
       </div>
       <ul class="cue">
       	<li>温馨提示</li>
