@@ -17,6 +17,7 @@ import so.wwb.gamebox.mobile.app.model.ActivityTypeApp;
 import so.wwb.gamebox.mobile.app.model.ActivityTypeListApp;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
@@ -35,7 +36,8 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 @Controller
 @RequestMapping("/discountsOrigin")
 public class DiscountsAppController {
-    private static final String ACTIVITY_DETAIL_URL = "/promo/goToPromoDetail.html";
+    private static final String ACTIVITY_DETAIL_URL = "/promo/promoDetail.html";
+    private static final String ACTIVITY_HALL_DETAIL_URL = "/promo/goToPromoDetail.html";
     private Log LOG = LogFactory.getLog(DiscountsAppController.class);
 
     /**
@@ -125,7 +127,7 @@ public class DiscountsAppController {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
-            if(playerRank != null){
+            if (playerRank != null) {
                 rankId = playerRank.getId();
             }
         }
@@ -137,6 +139,7 @@ public class DiscountsAppController {
         String release = ActivityStateEnum.RELEASE.getCode();
         String activityClassifyKey = listVo.getSearch().getActivityClassifyKey();
         List<ActivityTypeListApp> activityTypeListApps = new ArrayList<>();
+        String detailUrl = ParamTool.isOpenActivityHall() ? ACTIVITY_HALL_DETAIL_URL : ACTIVITY_DETAIL_URL;
         for (PlayerActivityMessage playerActivityMessage : activityMessageMap.values()) {
             isDisplay = playerActivityMessage.getIsDisplay() != null && playerActivityMessage.getIsDisplay();
             isDelete = playerActivityMessage.getIsDeleted() != null && playerActivityMessage.getIsDeleted();
@@ -151,7 +154,7 @@ public class DiscountsAppController {
                     ActivityTypeListApp activityApp = new ActivityTypeListApp();
                     activityApp.setId(playerActivityMessage.getId());
                     activityApp.setPhoto(ImageTag.getImagePath(domain, playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated()));
-                    activityApp.setUrl(ACTIVITY_DETAIL_URL + "?searchId=" + listVo.getSearchId(playerActivityMessage.getId()));
+                    activityApp.setUrl(detailUrl + "?searchId=" + listVo.getSearchId(playerActivityMessage.getId()));
                     activityApp.setName(playerActivityMessage.getActivityName());
                     activityTypeListApps.add(activityApp);
                 }
