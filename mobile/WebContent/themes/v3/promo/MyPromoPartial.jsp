@@ -28,9 +28,11 @@
                             <div>
                                 <span class="tit">申请时间：</span>${soulFn:formatDateTz(s.applyTime,DateFormat.DAY_SECOND ,timeZone )}
                             </div>
-                            <div>
-                                <span class="tit">申请单号：</span>${s.transactionNo}
-                            </div>
+                            <c:if test="${!empty s.transactionNo}">
+                                <div>
+                                    <span class="tit">申请单号：</span>${s.transactionNo}
+                                </div>
+                            </c:if>
                             <div>
                                 <span class="tit">参与活动：</span>${s.activityName}
                             </div>
@@ -53,3 +55,4 @@
         </c:forEach>
     </c:when>
 </c:choose>
+<input type="hidden" value="${command.paging.lastPageNumber}" id="partialPageNumber"/>

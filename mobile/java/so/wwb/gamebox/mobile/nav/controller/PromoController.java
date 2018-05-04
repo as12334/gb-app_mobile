@@ -31,6 +31,7 @@ import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.operation.po.ActivityPlayerApply;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.*;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -75,7 +76,10 @@ public class PromoController {
         /*if (ServletTool.isAjaxSoulRequest(request)) {
             vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         }*/
+        vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
+        Number money = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        model.addAttribute("money",money);
         model.addAttribute("command", vPreferentialRecodeListVo);
         return ServletTool.isAjaxSoulRequest(request) ? MY_PROMO_URL + "Partial" : MY_PROMO_URL;
     }
