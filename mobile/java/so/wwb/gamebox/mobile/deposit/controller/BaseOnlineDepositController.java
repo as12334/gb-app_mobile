@@ -93,10 +93,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 String url = domain + uri;
                 //添加支付网址
                 playerRecharge.setPayUrl(domain);
-                PlayerRechargeVo vo = new PlayerRechargeVo();
-                vo.setResult(playerRecharge);
-                vo.setProperties(PlayerRecharge.PROP_PAY_URL);
-                ServiceSiteTool.playerRechargeService().updateOnly(vo);
+                playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
+                ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
                 response.sendRedirect(url);
             }
         } catch (Exception e) {
