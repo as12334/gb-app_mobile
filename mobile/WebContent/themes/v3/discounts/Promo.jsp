@@ -6,7 +6,7 @@
 <head>
     <title>${siteName}</title>
     <%@ include file="../include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css" />
+    <link rel="stylesheet" href="${resRoot}/themes/swiper.min.css"/>
 </head>
 
 <body>
@@ -15,6 +15,7 @@
     <!-- 菜单容器 -->
     <%@ include file="../common/LeftMenu.jsp" %>
     <c:set var="defaultSaleImg" value="${resRoot}/images/img-sale1.jpg"/>
+    <c:set var="isActivityHall" value="<%=ParamTool.isOpenActivityHall()%>"/>
     <input type="hidden" value="${defaultSaleImg}" name="defaultSaleImg"/>
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
@@ -47,7 +48,7 @@
                                                 </div>
                                                 <div class="pro-txt">
                                                     <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a data-rel='{"target":"${root}/promo/goToPromoDetail.html?search.id=${message.id}","opType":"href"}'
+                                                    <a data-rel='{"target":"${root}/promo/${isActivityHall?'goToPromoDetail':'promoDetail'}.html?search.id=${message.id}","opType":"href"}'
                                                        class="mui-pull-right">查看详情</a>
                                                 </div>
                                                     <%--</a>--%>
@@ -82,7 +83,7 @@
                                                     </div>
                                                     <div class="pro-txt">
                                                         <div class="mui-pull-left">${message.activityName}</div>
-                                                        <a data-rel='{"target":"${root}/promo/goToPromoDetail.html?search.id=${message.id}","opType":"href"}'
+                                                        <a data-rel='{"target":"${root}/promo/${isActivityHall?'goToPromoDetail':'promoDetail'}.html?search.id=${message.id}","opType":"href"}'
                                                            class="mui-pull-right">查看详情</a>
                                                     </div>
                                                         <%--</a>--%>

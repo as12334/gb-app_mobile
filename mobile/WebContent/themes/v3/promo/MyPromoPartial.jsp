@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/include/include.inc.jsp" %>
+<c:set value="${command.result}" var="promo"/>
 <c:choose>
-    <c:when test="${fn:length(command.result) gt 0}">
-        <c:forEach items="${command.result}" var="s">
-
+    <c:when test="${fn:length(promo) > 0}">
+        <c:forEach items="${promo}" var="s">
             <c:choose>
                 <c:when test="${s.checkState eq '2' || s.checkState eq 'success'}">
                     <c:set value="green" var="color"/>
@@ -22,7 +22,7 @@
                 </c:when>
             </c:choose>
             <c:if test="${fn:length(recordName) > 0}">
-                <div class="promo-records-warp" name="${recordName}">
+                <div class="promo-records-warp">
                     <div class="mui-row">
                         <div class="promo-box-left">
                             <div>
@@ -41,11 +41,7 @@
                             <i class="pro-bg-left"></i>
                         </div>
                         <div class="promo-box-right promo-${color}">
-                        <span class="num">
-                            <c:if test="${s.checkState eq 'success' || s.checkState ne '0'}">
-                                ${siteCurrencySign}${soulFn:formatCurrency(s.preferentialValue)}
-                            </c:if>
-                        </span>
+                            <span class="num">${siteCurrencySign}${soulFn:formatCurrency(s.preferentialValue)}</span>
                             <span class="annotation">${text}</span>
                             <i class="pro-bg-right"></i>
                             <div class="round radio-up"></div>
@@ -56,30 +52,4 @@
             </c:if>
         </c:forEach>
     </c:when>
-    <c:otherwise>
-        <div class="promo-records-warp">
-            <div class="mui-row no-promo">
-                    ${views.promo_auto['暂无优惠信息']}
-            </div>
-        </div>
-    </c:otherwise>
 </c:choose>
-<c:choose>
-    <c:when test="${s.checkState eq '2' || s.checkState eq 'success'}">
-
-    </c:when>
-    <c:when test="${s.checkState eq '4'}">
-        <c:set value="gray" var="color"/>
-        <c:set value="${views.promo_auto['未通过']}" var="text"/>
-        <c:set value="didNotPass" var="recordName"/>
-    </c:when>
-    <c:when test="${s.checkState eq '1'}">
-        <c:set value="orange" var="color"/>
-        <c:set value="${views.promo_auto['待审核']}" var="text"/>
-        <c:set value="unaudited" var="recordName"/>
-    </c:when>
-</c:choose>
-<input value="${command.paging.lastPageNumber}" id="AllPageNumber" type="hidden"/>
-<input value="${command.paging.lastPageNumber}" id="awardedPageNumber" type="hidden"/>
-<input value="${command.paging.lastPageNumber}" id="didNotPassPageNumber" type="hidden"/>
-<input value="${command.paging.lastPageNumber}" id="unauditedPageNumber" type="hidden"/>
