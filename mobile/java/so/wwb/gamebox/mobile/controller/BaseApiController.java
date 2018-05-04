@@ -249,7 +249,9 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             Map<String, ApiCacheEntity> apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
-            apiTypeCacheEntity.setApis(apiMap.values());
+            if(MapTool.isNotEmpty(apiMap)) {
+                apiTypeCacheEntity.setApis(apiMap.values());
+            }
         }
         //处理二级分类游戏数据
         handleNavGame(model, apiType);
