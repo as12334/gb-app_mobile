@@ -4,16 +4,16 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Dawoo</title>
+    <title>更换手机</title>
     <%@ include file="../../include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css"/>
-    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css"/>
+    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css?v=${rcVersion}"/>
+    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css?v=${rcVersion}"/>
 </head>
 
 <body class="bind-mobile">
 <header class="mui-bar mui-bar-nav mui-bar-blue">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-    <h1 class="mui-title">手机绑定</h1>
+    <h1 class="mui-title">更换手机</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">
     <form class="mui-input-group" id="regForm">

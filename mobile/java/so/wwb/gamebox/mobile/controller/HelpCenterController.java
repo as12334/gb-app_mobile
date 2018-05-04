@@ -186,7 +186,6 @@ public class HelpCenterController {
         if (contactWay != null) {
             model.addAttribute("phone", StringTool.overlayTel(contactWay.getContactValue()));
             return "/help/bind/PhoneNumber";
-//            return "/help/bind/BindMobile";
         } else {
             return "/help/bind/BindMobile";
         }
@@ -218,13 +217,19 @@ public class HelpCenterController {
         return "/help/bind/PhoneNumber";
     }
 
-    @RequestMapping(value = "/bindNewMobile")
-    public Boolean bindNewMobile(NoticeContactWayVo contactVo, String oldPhone,BindMobileForm form, BindingResult result){
-        NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
-        if (StringTool.isNotBlank(oldPhone)&&!oldPhone.equals(contactWay.getContactValue())){
+    /**
+     * 判断原手机是否正确
+     * @param oldPhone
+     * @return
+     */
+    private boolean oldPhoneNumber(String oldPhone,String contactValue){
+        if(StringTool.isBlank(oldPhone)){
             return false;
         }
-        return savePhone(contactVo,form,result);
+        if (!oldPhone.equals(contactValue)){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -238,12 +243,16 @@ public class HelpCenterController {
     @RequestMapping(value = "/savePhone")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public Boolean savePhone(NoticeContactWayVo contactVo, @FormModel @Valid BindMobileForm form, BindingResult result) {
+    public Boolean savePhone(NoticeContactWayVo contactVo,String oldPhone, @FormModel @Valid BindMobileForm form, BindingResult result) {
         if(result.hasErrors()){
             return false;
         }
+
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         if (contactWay != null) {//修改
+            if(!oldPhoneNumber(oldPhone,contactWay.getContactValue())){
+                return false;
+            }
             contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
             contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());

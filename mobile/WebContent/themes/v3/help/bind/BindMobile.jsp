@@ -6,8 +6,8 @@
     <meta charset="utf-8">
     <title>手机绑定</title>
     <%@ include file="../../include/include.head.jsp" %>
-    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css"/>
-    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css"/>
+    <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css?v=${rcVersion}"/>
+    <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css?v=${rcVersion}"/>
 </head>
 
 <body class="bind-mobile">

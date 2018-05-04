@@ -190,7 +190,7 @@
                             </soul:button>
                         </li>
                     </ul>
-                    <%--<ul class="mui-list-unstyled list-mine-item"><!--第五行-->
+                    <ul class="mui-list-unstyled list-mine-item"><!--第五行-->
                         <li class="mui-col-xs-4">
                             <a data-rel='{"target":"${root}/help/bindMobile.html","opType":"href"}'>
 						<span class="item-img-wrap">
@@ -200,7 +200,7 @@
                             </a>
                         </li>
 
-                    </ul>--%>
+                    </ul>
                 </div>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
