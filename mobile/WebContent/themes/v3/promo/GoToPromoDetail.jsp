@@ -63,7 +63,7 @@
                 <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                 <span class="_now_time" value="${nowTime}" type="hidden"></span>
                 <c:set var="activityCode" value="${activity.code}"/>
-                <div class="gb-form-foot">
+                <div class="gb-form-foot new_foo">
                     <c:choose>
                         <c:when test="${(not empty activity.allRank) && activity.allRank}">
                             <c:set var="rankId" value="all"/>
