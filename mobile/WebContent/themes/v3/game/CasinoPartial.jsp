@@ -1,4 +1,6 @@
-<%--@elvariable id="command" type="so.wwb.gamebox.model.company.site.vo.SiteGameListVo"--%>
+<%--@elvariable id="tagGameMap" type="java.util.Map<java.lang.String, java.util.List<so.wwb.gamebox.model.company.site.vo.GameCacheEntity>>"--%>
+<%--@elvariable id="tagName" type="java.util.Map<java.lang.String, java.lang.String>"--%>
+<%--@elvariable id="allGames" type="java.util.List<so.wwb.gamebox.model.company.site.vo.GameCacheEntity>"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
 
@@ -36,32 +38,29 @@
                         <div class="swiper-wrapper">
                             <div class="swiper-slide all" data-rel='{"opType":"function","target":"changeTag"}'>所有游戏</div>
                             <c:forEach items="${tagName}" var="t">
-                                <c:if test="${fn:length(tagGames[t.key])>0}">
+                                <c:if test="${fn:length(tagGameMap[t.key])>0}">
                                     <div class="swiper-slide partial" data-rel='{"opType":"function","target":"changeTag"}'>${t.value}</div>
                                 </c:if>
                             </c:forEach>
                         </div>
                     </div>
-
                     <input type="hidden" value="${apiId}" apiId="${apiId}" id="api">
-
                     <div class="swiper-container g-t-slide-content">
                         <div class="swiper-wrapper">
-
                             <div class="swiper-slide">
                                 <div class="casino-wrap">
                                     <div class="casino-list">
                                         <div class="mui-row"><%--所有游戏--%>
                                             <c:forEach var="game" items="${allGames}" varStatus="tagMap">
-                                                    <div class="mui-col-xs-3" apiName="${game.value.name}">
-                                                        <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
-                                                            "dataGameCode":"${game.value.code}","dataGameId":"${game.value.gameId}",
-                                                            "dataApiName":"${game.value.name}","target":"goGame","opType":"function"}'>
+                                                    <div class="mui-col-xs-3" apiName="${game.name}">
+                                                        <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
+                                                            "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
+                                                            "dataApiName":"${game.name}","target":"goGame","opType":"function"}'>
 
                                                             <div class="img-wrap">
-                                                                <img data-lazyload="${soulFn:getImagePath(domain, game.value.cover)}">
+                                                                <img data-lazyload="${soulFn:getImagePath(domain, game.cover)}">
                                                             </div>
-                                                            <p>${game.value.name}</p>
+                                                            <p>${game.name}</p>
                                                         </a>
                                                     </div>
                                             </c:forEach>
@@ -70,27 +69,23 @@
                                 </div>
                             </div>
                             <c:forEach items="${tagName}" var="t">
-                                <c:if test="${fn:length(tagGames[t.key])>0}">
+                                <c:if test="${fn:length(tagGameMap[t.key])>0}">
                                     <div class="swiper-slide">
                                         <div class="casino-wrap">
                                             <div class="casino-list">
                                                 <div class="mui-row">
-                                                   <c:forEach items="${tagGames[t.key]}" var="i">
-                                                       <c:set var="game" value="${allGames[i.toString()]}"/>
-                                                       <c:if test="${!empty game}">
-                                                           <div class="mui-col-xs-3" apiName="${game.name}">
-                                                               <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
+                                                   <c:forEach items="${tagGameMap[t.key]}" var="game">
+                                                       <div class="mui-col-xs-3" apiName="${game.name}">
+                                                           <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
                                                                             "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
                                                                             "dataApiName":"${game.name}","target":"goGame","opType":"function"}' class="" >
 
-                                                                   <div class="img-wrap">
-                                                                           <%--<img data-src="${soulFn:getImagePath(domain, allGames[g].cover)}" src="${soulFn:getImagePath(domain, allGames[g].cover)}">--%>
-                                                                       <img data-lazyload="${soulFn:getImagePath(domain, game.cover)}">
-                                                                   </div>
-                                                                   <p>${game.name}</p>
-                                                               </a>
-                                                           </div>
-                                                       </c:if>
+                                                               <div class="img-wrap">
+                                                                   <img data-lazyload="${soulFn:getImagePath(domain, game.cover)}">
+                                                               </div>
+                                                               <p>${game.name}</p>
+                                                           </a>
+                                                       </div>
                                                    </c:forEach>
                                                 </div>
                                             </div>
