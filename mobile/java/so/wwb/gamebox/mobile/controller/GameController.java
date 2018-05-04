@@ -152,11 +152,10 @@ public class GameController extends BaseApiController {
         List<GameCacheEntity> games;
         String tagId;
         GameCacheEntity game;
+        model.addAttribute("allGames", gameMap.values());
         if(MapTool.isEmpty(tagName)) {
-            model.addAttribute("allGames", gameMap.values());
             return redirectUrl;
         }
-        List<GameCacheEntity> allGames = new ArrayList<>();
         for (String tagStr : tagName.keySet()) {
             games = new ArrayList<>();
             for (SiteGameTag gameTag : gameTagMap.values()) {
@@ -169,13 +168,11 @@ public class GameController extends BaseApiController {
                     continue;
                 }
                 games.add(game);
-                allGames.add(game);
             }
             tagGameMap.put(tagStr, games);
         }
         model.addAttribute("tagGameMap", tagGameMap);
         model.addAttribute("tagName", tagName);
-        model.addAttribute("allGames", allGames);
         return redirectUrl;
     }
 
