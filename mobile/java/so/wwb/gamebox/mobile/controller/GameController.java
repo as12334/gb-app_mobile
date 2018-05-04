@@ -272,7 +272,7 @@ public class GameController extends BaseApiController {
         tagVo.setApiId(listVo.getSearch().getApiId());
         tagVo.setApiTypeId(listVo.getSearch().getApiTypeId());
         tagVo.getSearch().setSiteId(SessionManager.getSiteId());
-        List<String> siteTagIds = ServiceSiteTool.searchTagIdService().searchTagId(tagVo);
+        List<String> siteTagIds = ServiceSiteTool.siteGameTagService().searchTagId(tagVo);
         Map<String, String> tagNameMap = getTagNameMap();
 
         for (String tagId : siteTagIds) {
