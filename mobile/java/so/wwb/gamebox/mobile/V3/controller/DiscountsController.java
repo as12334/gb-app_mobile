@@ -14,8 +14,8 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
-import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo;
+import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -23,6 +23,7 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -51,19 +52,26 @@ public class DiscountsController {
         List<SiteI18n> siteI18nTemp = new ArrayList<>();
         MobileActivityMessageVo messageVo = new MobileActivityMessageVo();
         for (SiteI18n siteI18n : siteI18nMap.values()) {
-            if(siteI18n.getLocale().equals(locale)) {
+            if (siteI18n.getLocale().equals(locale)) {
                 siteI18nTemp.add(siteI18n);
             }
         }
         messageVo.setTypeList(siteI18nTemp);
-        VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
+        /*VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
         vActivityMessageListVo = getActivityMessage(vActivityMessageListVo);
         List<VActivityMessage> vActivityMessages = vActivityMessageListVo.getResult();
         if (CollectionTool.isEmpty(vActivityMessages)) {
             return messageVo;
         }
         Map<String, List<VActivityMessage>> activityMessageByClassifyKey = CollectionTool.groupByProperty(vActivityMessages, VActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
-        messageVo.setTypeMessageMap(activityMessageByClassifyKey);
+        messageVo.setTypeMessageMap(activityMessageByClassifyKey);*/
+
+        Collection<PlayerActivityMessage> playerActivityMessages = Cache.getMobileActivityMessages().values();
+        if (CollectionTool.isEmpty(playerActivityMessages)) {
+            return messageVo;
+        }
+        Map<String, List<PlayerActivityMessage>> playerActivityMessageByClassifyKey = CollectionTool.groupByProperty(playerActivityMessages, PlayerActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
+        messageVo.setTypePlayMessageMap(playerActivityMessageByClassifyKey);
         return messageVo;
     }
 
@@ -80,7 +88,7 @@ public class DiscountsController {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
-            if(playerRank != null){
+            if (playerRank != null) {
                 vActivityMessageListVo.getSearch().setRankId(playerRank.getId());
             }
         }

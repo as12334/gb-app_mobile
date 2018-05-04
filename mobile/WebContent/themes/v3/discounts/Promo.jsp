@@ -27,7 +27,7 @@
                         <div class="swiper-slide">
                             <div class="mui-scroll-wrapper">
                                 <div class="mui-scroll">
-                                    <c:forEach var="map" items="${messageVo.typeMessageMap}">
+                                    <c:forEach var="map" items="${messageVo.typePlayMessageMap}">
                                         <c:forEach var="message" items="${map.value}">
                                             <div class="promo-item">
                                                     <%--<a href="${root}/promo/promoDetail.html?search.id=${message.id}"
@@ -59,7 +59,7 @@
                             </div>
                         </div>
                         <c:forEach var="type" items="${messageVo.typeList}">
-                            <c:set var="mapValue" value="${messageVo.typeMessageMap.get(type.key)}"></c:set>
+                            <c:set var="mapValue" value="${messageVo.typePlayMessageMap.get(type.key)}"></c:set>
                             <c:if test="${fn:length(mapValue) > 0}">
                                 <div class="swiper-slide" name="${type.key}">
                                     <div class="mui-scroll-wrapper">
