@@ -1,6 +1,7 @@
 package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.collections.CollectionTool;
+import org.soul.commons.collections.MapTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.model.security.privilege.vo.SysUserVo;
@@ -66,11 +67,11 @@ public class DiscountsController {
         Map<String, List<VActivityMessage>> activityMessageByClassifyKey = CollectionTool.groupByProperty(vActivityMessages, VActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
         messageVo.setTypeMessageMap(activityMessageByClassifyKey);*/
 
-        Collection<PlayerActivityMessage> playerActivityMessages = Cache.getMobileActivityMessages().values();
-        if (CollectionTool.isEmpty(playerActivityMessages)) {
+        Map<String, PlayerActivityMessage> playerActivityMessages = Cache.getMobileActivityMessages();
+        if (MapTool.isEmpty(playerActivityMessages)) {
             return messageVo;
         }
-        Map<String, List<PlayerActivityMessage>> playerActivityMessageByClassifyKey = CollectionTool.groupByProperty(playerActivityMessages, PlayerActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
+        Map<String, List<PlayerActivityMessage>> playerActivityMessageByClassifyKey = CollectionTool.groupByProperty(playerActivityMessages.values(), PlayerActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
         messageVo.setTypePlayMessageMap(playerActivityMessageByClassifyKey);
         return messageVo;
     }
