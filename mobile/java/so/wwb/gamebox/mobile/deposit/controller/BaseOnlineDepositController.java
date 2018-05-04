@@ -121,6 +121,12 @@ public class BaseOnlineDepositController extends BaseDepositController {
                 String uri = "/onlinePay/abcefg.html?search.transactionNo=" + playerRecharge.getTransactionNo() + "&origin=" + TerminalEnum.MOBILE.getCode();
                 domain = getDomain(domain, payAccount);
                 url = domain + uri;
+                //保存订单支付网址
+                playerRecharge.setPayUrl(domain);
+                PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+                playerRechargeVo.setResult(playerRecharge);
+                playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
+                ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
             }
         } catch (Exception e) {
             LOG.error(e);
