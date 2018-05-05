@@ -1,5 +1,6 @@
 <%--@elvariable id="activityClassifyMap" type="java.util.Map<java.lang.String, java.lang.String>"--%>
 <%--@elvariable id="activityMap" type="java.util.Map<java.lang.String, java.util.List<so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage>>"--%>
+<%--@elvariable id="command" type="so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <!DOCTYPE html>
@@ -48,7 +49,7 @@
                                                 </div>
                                                 <div class="pro-txt">
                                                     <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a data-rel='{"target":"${root}/promo/${isActivityHall?'goToPromoDetail':'promoDetail'}.html?search.id=${message.id}","opType":"href"}'
+                                                    <a data-rel='{"target":"${root}/promo/${isActivityHall?'goToPromoDetail':'promoDetail'}.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'
                                                        class="mui-pull-right">查看详情</a>
                                                 </div>
                                                     <%--</a>--%>
@@ -74,17 +75,15 @@
                                                                value="${soulFn:getImagePath(domain, message.activityCover)}"/>
                                                     </c:when>
                                                 </c:choose>
-                                                    <%--<a data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'>--%>
                                                 <div class="img-wrap">
                                                     <img src="${empty imgSrc?defaultSaleImg:''}"
                                                          data-lazyload="${imgSrc}"/>
                                                 </div>
                                                 <div class="pro-txt">
                                                     <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a data-rel='{"target":"${root}/promo/${isActivityHall?'goToPromoDetail':'promoDetail'}.html?search.id=${message.id}","opType":"href"}'
+                                                    <a data-rel='{"target":"${root}/promo/${isActivityHall?'goToPromoDetail':'promoDetail'}.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'
                                                        class="mui-pull-right">查看详情</a>
                                                 </div>
-                                                    <%--</a>--%>
                                             </div>
                                         </c:forEach>
                                     </div>

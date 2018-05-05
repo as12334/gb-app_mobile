@@ -9,7 +9,7 @@
 
 <body>
 <!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap mui-draggable">
+<div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <c:set var="activity" value="${command}" />
@@ -20,7 +20,7 @@
             <a class="mui-icon mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}' data-href="/promo/myPromo.html"><i></i></a>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
-        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice content-without-footer">
+        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <div class="mui-row">

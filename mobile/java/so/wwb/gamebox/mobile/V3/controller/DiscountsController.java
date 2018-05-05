@@ -11,6 +11,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +36,10 @@ public class DiscountsController {
         getActivityClassifyMap(model);
         //活动
         getActivities(model);
+        //是否开启新活动大厅
         model.addAttribute("isActivityHall", ParamTool.isOpenActivityHall());
+        //用于活动id加密
+        model.addAttribute("command", new VActivityMessageVo());
         return "/discounts/Promo";
     }
 
