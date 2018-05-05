@@ -36,8 +36,6 @@ public class DiscountsController {
         getActivityClassifyMap(model);
         //活动
         getActivities(model);
-        //是否开启新活动大厅
-        model.addAttribute("isActivityHall", ParamTool.isOpenActivityHall());
         //用于活动id加密
         model.addAttribute("command", new VActivityMessageVo());
         return "/discounts/Promo";
