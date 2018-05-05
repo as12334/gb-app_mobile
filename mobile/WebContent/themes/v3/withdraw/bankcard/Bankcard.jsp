@@ -110,9 +110,9 @@
 </body>
 <%@ include file="../../include/include.js.jsp" %>
 
-<script type="text/javascript" src="${resRoot}/js/mui/mui.poppicker.js"></script>
-<script type="text/javascript" src="${resRoot}/js/mui/mui.picker.js"></script>
-<script type="text/javascript" src="${resRoot}/js/withdraw/bankcard/Bankcard.js"></script>
+<script type="text/javascript" src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/withdraw/bankcard/Bankcard.js?v=${rcVersion}"></script>
 
 
 </html>

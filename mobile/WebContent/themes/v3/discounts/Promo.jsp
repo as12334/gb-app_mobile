@@ -109,8 +109,8 @@
 <input value="1" id="lastPageNumber" type="hidden">
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resRoot}/js/mui/mui.lazyload.js"></script>
-<script src="${resRoot}/js/mui/mui.lazyload.img.js"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.lazyload.img.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/discounts/Promo.js?v=${rcVersion}"></script>
