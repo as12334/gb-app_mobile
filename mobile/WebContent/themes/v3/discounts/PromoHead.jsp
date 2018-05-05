@@ -1,3 +1,5 @@
+<%--@elvariable id="activityClassifyMap" type="java.util.Map<java.lang.String, java.lang.String>"--%>
+<%--@elvariable id="activityMap" type="java.util.Map<java.lang.String, java.util.List<so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage>>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <header class="mui-bar mui-bar-nav">
@@ -14,10 +16,8 @@
         <div class="swiper-container p-t-slide-indicators promo-sorts">
             <div class="swiper-wrapper">
                 <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType":"function","activityType":""}'><span>${views.themes_auto['全部']}</span></a>
-                <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
-                    <c:if test="${fn:length(messageVo.typePlayMessageMap.get(type.key)) > 0}">
-                        <a class="swiper-slide mui-btn btn-promo-sort" name="${type.key}" data-rel='{"target":"activityType","opType":"function","activityType":"${type.key}"}'><span>${type.value}</span></a>
-                    </c:if>
+                <c:forEach var="i" items="${activityMap}" varStatus="vs">
+                    <a class="swiper-slide mui-btn btn-promo-sort" name="${i.key}" data-rel='{"target":"activityType","opType":"function","activityType":"${i.key}"}'><span>${activityClassifyMap[i.key]}</span></a>
                 </c:forEach>
             </div>
         </div>
