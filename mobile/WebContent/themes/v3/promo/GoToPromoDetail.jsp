@@ -60,7 +60,7 @@
                 </div>
             </div> <!--mui-scroll 闭合标签-->
 
-            <c:if test="${activity.states eq 'processing'}">
+            <%--<c:if test="${activity.states eq 'processing'}">--%>
                 <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
                 <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                 <span class="_now_time" value="${nowTime}" type="hidden"></span>
@@ -112,7 +112,7 @@
                         </c:choose>
                     </c:if>
                 </div>
-            </c:if>
+            <%--</c:if>--%>
         </div>  <!--mui-content 闭合标签-->
         <!--浮窗广告轮播-->
         <%@ include file="../index.include/Envelope.jsp" %>
