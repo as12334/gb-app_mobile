@@ -11,7 +11,7 @@
 <%--此处把js相关引用挪到前面是因为优惠详细里图片地址带onload方法里涉及window.top.imgRoot--%>
 <%@ include file="../include/include.js.jsp" %>
 <!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap mui-draggable">
+<div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <c:set var="activity" value="${command}"/>
@@ -60,7 +60,7 @@
                 </div>
             </div> <!--mui-scroll 闭合标签-->
 
-            <c:if test="${activity.states eq 'processing'}">
+            <%--<c:if test="${activity.states eq 'processing'}">--%>
                 <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
                 <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                 <span class="_now_time" value="${nowTime}" type="hidden"></span>
@@ -112,7 +112,7 @@
                         </c:choose>
                     </c:if>
                 </div>
-            </c:if>
+            <%--</c:if>--%>
         </div>  <!--mui-content 闭合标签-->
         <!--浮窗广告轮播-->
         <%@ include file="../index.include/Envelope.jsp" %>

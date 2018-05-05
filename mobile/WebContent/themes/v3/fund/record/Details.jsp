@@ -465,7 +465,7 @@
 
 </body>
 <%@ include file="../../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/fund/record/Details.js"></script>
+<script type="text/javascript" src="${resRoot}/js/fund/record/Details.js?v=${rcVersion}"></script>
 
 </html>
 <%@ include file="/include/include.footer.jsp" %>

@@ -33,7 +33,7 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/download/DownLoad.js"></script>
+<script type="text/javascript" src="${resRoot}/js/download/DownLoad.js?v=${rcVersion}"></script>
 </html>
 
 <%@ include file="/include/include.footer.jsp" %>

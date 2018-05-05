@@ -59,8 +59,8 @@
 </body>
 
 <%@ include file="../../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js"></script>
-<script type="text/javascript" src="${resRoot}/js/password/SafePasswordCommon.js"></script>
-<script type="text/javascript" src="${resRoot}/js/password/SetSecurityPassword.js"></script>
+<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/password/SafePasswordCommon.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/password/SetSecurityPassword.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>
