@@ -96,8 +96,9 @@
                             <c:when test="${isLogin}">
                                 <a class="mui-btn mui-btn-primary btn-deposit"
                                    data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply submit mui-disabled notfit mui-hidden">${views.promo_auto['未满足条件']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply fit submit" ${activityCode eq 'back_water'?'disabled':''}
+                                <a class="mui-btn mui-btn-primary btn-apply mui-hidden" id="notFit">${views.promo_auto['未满足条件']}</a>
+                                <a class="mui-btn mui-btn-primary btn-apply" ${activityCode eq 'back_water'?'disabled':''}
+                                   id="submit"
                                    data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
                                     "dataStates":"${activity.states}","dataType":"processing",
                                     "dataSearchId":"${activity.searchId}","dataRankId":"${rankId}",
