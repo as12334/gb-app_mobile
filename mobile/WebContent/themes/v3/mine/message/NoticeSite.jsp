@@ -4,11 +4,11 @@
     <div class="gb-noticetabs">
         <div id="" class="mui-segmented-control">
             <a data-href="noticeSite1" data-rel='{"target":"segmentedControl2","opType":"function"}'
-               class="mui-control-item">系统消息</a>
+               class="mui-control-item <c:if test="${empty unReadType || unReadType eq 'sysMessage'}">mui-active</c:if>">系统消息</a>
             <a data-href="noticeSite2" data-rel='{"target":"segmentedControl2","opType":"function"}'
-               class="mui-control-item">我的消息</a>
+               class="mui-control-item ${unReadType eq 'advisoryMessage'?'mui-active':''}">我的消息</a>
             <a data-href="noticeSite3" data-rel='{"target":"segmentedControl2","opType":"function"}'
-               class="mui-control-item mui-active">发送消息</a>
+               class="mui-control-item ${unReadType eq 'sendMessage'?'mui-active':''}">发送消息</a>
         </div>
     </div>
 </div>
