@@ -75,8 +75,19 @@ public class DiscountsController {
         //进行中和将来进行中活动展示
         long time = SessionManager.getDate().getNow().getTime();
         String classify;
+        String locale = SessionManager.getLocale().toString();
         for (PlayerActivityMessage playerActivityMessage : activityMap.values()) {
-            if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
+            if (playerActivityMessage.getIsDisplay() == null) {
+                continue;
+            }
+            if (!playerActivityMessage.getIsDisplay()) {
+                continue;
+            }
+            if (!locale.equals(playerActivityMessage.getActivityVersion())) {
+                continue;
+            }
+            if (playerActivityMessage.getEndTime() != null
+                    && playerActivityMessage.getEndTime().getTime() < time) {
                 continue;
             }
             classify = playerActivityMessage.getActivityClassifyKey();
