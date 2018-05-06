@@ -9,7 +9,7 @@
 
 <body>
 <!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap mui-draggable">
+<div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <c:set var="activity" value="${command}" />
@@ -20,7 +20,7 @@
             <a class="mui-icon mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}' data-href="/promo/myPromo.html"><i></i></a>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
-        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice content-without-footer">
+        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <div class="mui-row">
@@ -101,7 +101,7 @@
 <%@ include file="../include/include.js.jsp"%>
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
-<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/discounts/PromoDetail.js?v=${rcVersion}"></script>
 
 </html>

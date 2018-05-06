@@ -1,30 +1,22 @@
 package so.wwb.gamebox.mobile.V3.controller;
 
-import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.model.security.privilege.vo.SysUserVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
-import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.TerminalEnum;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
-import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
-import so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
-import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
-import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,69 +27,76 @@ import java.util.Map;
 public class DiscountsController {
 
     private static final Log LOG = LogFactory.getLog(DiscountsController.class);
-    private static final Integer pageSize = 8;
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
     public String index(Model model, Integer skip, HttpServletRequest request) {
         model.addAttribute("skip", skip);
-        MobileActivityMessageVo messageVo = getActivity(request);
-        model.addAttribute("messageVo", messageVo);
+        //活动分类
+        getActivityClassifyMap(model);
+        //活动
+        getActivities(model);
+        //用于活动id加密
+        model.addAttribute("command", new VActivityMessageVo());
         return "/discounts/Promo";
     }
 
-
-    private MobileActivityMessageVo getActivity(HttpServletRequest request) {
+    /**
+     * 获取活动分类名称
+     *
+     * @param model
+     */
+    private void getActivityClassifyMap(Model model) {
         Map<String, SiteI18n> siteI18nMap = Cache.getOperateActivityClassify();
+        if (MapTool.isEmpty(siteI18nMap)) {
+            return;
+        }
         String locale = SessionManager.getLocale().toString();
-        List<SiteI18n> siteI18nTemp = new ArrayList<>();
-        MobileActivityMessageVo messageVo = new MobileActivityMessageVo();
+        Map<String, String> activityClassifyMap = new HashMap<>();
         for (SiteI18n siteI18n : siteI18nMap.values()) {
             if (siteI18n.getLocale().equals(locale)) {
-                siteI18nTemp.add(siteI18n);
+                activityClassifyMap.put(siteI18n.getKey(), siteI18n.getValue());
             }
         }
-        messageVo.setTypeList(siteI18nTemp);
-        /*VActivityMessageListVo vActivityMessageListVo = new VActivityMessageListVo();
-        vActivityMessageListVo = getActivityMessage(vActivityMessageListVo);
-        List<VActivityMessage> vActivityMessages = vActivityMessageListVo.getResult();
-        if (CollectionTool.isEmpty(vActivityMessages)) {
-            return messageVo;
-        }
-        Map<String, List<VActivityMessage>> activityMessageByClassifyKey = CollectionTool.groupByProperty(vActivityMessages, VActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
-        messageVo.setTypeMessageMap(activityMessageByClassifyKey);*/
-
-        Map<String, PlayerActivityMessage> playerActivityMessages = Cache.getMobileActivityMessages();
-        if (MapTool.isEmpty(playerActivityMessages)) {
-            return messageVo;
-        }
-        Map<String, List<PlayerActivityMessage>> playerActivityMessageByClassifyKey = CollectionTool.groupByProperty(playerActivityMessages.values(), PlayerActivityMessage.PROP_ACTIVITY_CLASSIFY_KEY, String.class);
-        messageVo.setTypePlayMessageMap(playerActivityMessageByClassifyKey);
-        return messageVo;
+        model.addAttribute("activityClassifyMap", activityClassifyMap);
     }
 
     /**
-     * 获取正在进行中的活动
+     * 获取正在进行中、将来进行的活动
+     *
+     * @param model
      */
-    private VActivityMessageListVo getActivityMessage(VActivityMessageListVo vActivityMessageListVo) {
-        vActivityMessageListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageListVo.getSearch().setIsDeleted(Boolean.FALSE);
-        vActivityMessageListVo.getSearch().setIsDisplay(Boolean.TRUE);
-        vActivityMessageListVo.getSearch().setStates(ActivityStateEnum.PROCESSING.getCode());
-        //通过玩家层级判断是否显示活动
-        if (SessionManager.getUser() != null && !SessionManagerCommon.isLotteryDemo()) {
-            SysUserVo sysUserVo = new SysUserVo();
-            sysUserVo.getSearch().setId(SessionManager.getUserId());
-            PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
-            if (playerRank != null) {
-                vActivityMessageListVo.getSearch().setRankId(playerRank.getId());
-            }
+    private void getActivities(Model model) {
+        Map<String, PlayerActivityMessage> activityMap = Cache.getMobileActivityMessages();
+        if (MapTool.isEmpty(activityMap)) {
+            return;
         }
-        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
-        vActivityMessageListVo.setPaging(null);
-        vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
-        return vActivityMessageListVo;
+        Map<String, List<PlayerActivityMessage>> activityGroupByClassify = new HashMap<>();
+        //进行中和将来进行中活动展示
+        long time = SessionManager.getDate().getNow().getTime();
+        String classify;
+        String locale = SessionManager.getLocale().toString();
+        for (PlayerActivityMessage playerActivityMessage : activityMap.values()) {
+            if (playerActivityMessage.getIsDisplay() == null) {
+                continue;
+            }
+            if (!playerActivityMessage.getIsDisplay()) {
+                continue;
+            }
+            if (!locale.equals(playerActivityMessage.getActivityVersion())) {
+                continue;
+            }
+            if (playerActivityMessage.getEndTime() != null
+                    && playerActivityMessage.getEndTime().getTime() < time) {
+                continue;
+            }
+            classify = playerActivityMessage.getActivityClassifyKey();
+            if (activityGroupByClassify.get(classify) == null) {
+                activityGroupByClassify.put(classify, new ArrayList<>());
+            }
+            activityGroupByClassify.get(classify).add(playerActivityMessage);
+        }
+        model.addAttribute("activityMap", activityGroupByClassify);
     }
-
 
 }

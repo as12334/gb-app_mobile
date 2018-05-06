@@ -22,6 +22,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
@@ -159,15 +160,13 @@ public class PromoController {
     @RequestMapping("/promoDetail")
     @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        getPromo(vActivityMessageVo, model);
+        model.addAttribute("command", Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString()));
+        model.addAttribute("nowTime", SessionManager.getDate().getNow());
+        //是否开启新活动大厅
+        if(ParamTool.isOpenActivityHall()){
+            return "/promo/GoToPromoDetail";
+        }
         return PROMO_RECORDS_DETAIL;
-    }
-
-    @RequestMapping(value = "/goToPromoDetail")
-    @Upgrade(upgrade = true)
-    public String goToPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        getPromo(vActivityMessageVo, model);
-        return "/promo/GoToPromoDetail";
     }
 
     @RequestMapping(value = "/applyPromoDetail")
@@ -182,13 +181,6 @@ public class PromoController {
         } else {
             return "/promo/ApplyPromoDetail";
         }
-    }
-
-    private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        /*vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);*/
-        model.addAttribute("command", Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString()));
-        model.addAttribute("nowTime", SessionManager.getDate().getNow());
     }
 
     @ResponseBody

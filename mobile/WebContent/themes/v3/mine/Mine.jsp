@@ -212,8 +212,8 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
-<script type="text/javascript" src="${resRoot}/js/membercentre/MemberCentre.js"></script>
-<script type="text/javascript" src="${resRoot}/js/common/Menu.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/membercentre/MemberCentre.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

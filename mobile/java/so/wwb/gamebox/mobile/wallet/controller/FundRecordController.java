@@ -67,8 +67,6 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
     public String fundRecord(VPlayerTransactionListVo listVo, Model model, HttpServletRequest request) {
         listVo.getSearch().setPlayerId(SessionManager.getUserId());
         initQueryDate(listVo);
-        if (listVo.getSearch().getEndCreateTime() != null)
-            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         getFund(model);
         //修改为先加载资金记录头部 再加载页面 以应对mui框架自带的下拉在app无法降低内存
         if(ServletTool.isAjaxSoulRequest(request)) {
@@ -228,6 +226,8 @@ public class FundRecordController extends NoMappingCrudController<IVPlayerTransa
         }
         if (listVo.getSearch().getEndCreateTime() == null) {
             listVo.getSearch().setEndCreateTime(SessionManager.getDate().getNow());
+        } else {
+            listVo.getSearch().setEndCreateTime(DateTool.addDays(listVo.getSearch().getEndCreateTime(), 1));
         }
     }
 

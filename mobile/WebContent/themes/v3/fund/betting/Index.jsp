@@ -68,8 +68,8 @@
 </footer>
 </body>
 <%@include file="../../include/include.js.jsp" %>
-<script src="${resRoot}/js/mui/mui.picker.min.js"></script>
-<script src="${resComRoot}/js/timeControls/moment.js"></script>
-<script type="text/javascript" src="${resRoot}/js/fund/betting/Index.js"></script>
+<script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
+<script src="${resComRoot}/js/timeControls/moment.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/fund/betting/Index.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

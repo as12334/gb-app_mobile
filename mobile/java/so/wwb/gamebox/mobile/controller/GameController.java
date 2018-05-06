@@ -153,14 +153,14 @@ public class GameController extends BaseApiController {
         String tagId;
         GameCacheEntity game;
         model.addAttribute("allGames", gameMap.values());
-        if(MapTool.isEmpty(tagName)) {
+        if (MapTool.isEmpty(tagName)) {
             return redirectUrl;
         }
         for (String tagStr : tagName.keySet()) {
             games = new ArrayList<>();
             for (SiteGameTag gameTag : gameTagMap.values()) {
                 tagId = gameTag.getTagId();
-                if (!tagId.equals(tagStr)) {
+                if (tagId == null || !tagId.equals(tagStr)) {
                     continue;
                 }
                 game = gameMap.get(String.valueOf(gameTag.getGameId()));
