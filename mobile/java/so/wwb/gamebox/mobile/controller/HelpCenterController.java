@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.controller;
 
+import org.soul.commons.cache.locale.LocaleTool;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
@@ -26,6 +27,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.form.BindMobileForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.common.notice.enums.ContactWayType;
 import so.wwb.gamebox.model.company.help.po.HelpDocumentI18n;
@@ -35,6 +37,7 @@ import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
 import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -183,6 +186,7 @@ public class HelpCenterController {
     public String bindMobile(Model model, NoticeContactWayVo contactVo) {
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
+        model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
         if (contactWay != null) {
             model.addAttribute("phone", StringTool.overlayTel(contactWay.getContactValue()));
             return "/help/bind/PhoneNumber";
@@ -193,7 +197,6 @@ public class HelpCenterController {
     }
 
     /**
-     *
      * @param model
      * @return
      */
@@ -201,6 +204,7 @@ public class HelpCenterController {
     @Upgrade(upgrade = true)
     public String UpdateMobile(Model model) {
         model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
+        model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
         return "/help/bind/UpDataMobile";
     }
 
@@ -214,19 +218,21 @@ public class HelpCenterController {
     public String PhoneNumber(Model model, NoticeContactWayVo contactVo) {
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         model.addAttribute("phone", StringTool.overlayTel(contactWay.getContactValue()));
+        model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
         return "/help/bind/PhoneNumber";
     }
 
     /**
      * 判断原手机是否正确
+     *
      * @param oldPhone
      * @return
      */
-    private boolean oldPhoneNumber(String oldPhone,String contactValue){
-        if(StringTool.isBlank(oldPhone)){
+    private boolean oldPhoneNumber(String oldPhone, String contactValue) {
+        if (StringTool.isBlank(oldPhone)) {
             return false;
         }
-        if (!oldPhone.equals(contactValue)){
+        if (!oldPhone.equals(contactValue)) {
             return false;
         }
         return true;
@@ -243,15 +249,11 @@ public class HelpCenterController {
     @RequestMapping(value = "/savePhone")
     @ResponseBody
     @Upgrade(upgrade = true)
-    public Boolean savePhone(NoticeContactWayVo contactVo,String oldPhone, @FormModel @Valid BindMobileForm form, BindingResult result) {
-        if(result.hasErrors()){
-            return false;
-        }
-
+    public Map savePhone(NoticeContactWayVo contactVo, String oldPhone, @FormModel @Valid BindMobileForm form, BindingResult result) {
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         if (contactWay != null) {//修改
-            if(!oldPhoneNumber(oldPhone,contactWay.getContactValue())){
-                return false;
+            if (!oldPhoneNumber(oldPhone, contactWay.getContactValue())) {
+                return getMessage(false, "phone.oldPhone");
             }
             contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
@@ -265,9 +267,9 @@ public class HelpCenterController {
             contactVo = ServiceTool.noticeContactWayService().insert(contactVo);
         }
         if (!contactVo.isSuccess()) {//不成功
-            return false;
+            return getMessage(false, "phone.fail");
         }
-        return true;
+        return getMessage(true, "phone.success");
     }
 
     /**
@@ -289,32 +291,31 @@ public class HelpCenterController {
 
     /**
      * 远程验证手机号跟验证码
+     *
      * @param code
      * @param phone
      * @return
      */
     @RequestMapping("/checkPhoneCode")
     @ResponseBody
-    public String checkPhoneCode(@RequestParam("phoneCode")String code , @RequestParam("search.contactValue")String phone){
-        if(StringTool.isBlank(phone) || StringTool.isBlank(code)) {
+    public String checkPhoneCode(@RequestParam("phoneCode") String code, @RequestParam("search.contactValue") String phone) {
+        if (StringTool.isBlank(phone) || StringTool.isBlank(code)) {
             return "false";
         }
 
-        Map<String,String > params = SessionManagerCommon.getCheckRegisterPhoneInfo();
-        if(params == null){
+        Map<String, String> params = SessionManagerCommon.getCheckRegisterPhoneInfo();
+        if (params == null) {
             return "false";
         }
 
-        if(StringTool.isBlank(params.get("phone")) || StringTool.isBlank(params.get("code"))) {
+        if (StringTool.isBlank(params.get("phone")) || StringTool.isBlank(params.get("code"))) {
             return "false";
         }
-
         //验证码30分钟内有效
         if (DateTool.minutesBetween(SessionManagerCommon.getDate().getNow(), SessionManagerCommon.getSendRegisterPhone()) > 30) {
             return "false";
         }
-
-        return ( phone.equals(params.get("phone"))&& params.get("code").equals(code) ) +"";
+        return (phone.equals(params.get("phone")) && params.get("code").equals(code)) + "";
     }
 
     /**
@@ -332,5 +333,12 @@ public class HelpCenterController {
         listVo.getSearch().setContactType(ContactWayType.CELLPHONE.getCode());
         listVo.getSearch().setContactValue(searchContactValue);
         return ServiceSiteTool.userAgentService().isExistContactWay(listVo);
+    }
+
+    private Map<String, Object> getMessage(boolean isSuccess, String messageCode) {
+        Map<String, Object> resultMap = new HashMap<>(2, 1f);
+        resultMap.put("state", isSuccess);
+        resultMap.put("msg", LocaleTool.tranMessage(Module.REGISTER, messageCode));
+        return resultMap;
     }
 }
