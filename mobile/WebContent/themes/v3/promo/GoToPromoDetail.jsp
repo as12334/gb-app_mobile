@@ -85,10 +85,10 @@
                             <c:set var="btnText" value="${views.promo_auto['参与中']}"/>
                         </c:when>
                         <c:when test="${activityCode eq 'profit_loss' || activityCode eq 'effective_transaction'}">
-                            <c:set var="btnText" value="${views.promo_auto['报名参与']}"/>
+                            <c:set var="btnText" value="${views.promo_auto['立即报名']}"/>
                         </c:when>
                         <c:otherwise>
-                            <c:set var="btnText" value="${views.promo_auto['立即加入']}"/>
+                            <c:set var="btnText" value="${views.promo_auto['申请活动']}"/>
                         </c:otherwise>
                     </c:choose>
                     <c:if test="${activity.code ne 'content'}">
