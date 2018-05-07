@@ -18,15 +18,15 @@
             <h1 class="mui-title">${views.promo_auto['我的优惠记录']}</h1>
             <div class="top-info">
                 <div>累计获得优惠</div>
-                <span class="mone">${money}</span>
+                <span class="mone"><c:if test="${empty money}">0.00</c:if>${money}</span>
             </div>
         </header>
-        <input value="1" id="AllPageNumber" type="hidden"/>
         <div class="mui-content mui-scroll-wrapper content-without-notice content-without-footer promo-record-content">
             <!-- 主界面具体展示内容 -->
             <div class="promo-nav">
                 <div id="segmentedControl" class="mui-segmented-control">
-                    <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item mui-active" href="#item1">
+                    <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item mui-active"
+                       href="#item1">
                         全部优惠
                     </a>
                     <a data-rel='{"target":"switchOffers","opType":"function"}' class="mui-control-item" href="#item2">
@@ -72,9 +72,9 @@
                                                             <span class="tit">申请时间：</span>${soulFn:formatDateTz(s.applyTime,DateFormat.DAY_SECOND ,timeZone )}
                                                         </div>
                                                         <c:if test="${!empty s.transactionNo}">
-                                                        <div>
-                                                            <span class="tit">申请单号：</span>${s.transactionNo}
-                                                        </div>
+                                                            <div>
+                                                                <span class="tit">申请单号：</span>${s.transactionNo}
+                                                            </div>
                                                         </c:if>
                                                         <div>
                                                             <span class="tit">参与活动：</span>${s.activityName}

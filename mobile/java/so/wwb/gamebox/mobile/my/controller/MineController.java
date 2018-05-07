@@ -71,6 +71,7 @@ public class MineController{
         //现金取款方式
         model.addAttribute("isBit", ParamTool.isBit());
         model.addAttribute("isCash", ParamTool.isCash());
+        model.addAttribute("isSms",ParamTool.isSmsSwitch());
         return MY_INDEX;
     }
 

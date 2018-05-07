@@ -55,4 +55,4 @@
         </c:forEach>
     </c:when>
 </c:choose>
-<input type="hidden" value="${command.paging.lastPageNumber}" id="partialPageNumber"/>
+<input type="hidden" value="${command.paging.lastPageNumber}" name="partialPageNumber"/>

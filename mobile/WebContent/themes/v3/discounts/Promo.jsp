@@ -30,7 +30,7 @@
                                 <div class="mui-scroll">
                                     <c:forEach var="map" items="${activityMap}">
                                         <c:forEach var="message" items="${map.value}">
-                                            <div class="promo-item">
+                                            <div class="promo-item" data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'>
                                                     <%--<a href="${root}/promo/promoDetail.html?search.id=${message.id}"
                                                            data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'>--%>
                                                 <c:choose>
@@ -49,8 +49,7 @@
                                                 </div>
                                                 <div class="pro-txt">
                                                     <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'
-                                                       class="mui-pull-right">查看详情</a>
+                                                    <a class="mui-pull-right">查看详情</a>
                                                 </div>
                                                     <%--</a>--%>
                                             </div>
@@ -64,7 +63,7 @@
                                 <div class="mui-scroll-wrapper">
                                     <div class="mui-scroll">
                                         <c:forEach items="${type.value}" var="message">
-                                            <div class="promo-item">
+                                            <div class="promo-item"  data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'>
                                                 <c:choose>
                                                     <c:when test="${!empty message.activityAffiliated}">
                                                         <c:set var="imgSrc"
@@ -81,8 +80,7 @@
                                                 </div>
                                                 <div class="pro-txt">
                                                     <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'
-                                                       class="mui-pull-right">查看详情</a>
+                                                    <a class="mui-pull-right">查看详情</a>
                                                 </div>
                                             </div>
                                         </c:forEach>

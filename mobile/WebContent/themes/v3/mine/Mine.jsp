@@ -16,11 +16,14 @@
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav mui-bar-blue mui-bar-mine">
-            <soul:button target="leftMenu" text="" opType="function" cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
+            <soul:button target="leftMenu" text="" opType="function"
+                         cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
             <h1 class="mui-title">${views.themes_auto['我的']}</h1>
             <%--<a href="" class="mui-icon icon-gift mui-pull-right"></a>--%>
-            <soul:button target="goTab" skip="1" dataHref="/discounts/index.html?skip=1" isLeft="false" text="" opType="function" cssClass="mui-icon icon-gift mui-pull-right"/>
-            <soul:button target="${root}/message/gameNotice.html" text="" opType="href" cssClass="mui-icon icon-message mui-pull-right" >
+            <soul:button target="goTab" skip="1" dataHref="/discounts/index.html?skip=1" isLeft="false" text=""
+                         opType="function" cssClass="mui-icon icon-gift mui-pull-right"/>
+            <soul:button target="${root}/message/gameNotice.html" text="" opType="href"
+                         cssClass="mui-icon icon-message mui-pull-right">
                 <span class="mui-badge mui-badge-danger unReadCount"></span>
             </soul:button>
             <%--<a href="" class="mui-icon icon-message mui-pull-right">
@@ -38,7 +41,8 @@
                                 <img src="${resRoot}/images/avatar.png" class="avatar">
                                 <p></p>
                                 <%--<a class="btn mui-btn mui-btn-outlined user-logout">${views.themes_auto['退出登录']}</a>--%>
-                                <soul:button target="logout" text="${views.themes_auto['退出登录']}" opType="function" cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
+                                <soul:button target="logout" text="${views.themes_auto['退出登录']}" opType="function"
+                                             cssClass="btn mui-btn mui-btn-outlined user-logout"></soul:button>
                             </div>
                             <p class="money-info">
                                 <span class="span">
@@ -57,7 +61,8 @@
                 <div class="mui-row">
                     <ul class="mui-list-unstyled list-mine-item">
                         <li class="mui-col-xs-4">
-                            <soul:button target="goTab" skip="0" dataHref="/wallet/deposit/index.html" text="" opType="function" cssClass="" >
+                            <soul:button target="goTab" skip="0" dataHref="/wallet/deposit/index.html" text=""
+                                         opType="function" cssClass="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico1.png" class="mine-item-img"/>
 						        </span>
@@ -116,7 +121,8 @@
                     <ul class="mui-list-unstyled list-mine-item"><!--第三行-->
                         <c:if test="${isCash}">
                             <li class="mui-col-xs-4">
-                                <soul:button target="${root}/bankCard/page/addCard.html" text="" opType="href" cssClass="">
+                                <soul:button target="${root}/bankCard/page/addCard.html" text="" opType="href"
+                                             cssClass="">
                                     <span class="item-img-wrap">
 							            <img src="${resRoot}/images/my-ico7.png" class="mine-item-img"/>
                                     </span>
@@ -128,7 +134,8 @@
                         </c:if>
                         <c:if test="${isBit}">
                             <li class="mui-col-xs-4">
-                                <soul:button target="${root}/bankCard/page/addBtc.html" text="" opType="href" cssClass="">
+                                <soul:button target="${root}/bankCard/page/addBtc.html" text="" opType="href"
+                                             cssClass="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico12.png" class="mine-item-img"/>
 						        </span>
@@ -141,7 +148,8 @@
                             <c:set var="len" value="${len+1}"/>
                         </c:if>
                         <li class="mui-col-xs-4">
-                            <soul:button target="${root}/my/password/editPassword.html" text="" opType="href" cssClass="">
+                            <soul:button target="${root}/my/password/editPassword.html" text="" opType="href"
+                                         cssClass="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico10.png" class="mine-item-img"/>
 						        </span>
@@ -151,7 +159,8 @@
 
                         <c:if test="${len!=2}">
                             <li class="mui-col-xs-4">
-                                <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href" cssClass="">
+                                <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href"
+                                             cssClass="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
 						        </span>
@@ -163,7 +172,8 @@
                     <ul class="mui-list-unstyled list-mine-item"><!--第四行-->
                         <c:if test="${len==2}">
                             <li class="mui-col-xs-4">
-                                <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href" cssClass="">
+                                <soul:button target="${root}/passport/securityPassword/edit.html" text="" opType="href"
+                                             cssClass="">
 						        <span class="item-img-wrap">
 							        <img src="${resRoot}/images/my-ico11.png" class="mine-item-img"/>
 						        </span>
@@ -172,35 +182,51 @@
                             </li>
                         </c:if>
                         <li class="mui-col-xs-4">
-                                <soul:button target="${root}/recommend.html" text="" opType="href">
+                            <soul:button target="${root}/recommend.html" text="" opType="href">
                                     <span class="item-img-wrap">
 							            <img src="${resRoot}/images/my-ico8.png" class="mine-item-img"/>
 						            </span>
-                                    <p>${views.themes_auto['推荐好友']}</p>
-                                </soul:button>
+                                <p>${views.themes_auto['推荐好友']}</p>
+                            </soul:button>
 
-                                <span class="ext-info recomdAmount"></span>
+                            <span class="ext-info recomdAmount"></span>
                         </li>
                         <li class="mui-col-xs-4">
-                            <soul:button target="${root}/message/gameNotice.html?isSendMessage=true" text="" opType="href" cssClass="">
+                            <soul:button target="${root}/message/gameNotice.html?isSendMessage=true" text=""
+                                         opType="href" cssClass="">
                                 <span class="item-img-wrap">
                                     <img src="${resRoot}/images/my-ico9.png" class="mine-item-img"/>
                                 </span>
                                 <p>${views.mine_auto['申请优惠']}</p>
                             </soul:button>
                         </li>
-                    </ul>
-                    <ul class="mui-list-unstyled list-mine-item"><!--第五行-->
-                        <li class="mui-col-xs-4">
-                            <a data-rel='{"target":"${root}/help/bindMobile.html","opType":"href"}'>
+                        <c:if test="${isSms}">
+                            <c:if test="${len !=2}">
+                                <li class="mui-col-xs-4">
+                                    <a data-rel='{"target":"${root}/help/bindMobile.html","opType":"href"}'>
 						<span class="item-img-wrap">
-							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;" />
+							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;"/>
 						</span>
-                                <p>绑定手机</p>
-                            </a>
-                        </li>
-
+                                        <p>绑定手机</p>
+                                    </a>
+                                </li>
+                            </c:if>
+                        </c:if>
                     </ul>
+                    <c:if test="${isSms}">
+                        <c:if test="${len ==2}">
+                            <ul class="mui-list-unstyled list-mine-item"><!--第五行-->
+                                <li class="mui-col-xs-4">
+                                    <a data-rel='{"target":"${root}/help/bindMobile.html","opType":"href"}'>
+						<span class="item-img-wrap">
+							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;"/>
+						</span>
+                                        <p>绑定手机</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </c:if>
+                    </c:if>
                 </div>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
