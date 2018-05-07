@@ -3,6 +3,14 @@
 <c:choose>
     <c:when test="${fn:length(command.result)>0}">
             <table>
+                <thead>
+                <tr>
+                    <th>${views.fund_auto['时间']}</th>
+                    <th>${views.fund_auto['金额']}</th>
+                    <th>${views.fund_auto['状态']}</th>
+                    <th>${views.fund_auto['类型']}</th>
+                </tr>
+                </thead>
                 <tbody>
                 <c:forEach items="${command.result}" var="s">
                     <tr data-rel='{"target":"${root}/fund/record/details.html?searchId=${command.getSearchId(s.id)}","opType":"href"}'>
