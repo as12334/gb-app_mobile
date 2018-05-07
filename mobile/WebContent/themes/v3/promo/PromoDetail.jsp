@@ -9,6 +9,8 @@
 
 <body>
 <!-- 侧滑导航根容器 -->
+<%--此处把js相关引用挪到前面是因为优惠详细里图片地址带onload方法里涉及window.top.imgRoot--%>
+<%@ include file="../include/include.js.jsp"%>
 <div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
@@ -98,7 +100,6 @@
     </div>
 </div>
 </body>
-<%@ include file="../include/include.js.jsp"%>
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>

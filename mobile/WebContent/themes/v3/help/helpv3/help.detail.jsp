@@ -2,6 +2,8 @@
 <%@ include file="../../include/include.inc.jsp" %>
 
 <body class="gb-theme help-center">
+<%--此处把js相关引用挪到前面是因为优惠详细里图片地址带onload方法里涉及window.top.imgRoot--%>
+<%@ include file="../../include/include.js.jsp" %>
 <div class="mui-draggable mui-off-canvas-wrap">
     <div class="mui-inner-wrap">
         <header class="mui-bar mui-bar-nav">
@@ -25,5 +27,4 @@
     </div>
 </div>
 </body>
-<%@ include file="../../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/help/Help.js?v=${rcVersion}"></script>
