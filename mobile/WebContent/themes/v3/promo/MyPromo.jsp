@@ -55,7 +55,7 @@
                                                 <c:set value="green" var="colorAll"/>
                                                 <c:set value="${views.promo_auto['已发放']}" var="textAll"/>
                                             </c:when>
-                                            <c:when test="${s.checkState eq '4'}">
+                                            <c:when test="${s.checkState eq '3'||s.checkState eq '4'}">
                                                 <c:set value="gray" var="colorAll"/>
                                                 <c:set value="${views.promo_auto['未通过']}" var="textAll"/>
                                             </c:when>
@@ -171,7 +171,7 @@
                                 <c:when test="${fn:length(promo) > 0}">
                                     <c:forEach items="${promo}" var="s">
                                         <c:choose>
-                                            <c:when test="${s.checkState eq '4'}">
+                                            <c:when test="${s.checkState eq '3'||s.checkState eq '4'}">
                                                 <c:set value="gray" var="colorNoPass"/>
                                                 <c:set value="${views.promo_auto['未通过']}" var="textNoPass"/>
                                             </c:when>

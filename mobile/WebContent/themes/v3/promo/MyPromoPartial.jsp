@@ -10,7 +10,7 @@
                     <c:set value="${views.promo_auto['已发放']}" var="text"/>
                     <c:set value="awarded" var="recordName"/>
                 </c:when>
-                <c:when test="${s.checkState eq '4'}">
+                <c:when test="${s.checkState eq '3'||s.checkState eq '4'}">
                     <c:set value="gray" var="color"/>
                     <c:set value="${views.promo_auto['未通过']}" var="text"/>
                     <c:set value="didNotPass" var="recordName"/>
