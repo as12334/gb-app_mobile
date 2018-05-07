@@ -26,10 +26,7 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
-import so.wwb.gamebox.model.master.enums.ActivityEffectiveTime;
-import so.wwb.gamebox.model.master.enums.ActivityResultCodeEnum;
-import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
-import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
+import so.wwb.gamebox.model.master.enums.*;
 import so.wwb.gamebox.model.master.operation.po.ActivityPlayerApply;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
@@ -78,8 +75,9 @@ public class PromoController {
             vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         }*/
         vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
-        Number money = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
+        Number money = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
         model.addAttribute("money",money);
         model.addAttribute("command", vPreferentialRecodeListVo);
         return ServletTool.isAjaxSoulRequest(request) ? MY_PROMO_URL + "Partial" : MY_PROMO_URL;
