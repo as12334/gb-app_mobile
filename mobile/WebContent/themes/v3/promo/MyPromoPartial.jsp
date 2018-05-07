@@ -20,6 +20,9 @@
                     <c:set value="${views.promo_auto['待审核']}" var="text"/>
                     <c:set value="unaudited" var="recordName"/>
                 </c:when>
+                <c:otherwise>
+                    <c:set value="" var="recordName"/>
+                </c:otherwise>
             </c:choose>
             <c:if test="${fn:length(recordName) > 0}">
                 <div class="promo-records-warp">

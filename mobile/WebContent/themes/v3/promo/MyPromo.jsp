@@ -63,6 +63,9 @@
                                                 <c:set value="orange" var="colorAll"/>
                                                 <c:set value="${views.promo_auto['待审核']}" var="textAll"/>
                                             </c:when>
+                                            <c:otherwise>
+                                                <c:set value="" var="textAll"/>
+                                            </c:otherwise>
                                         </c:choose>
                                         <c:if test="${fn:length(textAll) > 0}">
                                             <div class="promo-records-warp">
@@ -116,6 +119,9 @@
                                                 <c:set value="green" var="colorSuccess"/>
                                                 <c:set value="${views.promo_auto['已发放']}" var="textSuccess"/>
                                             </c:when>
+                                            <c:otherwise>
+                                                <c:set value="" var="textSuccess"/>
+                                            </c:otherwise>
                                         </c:choose>
                                         <c:if test="${fn:length(textSuccess) > 0}">
                                             <div class="promo-records-warp">
@@ -169,6 +175,9 @@
                                                 <c:set value="gray" var="colorNoPass"/>
                                                 <c:set value="${views.promo_auto['未通过']}" var="textNoPass"/>
                                             </c:when>
+                                            <c:otherwise>
+                                                <c:set value="" var="textNoPass"/>
+                                            </c:otherwise>
                                         </c:choose>
                                         <c:if test="${fn:length(textNoPass) > 0}">
                                             <div class="promo-records-warp">
@@ -193,7 +202,7 @@
                                                     </div>
                                                     <div class="promo-box-right promo-${colorNoPass}">
                                                         <span class="num">${siteCurrencySign}${soulFn:formatCurrency(s.preferentialValue)}</span>
-                                                        <span class="annotation">${text}</span>
+                                                        <span class="annotation">${textNoPass}</span>
                                                         <i class="pro-bg-right"></i>
                                                         <div class="round radio-up"></div>
                                                         <div class="round radio-dwon"></div>
@@ -222,6 +231,9 @@
                                                 <c:set value="orange" var="colorUnAudit"/>
                                                 <c:set value="${views.promo_auto['待审核']}" var="textUnAudit"/>
                                             </c:when>
+                                            <c:otherwise>
+                                                <c:set value="" var="textUnAudit"/>
+                                            </c:otherwise>
                                         </c:choose>
                                         <c:if test="${fn:length(textUnAudit) > 0}">
                                             <div class="promo-records-warp">
