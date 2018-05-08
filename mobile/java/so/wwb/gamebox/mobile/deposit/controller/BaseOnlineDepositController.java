@@ -23,6 +23,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
@@ -350,14 +351,12 @@ public class BaseOnlineDepositController extends BaseDepositController {
         boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
         //返手续费标志
         boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
-        List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRecharge.getRechargeType());
-        if (!isFee && !isReturnFee && CollectionTool.isEmpty(activityMessages)) {
-            pop = false;
-        } else {
+        boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
+        model.addAttribute("isOpenActivityHall", isOpenActivityHall);
+        if(isFee || isReturnFee) {
             String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
             model.addAttribute("counterFee", counterFee);
             model.addAttribute("fee", fee);
-            model.addAttribute("sales", activityMessages);
             String msg = "";
             if (fee > 0) {
                 msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.returnFee", counterFee);
@@ -368,6 +367,10 @@ public class BaseOnlineDepositController extends BaseDepositController {
             }
             model.addAttribute("msg", msg);
             model.addAttribute("depositChannel", playerRechargeVo.getDepositChannel());
+        }
+        if(!isOpenActivityHall) {
+            List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRecharge.getRechargeType());
+            model.addAttribute("sales", activityMessages);
         }
         return submitReturn(model, unCheckSuccess, pop, rechargeAmount, "");
     }

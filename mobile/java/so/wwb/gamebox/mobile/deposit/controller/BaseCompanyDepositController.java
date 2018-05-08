@@ -2,7 +2,6 @@ package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
@@ -26,7 +25,6 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
-import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
@@ -144,12 +142,12 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                 double fee = calculateFee(rank, rechargeAmount);
                 if (rechargeAmount + fee <= 0) {
                     model.addAttribute("tips", "存款金额加手续费必须大于0");
-                }else if("1".equals(playerRechargeVo.getStatusNum())){//状态为"1"，不显示优惠信息
+                } else if ("1".equals(playerRechargeVo.getStatusNum())) {//状态为"1"，不显示优惠信息
                     pop = false;
                     unCheckSuccess = true;
                     /*Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
                     model.addAttribute("failureCount",failureCount);*/
-                }else{
+                } else {
                     unCheckSuccess = true;
                     //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
                     //手续费标志
@@ -161,17 +159,13 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                         depositWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
                     }*/
                     String depositWay = playerRechargeVo.getResult().getRechargeType();
-                    if("company".equals(playerRechargeVo.getDepositChannel())){
+                    if ("company".equals(playerRechargeVo.getDepositChannel())) {
                         depositWay = DepositWayEnum.COMPANY_DEPOSIT.getCode();
                     }
-                    List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, depositWay);
-                    if (!isFee && !isReturnFee && activityMessages.size() <= 0) {
-                        pop = false;
-                    } else {
+                    if (isFee || isReturnFee) {
                         String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
                         model.addAttribute("counterFee", counterFee);
                         model.addAttribute("fee", fee);
-                        model.addAttribute("sales", activityMessages);
                         String msg = "";
                         if (fee > 0) {
                             msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.returnFee", counterFee);
@@ -182,6 +176,12 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                         }
                         model.addAttribute("depositChannel", playerRechargeVo.getDepositChannel());
                         model.addAttribute("msg", msg);
+                    }
+                    boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
+                    model.addAttribute("isOpenActivityHall", isOpenActivityHall);
+                    if (!isOpenActivityHall) {
+                        List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, depositWay);
+                        model.addAttribute("sales", activityMessages);
                     }
                 }
             }
@@ -207,7 +207,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             playerRechargeVo.setSuccess(false);
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
-            map.put("accountNotUsing",true);
+            map.put("accountNotUsing", true);
             return getVoMessage(map, playerRechargeVo);
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount);
