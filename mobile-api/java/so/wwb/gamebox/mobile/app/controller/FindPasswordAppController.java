@@ -77,8 +77,9 @@ public class FindPasswordAppController {
                     null,
                     APP_VERSION);
         }
-        Map dataMap = new HashMap(1, 1f);
+        Map dataMap = new HashMap(2, 1f);
         dataMap.put("encryptedId", map.get("encryptedId"));
+        dataMap.put("phone", map.get("phone"));
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
