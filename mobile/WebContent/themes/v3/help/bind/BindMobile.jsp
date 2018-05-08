@@ -22,7 +22,7 @@
             <div class="input">
                 <div class="mobile">
                     <i class="icon-mobile"></i>
-                    <input type="number" maxlength="12" placeholder="手机号码" name="search.contactValue"/>
+                    <input type="number" maxlength="20" placeholder="手机号码" name="search.contactValue"/>
                 </div>
                 <div class="yzm">
                     <i class="icon-yzm"></i>
