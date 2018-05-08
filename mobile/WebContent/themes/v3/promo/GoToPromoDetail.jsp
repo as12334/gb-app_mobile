@@ -58,9 +58,7 @@
                         </div>
                     </div>
                 </div>
-            </div> <!--mui-scroll 闭合标签-->
-
-            <%--<c:if test="${activity.states eq 'processing'}">--%>
+                <%--<c:if test="${activity.states eq 'processing'}">--%>
                 <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
                 <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                 <span class="_now_time" value="${nowTime}" type="hidden"></span>
@@ -96,7 +94,8 @@
                             <c:when test="${isLogin}">
                                 <a class="mui-btn mui-btn-primary btn-deposit"
                                    data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply mui-hidden" id="notFit">${views.promo_auto['未满足条件']}</a>
+                                <a class="mui-btn mui-btn-primary btn-apply mui-hidden"
+                                   id="notFit">${views.promo_auto['未满足条件']}</a>
                                 <a class="mui-btn mui-btn-primary btn-apply" ${activityCode eq 'back_water'?'disabled':''}
                                    id="submit"
                                    data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
@@ -113,7 +112,8 @@
                         </c:choose>
                     </c:if>
                 </div>
-            <%--</c:if>--%>
+                <%--</c:if>--%>
+            </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
         <!--浮窗广告轮播-->
         <%@ include file="../index.include/Envelope.jsp" %>
