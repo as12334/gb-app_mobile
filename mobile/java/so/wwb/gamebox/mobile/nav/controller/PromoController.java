@@ -174,9 +174,10 @@ public class PromoController {
         model.addAttribute("resultId", resultId);
         model.addAttribute("code", code);
         model.addAttribute("type", type);
+        //申请 存就送，有效投注额，盈亏送
         if ("fetch".equals(type)) {
             return "/promo/ProcessApplyDetail";
-        } else {
+        } else {//其他活动申请后显示信息
             return "/promo/ApplyPromoDetail";
         }
     }
