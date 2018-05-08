@@ -116,6 +116,7 @@
     </div>
 </div>
 <div class="mui-row">
+    <input type="hidden" name="isOpenActivityHall" value="${isOpenActivityHall}"/>
     <div class="gb-form-foot bank-pay-btn">
         <a data-rel='{"opType":"function","target":"depositDiscount"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['提交']}</a>
     </div>
