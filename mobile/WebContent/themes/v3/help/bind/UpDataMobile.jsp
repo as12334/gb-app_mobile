@@ -20,8 +20,8 @@
     <div id="validateRule" style="display: none">${rule}</div>
     <div class="mui-scroll">
       <div class="input">
-          <input type="number" name="oldPhone" maxlength="12" placeholder="旧手机号码"/>
-          <input type="number" name="search.contactValue" maxlength="12" placeholder="新手机号码"/>
+          <input type="number" name="oldPhone" maxlength="20" placeholder="旧手机号码"/>
+          <input type="number" name="search.contactValue" maxlength="20" placeholder="新手机号码"/>
         <div class="yzm">
           <input  id="phoneCode" name="phoneCode" type="number" maxlength="6" placeholder="验证码"/>
           <a id="sendPhoneCode" data-rel='{"target":"sendPhoneCode","opType":"function"}'>获取验证码</a>
