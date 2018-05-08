@@ -167,6 +167,15 @@ public class PromoController {
         return PROMO_RECORDS_DETAIL;
     }
 
+    /**
+     * 跳转到子页面申请活动
+     * @param resultId
+     * @param activityName
+     * @param code
+     * @param type
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/applyPromoDetail")
     @Upgrade(upgrade = true)
     public String applyPromoDetail(String resultId, String activityName, String code, String type, Model model) {
