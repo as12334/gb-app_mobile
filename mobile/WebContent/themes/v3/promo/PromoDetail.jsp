@@ -90,6 +90,13 @@
                             </div>
                         </div>
                     </c:if>
+                    <c:if test="${activity.states != 'processing'}">
+                        <div class="gb-form-foot" style="margin-top: -10px;">
+                            <div class="gb-form-foot">
+                                <a class="mui-btn mui-btn-primary submit" disabled>${dicts.operation.activity_state[activity.states]}</a>
+                            </div>
+                        </div>
+                    </c:if>
                     <%--<div class="mui-off-canvas-backdrop"></div>--%>
 
                 </div>

@@ -78,7 +78,7 @@ public class PromoController {
         vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
         Number money = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
-        model.addAttribute("money",money);
+        model.addAttribute("money", money);
         model.addAttribute("command", vPreferentialRecodeListVo);
         return ServletTool.isAjaxSoulRequest(request) ? MY_PROMO_URL + "Partial" : MY_PROMO_URL;
     }
@@ -158,10 +158,19 @@ public class PromoController {
     @RequestMapping("/promoDetail")
     @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        model.addAttribute("command", Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString()));
+        PlayerActivityMessage playerActivityMessage = Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString());
+        long time = SessionManager.getDate().getNow().getTime();
+        if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
+            playerActivityMessage.setStates(ActivityStateEnum.NOTSTARTED.getCode());
+        } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
+            playerActivityMessage.setStates(ActivityStateEnum.FINISHED.getCode());
+        } else {
+            playerActivityMessage.setStates(ActivityStateEnum.PROCESSING.getCode());
+        }
+        model.addAttribute("command", playerActivityMessage);
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
         //是否开启新活动大厅
-        if(ParamTool.isOpenActivityHall()){
+        if (ParamTool.isOpenActivityHall()) {
             return "/promo/GoToPromoDetail";
         }
         return PROMO_RECORDS_DETAIL;
@@ -169,6 +178,7 @@ public class PromoController {
 
     /**
      * 跳转到子页面申请活动
+     *
      * @param resultId
      * @param activityName
      * @param code
