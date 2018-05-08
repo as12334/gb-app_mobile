@@ -30,7 +30,7 @@
                            class="mui-control-item ${unReadType eq 'noticeSys' ? 'mui-active':''}">${views.mine_auto['系统公告']}<i></i></a>
                         <a data-rel='{"target":"segmentedControl1","opType":"function"}'
                            data-href="noticeSite" id="siteNotice"
-                           class="mui-control-item ${unReadType eq 'sendMessage' ?'mui-active':''}">${views.mine_auto['站点消息']}<i></i></a>
+                           class="mui-control-item ${unReadType eq 'sendMessage'||unReadType eq 'sysMessage'||unReadType eq 'advisoryMessage' ?'mui-active':''}">${views.mine_auto['站点消息']}<i></i></a>
                     </div>
                 </div>
             </div>
