@@ -51,7 +51,7 @@ public class FindPasswordAppController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "findUserPhone")
+    @RequestMapping(value = "/findUserPhone")
     @ResponseBody
     public String findUserPhone(SysUser user) {
         if (StringTool.isBlank(user.getUsername())) {
@@ -94,7 +94,7 @@ public class FindPasswordAppController {
      * @param code
      * @return
      */
-    @RequestMapping(value = "checkPhoneCode")
+    @RequestMapping(value = "/checkPhoneCode")
     @ResponseBody
     public String checkPhoneCode(String phone, String code) {
         if (StringTool.isBlank(phone) && StringTool.isBlank(code)) {
@@ -123,7 +123,7 @@ public class FindPasswordAppController {
      *
      * @return
      */
-    @RequestMapping(value = "findLoginPassword")
+    @RequestMapping(value = "/findLoginPassword")
     @ResponseBody
     public String findLoginPassword(SysUser user, UpdatePasswordVo updatePasswordVo) {
         if (StringTool.isBlank(user.getUsername())) {
@@ -182,7 +182,7 @@ public class FindPasswordAppController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "findSafePassword")
+    @RequestMapping(value = "/findSafePassword")
     @ResponseBody
     public String findSafePassword(SecurityPassword password, SysUser user) {
         if (StringTool.isBlank(user.getUsername())) {
@@ -215,6 +215,8 @@ public class FindPasswordAppController {
                     null,
                     APP_VERSION);
         }
+        SessionManager.clearPrivilegeStatus();
+
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),

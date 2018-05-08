@@ -18,6 +18,7 @@
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
     <div class="mui-scroll">
+        <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
         <div class="mui-row">
             <div class="mui-input-group mine-form">
                 <div class="bank-selector modes-payment">
