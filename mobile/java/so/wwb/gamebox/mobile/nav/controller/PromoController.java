@@ -4,6 +4,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
+import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
@@ -21,15 +22,14 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCustomerService;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
-import so.wwb.gamebox.model.master.enums.ActivityEffectiveTime;
-import so.wwb.gamebox.model.master.enums.ActivityResultCodeEnum;
-import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
-import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
+import so.wwb.gamebox.model.master.enums.*;
 import so.wwb.gamebox.model.master.operation.po.ActivityPlayerApply;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.po.VPreferentialRecode;
 import so.wwb.gamebox.model.master.operation.vo.*;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
@@ -71,9 +71,14 @@ public class PromoController {
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
         vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
-        if (ServletTool.isAjaxSoulRequest(request)) {
+        /*if (ServletTool.isAjaxSoulRequest(request)) {
             vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
-        }
+        }*/
+        vPreferentialRecodeListVo.setPropertyName(VPreferentialRecode.PROP_PREFERENTIAL_VALUE);
+        vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
+        vPreferentialRecodeListVo.getSearch().setCheckState(ActivityApplyCheckStatusEnum.SUCCESS.getCode());
+        Number money = ServiceSiteTool.vPreferentialRecodeService().sum(vPreferentialRecodeListVo);
+        model.addAttribute("money", money);
         model.addAttribute("command", vPreferentialRecodeListVo);
         return ServletTool.isAjaxSoulRequest(request) ? MY_PROMO_URL + "Partial" : MY_PROMO_URL;
     }
@@ -153,12 +158,47 @@ public class PromoController {
     @RequestMapping("/promoDetail")
     @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
-        vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
-        vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);
-
-        model.addAttribute("command", vActivityMessageVo);
+        PlayerActivityMessage playerActivityMessage = Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString());
+        long time = SessionManager.getDate().getNow().getTime();
+        if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
+            playerActivityMessage.setStates(ActivityStateEnum.NOTSTARTED.getCode());
+        } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
+            playerActivityMessage.setStates(ActivityStateEnum.FINISHED.getCode());
+        } else {
+            playerActivityMessage.setStates(ActivityStateEnum.PROCESSING.getCode());
+        }
+        model.addAttribute("command", playerActivityMessage);
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
+        //是否开启新活动大厅
+        if (ParamTool.isOpenActivityHall()) {
+            return "/promo/GoToPromoDetail";
+        }
         return PROMO_RECORDS_DETAIL;
+    }
+
+    /**
+     * 跳转到子页面申请活动
+     *
+     * @param resultId
+     * @param activityName
+     * @param code
+     * @param type
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/applyPromoDetail")
+    @Upgrade(upgrade = true)
+    public String applyPromoDetail(String resultId, String activityName, String code, String type, Model model) {
+        model.addAttribute("activityName", EncodeTool.urlDecode(activityName));
+        model.addAttribute("resultId", resultId);
+        model.addAttribute("code", code);
+        model.addAttribute("type", type);
+        //申请 存就送，有效投注额，盈亏送
+        if ("fetch".equals(type)) {
+            return "/promo/ProcessApplyDetail";
+        } else {//其他活动申请后显示信息
+            return "/promo/ApplyPromoDetail";
+        }
     }
 
     @ResponseBody

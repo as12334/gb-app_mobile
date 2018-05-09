@@ -7,6 +7,7 @@ import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
@@ -16,7 +17,6 @@ import so.wwb.gamebox.mobile.common.consts.MobileConst;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.CacheBase;
-import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -26,9 +26,7 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
-import so.wwb.gamebox.model.company.site.vo.SiteApiTypeRelationVo;
-import so.wwb.gamebox.model.company.site.vo.SiteApiVo;
-import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.company.site.vo.*;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
@@ -38,10 +36,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LeTu on 2017/3/31.
@@ -236,7 +231,7 @@ public abstract class BaseApiController extends BaseDemoController {
     }
 
     protected void getApiTypeGame(Model model) {
-        //获取类型
+      /*  //获取类型
         List<SiteApiType> siteApiTypes = getApiTypes();
         Map<String, SiteApiTypeRelation> siteApiTypeRelationMap = CacheBase.siteApiTypeRelationMap(SessionManager.getSiteId());
         Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
@@ -249,7 +244,63 @@ public abstract class BaseApiController extends BaseDemoController {
         }
         model.addAttribute("siteApiTypes", siteApiTypes);
         //处理二级分类游戏数据
-        handleNavGame(model);
+        handleNavGame(model);*/
+        Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
+        Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
+        for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
+            LinkedHashMap<String, ApiCacheEntity> apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
+            if(MapTool.isNotEmpty(apiMap)) {
+                apiTypeCacheEntity.setApis(apiMap.values());
+            }
+        }
+        //处理二级分类游戏数据
+        handleNavGame(model, apiType);
+    }
+
+    protected void handleNavGame(Model model, Map<String, ApiTypeCacheEntity> apiTypeCacheEntityMap) {
+        //处理彩票、棋牌游戏
+        List<Integer> navType = getNavType();
+        ApiTypeCacheEntity apiTypeCacheEntity;
+        Map<String, LinkedHashMap<String, GameCacheEntity>> gameMap;
+        Map<String, GameCacheEntity> apiGameMap;
+        String locale = SessionManager.getLocale().toString();
+        List<GameCacheEntity> games;
+        //因为只是取彩票、棋牌类api游戏，相对数据量比较小，故循环取缓存数据
+        for (Integer apiTypeId : navType) {
+            apiTypeCacheEntity = apiTypeCacheEntityMap.get(String.valueOf(apiTypeId));
+            if (apiTypeCacheEntity == null || CollectionTool.isEmpty(apiTypeCacheEntity.getApis())) {
+                continue;
+            }
+            gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
+            for (ApiCacheEntity apiCacheEntity : apiTypeCacheEntity.getApis()) {
+                apiGameMap = gameMap.get(String.valueOf(apiCacheEntity.getApiId()));
+                if (MapTool.isEmpty(apiGameMap)) {
+                    continue;
+                }
+                games = new ArrayList<>();
+                for (GameCacheEntity game : apiGameMap.values()) {
+                    game.setCover(String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
+                    games.add(game);
+                }
+                apiCacheEntity.setGames(games);
+            }
+        }
+        model.addAttribute("siteApiTypes", apiTypeCacheEntityMap.values());
+        //处理捕鱼数据
+        Map<String, GameCacheEntity> fishGameMap = Cache.getMobileFishGameCache();
+        StringBuffer fishName;
+        List<GameCacheEntity> fishGames = new ArrayList<>();
+        for (GameCacheEntity game : fishGameMap.values()) {
+            game.setCover(String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
+            //捕鱼游戏名称=api名称 + 游戏名称
+            fishName = new StringBuffer();
+            fishName.append(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId()))).append(" ").append(game.getName());
+            game.setName(fishName.toString());
+            fishGames.add(game);
+        }
+        if (MapTool.isNotEmpty(fishGameMap)) {
+            model.addAttribute("fishGames", fishGames);
+        }
     }
 
     /**
@@ -270,7 +321,6 @@ public abstract class BaseApiController extends BaseDemoController {
      * @param model
      */
     protected void handleNavGame(Model model) {
-        //处理捕鱼、彩票游戏
         Map<String, SiteGame> siteGameMap = CacheBase.getSiteGame();
         if (MapTool.isEmpty(siteGameMap)) {
             return;
@@ -390,19 +440,13 @@ public abstract class BaseApiController extends BaseDemoController {
 
     protected void setAccount(PlayerApiAccountVo playerApiAccountVo, HttpServletRequest request) {
         Integer apiId = playerApiAccountVo.getApiId();
-
-        StringBuilder domain = new StringBuilder();
-        domain.append(request.getServerName());
-        if (!domain.toString().contains("http")) {
-            domain.insert(0, "http://");
-        }
-
-        String transferUrl = domain + "/transfer/index.html"
+        String fullAddress = ServletTool.getDomainFullAddress(request);
+        String transferUrl = fullAddress + "/transfer/index.html"
                 + "?apiId=" + apiId
                 + "&apiTypeId=" + playerApiAccountVo.getApiTypeId();
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
-        playerApiAccountVo.setLobbyUrl(domain.toString());
+        playerApiAccountVo.setLobbyUrl(fullAddress);
         if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
         }

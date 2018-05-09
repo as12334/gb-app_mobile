@@ -9,10 +9,12 @@
 
 <body>
 <!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap mui-draggable">
+<%--此处把js相关引用挪到前面是因为优惠详细里图片地址带onload方法里涉及window.top.imgRoot--%>
+<%@ include file="../include/include.js.jsp"%>
+<div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-        <c:set var="activity" value="${command.result}" />
+        <c:set var="activity" value="${command}" />
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav">
             <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
@@ -20,7 +22,7 @@
             <a class="mui-icon mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}' data-href="/promo/myPromo.html"><i></i></a>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
-        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice content-without-footer">
+        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <div class="mui-row">
@@ -59,7 +61,7 @@
                         <c:set var="activityCode" value="${activity.code}"/>
                         <div class="gb-form-foot" style="margin-top: -10px;">
                             <c:choose>
-                                <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
+                                <c:when test="${(not empty activity.allRank) && activity.allRank}">
                                     <c:set var="rankId" value="all" />
                                 </c:when>
                                 <c:when test="${activityCode eq 'back_water'}">
@@ -88,6 +90,13 @@
                             </div>
                         </div>
                     </c:if>
+                    <c:if test="${activity.states != 'processing'}">
+                        <div class="gb-form-foot" style="margin-top: -10px;">
+                            <div class="gb-form-foot">
+                                <a class="mui-btn mui-btn-primary submit mui-disabled" disabled>${dicts.operation.activity_state[activity.states]}</a>
+                            </div>
+                        </div>
+                    </c:if>
                     <%--<div class="mui-off-canvas-backdrop"></div>--%>
 
                 </div>
@@ -98,10 +107,9 @@
     </div>
 </div>
 </body>
-<%@ include file="../include/include.js.jsp"%>
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
-<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/discounts/PromoDetail.js?v=${rcVersion}"></script>
 
 </html>

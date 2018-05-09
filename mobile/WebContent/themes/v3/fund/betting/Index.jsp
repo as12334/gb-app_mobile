@@ -60,7 +60,7 @@
         <span>${views.fund_auto['合计']}：</span>
         <div class="c">
             <div style="width: 50%;" id="statisticalTotalAmount">${views.fund_auto['投注总额']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
-            <div style="width:50%" id="statisticalProfit">${views.fund_auto['彩池奖金']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
+            <div style="width:50%" id="statisticalProfit">${views.fund_auto['派彩']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
             <div style="width: 50%;" id="statisticalDataEffective">${views.fund_auto['有效投注额']}：${siteCurrencySign}${soulFn:formatCurrency(0)}</div>
             <div style="width:50%" id="statisticalTotalPage">${views.fund_auto['投注笔数']}：0${views.fund_auto['笔']}</div>
         </div>
@@ -68,8 +68,8 @@
 </footer>
 </body>
 <%@include file="../../include/include.js.jsp" %>
-<script src="${resRoot}/js/mui/mui.picker.min.js"></script>
-<script src="${resComRoot}/js/timeControls/moment.js"></script>
-<script type="text/javascript" src="${resRoot}/js/fund/betting/Index.js"></script>
+<script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
+<script src="${resComRoot}/js/timeControls/moment.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/fund/betting/Index.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

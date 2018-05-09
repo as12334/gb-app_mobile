@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.my.form.PlayerAdvisoryForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
@@ -78,6 +79,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/gameNotice")
+    @Upgrade(upgrade = true)
     public String gameNotice(VSystemAnnouncementListVo listVo, VPlayerAdvisoryListVo aListVo,Model model, HttpServletRequest request,boolean isSendMessage,boolean isSysNotice) {
         String returnStr=GAME_NOTICE_URL;
         model.addAttribute("maxDate", SessionManager.getDate().getNow());
@@ -140,6 +142,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/systemNotice")
+    @Upgrade(upgrade = true)
     public String systemNoticeHistory( VPlayerAdvisoryListVo aListVo, VSystemAnnouncementListVo vListVo, Model model) {
         if(vListVo.getSearch().getStartTime()==null && vListVo.getSearch().getEndTime()==null){
             vListVo.getSearch().setStartTime(DateTool.addMonths(SessionManager.getDate().getNow(), -1));
@@ -170,6 +173,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/messageList")
+    @Upgrade(upgrade = true)
     public String messageList(VNoticeReceivedTextListVo listVo,  Model model) {
         listVo.getSearch().setReceiverId(SessionManager.getUserId());
         listVo = ServiceTool.noticeService().fetchReceivedSiteMsg(listVo);
@@ -193,6 +197,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/advisoryMessage")
+    @Upgrade(upgrade = true)
     public String advisoryMessage(VPlayerAdvisoryListVo listVo, VPlayerAdvisoryListVo aListVo, Model model ) {
         //提问内容+未读数量
         listVo = this.unReadCount(listVo, model);
@@ -207,6 +212,7 @@ public class MessageController {
      */
     @RequestMapping("/beforeSendMessage")
     @Token(generate = true)
+    @Upgrade(upgrade = true)
     public String beforeSendMessage(VPlayerAdvisoryListVo aListVo, Model model) {
         //表单校验
         model.addAttribute("validate", JsRuleCreator.create(PlayerAdvisoryForm.class, "result"));
@@ -414,6 +420,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/announcementDetail")
+    @Upgrade(upgrade = true)
     public String announcementDetail(VNoticeReceivedTextVo vo, VPlayerAdvisoryListVo aListVo, NoticeReceiveVo noticeReceiveVo, Model model, HttpServletRequest request) {
         List list = new ArrayList();
         list.add(noticeReceiveVo.getSearch().getId());
@@ -437,6 +444,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/systemNoticeDetail")
+    @Upgrade(upgrade = true)
     public String systemNoticeDetail(Model model, VPlayerAdvisoryListVo aListVo, VSystemAnnouncementListVo vSystemAnnouncementListVo) {
         vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
@@ -455,6 +463,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping({"/playerAdvisoryDetail"})
+    @Upgrade(upgrade = true)
     public String playerAdvisory(VPlayerAdvisoryListVo aListVo, VPlayerAdvisoryListVo vPlayerAdvisoryListVo, Integer id, Integer continueQuizId, VPlayerAdvisoryReplyListVo listVo, Model model) {
         //表单校验
 //        model.addAttribute("validate", JsRuleCreator.create(AdvisoryMessageForm.class, "result"));
@@ -515,6 +524,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping("/gameNoticeDetail")
+    @Upgrade(upgrade = true)
     public String gameNoticeDetail(VSystemAnnouncementListVo vSystemAnnouncementListVo, Model model) {
         vSystemAnnouncementListVo.getSearch().setLocal(SessionManager.getLocale().toString());
         vSystemAnnouncementListVo.getSearch().setAnnouncementType(AnnouncementTypeEnum.GAME.getCode());

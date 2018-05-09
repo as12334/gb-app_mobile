@@ -116,6 +116,7 @@
     </div>
 </div>
 <div class="mui-row">
+    <input type="hidden" name="isOpenActivityHall" value="${isOpenActivityHall}"/>
     <div class="gb-form-foot bank-pay-btn">
         <a data-rel='{"opType":"function","target":"depositDiscount"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['提交']}</a>
     </div>
@@ -140,10 +141,10 @@
 </div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
-<script src="${resRoot}/js/mui/mui.picker.js"></script>
-<script src="${resRoot}/js/mui/mui.poppicker.js"></script>
-<script src="${resRoot}/js/mui/mui.dtpicker.js"></script>
+<script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/deposit/DepositCenter.js"></script>
-<script src="${resRoot}/js/deposit/CompanyDeposit.js"></script>
+<script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>

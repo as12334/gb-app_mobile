@@ -125,7 +125,7 @@ public class DiscountsAppController {
             SysUserVo sysUserVo = new SysUserVo();
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             PlayerRank playerRank = ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
-            if(playerRank != null){
+            if (playerRank != null) {
                 rankId = playerRank.getId();
             }
         }

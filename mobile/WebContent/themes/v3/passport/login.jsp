@@ -11,9 +11,7 @@
 <header class="mui-bar mui-bar-nav mui-bar-blue mui-action-back">
     <a class="mui-icon mui-icon-arrowleft mui-pull-left"></a>
     <h1 class="mui-title">${views.passport_auto['登录']}</h1>
-    <c:if test="${os ne 'app_ios' }">
-        <a class="mui-icon mui-icon-home mui-pull-right " data-rel='{"target":"${root}/mainIndex.html","opType":"href"}' data-href="/mainIndex.html"></a>
-    </c:if>
+    <a class="mui-icon mui-icon-home mui-pull-right " data-rel='{"target":"goToHomePageOnly","opType":"function"}'></a>
 </header>
 <div class="mui-content mui-scroll-wrapper mui-content-without-footer-address login-content">
     <div class="mui-scroll">

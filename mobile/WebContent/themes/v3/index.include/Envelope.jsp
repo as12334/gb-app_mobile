@@ -8,6 +8,7 @@
             <div class="mui-slider-group">
                 <c:forEach var="item" items="${floatList}">
                     <c:if test="${item.type=='moneyActivity'}">
+                        <input type="hidden" value="${item.cttFloatPic.showEffect}" id="showEffect" />
                         <c:choose>
                             <c:when test="${item.cttFloatPic.singleMode}">
                                 <div class="mui-slider-item hb_type_<c:choose>

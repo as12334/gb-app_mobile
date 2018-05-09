@@ -34,6 +34,7 @@ import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.GameCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameTagVo;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -134,36 +135,44 @@ public class GameController extends BaseApiController {
         String redirectUrl = "/game/%sPartial";
         SiteGameSo so = listVo.getSearch();
         redirectUrl = getRedirectUrl(listVo, redirectUrl);
-
         Integer apiId = so.getApiId();
-
         if (apiId == null) {
             return redirectUrl;
         }
-
-        //查找所有的游戏
-        Map<String, SiteGame> siteGamesMap = getGameListByApiIdAndApiTypeId(listVo);
-
-        List<Integer> games;
-
+        model.addAttribute("apiId", apiId);
+        Map<String, LinkedHashMap<String, GameCacheEntity>> gameByApiMap = Cache.getMobileGameCacheEntity(String.valueOf(ApiTypeEnum.CASINO.getCode()));
+        LinkedHashMap<String, GameCacheEntity> gameMap = gameByApiMap == null ? null : gameByApiMap.get(String.valueOf(apiId));
+        if (MapTool.isEmpty(gameMap)) {
+            return redirectUrl;
+        }
+        Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
         //游戏标签
         Map<String, String> tagName = getGameTagMap(listVo);
-
-        Map<String, List<Integer>> tagGames = new HashedMap();
-        Map<String, SiteGameTag> gameTagMap = Cache.getSiteGameTag();
-        for (String tagStr : tagName.keySet()) {
-            games = getGamesByTagId(gameTagMap, tagStr);
-            tagGames.put(tagStr, games);
+        Map<String, List<GameCacheEntity>> tagGameMap = new LinkedHashMap<>();
+        List<GameCacheEntity> games;
+        String tagId;
+        GameCacheEntity game;
+        model.addAttribute("allGames", gameMap.values());
+        if (MapTool.isEmpty(tagName)) {
+            return redirectUrl;
         }
-
-        //全部游戏
-        model.addAttribute("allGames", siteGamesMap);
-        //全部标签
+        for (String tagStr : tagName.keySet()) {
+            games = new ArrayList<>();
+            for (SiteGameTag gameTag : gameTagMap.values()) {
+                tagId = gameTag.getTagId();
+                if (tagId == null || !tagId.equals(tagStr)) {
+                    continue;
+                }
+                game = gameMap.get(String.valueOf(gameTag.getGameId()));
+                if (game == null) {
+                    continue;
+                }
+                games.add(game);
+            }
+            tagGameMap.put(tagStr, games);
+        }
+        model.addAttribute("tagGameMap", tagGameMap);
         model.addAttribute("tagName", tagName);
-        model.addAttribute("tagGames", tagGames);
-        model.addAttribute("apiId", apiId);
-        model.addAttribute("command", listVo);
-
         return redirectUrl;
     }
 
@@ -260,7 +269,7 @@ public class GameController extends BaseApiController {
         tagVo.setApiId(listVo.getSearch().getApiId());
         tagVo.setApiTypeId(listVo.getSearch().getApiTypeId());
         tagVo.getSearch().setSiteId(SessionManager.getSiteId());
-        List<String> siteTagIds = ServiceSiteTool.searchTagIdService().searchTagId(tagVo);
+        List<String> siteTagIds = ServiceSiteTool.siteGameTagService().searchTagId(tagVo);
         Map<String, String> tagNameMap = getTagNameMap();
 
         for (String tagId : siteTagIds) {
