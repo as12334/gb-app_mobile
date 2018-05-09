@@ -46,6 +46,7 @@
                              src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
                     </div>
                 </div>
+                <%--<p class='forget-pas'><a href="javascript:;">忘记密码？</a></p> 暂时先隐藏--%>
                 <a data-rel='{"target":"loginOk","opType":"function"}' type="button"
                    class="btn btn-login btn-ok">立即登录</a>
                 <a data-rel='{"target":"${root}/signUp/index.html","opType":"href"}' type="button"
