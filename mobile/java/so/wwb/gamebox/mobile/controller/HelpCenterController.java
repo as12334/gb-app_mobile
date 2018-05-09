@@ -168,10 +168,54 @@ public class HelpCenterController {
         return typeName;
     }
 
+    /**
+     * 进入找回密码页面
+     *
+     * @return
+     */
     @RequestMapping(value = "/forgetPassword")
     @Upgrade(upgrade = true)
     public String gotoFindPassword() {
         return "/help/forget/ForgetPassword";
+    }
+
+    /**
+     * 找回密码，判断用户是否存在
+     *
+     * @return
+     */
+    @RequestMapping(value = "/judgeUserExist")
+    @Upgrade(upgrade = true)
+    public String judgeUserExist() {
+        return "/help/forget/JudgeUserExist";
+    }
+
+    /**
+     * 发送手机短信
+     *
+     * @param encryptedId
+     * @param phone
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/sendPhoneCode")
+    @Upgrade(upgrade = true)
+    public String sendPhoneCode(String encryptedId, String phone, Model model) {
+        model.addAttribute("encryptedId", encryptedId);
+        model.addAttribute("phone", phone);
+        return "/help/forget/SendPhoneCode";
+    }
+
+    /**
+     * 设置新密码
+     *
+     * @return
+     */
+    @RequestMapping(value = "/setLoginPassword")
+    @Upgrade(upgrade = true)
+    public String setLoginPassword(Model model, String encryptedId) {
+        model.addAttribute("encryptedId", encryptedId);
+        return "/help/forget/SetLoginPassword";
     }
 
     /**
