@@ -34,19 +34,19 @@
                     <p id="password-error-msg" class="warn">
                     </p>
                 </div>
-                <div class="mui-input-row _captcha ${isOpenCaptcha ? 'final' : ''}"
+                <div class="code _captcha ${isOpenCaptcha ? 'final' : ''}"
                      id="captcha_div" ${isOpenCaptcha ? "" :'style="display: none"'}>
                     <label>${views.passport_auto['请输入验证码']}</label>
                     <p id="captcha-error-msg" class="warn">
                     </p>
-                    <div class="mui-flex gb-vcode">
+                    <div class="div_flex">
                         <input type="text" class="mui-input-clear" name="captcha" id="captcha" maxlength="4"
                                placeholder="${views.passport_auto['请输入验证码']}">
                         <img class="captcha_img" data-rel='{"target":"captchaChange","opType":"function"}'
                              src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
                     </div>
                 </div>
-                <%--<p class='forget-pas'><a href="javascript:;">忘记密码？</a></p> 暂时先隐藏--%>
+                <%--<p class='forget-pas'><a href="javascript:;">忘记密码？</a></p>暂时隐藏--%>
                 <a data-rel='{"target":"loginOk","opType":"function"}' type="button"
                    class="btn btn-login btn-ok">立即登录</a>
                 <a data-rel='{"target":"${root}/signUp/index.html","opType":"href"}' type="button"
