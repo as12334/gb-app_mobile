@@ -13,13 +13,12 @@
 <%@include file="common/Head.jsp"%>
 <!-- 主界面具体展示内容 -->
 <div class="mui-content home-content">
-    <%--顶部游戏类型--%>
-    <%@include file="index.include/include.nav.jsp"%>
     <!--易记域名-->
     <section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>
     <!--轮播和公告-->
     <%@include file="index.include/include.banner.jsp"%>
     <%--游戏类型--%>
+    <%@include file="index.include/include.nav.jsp"%>
     <%@include file="index.include/include.api.jsp"%>
 </div>  <!--mui-content 闭合标签-->
 <%--底部菜单--%>
