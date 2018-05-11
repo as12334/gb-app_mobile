@@ -19,6 +19,16 @@ public class AppRechargePay {
     private String payerBankcard;
     /**添加柜台机存款类型list*/
     private List<AppSimpleModel> counterRechargeTypes;
+    /**是否是新活动*/
+    private boolean isNewActivity;
+
+    public boolean isNewActivity() {
+        return isNewActivity;
+    }
+
+    public void setNewActivity(boolean newActivity) {
+        isNewActivity = newActivity;
+    }
 
     public String getCurrency() {
         return currency;
