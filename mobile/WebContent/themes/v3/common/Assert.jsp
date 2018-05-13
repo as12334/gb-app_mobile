@@ -35,7 +35,7 @@
                 <a data-rel='{"target":"refreshApi","opType":"function"}' class="go btn-refresh">${views.include_auto['刷新额度']}</a>
             </p>
             <p>
-                <a data-rel='{"opType":"href","target":"${root}/wallet/deposit/index.html"}' class="go btn-deposit">${views.include_auto['存款']}</a>
+                <a data-rel='{"opType":"href","target":"${root}/wallet/v3/deposit/index.html?skip=0"}' class="go btn-deposit">${views.include_auto['存款']}</a>
             </p>
         </div>
     </div>

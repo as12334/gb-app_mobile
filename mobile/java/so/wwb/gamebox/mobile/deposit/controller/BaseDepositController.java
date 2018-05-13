@@ -7,6 +7,7 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
+import org.soul.commons.query.sort.Order;
 import org.soul.commons.support._Module;
 import org.soul.model.session.SessionKey;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -97,13 +99,23 @@ public class BaseDepositController extends BaseCommonDepositController {
     }
 
     /**
+     * 查询玩家可选择的存款渠道
+     *
+     * @param type String
+     */
+    protected List<Bank> searchBank(String type) {
+        Map<String, Bank> bankMap = Cache.getBank();
+        return CollectionQueryTool.query(bankMap.values(), Criteria.add(Bank.PROP_TYPE, Operator.EQ, type), Order.asc(Bank.PROP_ORDER_NUM));
+    }
+
+    /**
      * 根据存款金额、存款方式获取优惠
      *
      * @param rechargeAmount
      * @param type
      * @return
      */
-    List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
+    protected List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
         UserPlayer userPlayer = getUserPlayer();
         VActivityMessageVo vActivityMessageVo = new VActivityMessageVo();
         vActivityMessageVo.getSearch().setDepositWay(type);
@@ -131,7 +143,7 @@ public class BaseDepositController extends BaseCommonDepositController {
      * @param type
      * @return
      */
-    public List<VActivityMessage> searchSales(String type) {
+    protected List<VActivityMessage> searchSales(String type) {
         if (StringTool.isBlank(type)) {
             return null;
         }
@@ -157,7 +169,7 @@ public class BaseDepositController extends BaseCommonDepositController {
      * @param payAccountId
      * @return
      */
-    PayAccount getPayAccountById(Integer payAccountId) {
+    protected PayAccount getPayAccountById(Integer payAccountId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.getSearch().setId(payAccountId);
         payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
@@ -167,7 +179,7 @@ public class BaseDepositController extends BaseCommonDepositController {
     /**
      * 计算手续费
      */
-    Double calculateFee(PlayerRank rank, Double rechargeAmount) {
+    protected Double calculateFee(PlayerRank rank, Double rechargeAmount) {
         if (rank == null || rechargeAmount == null) {
             return 0d;
         }

@@ -6,13 +6,14 @@
     <link rel="stylesheet" href="${resRoot}/themes/mui.poppicker.css">
 </head>
 
-<body class="exchange-bank">
+<body class="deposit_2">
 <header class="mui-bar mui-bar-nav">
     <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"opType":"function","target":"goToLastPage"}'></a>
     <h1 class="mui-title">${views.deposit_auto['银行卡转账']}</h1>
 </header>
-<div class="mui-content mui-scroll-wrapper">
+<div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
+        <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
         <form id="confirmCompanyForm">
             <c:choose>
                 <c:when test="${not empty payAccount}">
@@ -21,81 +22,58 @@
                     <input type="hidden" id="rechargeTypeJson" value='${rechargeTypeJson}' />
                     <input type="hidden" name="depositChannel" value="company"/>
                     <gb:token/>
-                    <div id="wechat1" class="mui-control-content mui-active">
-                        <div class="mui-row">
-                            <div class="gb-panel" style="border-top-color: #fff;">
-                                <div class="gb-bankcard ">
-                                    <div class="hd">
-                                        <c:set var="isOther" value="${payAccount.bankCode=='other_bank'}"/>
-                                        <p><span class="mui-pull-right">${views.deposit_auto['储蓄卡']}</span>
-                                            <c:choose>
-                                                <c:when test="${isOther}">
-                                                    <span style="margin-right: -30px;">${payAccount.customBankName}</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="pay-bank ${payAccount.bankCode}" style="margin-right: -30px;"></span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </p>
-                                    </div>
-                                    <div class="ct">
-                                        <p>
-                                        <c:choose>
-                                            <c:when test="${isHide}">
-                                                <span class="text-green">${account.code}&nbsp;&nbsp;</span>
-                                                <a open-href="${root}/index/gotoCustomer.html">${hideContent.value}</a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="text-green">${soulFn:formatBankCard(payAccount.account)}</span><%--data-rel='{"opType":"function","target":"copy"}'--%>
-                                                <a href="#" class="copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
-                                            </c:otherwise>
-                                            </c:choose>
-                                        </p>
-                                        <div class="ct">
-                                            <p><span style="float:left;">${views.deposit_auto['银行开户名']}: </span>
-                                                    ${payAccount.fullName}
-                                                <c:if test="${fn:length(payAccount.fullName)>0}">
-                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
-                                                </c:if>
-                                            </p>
-                                            <p style="margin-top:3px;"><span style="float:left;">${views.deposit_auto['开户行']}: </span>
-                                                    ${payAccount.openAcountName}
-                                                <c:if test="${fn:length(payAccount.openAcountName)>0}">
-                                                    <a href="#" class="copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a>
-                                                </c:if>
-                                            </p>
-                                        </div>
-                                    </div>
+                    <div class="pay_mone">
+                        <div class="tit">账号信息</div>
+                        <c:set var="isOther" value="${payAccount.bankCode=='other_bank'}"/>
+                        <div class="bank_car_item">
+                            <div class="top">
+                                <span class="pay-bank icbc"></span>
+                                <span class="car_type">
+                                    ${views.deposit_auto['储蓄卡']}</span>
+                                    <c:choose>
+                                        <c:when test="${isOther}">
+                                            <span style="margin-right: -30px;">${payAccount.customBankName}</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="pay-bank ${payAccount.bankCode}" style="margin-right: -30px;"></span>
+                                        </c:otherwise>
+                                    </c:choose>
+                            </div>
+                            <div class="bank_car_txt_info">
+                                <div class="b_c_t_i_row">
+                                    <c:choose>
+                                    <c:when test="${isHide}">
+                                        <span class="text-green">${account.code}&nbsp;&nbsp;</span>
+                                        <a open-href="${root}/index/gotoCustomer.html">${hideContent.value}</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        ${soulFn:formatBankCard(payAccount.account)}
+                                        <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
+                                    </c:otherwise>
+                                    </c:choose>
                                 </div>
+                                <div class="b_c_t_i_row"> ${views.deposit_auto['银行开户名']}：脸全用 <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a></div>
+                                <div class="b_c_t_i_row"> ${views.deposit_auto['开户行']}：石家庄分行红旗支行 <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a></div>
+                            </div>
+
+                        </div>
+                        <div class="depo_row">
+                            <div class="label">存款类型</div>
+                            <div class="input">
+                                <input class="text-right" type="text" placeholder="网银存款" readonly/>
+                                <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="online_bank"/>
                             </div>
                         </div>
-                        <div class="mui-row">
-                            <div class="mui-input-group mine-form m-t-sm">
-                                    <div class="mui-input-row"><label>${views.deposit_auto['存款类型']}</label>
-                                        <div class="ct" id="rechargeType">
-                                            <div class="gb-select">
-                                                <input type="text" data-rel='{"opType":"function","target":"showPayTypeList","rechargeTypeValue":"${rechargeType.value}"}' readOnly="readonly" id="rechargeTypeText" id="payTypeText" placeholder=" ${rechargeType.text}"/>
-                                                <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="${rechargeType.value}"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <div class="mui-input-row">
-                                    <label for="result.payerName">${views.deposit_auto['存款人']}</label>
-                                    <div class="ct">
-                                        <input type="text" id="result.payerName" name="result.payerName" placeholder="${views.deposit_auto['您转账时使用的银行卡姓名']}" onchange="this.value=this.value.trim()"/>
-                                    </div>
-                                </div>
-                                <div class="mui-input-row">
-                                    <label for="result.rechargeAddress">${views.deposit_auto['交易地点']}</label>
-                                    <div class="ct">
-                                        <input type="text" id="result.rechargeAddress" name="result.rechargeAddress" maxlength="20" placeholder="${views.deposit_auto['请输入地点']}" onchange="this.value=this.value.trim()"/>
-                                    </div>
-                                </div>
-                                 <%--存款金额--%>
-                                <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
-                                <input type="hidden" name="activityId" id="activityId"/>
-                            </div>
+                        <div class="depo_row">
+                            <div class="label">存款人</div>
+                            <div class="input"><input class="text-right"  type="text" placeholder="转账账号对应的姓名"></div>
                         </div>
+                            <%--存款金额--%>
+                        <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
+                        <input type="hidden" name="activityId" id="activityId"/>
+                    </div>
+                    <div class="btn_wrap">
+                        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -105,11 +83,6 @@
                 </c:otherwise>
             </c:choose>
         </form>
-    </div>
-</div>
-<div class="mui-row">
-    <div class="gb-form-foot bank-pay-btn">
-        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['提交']}</a>
     </div>
 </div>
 <!--弹窗-->

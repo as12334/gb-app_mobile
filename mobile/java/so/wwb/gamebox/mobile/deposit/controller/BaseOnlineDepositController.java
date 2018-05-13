@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelper;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -34,6 +35,7 @@ import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
+import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
@@ -165,7 +167,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     /**
      * 线上支付（含扫码支付）提交公共方法
      */
-    Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
+    protected Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors()) {
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
             return getResultMsg(false, playerRechargeVo.getErrMsg(), null);
@@ -347,13 +349,14 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
         unCheckSuccess = true;
         //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
+
         //手续费标志
         boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
         //返手续费标志
         boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         model.addAttribute("isOpenActivityHall", isOpenActivityHall);
-        if(isFee || isReturnFee) {
+        if (isFee || isReturnFee) {
             String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
             model.addAttribute("counterFee", counterFee);
             model.addAttribute("fee", fee);
@@ -368,7 +371,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             model.addAttribute("msg", msg);
             model.addAttribute("depositChannel", playerRechargeVo.getDepositChannel());
         }
-        if(!isOpenActivityHall) {
+        if (!isOpenActivityHall) {
             List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRecharge.getRechargeType());
             model.addAttribute("sales", activityMessages);
         }
@@ -386,19 +389,18 @@ public class BaseOnlineDepositController extends BaseDepositController {
     /**
      * 查询符合玩家条件收款账号
      */
-    List<PayAccount> searchPayAccount(String type, String accountType) {
-        Map<String, Object> map = new HashMap<>(4, 1f);
-        map.put("playerId", SessionManager.getUserId());
-        map.put("type", type);
-        map.put("accountType", accountType);
-        map.put("currency", SessionManager.getUser().getDefaultCurrency());
-        map.put("terminal", TerminalEnum.MOBILE.getCode());
-        PayAccountListVo listVo = new PayAccountListVo();
-        listVo.setConditions(map);
-        return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
+    protected List<PayAccount> searchPayAccount(String type, String accountType) {
+        return DepositControllerHelper.getInstance().searchPayAccount(type, accountType, TerminalEnum.MOBILE.getCode(), null, null);
     }
 
-    PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
+    /**
+     * 查询符合玩家条件收款账号
+     */
+    protected List<PayAccount> searchPayAccount(String type, String accountType, String[] accountTypes) {
+        return DepositControllerHelper.getInstance().searchPayAccount(type, accountType, TerminalEnum.MOBILE.getCode(), null, accountTypes);
+    }
+
+    protected PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
         List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), accountType);
         PayAccountListVo payAccountListVo = new PayAccountListVo();
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
@@ -407,6 +409,5 @@ public class BaseOnlineDepositController extends BaseDepositController {
         payAccountListVo.setRechargeType(rechargeType);
         return ServiceSiteTool.payAccountService().getOnlineScanAccount(payAccountListVo);
     }
-
 
 }

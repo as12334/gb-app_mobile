@@ -62,7 +62,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
      * @param model
      * @param paramEnum
      */
-    void isHide(Model model, SiteParamEnum paramEnum) {
+    protected void isHide(Model model, SiteParamEnum paramEnum) {
         // 查询隐藏参数
         SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
         if (sysParam == null) {

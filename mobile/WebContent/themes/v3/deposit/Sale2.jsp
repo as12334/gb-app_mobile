@@ -9,11 +9,14 @@
             </c:if>
             <div class="gb-withdraw-box pro-window" style="display:block">
                 <div  class="cont">
-                    <h3>${views.deposit_auto['消息']}</h3>
-                    <div class="cont-text">
-                        <p>${views.deposit_auto['存款金额']}：<span class="org">${soulFn:formatCurrency(rechargeAmount)}</span></p>
-                        <%--<p>${views.deposit_auto['手续费']}：<span class="org">${msg}</span> / 免手续费 / 返还<span class="org">300元</span></p>--%>
-                        <p>${views.deposit_auto['手续费']}：<span class="org">${msg}</span></p>
+                    <h3 style="text-align: center">${views.deposit_auto['消息']}</h3>
+                    <div class="pro_ite">
+                        <p>${views.deposit_auto['金额']}：<span class="org">${soulFn:formatCurrency(rechargeAmount)}</span></p>
+                        <p>${views.deposit_auto['手续费']}：
+                            <span class="org">
+                                    ${empty msg?"免手续费":msg}
+                            </span>
+                        </p>
                     </div>
                     <c:if test="${!isOpenActivityHall}">
                         <div class="text-pro">
