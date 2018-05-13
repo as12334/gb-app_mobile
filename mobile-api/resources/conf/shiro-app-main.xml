@@ -49,7 +49,23 @@
 			<value>
 				/mineOrigin/loginIsOpenVerify.html = anon
 				/userInfoOrigin/verifyRealNameForApp.html = anon
-				/origin/*.html = anon
+				/origin/getTimeZone.html = anon
+				/origin/getCustomerService.html = anon
+				/origin/mainIndex.html = anon
+				/origin/getCarouse.html = anon
+				/origin/getAnnouncement.html = anon
+				/origin/getSiteApiRelation.html = anon
+				/origin/getFloat.html = anon
+				/origin/getCasinoGame.html = anon
+				/origin/getGameTag.html = anon
+				/origin/about.html = anon
+				/origin/terms.html = anon
+				/origin/helpFirstType.html = anon
+				/origin/secondType.html = anon
+				/origin/helpDetail.html = anon
+				/origin/sendPhoneCode.html = anon
+				/origin/sendFindPasswordPhone.html = anon
+				/origin/getHttpCookie.html = anon
 				/discountsOrigin/*.html = anon
 				/registerOrigin/*.html = anon
 				/findPasswordOrigin/*.html = anon

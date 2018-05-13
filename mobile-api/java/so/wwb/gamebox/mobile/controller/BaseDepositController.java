@@ -403,6 +403,7 @@ public class BaseDepositController {
         appRechargePay.setCustomerService(getCustomerService());
         appRechargePay.setQuickMoneys(quickSelection());
         appRechargePay.setMultipleAccount(isMultipleAccount());
+        appRechargePay.setNewActivity(ParamTool.isOpenActivityHall());
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 appRechargePay, APP_VERSION);

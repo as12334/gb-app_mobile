@@ -19,10 +19,7 @@ import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.app.form.*;
 import so.wwb.gamebox.mobile.controller.BaseDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.TerminalEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -429,20 +426,35 @@ public class DepositAppController extends BaseDepositController {
         boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
         //返手续费标志
         boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
-
-        List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRechargeVo.getDepositWay());
-        List<AppSale> saleList = new ArrayList<>();
-        AppSale appSale = new AppSale();
-        appSale.setId(null);
-        appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
-        saleList.add(appSale);
-        if (!isFee && !isReturnFee && CollectionTool.isEmpty(activityMessages)) {
+        if (isFee || isReturnFee) {
+            String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
+            map.put("counterFee", counterFee);
+            map.put("fee", fee);
+            String msg = "";
+            if (fee > 0) {
+                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.appReturnFee", counterFee);
+            } else if (fee < 0) {
+                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.appNeedFee", counterFee);
+            } else if (fee == 0) {
+                msg = LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee", counterFee);
+            }
+            map.put("msg", msg);
+        } else {
             map.put("counterFee", null);
             map.put("fee", null);
-            map.put("sales",saleList );
             map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
+        }
+        boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
+        if (isOpenActivityHall) {
+            map.put("sales", new ArrayList<>());
         } else {
-            if(CollectionTool.isNotEmpty(activityMessages)) {
+            List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRechargeVo.getDepositWay());
+            List<AppSale> saleList = new ArrayList<>();
+            AppSale appSale = new AppSale();
+            appSale.setId(null);
+            appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
+            saleList.add(appSale);
+            if (CollectionTool.isNotEmpty(activityMessages)) {
                 for (VActivityMessage vActivityMessage : activityMessages) {
                     if (vActivityMessage.isPreferential()) {
                         AppSale appSale4Activity = new AppSale();
