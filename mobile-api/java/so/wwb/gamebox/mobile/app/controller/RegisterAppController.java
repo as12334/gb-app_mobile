@@ -309,7 +309,8 @@ public class RegisterAppController {
         sysUserVo.getSearch().setSubsysCode(SubSysCodeEnum.PCENTER.getCode());
         sysUserVo.getSearch().setUsername(userName);
         sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
-        return ServiceTool.sysUserService().isExists(sysUserVo);
+        return ServiceSiteTool.userAgentService().isExistUser(sysUserVo);
+        //return ServiceTool.sysUserService().isExists(sysUserVo);
     }
 
     //email验证码

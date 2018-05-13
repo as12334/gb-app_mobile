@@ -248,7 +248,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
-            Map<String, ApiCacheEntity> apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
+            LinkedHashMap<String, ApiCacheEntity> apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
             if(MapTool.isNotEmpty(apiMap)) {
                 apiTypeCacheEntity.setApis(apiMap.values());
             }

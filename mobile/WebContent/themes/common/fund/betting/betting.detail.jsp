@@ -148,6 +148,9 @@
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==3}">
                                     <%@include file="betting.sportsbookdetail.jsp"%>
                                 </c:when>
+                                <c:when test="${result.apiId==39}">
+                                    <%@include file="betting.sportsbookdetail.jsp"%>
+                                </c:when>
                                 <%--真人投注--%>
                                 <c:when test="${!empty result.betDetail && result.apiTypeId==1}">
                                     <%@include file="betting.livedealerdetail.jsp"%>
