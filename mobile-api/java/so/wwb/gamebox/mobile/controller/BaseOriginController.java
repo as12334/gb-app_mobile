@@ -296,13 +296,13 @@ public abstract class BaseOriginController {
 
         String gameCover = String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
         String apiLogoUrl = setApiLogoUrl(model, request);
-        LinkedHashMap<String, List<AppSiteApiTypeRelationI18n>> appSiteMap = changeToAppApiTypeRelationsI18n(apiCacheMap, apiLogoUrl, apiType,gameCover);
+        LinkedHashMap<String, List<AppSiteApiTypeRelationI18n>> appSiteMap = changeToAppApiTypeRelationsI18n(apiCacheMap, apiLogoUrl, apiType, gameCover);
 
         List<AppSiteApiTypeRelastionVo> appApiTypes = new ArrayList<>();
         Integer apiTypeId;
         String apiLogUrl = setApiLogoUrl(model, request);
         for (ApiTypeCacheEntity siteApiType : apiType.values()) {
-            if(CollectionTool.isEmpty(appSiteMap.get(String.valueOf(siteApiType.getApiTypeId())))){
+            if (CollectionTool.isEmpty(appSiteMap.get(String.valueOf(siteApiType.getApiTypeId())))) {
                 continue;
             }
             //转换实体提供给app原生
@@ -361,44 +361,50 @@ public abstract class BaseOriginController {
                                                                                                     String gameCover) {
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             LinkedHashMap<String, ApiCacheEntity> apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
-            if(MapTool.isNotEmpty(apiMap)) {
+            if (MapTool.isNotEmpty(apiMap)) {
                 apiTypeCacheEntity.setApis(apiMap.values());
             }
         }
         //彩票，棋牌
         Map<Integer, List<AppSiteGame>> appGames = new HashMap<>();
         List<Integer> navApiTypes = navApiTypes();
-        navApiTypes.forEach((apiTypeId) -> {
-            ApiTypeCacheEntity apiTypeCacheEntity = apiType.get(String.valueOf(apiTypeId));
-            Collection<ApiCacheEntity> apis = apiTypeCacheEntity.getApis();
-            Map<String, LinkedHashMap<String, GameCacheEntity>> gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
-            if(CollectionTool.isNotEmpty(apis)){
-                apis.forEach((l) -> {
-                    Map<String, GameCacheEntity> apiGameMap = gameMap.get(String.valueOf(l.getApiId()));
-                    List<AppSiteGame> appSiteGames = new ArrayList<>();
-                    if(MapTool.isNotEmpty(apiGameMap)){
-                        apiGameMap.forEach((k, v) -> {
-                            v.setCover(MessageFormat.format(gameCover, v.getApiId(), v.getCode()));
-                            appSiteGames.add(changeSiteGameToApp(v));
-                            appGames.put(l.getApiId(), appSiteGames);
-                        });
-                    }
-                });
+        ApiTypeCacheEntity apiTypeCacheEntity;
+        Map<String, LinkedHashMap<String, GameCacheEntity>> gameMap;
+        Map<String, GameCacheEntity> apiGameMap;
+        List<AppSiteGame> appSiteGames;
+        for (Integer apiTypeId : navApiTypes) {
+            apiTypeCacheEntity = apiType.get(String.valueOf(apiTypeId));
+            if (apiTypeCacheEntity == null || CollectionTool.isEmpty(apiTypeCacheEntity.getApis())) {
+                continue;
             }
-        });
+            gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
+            for (ApiCacheEntity apiCacheEntity : apiTypeCacheEntity.getApis()) {
+                apiGameMap = gameMap.get(String.valueOf(apiCacheEntity.getApiId()));
+                if (MapTool.isEmpty(apiGameMap)) {
+                    continue;
+                }
+                appSiteGames = new ArrayList<>();
+                for (GameCacheEntity game : apiGameMap.values()) {
+                    game.setCover(MessageFormat.format(gameCover, game.getApiId(), game.getCode()));
+                    appSiteGames.add(changeSiteGameToApp(game));
+                }
+                appGames.put(apiCacheEntity.getApiId(), appSiteGames);
+            }
+        }
 
         LinkedHashMap<String, List<AppSiteApiTypeRelationI18n>> appApiMap = new LinkedHashMap<>();
-        apiCacheMap.forEach((k, v) -> {
-            List<AppSiteApiTypeRelationI18n> appApis = new ArrayList<>();
-            v.values().forEach((l) -> {
-                AppSiteApiTypeRelationI18n appSite = changeApiTypeRelationI18nModelToApp(l, apiLogoUrl, null);
-                if(appSite.getApiTypeId().equals(ApiTypeEnum.LOTTERY.getCode()) || appSite.getApiTypeId().equals(ApiTypeEnum.CHESS.getCode())){
-                    appSite.setGameList(appGames.get(l.getApiId()));
+        List<AppSiteApiTypeRelationI18n> appApis;
+        for (Map.Entry<String, LinkedHashMap<String, ApiCacheEntity>> apiMap : apiCacheMap.entrySet()) {
+            appApis = new ArrayList<>();
+            for (ApiCacheEntity apiCacheEntity : apiMap.getValue().values()) {
+                AppSiteApiTypeRelationI18n appSite = changeApiTypeRelationI18nModelToApp(apiCacheEntity, apiLogoUrl, null);
+                if (appSite.getApiTypeId().equals(ApiTypeEnum.LOTTERY.getCode()) || appSite.getApiTypeId().equals(ApiTypeEnum.CHESS.getCode())) {
+                    appSite.setGameList(appGames.get(apiCacheEntity.getApiId()));
                 }
                 appApis.add(appSite);
-            });
-            appApiMap.put(k, appApis);
-        });
+            }
+            appApiMap.put(apiMap.getKey(), appApis);
+        }
 
         return appApiMap;
     }
