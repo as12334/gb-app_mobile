@@ -17,6 +17,7 @@ import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
@@ -72,10 +73,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
     @Upgrade(upgrade = true)
     public String getSales() {
         if (!ParamTool.isOpenActivityHall()) {
-            VActivityMessageListVo listVo = new VActivityMessageListVo();
-            listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
-            listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
-            return JsonTool.toJson(listVo.getResult());
+            return JsonTool.toJson( searchSales(DepositWayEnum.BITCOIN_FAST.getCode()));
         } else {
             return JsonTool.toJson(new ArrayList<>(0));
         }

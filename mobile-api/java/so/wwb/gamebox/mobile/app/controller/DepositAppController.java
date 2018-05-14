@@ -496,11 +496,6 @@ public class DepositAppController extends BaseDepositController {
                     null, APP_VERSION);
         }
         Map<String, Object> map = new HashMap<String, Object>();
-        List<AppSale> saleList = new ArrayList<>();
-        AppSale appSale = new AppSale();
-        appSale.setId(null);
-        appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
-        saleList.add(appSale);
         map.put("counterFee", null);
         map.put("fee", null);
         map.put("msg", LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.freeFee"));
@@ -509,11 +504,14 @@ public class DepositAppController extends BaseDepositController {
         if (isOpenActivityHall) {
             map.put("sales", new ArrayList<>());
         } else {
-            VActivityMessageListVo listVo = new VActivityMessageListVo();
-            listVo.getSearch().setDepositWay(playerRechargeVo.getDepositWay());
-            listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
-            if (CollectionTool.isNotEmpty(listVo.getResult())) {
-                for (VActivityMessage vActivityMessage : listVo.getResult()) {
+            List<AppSale> saleList = new ArrayList<>();
+            AppSale appSale = new AppSale();
+            appSale.setId(null);
+            appSale.setActivityName(LocaleTool.tranMessage(Module.FUND, "Recharge.recharge.Notsale"));
+            saleList.add(appSale);
+            List<VActivityMessage> activityMessages = searchSales(playerRechargeVo.getDepositWay());
+            if (CollectionTool.isNotEmpty(activityMessages)) {
+                for (VActivityMessage vActivityMessage : activityMessages) {
                     if (vActivityMessage.isPreferential()) {
                         AppSale appSale4Activity = new AppSale();
                         appSale4Activity.setId(vActivityMessage.getId());
