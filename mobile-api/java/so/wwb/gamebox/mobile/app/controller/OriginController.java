@@ -117,7 +117,7 @@ public class OriginController extends BaseOriginController {
         Map<String, Object> map = new HashMap<>(5, 1f);
         getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getApiTypeGame(model, request));
+        map.put("siteApiRelation", getApiTypeGames(model,request));
         map.put("activity", getMoneyActivityFloat(request));
         map.put("language", SessionManager.getLocale().toString());
 
@@ -176,7 +176,7 @@ public class OriginController extends BaseOriginController {
         //游戏
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                getApiTypeGame(model, request),
+                getApiTypeGames(model,request),
                 APP_VERSION);
     }
 

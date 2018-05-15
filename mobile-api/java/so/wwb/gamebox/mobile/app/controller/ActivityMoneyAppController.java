@@ -233,10 +233,31 @@ public class ActivityMoneyAppController {
     private PlayerActivityMessage findMoneyActivity() {
         Map<String, PlayerActivityMessage> activityMessages = Cache.getMobileActivityMessages();
         String lang = SessionManagerBase.getLocale().toString();
-        Iterator<String> iter = activityMessages.keySet().iterator();
+        //Iterator<String> iter = activityMessages.keySet().iterator();
         Date justNow = new Date();
-        PlayerActivityMessage playerActivityMessage = null;
-        while (iter.hasNext()) {
+        PlayerActivityMessage playerActivityMessage;
+        for (Map.Entry<String, PlayerActivityMessage> activityMap : activityMessages.entrySet()) {
+            if (activityMap.getKey().endsWith(lang)) {
+                playerActivityMessage = activityMap.getValue();
+                Date startTime = playerActivityMessage.getStartTime();
+                Date endTime = playerActivityMessage.getEndTime();
+                if (!ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())) {
+                    //不是红包活动继续
+                    continue;
+                }
+                if (playerActivityMessage.getIsDeleted()) {
+                    continue;
+                }
+                if (!playerActivityMessage.getIsDisplay()) {
+                    continue;
+                }
+                if (startTime.before(justNow) && justNow.before(endTime)) {
+                    return playerActivityMessage;
+                }
+
+            }
+        }
+        /*while (iter.hasNext()) {
             String key = iter.next();
             if (key.endsWith(lang)) {
                 playerActivityMessage = activityMessages.get(key);
@@ -257,7 +278,7 @@ public class ActivityMoneyAppController {
                 }
 
             }
-        }
+        }*/
         return null;
     }
 

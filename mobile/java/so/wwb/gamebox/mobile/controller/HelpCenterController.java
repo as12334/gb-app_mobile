@@ -246,7 +246,7 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/updataMobile")
     @Upgrade(upgrade = true)
-    public String UpdateMobile(Model model) {
+    public String updateMobile(Model model) {
         model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
         model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
         return "/help/bind/UpDataMobile";
@@ -259,7 +259,7 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/phoneNumber")
     @Upgrade(upgrade = true)
-    public String PhoneNumber(Model model, NoticeContactWayVo contactVo) {
+    public String setPhoneNumber(Model model, NoticeContactWayVo contactVo) {
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         model.addAttribute("phone", StringTool.overlayTel(contactWay.getContactValue()));
         model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
