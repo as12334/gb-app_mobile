@@ -31,6 +31,7 @@ import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 
@@ -113,8 +114,8 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyBankDeposit2Form form,
-                                       BindingResult result) {
-        return commonDeposit(playerRechargeVo, result);
+                                       BindingResult result,HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result,request);
     }
 
     /**
@@ -124,7 +125,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         if (playerRecharge.getCounterFee() == null) {
@@ -158,7 +159,7 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
         playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
 
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setSysUser(SessionManager.getUser());
         playerRechargeVo.setRankId(rank.getId());
 

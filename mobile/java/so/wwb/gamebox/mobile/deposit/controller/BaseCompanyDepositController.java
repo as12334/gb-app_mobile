@@ -32,6 +32,7 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -174,7 +175,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         return "/deposit/Sale2";
     }
 
-    public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
+    public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>(3, 1f);
         if (result.hasErrors()) {
             playerRechargeVo.setSuccess(false);
@@ -187,7 +188,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
             map.put("accountNotUsing", true);
             return getVoMessage(map, playerRechargeVo);
         }
-        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount);
+        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount,request);
         //保存订单
         playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
         if (playerRechargeVo.isSuccess()) {
@@ -196,5 +197,5 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         return getVoMessage(map, playerRechargeVo);
     }
 
-    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount);
+    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request);
 }
