@@ -63,10 +63,12 @@ import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
@@ -680,6 +682,23 @@ public class BaseDepositController {
         return setClassifyKeyName(activityList);
     }
 
+    /**
+     * 获取优惠
+     *
+     * @param type
+     * @return
+     */
+    public List<VActivityMessage> searchSales(String type) {
+        if (StringTool.isBlank(type)) {
+            return null;
+        }
+        VActivityMessageListVo listVo = new VActivityMessageListVo();
+        listVo.getSearch().setDepositWay(type);
+        listVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        listVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
+        listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        return setClassifyKeyName(listVo.getResult());
+    }
 
     /**
      * 设置分类
@@ -777,7 +796,7 @@ public class BaseDepositController {
         }
         PlayerRank rank = getRank();
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
-                playerRechargeVo.getResult().getRechargeType());
+                playerRechargeVo.getResult().getRechargeType(),request);
         if (playerRechargeVo.isSuccess()) {
             //声音提醒站长中心
             onlineToneWarn();
@@ -886,11 +905,11 @@ public class BaseDepositController {
      * 保存存款数据
      */
     private PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, PlayerRank rank,
-                                          String rechargeTypeParent, String rechargeType) {
+                                          String rechargeTypeParent, String rechargeType,HttpServletRequest request) {
         //设置存款其他数据
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
         if (playerRecharge.getCounterFee() == null) {
             playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
@@ -937,11 +956,11 @@ public class BaseDepositController {
             onlineCommonDeposit(playerRechargeVo, result, request);
         }
         if (AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)) {
-            playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount);
+            playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount,request);
         } else if (AppDepositPayEnum.ELECTRONIC_PAY.getCode().equals(type)) {
-            playerRechargeVo = electronicSaveRecharge(playerRechargeVo, payAccount);
+            playerRechargeVo = electronicSaveRecharge(playerRechargeVo, payAccount,request);
         } else if (AppDepositPayEnum.BITCOIN_PAY.getCode().equals(type)) {
-            playerRechargeVo = bitcoinSaveRecharge(playerRechargeVo, payAccount);
+            playerRechargeVo = bitcoinSaveRecharge(playerRechargeVo, payAccount,request);
         }
         //保存订单
         playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
@@ -1036,7 +1055,7 @@ public class BaseDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo companySaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+    public PlayerRechargeVo companySaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         if (playerRecharge.getCounterFee() == null) {
@@ -1070,7 +1089,7 @@ public class BaseDepositController {
         playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
 
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setSysUser(SessionManager.getUser());
         playerRechargeVo.setRankId(rank.getId());
 
@@ -1084,7 +1103,7 @@ public class BaseDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo electronicSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+    public PlayerRechargeVo electronicSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
@@ -1111,7 +1130,7 @@ public class BaseDepositController {
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
 
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
         playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
 
@@ -1125,7 +1144,7 @@ public class BaseDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo bitcoinSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+    public PlayerRechargeVo bitcoinSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
         playerRecharge.setRechargeAmount(0d);
@@ -1140,7 +1159,7 @@ public class BaseDepositController {
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
         playerRecharge.setRechargeType(RechargeTypeEnum.BITCOIN_FAST.getCode());
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
         return playerRechargeVo;
     }

@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.deposit.controller;
+package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.I18nTool;
@@ -10,32 +10,35 @@ import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelper;
+import so.wwb.gamebox.mobile.deposit.controller.BaseCompanyDepositController;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2CashForm;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2Form;
-import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.company.enums.BankEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
+import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
+import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
+import so.wwb.gamebox.model.master.operation.po.ActivityDepositWay;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 
-import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -46,11 +49,11 @@ import java.util.Map;
 /**
  * 网银存款,银行柜台存款,柜员机转账,柜员机现金存款
  * <p/>
- * Created by bruce on 16-12-9.
+ * Created by hanson on 18-05-12.
  */
 @Controller
-@RequestMapping("/wallet/deposit/company")
-public class CompanyBankDepositController extends BaseCompanyDepositController {
+@RequestMapping("/wallet/v3/deposit/company")
+public class V3CompanyBankDepositControllor extends BaseCompanyDepositController {
 
     //公司入款支持的存款类型
     private static String[] RECHARGE_TYPE = {
@@ -67,16 +70,41 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
     @RequestMapping("/depositCash")
     @Token(generate = true)
     @Upgrade(upgrade = true)
-    public String depositCash(PayAccountVo payAccountVo, Model model) {
-        PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
-        if (payAccount != null) {
-            model.addAttribute("companyPayAccount", payAccount);
-        }
-        model.addAttribute("rank", getRank());
-//        model.addAttribute("bankCode",payAccount.getBankCode());
+    public String depositCash(Model model) {
+        DepositControllerHelper helper = DepositControllerHelper.getInstance();
+        List<PayAccount> payAccounts = helper.searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), null, null, null);
+        PlayerRank rank = helper.getRank();
+        boolean display = rank != null && rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
+        //获取公司入款收款账号
+        model.addAttribute("accounts", getCompanyPayAccount(payAccounts));
+        model.addAttribute("rank", rank);
         model.addAttribute("currency", getCurrencySign());
+        //验证规则
         model.addAttribute("validateRule", JsRuleCreator.create(CompanyBankDeposit2CashForm.class));
+        model.addAttribute("isRealName", StringTool.isBlank(SessionManager.getUser().getRealName()));
+        model.addAttribute("displayAccounts", display);
+        isHide(model, SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING);
+        //可用的网银转账链接
+        model.addAttribute("bankList", searchBank(BankEnum.TYPE_BANK.getCode()));
         return "/deposit/DepositCompanyCash";
+    }
+
+    /**
+     * 获取公司入款收款账号（根据固定顺序获取收款账户）
+     *
+     * @param accounts
+     * @return
+     */
+    private List<PayAccount> getCompanyPayAccount(List<PayAccount> accounts) {
+        List<String> bankCodes = new ArrayList<>();
+        List<PayAccount> payAccounts = new ArrayList<>();
+        for (PayAccount payAccount : accounts) {
+            if (!bankCodes.contains(payAccount.getBankCode())) {
+                payAccounts.add(payAccount);
+                bankCodes.add(payAccount.getBankCode());
+            }
+        }
+        return payAccounts;
     }
 
     @RequestMapping("/index")
@@ -85,7 +113,6 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
     public String company(PayAccountVo payAccountVo, Model model) {
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
-
         if (payAccount != null) {
             model.addAttribute("rank", getRank());
             model.addAttribute("currency", getCurrencySign());

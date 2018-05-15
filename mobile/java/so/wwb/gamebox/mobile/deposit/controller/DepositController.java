@@ -349,38 +349,6 @@ public class DepositController extends BaseCommonDepositController {
 
     }
 
-    private String getFastRechargeUrl() {
-
-        SysParam rechargeUrlParam = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL);
-        if (rechargeUrlParam == null || StringTool.isBlank(rechargeUrlParam.getParamValue())) {
-            return "";
-        }
-
-        //是否包含全部层级
-        SysParam allRank = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL_ALL_RANK);
-        if (allRank != null && "true".equals(allRank.getParamValue())) {
-            return rechargeUrlParam.getParamValue();
-        }
-        SysParam ranksParam = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL_RANKS);
-        boolean isFastRecharge = false;
-        if (ranksParam != null && StringTool.isNotBlank(ranksParam.getParamValue())) {
-            PlayerRank rank = getRank();
-            String[] ranks = ranksParam.getParamValue().split(",");
-            for (String rankId : ranks) {
-                if (String.valueOf(rank.getId()).equals(rankId)) {
-                    isFastRecharge = true;
-                    break;
-                }
-            }
-        }
-
-        if (isFastRecharge) {
-            return rechargeUrlParam.getParamValue();
-        } else {
-            return "";
-        }
-    }
-
     /**
      * 去除维护中收款账户
      *

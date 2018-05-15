@@ -1,96 +1,117 @@
-package so.wwb.gamebox.mobile.deposit.controller;
+package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.currency.CurrencyTool;
-import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.locale.LocaleTool;
-import org.soul.model.comet.vo.MessageVo;
-import org.soul.model.security.privilege.vo.SysResourceListVo;
-import org.soul.model.sys.po.SysParam;
+import org.soul.commons.log.Log;
+import org.soul.commons.log.LogFactory;
+import org.soul.commons.spring.utils.SpringTool;
+import org.soul.web.validation.form.annotation.FormModel;
+import org.soul.web.validation.form.js.JsRuleCreator;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.mobile.V3.enums.ScanCodeTypeEnum;
+import so.wwb.gamebox.mobile.V3.handler.IScanCodeControllerHandler;
+import so.wwb.gamebox.mobile.deposit.controller.BaseOnlineDepositController;
+import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
+import so.wwb.gamebox.mobile.deposit.form.OnlineScanDeposit2Form;
+import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.common.Const;
-import so.wwb.gamebox.model.common.MessageI18nConst;
-import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
-import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
-import so.wwb.gamebox.model.master.dataRight.DataRightModuleType;
-import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
-import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.web.cache.Cache;
-import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
+import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by cherry on 16-8-12.
+ * create by hanson 18-05-13
  */
-public abstract class BaseCompanyDepositController extends BaseDepositController {
+@Controller
+@RequestMapping("/wallet/v3/deposit/online/scan")
+public class V3OnlineScanDePositController extends BaseOnlineDepositController {
 
-    /* 公司入款地址 */
-    private static final String MCENTER_COMPANY_RECHARGE_URL = "fund/deposit/company/confirmCheck.html";
-
-    private void filterUnavailableSubAccount(List<Integer> userIdByUrl) {
-        SysUserDataRightListVo sysUserDataRightListVo = new SysUserDataRightListVo();
-        sysUserDataRightListVo.getSearch().setUserId(SessionManager.getUserId());
-        sysUserDataRightListVo.getSearch().setModuleType(DataRightModuleType.COMPANYDEPOSIT.getCode());
-        List<Integer> dataRightEntityIds = ServiceSiteTool.sysUserDataRightService().searchPlayerDataRightEntityId(sysUserDataRightListVo);
-
-        for (Iterator<Integer> iterator = userIdByUrl.iterator(); iterator.hasNext(); ) {
-            Integer userId = iterator.next();
-            if (!dataRightEntityIds.contains(userId)) {
-                iterator.remove();
-            }
-        }
-    }
-
+    private Log LOG = LogFactory.getLog(V3OnlineScanDePositController.class);
 
     /**
-     * 存款消息提醒发送消息给前端
-     *
-     * @param playerRechargeVo
+     * 扫码支付
      */
-    void tellerReminder(PlayerRechargeVo playerRechargeVo) {
-        PlayerRecharge recharge = playerRechargeVo.getResult();
-        if (recharge == null || recharge.getId() == null) {
-            return;
+    @RequestMapping("/scanCode/{type}")
+    @Token(generate = true)
+    @Upgrade(upgrade = true)
+    public String scanCode(Model model, @PathVariable String type) {
+        PlayerRank rank = getRank();
+        ScanCodeTypeEnum scanType = ScanCodeTypeEnum.enumOf(type);
+        IScanCodeControllerHandler handler = SpringTool.getBean(scanType.getHandlerClazz());
+
+        Map<String, PayAccount> scanAccount = handler.getScanAccount(rank);
+        if (scanAccount != null) {
+            model.addAttribute("scan", scanAccount);
         }
-        //推送消息给前端
-        MessageVo message = new MessageVo();
-        message.setSubscribeType(CometSubscribeType.MCENTER_RECHARGE_REMINDER.getCode());
-        Map<String, Object> map = new HashMap<>(3, 1f);
-        map.put("date", recharge.getCreateTime() == null ? new Date() : recharge.getCreateTime());
-        map.put("currency", getCurrencySign());
-        map.put("type", recharge.getRechargeTypeParent());
-        map.put("amount", CurrencyTool.formatCurrency(recharge.getRechargeAmount()));
-        map.put("id", recharge.getId());
-        map.put("transactionNo", recharge.getTransactionNo());
-        message.setMsgBody(JsonTool.toJson(map));
-        message.setSendToUser(true);
-        message.setCcenterId(SessionManager.getSiteParentId());
-        message.setSiteId(SessionManager.getSiteId());
-        message.setMasterId(SessionManager.getSiteUserId());
-        SysResourceListVo sysResourceListVo = new SysResourceListVo();
-        sysResourceListVo.getSearch().setUrl(MCENTER_COMPANY_RECHARGE_URL);
-        List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
-        //判断账号是否可以查看该层级的记录 add by Bruce.QQ
-        filterUnavailableSubAccount(userIdByUrl);
-        userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
-        message.addUserIds(userIdByUrl);
-        ServiceTool.messageService().sendToMcenterMsg(message);
+        //获取支持配置的电子账号类型
+        List<PayAccount> electronicAccount = handler.getElectronicAccount(rank);
+        if (electronicAccount != null) {
+            model.addAttribute("electronic", electronicAccount);
+        }
+        commonPage(model, rank, handler.getOnlineType(), handler.getCompanyType());
+        model.addAttribute("bankCode", handler.getBankCode());
+        return "/deposit/ScanCode";
+    }
+
+    /**
+     * 支付页面公共页面元素部分
+     *
+     * @param model
+     */
+    private void commonPage(Model model, PlayerRank rank, String onlineType, String companyType) {
+        model.addAttribute("command", new PayAccountVo());
+        model.addAttribute("username", SessionManager.getUserName());
+        model.addAttribute("rank", rank);
+        isHide(model, SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT);
+        model.addAttribute("validateRule", JsRuleCreator.create(OnlineScanDepositForm.class));
+        Double rechargeDecimals = Math.random() * 99 + 1;
+        model.addAttribute("rechargeDecimals", rechargeDecimals.intValue());
+        model.addAttribute("onlineType", onlineType);
+        model.addAttribute("companyType", companyType);
+        model.addAttribute("currency", SessionManager.getUser().getDefaultCurrency());
+        model.addAttribute("isOpenActivityHall", ParamTool.isOpenActivityHall());
+    }
+
+    @RequestMapping("/index")
+    @Token(generate = true)
+    @Upgrade(upgrade = true)
+    public String index(PayAccountVo payAccountVo, Model model, HttpServletRequest request) {
+        //获取收款账号
+        PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
+        if (payAccount != null) {
+            //是否隐藏收款账号
+            isHide(model, SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT);
+            model.addAttribute("rank", getRank());
+            model.addAttribute("currency", getCurrencySign());
+            String rechargeType = getElectronicRechargeType(payAccount.getBankCode());
+            model.addAttribute("rechargeType", rechargeType);
+            model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositForm.class));
+            //上一次填写的账号/昵称
+            model.addAttribute("lastTimeAccount", getPlayerPerDepositName(rechargeType, SessionManager.getUserId()));
+        }
+        if (payAccountVo.getDepositCash() != null) {
+            model.addAttribute("rechargeAmount", payAccountVo.getDepositCash());
+        }
+        model.addAttribute("payAccount", payAccount);
+        return "/deposit/Electronic";
     }
 
     /**
@@ -99,10 +120,9 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
      * @param playerRechargeVo
      * @return
      */
-    @RequestMapping("/submit")
+    @RequestMapping("/electronicSubmit")
     @Upgrade(upgrade = true)
     public String submit(PlayerRechargeVo playerRechargeVo, Model model) {
-
         boolean unCheckSuccess = false;
         boolean pop = true;
         String tips = "";
@@ -175,27 +195,25 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         return "/deposit/Sale2";
     }
 
-    public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<>(3, 1f);
-        if (result.hasErrors()) {
-            playerRechargeVo.setSuccess(false);
-            return getVoMessage(map, playerRechargeVo);
-        }
-        PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
-        if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
-            playerRechargeVo.setSuccess(false);
-            playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
-            map.put("accountNotUsing", true);
-            return getVoMessage(map, playerRechargeVo);
-        }
-        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount,request);
-        //保存订单
-        playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
-        if (playerRechargeVo.isSuccess()) {
-            tellerReminder(playerRechargeVo);
-        }
-        return getVoMessage(map, playerRechargeVo);
+    @RequestMapping("/scanCodeSubmit")
+    @ResponseBody /*支付宝*/
+    @Token(valid = true)
+    public Map<String, Object> ScanCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDepositForm form, BindingResult result, HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result, request);
     }
 
-    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request);
+    /**
+     * 开启随机额度时提交方法
+     *
+     * @param playerRechargeVo
+     * @param form
+     * @param result
+     * @return
+     */
+    @RequestMapping("/scanRandomCodeSubmit")
+    @ResponseBody
+    @Token(valid = true)
+    public Map<String, Object> scanRandomCodeSubmit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid OnlineScanDeposit2Form form, BindingResult result, HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result, request);
+    }
 }
