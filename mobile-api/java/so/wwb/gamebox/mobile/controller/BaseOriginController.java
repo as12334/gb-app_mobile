@@ -288,6 +288,12 @@ public abstract class BaseOriginController {
         return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_MOBILE_ORDER_NUM));
     }
 
+    /**
+     * 获取游戏类型api
+     * @param model
+     * @param request
+     * @return
+     */
     protected List<AppSiteApiTypeRelastionVo> getApiTypeGames(AppRequestModelVo model, HttpServletRequest request) {
         Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
