@@ -21,9 +21,8 @@
             <h1>${views.errors_auto['你访问的页面不存在']}</h1>
             <h2>Not Found</h2>
             <p>抱歉！您访问的页面不存在，如有造成不便，敬请见谅。如果有什么疑问，请联系我们的客服。</p>
-            <c:if test="${terminal eq '2'}">
-                <a class="online-ser btn diy"
-                   href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a></c:if>
+            <a class="online-ser btn diy"
+               href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a>
         </div>
     </div>
     <footer></footer>

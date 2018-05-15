@@ -20,9 +20,8 @@
             <h1>您已被踢出...</h1>
             <h3>YOU HAVE BEEN MANDATORY LOGOUT</h3>
             <p>您的账号有可能在另外一个地点登录或账号长时间未进行任何操作，您被强制踢出如果有什么疑问，请联系我们的客服。</p>
-            <c:if test="${terminal eq '2'}">
-                <a class="online-ser btn diy"
-                   href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a></c:if>
+            <a class="online-ser btn diy"
+               href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a>
         </div>
     </div>
     <footer></footer>

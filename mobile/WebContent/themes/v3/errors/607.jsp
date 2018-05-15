@@ -20,9 +20,8 @@
             <h1 style="font-size:26px;">网站维护中,暂停访问</h1>
             <h2>UNDER MAINTENANCE</h2>
             <p>抱歉！本系统程序升级，将暂停访问，敬请期待。维护完成时间于<font class='time'>${endTime}</font>,如果有什么疑问，请联系我们的客服。</p>
-            <c:if test="${terminal eq '2'}">
-                <a class="online-ser btn diy"
-                   href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a></c:if>
+            <a class="online-ser btn diy"
+               href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a>
         </div>
     </div>
     <footer></footer>
