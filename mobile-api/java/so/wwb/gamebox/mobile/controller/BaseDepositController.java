@@ -63,6 +63,7 @@ import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
@@ -680,6 +681,23 @@ public class BaseDepositController {
         return setClassifyKeyName(activityList);
     }
 
+    /**
+     * 获取优惠
+     *
+     * @param type
+     * @return
+     */
+    public List<VActivityMessage> searchSales(String type) {
+        if (StringTool.isBlank(type)) {
+            return null;
+        }
+        VActivityMessageListVo listVo = new VActivityMessageListVo();
+        listVo.getSearch().setDepositWay(type);
+        listVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        listVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
+        listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
+        return setClassifyKeyName(listVo.getResult());
+    }
 
     /**
      * 设置分类
