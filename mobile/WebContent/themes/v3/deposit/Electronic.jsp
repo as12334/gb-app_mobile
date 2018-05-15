@@ -3,7 +3,7 @@
 <head>
     <%@include file="../include/include.head.jsp" %>
 </head>
-<body class="exchange-wechat exchange-bank">
+<body class="deposit_2">
 <header class="mui-bar mui-bar-nav">
     <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"opType":"function","target":"goToLastPage"}'></a>
     <h1 class="mui-title">
@@ -30,9 +30,10 @@
         </c:if>
     </h1>
 </header>
-<div class="mui-content mui-scroll-wrapper">
+<div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
-        <form id="electronicForm">
+        <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
+        <form id="scanForm">
             <gb:token/>
             <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
@@ -40,11 +41,11 @@
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="depositChannel" value="electronic"/>
-            <div class="mui-row">
+            <div class="pay_mone">
                 <div class="gb-panel" style="border-top-color: #fff;">
-                    <p class="tit">${views.deposit_auto['账号信息']}</p>
-                    <div class="gb-bankcard">
-                        <div class="hd">
+                    <div class="tit">${views.deposit_auto['账号信息']}</div>
+                    <div class="bank_car_item">
+                        <div class="top">
                             <c:set var="flag" value="${empty payAccount.customBankName || dicts.common.bankname[payAccount.bankCode]==payAccount.customBankName}"/>
                             <p class="${!flag ? '':'pay-third '} ${!flag ? '':payAccount.bankCode}">
                                 <c:if test="${!flag}">
@@ -52,9 +53,8 @@
                                 </c:if>
                             </p>
                         </div>
-                        <div class="ct" style="padding-left:20px;">
-                            <p>
-                                <span class="text-green" style="color:#f49e2e;line-height:40px;">
+                        <div class="bank_car_txt_info">
+                            <div class="b_c_t_i_row">
                                 <c:choose>
                                     <c:when test="${isHide}">
                                         ${payAccount.code},${views.deposit_auto['请联系客服']}
@@ -63,14 +63,12 @@
                                         ${payAccount.account}
                                     </c:otherwise>
                                 </c:choose>
-                                </span>
-                                <a href="#" class="copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
-                            </p>
-                            <div class="ct">
-                                <p><span style="float:left;">${views.deposit_auto['姓名']}:</span>
+                                <a href="#" class="copy btn_copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
+                            </div>
+                            <div class="b_c_t_i_row">
+                                    ${views.deposit_auto['姓名']}:
                                     ${payAccount.fullName}
-                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
-                                </p>
+                                    <a href="#" class=" btn_copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
                             </div>
                         </div>
                     </div>
@@ -142,30 +140,27 @@
                             <input type="text" id="result.bankOrder" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
                         </div>
                     </div>
+                    <div class="btn_wrap">
+                        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
+                    </div>
                 </div>
             </div>
             <c:choose>
                 <c:when test="${empty payAccount.remark}">
-                    <ul class="info">
-                        <li>* ${views.deposit_auto['请先加好友']}</li>
-                        <li>* ${views.deposit_auto['请输入订单号后5位']}</li>
-                        <li>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</li>
-                    </ul>
+                    <div class="deposit_help">
+                        <p>温馨提示</p>
+                        <p>* ${views.deposit_auto['请先加好友']}</p>
+                        <p>* ${views.deposit_auto['请输入订单号后5位']}</p>
+                        <p>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    </div>
                 </c:when>
                 <c:otherwise>
-                    <div class="info">
-                    <ul>
-                        <li> ${payAccount.remark}</li>
-                    </ul>
+                    <div class="deposit_help">
+                        <p>${payAccount.remark}</p>
                 </div>
                 </c:otherwise>
             </c:choose>
         </form>
-    </div>
-</div>
-<div class="mui-row">
-    <div class="gb-form-foot bank-pay-btn">
-        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['提交']}</a>
     </div>
 </div>
 <!--弹窗-->

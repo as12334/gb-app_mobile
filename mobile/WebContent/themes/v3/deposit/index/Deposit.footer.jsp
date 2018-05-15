@@ -21,8 +21,6 @@
         </div>
     </div>
 </div>
-</div>
-
 <!--存款帮助：-->
 <%--微信反扫教程：--%>
 <div id="depositHelpBox10" class="depositHelpBox" style="display: none">
@@ -75,6 +73,9 @@
         <a data-rel='{"opType":"function","target":"closeHelpBox"}' class="closeHelpBox">+</a>
     </div>
 </div>
+</div>
+
+
 
 <%@ include file="../../common/Footer.jsp" %>
 </body>

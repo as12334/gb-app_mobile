@@ -35,41 +35,27 @@ import java.util.Map;
 
 /**
  * 电子支付(微信,支付宝,其他)
- *
+ * <p>
  * Created by bruce on 16-12-10.
  */
 @Controller
 @RequestMapping("/wallet/deposit/company/electronic")
 public class CompanyElectronicDepositController extends BaseCompanyDepositController {
 
-    /*支付宝*/
-    private static final String ALIPAY = "alipay";
-    /*微信支付*/
-    private static final String WECHATPAY = "wechatpay";
-    /*QQ钱包*/
-    private static final String QQWALLET = "qqwallet";
-    /*京东钱包*/
-    private static final String JDWALLET = "jdwallet";
-    /*百度钱包*/
-    private static final String BDWALLET = "bdwallet";
-    /*一码付*/
-    private static final String ONECODEPAY = "onecodepay";
-
-
     /**
-     *存款金额
+     * 存款金额
      */
     @RequestMapping("/depositCash")
     @Token(generate = true)
     @Upgrade(upgrade = true)
-    public String depositCash(PayAccountVo payAccountVo, Model model){
+    public String depositCash(PayAccountVo payAccountVo, Model model) {
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
-        if(payAccount != null){
-            model.addAttribute("electronicPayAccount",payAccount);
+        if (payAccount != null) {
+            model.addAttribute("electronicPayAccount", payAccount);
         }
         model.addAttribute("rank", getRank());
 //        model.addAttribute("bankCode",payAccount.getBankCode());
-        model.addAttribute("currency",getCurrencySign());
+        model.addAttribute("currency", getCurrencySign());
         model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositCashForm.class));
         return "/deposit/DepositElectronicCash";
     }
@@ -77,7 +63,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     @RequestMapping("/index")
     @Token(generate = true)
     @Upgrade(upgrade = true)
-    public String index(PayAccountVo payAccountVo,Model model, HttpServletRequest request) {
+    public String index(PayAccountVo payAccountVo, Model model, HttpServletRequest request) {
         //获取收款账号
         PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
         if (payAccount != null) {
@@ -86,14 +72,14 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
             model.addAttribute("rank", getRank());
             model.addAttribute("currency", getCurrencySign());
 
-            String rechargeType = getRechargeType(payAccount.getBankCode());
-            model.addAttribute("rechargeType",rechargeType);
+            String rechargeType = getElectronicRechargeType(payAccount.getBankCode());
+            model.addAttribute("rechargeType", rechargeType);
             model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositForm.class));
             //上一次填写的账号/昵称
-            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType,SessionManager.getUserId()));
+            model.addAttribute("lastTimeAccount", getPlayerPerDepositName(rechargeType, SessionManager.getUserId()));
         }
-        if(payAccountVo.getDepositCash() != null){
-            model.addAttribute("rechargeAmount",payAccountVo.getDepositCash());
+        if (payAccountVo.getDepositCash() != null) {
+            model.addAttribute("rechargeAmount", payAccountVo.getDepositCash());
         }
         model.addAttribute("payAccount", payAccount);
         return "/deposit/Electronic";
@@ -103,8 +89,8 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyElectronicDepositForm form,
-                                      BindingResult result) {
-        return commonDeposit(playerRechargeVo,result);
+                                       BindingResult result) {
+        return commonDeposit(playerRechargeVo, result);
     }
 
     /**
@@ -148,30 +134,4 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
         return playerRechargeVo;
     }
 
-    private String getRechargeType(String bankCode) {
-        String rechargeType = RechargeTypeEnum.OTHER_FAST.getCode();
-        if (WECHATPAY.equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.WECHATPAY_FAST.getCode();
-        } else if (ALIPAY.equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.ALIPAY_FAST.getCode();
-        }else if (QQWALLET.equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.QQWALLET_FAST.getCode();
-        }else if (JDWALLET.equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.JDWALLET_FAST.getCode();
-        }else if (BDWALLET.equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.BDWALLET_FAST.getCode();
-        }else if (ONECODEPAY.equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.ONECODEPAY_FAST.getCode();
-        }
-        return rechargeType;
-    }
-
-    private String getLastDepositName(String rechargeType,Integer userId) {
-        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
-        PlayerRecharge playerRecharge = new PlayerRecharge();
-        playerRecharge.setRechargeType(rechargeType);
-        playerRecharge.setPlayerId(userId);
-        playerRechargeVo.setResult(playerRecharge);
-        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
-    }
 }

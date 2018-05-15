@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
@@ -35,7 +34,6 @@ import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
-import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
@@ -205,25 +203,6 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
     }
 
-    private PayAccount getPayAccountBySearchId(String searchId) {
-        PayAccountVo payAccountVo = new PayAccountVo();
-        payAccountVo.setSearchId(searchId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
-        PayAccount payAccount = payAccountVo.getResult();
-        if (payAccount == null) {
-            return null;
-        }
-        if (!PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
-            LOG.info("账号{0}已听用,故返回收款账号null", payAccount.getPayName());
-            return null;
-        }
-       /* Bank bank = Cache.getBank().get(payAccount.getBankCode());
-        if (bank == null || (bank.getIsUse() != null && !bank.getIsUse())) {
-            LOG.info("{0}渠道已关闭，故返回收款账号null", payAccount.getBankCode());
-            return null;
-        }*/
-        return payAccount;
-    }
 
     private Map<String, Object> getResultMsg(boolean isSuccess, String msg, String transactionNo) {
         Map<String, Object> map = new HashMap<>(3, 1f);

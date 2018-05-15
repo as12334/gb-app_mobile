@@ -26,24 +26,7 @@
         <input type="hidden" name="result.payerBank" id="result.payerBank" value="${bank}"/>
         <input type="hidden" name="depositChannel" value="online"/>
         <div class="pay_mone">
-            <div class="tit">选择金额</div>
-            <div class="conv_mone">
-                <div class="conv_mone_i">
-                    <i class="icon_mone mone_100" data-rel='{"mone":100,"opType":"function","target":"quickCheckMoney"}'></i>
-                </div>
-                <div class="conv_mone_i">
-                    <i class="icon_mone mone_200" data-rel='{"mone":200,"opType":"function","target":"quickCheckMoney"}'></i>
-                </div>
-                <div class="conv_mone_i">
-                    <i class="icon_mone mone_500" data-rel='{"mone":500,"opType":"function","target":"quickCheckMoney"}'></i>
-                </div>
-                <div class="conv_mone_i">
-                    <i class="icon_mone mone_1000" data-rel='{"mone":1000,"opType":"function","target":"quickCheckMoney"}'></i>
-                </div>
-                <div class="conv_mone_i">
-                    <i class="icon_mone mone_5000" data-rel='{"mone":5000,"opType":"function","target":"quickCheckMoney"}'></i>
-                </div>
-            </div>
+            <%@include file="./ChooseAmount.jsp"%>
             <div class="depo_row">
                 <div class="label">存款金额</div>
                 <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text" placeholder="${onlinePayMin}.00~${onlinePayMax}.00"/></div>
