@@ -53,6 +53,7 @@ import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_SITE_SPECIAL;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_TYPE_LOGO_URL;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.FISH_API_TYPE_ID;
 
 /**
@@ -290,6 +291,7 @@ public abstract class BaseOriginController {
 
     /**
      * 获取游戏类型api
+     *
      * @param model
      * @param request
      * @return
@@ -383,7 +385,7 @@ public abstract class BaseOriginController {
             appApiType = new AppSiteApiTypeRelastionVo();
             appApiType.setApiType(apiTypeId);
             appApiType.setApiTypeName(apiTypeCacheEntity.getName());
-            appApiType.setCover(getApiTypeCover(apiLogoUrl, apiTypeId));
+            appApiType.setCover(String.format(API_TYPE_LOGO_URL, apiLogoUrl, apiTypeId));
             appApiType.setSiteApis(appApis);
             if (navApiTypes.contains(apiTypeId)) {
                 appApiType.setLevel(true);

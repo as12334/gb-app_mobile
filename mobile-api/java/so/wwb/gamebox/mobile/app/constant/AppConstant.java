@@ -73,6 +73,9 @@ public interface AppConstant {
     /*api图片地址 */
     String API_LOGO_URL = "%s/api/api_logo_%s.png";
 
+    /*apiType图片地址 */
+    String API_TYPE_LOGO_URL = "%s/api_type_%s.png";
+
     /**
      * 存款渠道图片路径：/终端/common/deposit/分辨率/deposit_entry
      */
