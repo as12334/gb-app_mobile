@@ -364,7 +364,7 @@ public abstract class BaseOriginController {
 
             appApis = new ArrayList<>();
             for (ApiCacheEntity apiCacheEntity : apiMap.values()) {
-                appSite = changeApiTypeRelationI18nModelToApp(apiCacheEntity, apiLogoUrl, null);
+                appSite = changeApiTypeRelationI18nModelToApp(apiCacheEntity, apiLogoUrl);
 
                 //彩票，棋牌
                 if (navApiTypes.contains(apiTypeId)) {
@@ -458,7 +458,7 @@ public abstract class BaseOriginController {
      * @param apiEntity
      * @return
      */
-    private AppSiteApiTypeRelationI18n changeApiTypeRelationI18nModelToApp(ApiCacheEntity apiEntity, String apiLogoUrl, List<AppSiteGame> games) {
+    private AppSiteApiTypeRelationI18n changeApiTypeRelationI18nModelToApp(ApiCacheEntity apiEntity, String apiLogoUrl) {
         AppSiteApiTypeRelationI18n appRelation = new AppSiteApiTypeRelationI18n();
         appRelation.setName(apiEntity.getApiName());
         appRelation.setApiId(apiEntity.getApiId());
@@ -469,11 +469,8 @@ public abstract class BaseOriginController {
         } else {
             appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiEntity.getApiId()));
         }
-        if (CollectionTool.isNotEmpty(games)) {
-            appRelation.setGameList(CollectionQueryTool.sort(games, Order.asc(AppSiteGame.PROP_ORDER_NUM)));
-        } else {
-            appRelation.setGameLink(getAutoPayGameLink(apiEntity));
-        }
+        appRelation.setGameLink(getAutoPayGameLink(apiEntity));
+
         appRelation.setAutoPay(SessionManager.isAutoPay());
         return appRelation;
     }
