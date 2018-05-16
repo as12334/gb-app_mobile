@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.shiro.local.filter.LocalLoginFilter;
@@ -44,6 +45,7 @@ class LoginController {
         model.addAttribute("apiId", request.getParameter("a"));
         model.addAttribute("gameCode", request.getParameter("c"));
         model.addAttribute("apiTypeId", request.getParameter("t"));
+        model.addAttribute("isRecover",ParamTool.isSmsSwitch()&&ParamTool.isOpenRecoverPassword());
         return LOGIN_URI;
     }
 

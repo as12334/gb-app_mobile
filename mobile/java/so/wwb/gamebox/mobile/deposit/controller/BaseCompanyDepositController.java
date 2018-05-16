@@ -32,6 +32,7 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -56,26 +57,6 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         }
     }
 
-    /**
-     * 是否隐藏收款账号
-     *
-     * @param model
-     * @param paramEnum
-     */
-    void isHide(Model model, SiteParamEnum paramEnum) {
-        // 查询隐藏参数
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
-        if (sysParam == null) {
-            return;
-        }
-        SysParam hideParam = ParamTool.getSysParam(paramEnum);
-        // 判断是否隐藏收款账号
-        if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
-            model.addAttribute("isHide", true);
-            model.addAttribute("hideContent", Cache.getSiteI18n(SiteI18nEnum.MASTER_CONTENT_HIDE_ACCOUNT_CONTENT).get(SessionManager.getLocale().toString()));
-            model.addAttribute("customerService", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
-        }
-    }
 
     /**
      * 存款消息提醒发送消息给前端
@@ -194,23 +175,20 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         return "/deposit/Sale2";
     }
 
-    public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result) {
+    public Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result,HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>(3, 1f);
         if (result.hasErrors()) {
             playerRechargeVo.setSuccess(false);
             return getVoMessage(map, playerRechargeVo);
         }
         PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
-//        playerRechargeVo.getResult().setPayerBank(payAccount.getBankCode());
-//        Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo, SessionManager.getUserId());
-//        map.put("failureCount",failureCount);
         if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             playerRechargeVo.setSuccess(false);
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST));
             map.put("accountNotUsing", true);
             return getVoMessage(map, playerRechargeVo);
         }
-        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount);
+        playerRechargeVo = saveRecharge(playerRechargeVo, payAccount,request);
         //保存订单
         playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
         if (playerRechargeVo.isSuccess()) {
@@ -219,5 +197,5 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         return getVoMessage(map, playerRechargeVo);
     }
 
-    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount);
+    protected abstract PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request);
 }
