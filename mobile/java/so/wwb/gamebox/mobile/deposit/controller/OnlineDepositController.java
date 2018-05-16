@@ -15,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelper;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -51,12 +50,18 @@ public class OnlineDepositController extends BaseOnlineDepositController {
     @Token(generate = true)
     @Upgrade(upgrade = true)
     protected String index(Model model) {
-        PayAccountListVo payAccountListVo = DepositControllerHelper.getInstance().loadPayAccountListVo();
+        PlayerRank pr = getRank();
+        List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), PayAccountAccountType.THIRTY.getCode());
+        PayAccountListVo payAccountListVo = new PayAccountListVo();
+        payAccountListVo.setResult(payAccounts);
+        payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
+        payAccountListVo.setPlayerRank(pr);
+        payAccountListVo.setBanks(searchBank(BankEnum.TYPE_BANK.getCode()));
         Map<String, PayAccount> payAccountMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
         model.addAttribute("validateRule", JsRuleCreator.create(DepositForm.class));
         //收款账号
         getOnlineAccounts(model, payAccountMap);
-        model.addAttribute("rank", payAccountListVo.getPlayerRank());
+        model.addAttribute("rank", pr);
         model.addAttribute("currency", getCurrencySign());
         model.addAttribute("rechargeType", RechargeTypeEnum.ONLINE_DEPOSIT.getCode());
         model.addAttribute("payAccountMap", payAccountMap);
@@ -66,7 +71,8 @@ public class OnlineDepositController extends BaseOnlineDepositController {
 
     private void getOnlineAccounts(Model model, Map<String, PayAccount> payAccountMap) {
         List<Map<String, String>> bankList = new ArrayList<>();
-        Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
+        Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString())
+                .get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
         Set<Map.Entry<String, PayAccount>> entrySet = payAccountMap.entrySet();
         PayAccountVo payAccountVo = new PayAccountVo();
         for (Map.Entry<String, PayAccount> entry : entrySet) {
@@ -82,6 +88,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
         }
         model.addAttribute("bankList", bankList);
         model.addAttribute("bankJson", JsonTool.toJson(bankList));
+
     }
 
     @RequestMapping("/deposit")
@@ -96,7 +103,7 @@ public class OnlineDepositController extends BaseOnlineDepositController {
      *
      * @param type
      */
-    protected List<Bank> searchBank(String type) {
+    private List<Bank> searchBank(String type) {
         Map<String, Bank> bankMap = Cache.getBank();
         if (bankMap == null || bankMap.size() <= 0) {
             return null;
