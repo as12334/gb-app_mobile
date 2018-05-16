@@ -240,7 +240,11 @@ public class IndexController extends BaseApiController {
         model.addAttribute("sign", getCurrencySign());
         model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         //活动规则
-        model.addAttribute("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue());
+        Map siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE);
+        if(MapTool.isNotEmpty(siteI18nMap)){
+            model.addAttribute("activityRules", siteI18nMap.get(SessionManager.getLocale().toString()));
+        }
+
         //是否是ajax请求
         if (ServletTool.isAjaxSoulRequest(request)) {
             return "/recommend/RecommendList";

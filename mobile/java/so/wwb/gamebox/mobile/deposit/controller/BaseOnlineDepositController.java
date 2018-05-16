@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.deposit.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
@@ -20,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelper;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -42,6 +42,7 @@ import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
@@ -165,7 +166,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     /**
      * 线上支付（含扫码支付）提交公共方法
      */
-    Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
+    protected Map<String, Object> commonDeposit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
         if (result.hasErrors()) {
             playerRechargeVo.setErrMsg(LocaleTool.tranMessage("deposit_auto", "请检查提交的数据是否正确"));
             return getResultMsg(false, playerRechargeVo.getErrMsg(), null);
@@ -189,7 +190,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             }
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
-                playerRechargeVo.getResult().getRechargeType());
+                playerRechargeVo.getResult().getRechargeType(),request);
         if (playerRechargeVo.isSuccess()) {
             //声音提醒站长中心
             onlineToneWarn();
@@ -203,25 +204,6 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
     }
 
-    private PayAccount getPayAccountBySearchId(String searchId) {
-        PayAccountVo payAccountVo = new PayAccountVo();
-        payAccountVo.setSearchId(searchId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
-        PayAccount payAccount = payAccountVo.getResult();
-        if (payAccount == null) {
-            return null;
-        }
-        if (!PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
-            LOG.info("账号{0}已听用,故返回收款账号null", payAccount.getPayName());
-            return null;
-        }
-       /* Bank bank = Cache.getBank().get(payAccount.getBankCode());
-        if (bank == null || (bank.getIsUse() != null && !bank.getIsUse())) {
-            LOG.info("{0}渠道已关闭，故返回收款账号null", payAccount.getBankCode());
-            return null;
-        }*/
-        return payAccount;
-    }
 
     private Map<String, Object> getResultMsg(boolean isSuccess, String msg, String transactionNo) {
         Map<String, Object> map = new HashMap<>(3, 1f);
@@ -260,11 +242,11 @@ public class BaseOnlineDepositController extends BaseDepositController {
      * 保存存款数据
      */
     private PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, PlayerRank rank,
-                                          String rechargeTypeParent, String rechargeType) {
+                                          String rechargeTypeParent, String rechargeType,HttpServletRequest request) {
         //设置存款其他数据
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
         if (playerRecharge.getCounterFee() == null) {
             playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
@@ -347,13 +329,14 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
         unCheckSuccess = true;
         //如果没有开启手续费和返还手续费,并且没有可参与优惠,不显示提交弹窗
+
         //手续费标志
         boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
         //返手续费标志
         boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         model.addAttribute("isOpenActivityHall", isOpenActivityHall);
-        if(isFee || isReturnFee) {
+        if (isFee || isReturnFee) {
             String counterFee = getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee));
             model.addAttribute("counterFee", counterFee);
             model.addAttribute("fee", fee);
@@ -368,7 +351,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             model.addAttribute("msg", msg);
             model.addAttribute("depositChannel", playerRechargeVo.getDepositChannel());
         }
-        if(!isOpenActivityHall) {
+        if (!isOpenActivityHall) {
             List<VActivityMessage> activityMessages = searchSaleByAmount(rechargeAmount, playerRecharge.getRechargeType());
             model.addAttribute("sales", activityMessages);
         }
@@ -386,19 +369,18 @@ public class BaseOnlineDepositController extends BaseDepositController {
     /**
      * 查询符合玩家条件收款账号
      */
-    List<PayAccount> searchPayAccount(String type, String accountType) {
-        Map<String, Object> map = new HashMap<>(4, 1f);
-        map.put("playerId", SessionManager.getUserId());
-        map.put("type", type);
-        map.put("accountType", accountType);
-        map.put("currency", SessionManager.getUser().getDefaultCurrency());
-        map.put("terminal", TerminalEnum.MOBILE.getCode());
-        PayAccountListVo listVo = new PayAccountListVo();
-        listVo.setConditions(map);
-        return ServiceSiteTool.payAccountService().searchPayAccountByRank(listVo);
+    protected List<PayAccount> searchPayAccount(String type, String accountType) {
+        return DepositControllerHelper.getInstance().searchPayAccount(type, accountType, TerminalEnum.MOBILE.getCode(), null, null);
     }
 
-    PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
+    /**
+     * 查询符合玩家条件收款账号
+     */
+    protected List<PayAccount> searchPayAccount(String type, String accountType, String[] accountTypes) {
+        return DepositControllerHelper.getInstance().searchPayAccount(type, accountType, TerminalEnum.MOBILE.getCode(), null, accountTypes);
+    }
+
+    protected PayAccount getScanPay(PlayerRank rank, String accountType, String rechargeType) {
         List<PayAccount> payAccounts = searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), accountType);
         PayAccountListVo payAccountListVo = new PayAccountListVo();
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
@@ -407,6 +389,5 @@ public class BaseOnlineDepositController extends BaseDepositController {
         payAccountListVo.setRechargeType(rechargeType);
         return ServiceSiteTool.payAccountService().getOnlineScanAccount(payAccountListVo);
     }
-
 
 }

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <footer class="mui-bar mui-bar-tab">
-    <a data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}' class="mui-tab-item">
+    <a data-rel='{"target":"${root}/wallet/v3/deposit/index.html?skip=0","opType":"href"}' class="mui-tab-item ${skip == 0?'mui-active':''}">
         <span class="mui-icon icon-deposit"></span>
         <span class="mui-tab-label">${views.themes_auto['存款']}</span>
     </a>

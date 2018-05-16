@@ -34,9 +34,9 @@
     <div data-rel='{"target":"closeDesk","opType":"function"}' class="mui-col-xs-1 close"><i></i></div>
 </div>
 <!--消息弹窗-->
-<%@include file="index.include/include.dialog.jsp"%>
-<%--红包--%>
-<%@include file="index.include/Envelope.jsp"%>
+<%--<%@include file="index.include/include.dialog.jsp"%>
+<%--红包
+<%@include file="index.include/Envelope.jsp"%>--%>
 </body>
 <%@include file="include/include.js.jsp"%>
 <script src="${resRoot}/js/mui/mui.lazyload.js?v=${rcVersion}"></script>

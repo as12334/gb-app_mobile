@@ -23,18 +23,6 @@
                     </p>
                 </div>
                 <%@include file="./ChooseAmount.jsp"%>
-                <%--<div class="mui-input-row">
-                    <p style="text-align: left;float: left;line-height: 21px;height: 58px;
-                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['请先加好友']}</p>
-                    <p style="text-align: left;float:left;line-height: 21px;height: 58px;
-                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['存款金额请加以小数']}
-                    <p style="text-align: left;float:left;line-height: 21px;height: 58px;
-                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['提示']}<span style="color: red">${views.deposit_auto['支付成功']}</span>${views.deposit_auto['关闭支付窗口']}
-                    <p style="text-align: left;float:left;line-height: 21px;height: 58px;
-                        color: #444;padding-right:12px;padding-left:12px;padding-top: 10px;">* ${views.deposit_auto['客服帮助']}
-                        <soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/>
-                    </p>
-                </div>--%>
                 <ul class="depositHelp" style="color: #262729 ">
                     <li>* ${views.deposit_auto['请先加好友']}</li>
                     <li>* ${views.deposit_auto['存款金额请加以小数']}</li>
