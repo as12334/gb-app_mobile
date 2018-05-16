@@ -6,11 +6,13 @@
             <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
             <%@ include file="Deposit.ToolBar.jsp" %>
         </c:if>
+        <form id="rechargeForm" onsubmit="return false">
         <div class="mui-row" id="depositInput">
             <div class="ct" style="text-align: center;">
                 <p class="text-gray-light">请选择存款方式</p>
             </div>
         </div>
+        </form>
         <c:if test="${fn:length(map) >0 || !empty digiccyAccountInfo}">
             <div class="deposit_help">
                 <p>温馨提示</p>

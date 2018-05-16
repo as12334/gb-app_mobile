@@ -33,15 +33,12 @@ public class AlipayScanCodeHandler extends BaseScanCodeControllerHandler impleme
     }
 
 
-    public String getCompanyType() {
-        return RechargeTypeEnum.ALIPAY_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.ALIPAY_MICROPAY.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.ALIPAY_SCAN.getCode();
+    }
+
+    @Override
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.ALIPAY_FAST.getCode();
     }
 }

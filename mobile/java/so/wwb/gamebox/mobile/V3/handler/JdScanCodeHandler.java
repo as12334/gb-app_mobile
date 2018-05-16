@@ -33,15 +33,11 @@ public class JdScanCodeHandler extends BaseScanCodeControllerHandler implements 
     }
 
 
-    public String getCompanyType() {
-        return RechargeTypeEnum.JDWALLET_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.JDWALLET.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.JDPAY_SCAN.getCode();
+    }
+
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.JDWALLET_FAST.getCode();
     }
 }

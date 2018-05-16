@@ -24,23 +24,19 @@ public interface IScanCodeControllerHandler {
      */
     List<PayAccount> getElectronicAccount(PlayerRank rank);
 
-    /**
-     * 获取company类型
-     *
-     * @return
-     */
-    String getCompanyType();
 
     /**
-     * 获取银行代码
-     *
-     * @return
-     */
-    String getBankCode();
-
-    /**
+     * 在线支付类型
      * OnlineType
+     *
      * @return
      */
-    String getOnlineType();
+    String getOnlineRechargeType();
+
+    /**
+     * 公司入款类型
+     *
+     * @return
+     */
+    String getCompanyRechargeType();
 }

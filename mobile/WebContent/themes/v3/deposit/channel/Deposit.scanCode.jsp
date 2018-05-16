@@ -1,49 +1,53 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="../../include/include.inc.jsp" %>
 <c:choose>
-    <c:when test="${fn:length(scan)>0 || fn:length(electronic)>0}">
-        <form id="scanForm" onsubmit="return false">
+    <c:when test="${fn:length(accounts)>0}">
             <div id="validateRule" style="display: none">${validateRule}</div>
             <gb:token/>
-            <input type="hidden" name="result.rechargeType" value="${onlineType}"/>
-            <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
+
             <input type="hidden" id="onlinePayMax" value="" name="onlinePayMax"/>
             <input type="hidden" id="onlinePayMin" value="" name="onlinePayMin"/>
-            <input type="hidden" name="activityId" id="activityId"/>
-            <input type="hidden" name="account" value="" id="account"/>
-            <input type="hidden" name="accountId" value="" id="accountId"/>
             <input type="hidden" id="siteCurrencySign" value="${siteCurrencySign}"/>
-            <input type="hidden" name="result.payerBank" value="" id="result.payerBank"/>
-            <input type="hidden" name="depositChannel" id="depositChannel" value=""/>
             <input type="hidden" name="randomValue" id="randomValue" value="${rechargeDecimals}">
             <input type="hidden" name="isAuthCode" id="isAuthCode" value=""/>
             <input type="hidden" name="accountType" id="accountType" value=""/>
-            <input type="hidden" name="statusNum" id="statuNum" value="0"/>
+
+            <input type="hidden" name="activityId" id="activityId"/>
+            <input type="hidden" name="account" value="" id="account"/>
+            <input type="hidden" name="result.payerBank" value="" id="result.payerBank"/>
+            <input type="hidden" name="depositChannel" id="depositChannel" value=""/>
+            <input type="hidden" name="result.rechargeType" id="rechargeType" value=""/>
+            <input type="hidden" name="channel" id="channel" value="${channel}"/>
+
             <div class="pay_mone">
                 <div class="tit">存款方式</div>
                 <div class="bank_list" id="scan_Bank_List">
                         <%--迭代页面返回的账号信息--%>
-                    <c:forEach items="${scan}" var="i">
-                        <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","target":"selectScanCode"}'>
-                            <input type="hidden" depositChannel="scan" accountType="${i.value.accountType}" randomAmount="${i.value.randomAmount}" onlinePayMax="${i.value.singleDepositMax}" onlinePayMin="${i.value.singleDepositMin}" account="${command.getSearchId(i.value.id)}" payerBank="${i.key}" />
-                            <div class="bank_list_i">
-                                <i class="bank_n ${i.key}"></i>
-                                <div class="bank_n_txt">${dicts.content.account_type[i.value.accountType]}</div>
+                    <c:forEach items="${accounts}" var="i">
+                        <c:if test="${i.scanType=='sacn'}">
+                            <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","target":"depositScanCode.checkAccount"}'>
+                                <input type="hidden" depositChannel="scan"  rechargeType="${i.rechargeType}" accountType="${i.accountType}" randomAmount="${i.randomAmount}" onlinePayMax="${i.singleDepositMax}" onlinePayMin="${i.singleDepositMin}" account="${i.id}" payerBank="${i.bankCode}" />
+                                <div class="bank_list_i">
+                                    <i class="bank_n ${channel}"></i>
+                                    <div class="bank_n_txt">${dicts.content.account_type[i.accountType]}</div>
+                                </div>
                             </div>
-                        </div>
-                    </c:forEach>
-                    <c:forEach items="${electronic}" var="i">
-                        <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","target":"selectScanCode"}'>
-                            <input type="hidden" depositChannel="electronic"  accountType="0" randomAmount="false" onlinePayMax="${rank.onlinePayMax}" onlinePayMin="${rank.onlinePayMin}" account="${command.getSearchId(i.id)}" payerBank="${i.bankCode}" />
-                            <div class="bank_list_i">
-                                <i class="bank_n ${i.bankCode}"></i>
-                                <div class="bank_n_txt">${i.customBankName}</div>
+                        </c:if>
+                        <c:if test="${i.scanType=='electroin'}">
+                            <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","target":"depositScanCode.checkAccount"}'>
+                                <input type="hidden" depositChannel="electronic" rechargeType="${i.rechargeType}"  accountType="0" randomAmount="false" onlinePayMax="${rank.onlinePayMax}" onlinePayMin="${rank.onlinePayMin}" account="${i.id}" payerBank="${i.bankCode}" />
+                                <div class="bank_list_i">
+                                    <i class="bank_n ${channel}"></i>
+                                    <div class="bank_n_txt">
+                                            ${empty i.aliasName ? i.customBankName:i.aliasName}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </c:if>
                     </c:forEach>
                 </div>
-                <%@include file="./ChooseAmount.jsp"%>
+                <%@include file="../ChooseAmount.jsp"%>
                 <div class="depo_row">
                     <div class="label">存款金额</div>
                     <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text" placeholder="请选择存款方式"/></div>
@@ -65,10 +69,9 @@
                 </div>
             </div>
             <div class="btn_wrap">
-                <a id="btn_scan" style="display: none" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"confirmDeposit","payType":"scan"}'>提交</a>
-                <a id="btn_electronicPay" style="display: none" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"nextStep","payType":"electronicPay"}'>提交</a>
+                <a id="btn_scan" style="display: none" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"baseDeposit.activity","payType":"scan"}'>提交</a>
+                <a id="btn_electronicPay" style="display: none" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"baseDeposit.nextStep","payType":"electronicPay"}'>提交</a>
             </div>
-        </form>
     </c:when>
     <c:otherwise>
         <div class="ct">

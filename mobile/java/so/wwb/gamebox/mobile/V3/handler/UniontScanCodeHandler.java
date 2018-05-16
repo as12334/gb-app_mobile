@@ -33,15 +33,11 @@ public class UniontScanCodeHandler extends BaseScanCodeControllerHandler impleme
     }
 
 
-    public String getCompanyType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.UNION_PAY_SCAN.getCode();
     }
 
-    public String getBankCode() {
-        return BankCodeEnum.UNIONPAY.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getCompanyRechargeType() {
         return null;
     }
 }

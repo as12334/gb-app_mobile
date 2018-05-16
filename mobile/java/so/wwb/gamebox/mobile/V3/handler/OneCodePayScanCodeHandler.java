@@ -32,15 +32,11 @@ public class OneCodePayScanCodeHandler extends BaseScanCodeControllerHandler imp
     }
 
 
-    public String getCompanyType() {
-        return RechargeTypeEnum.ONECODEPAY_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.ONECODEPAY.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return null;
+    }
+
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.ONECODEPAY_FAST.getCode();
     }
 }

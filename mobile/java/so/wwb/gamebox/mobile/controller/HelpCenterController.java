@@ -186,7 +186,8 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/judgeUserExist")
     @Upgrade(upgrade = true)
-    public String judgeUserExist() {
+    public String judgeUserExist(String forgetType,Model model) {
+        model.addAttribute("forgetType",forgetType);
         return "/help/forget/JudgeUserExist";
     }
 
@@ -200,8 +201,9 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/sendPhoneCode")
     @Upgrade(upgrade = true)
-    public String sendPhoneCode(String encryptedId, String phone, Model model) {
+    public String sendPhoneCode(String encryptedId, String phone,String forgetType, Model model) {
         model.addAttribute("encryptedId", encryptedId);
+        model.addAttribute("forgetType", forgetType);
         model.addAttribute("phone", phone);
         return "/help/forget/SendPhoneCode";
     }
@@ -213,8 +215,11 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/setLoginPassword")
     @Upgrade(upgrade = true)
-    public String setLoginPassword(Model model, String encryptedId) {
+    public String setLoginPassword(Model model, String encryptedId,String forgetType) {
         model.addAttribute("encryptedId", encryptedId);
+        if ("forgetSafetyCode".equals(forgetType)){
+            return "/help/forget/SetSafetyCode";
+        }
         return "/help/forget/SetLoginPassword";
     }
 
@@ -385,4 +390,16 @@ public class HelpCenterController {
         resultMap.put("msg", LocaleTool.tranMessage(Module.REGISTER, messageCode));
         return resultMap;
     }
+
+    /**
+     * 进入找回安全码
+     * @return
+     */
+    @RequestMapping(value = "/forgetSafetyCode")
+    @Upgrade(upgrade = true)
+    public String gotoforgetSafetyCode(Model model) {
+        model.addAttribute("forgetType","forgetSafetyCode");
+        return "/help/forget/ForgetPassword";
+    }
+
 }
