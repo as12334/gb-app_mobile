@@ -141,7 +141,7 @@
                                                          data-rel='{"target":"${root}/bankCard/page/addBtc.html?action=withdraw","opType":"href"}'>
                                                     <span>
                                                         <c:if test="${!empty btc}">
-                                                            <span class="pay-bank bitcoin"></span>
+                                                            <span class="pay-third BTC"></span>
                                                             ${views.themes_auto['比特币']}&nbsp;${gbFn:overlayBankcard(btc.bankcardNumber)}
                                                         </c:if>
                                                          <c:if test="${empty btc}">
@@ -224,8 +224,8 @@
 </div>
 </body>
 <%@include file="../include/include.js.jsp" %>
-<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js"></script>
-<script type="text/javascript" src="${resRoot}/js/withdraw/Index.js"></script>
-<script type="text/javascript" src="${resRoot}/js/password/SafePasswordCommon.js"></script>
+<script type="text/javascript" src="${resRoot}/js/password/SafePasswordCommon.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/withdraw/Index.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

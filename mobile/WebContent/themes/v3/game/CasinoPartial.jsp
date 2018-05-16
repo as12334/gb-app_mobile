@@ -55,7 +55,7 @@
                                             <c:forEach var="game" items="${allGames}" varStatus="tagMap">
                                                     <div class="mui-col-xs-3" apiName="${game.value.name}">
                                                         <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.value.apiId}","dataStatus":"${game.value.status}",
-                                                            "dataGameCode":"${game.value.apiId!=10? game.value.code : ''}","dataGameId":"${game.value.apiId!=10? game.value.gameId : ''}",
+                                                            "dataGameCode":"${game.value.code}","dataGameId":"${game.value.gameId}",
                                                             "dataApiName":"${game.value.name}","target":"goGame","opType":"function"}'>
 
                                                             <div class="img-wrap">
@@ -80,7 +80,7 @@
                                                        <c:if test="${!empty game}">
                                                            <div class="mui-col-xs-3" apiName="${game.name}">
                                                                <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
-                                                                            "dataGameCode":"${game.apiId!=10? game.code : ''}","dataGameId":"${game.apiId!=10? game.gameId : ''}",
+                                                                            "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
                                                                             "dataApiName":"${game.name}","target":"goGame","opType":"function"}' class="" >
 
                                                                    <div class="img-wrap">
@@ -116,6 +116,9 @@
 <script src="${resRoot}/js/mui/mui.lazyload.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.lazyload.img.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
+<c:if test="${apiId == 6}">
+    <script type="text/javascript" src="${resRoot}/js/game/PtGame.js?v=${rcVersion}"></script>
+</c:if>
 <script type="text/javascript" src="${resRoot}/js/game/Game.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/game/GoGame.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>

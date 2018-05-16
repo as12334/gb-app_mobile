@@ -14,10 +14,10 @@
                 <td>${soulFn:formatCurrency(p.singleAmount)}</td>
                 <c:choose>
                     <c:when test="${p.orderState eq 'settle'&&p.profitAmount > 0}">
-                        <td><span class="co-green">+${soulFn:formatCurrency(p.profitAmount)}</span></td>
+                        <td><span class="text-green">+${soulFn:formatCurrency(p.profitAmount)}</span></td>
                     </c:when>
                     <c:when test="${p.orderState eq 'settle'&&p.profitAmount<0}">
-                        <td><span class="co-red3">${soulFn:formatCurrency(p.profitAmount)}</span></td>
+                        <td><span class="text-red">${soulFn:formatCurrency(p.profitAmount)}</span></td>
                     </c:when>
                     <c:when test="${p.orderState eq 'settle'&&!empty p.profitAmount&&p.profitAmount==0}">
                         <td>0</td>

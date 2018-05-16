@@ -15,7 +15,9 @@
             <div class="swiper-wrapper">
                 <a class="swiper-slide mui-btn btn-promo-sort" data-rel='{"target":"activityType","opType":"function","activityType":""}'><span>${views.themes_auto['全部']}</span></a>
                 <c:forEach var="type" items="${messageVo.typeList}" varStatus="vs">
-                    <a class="swiper-slide mui-btn btn-promo-sort" name="${type.key}" data-rel='{"target":"activityType","opType":"function","activityType":"${type.key}"}'><span>${type.value}</span></a>
+                    <c:if test="${fn:length(messageVo.typeMessageMap.get(type.key)) > 0}">
+                        <a class="swiper-slide mui-btn btn-promo-sort" name="${type.key}" data-rel='{"target":"activityType","opType":"function","activityType":"${type.key}"}'><span>${type.value}</span></a>
+                    </c:if>
                 </c:forEach>
             </div>
         </div>

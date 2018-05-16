@@ -71,6 +71,7 @@
 				/promo/activityType.html = anon
 				/promo/finishedPromo.html = anon
 				/promo/promoDetail.html = anon
+				/promo/goToPromoDetail.html = anon
 				/captcha/*.html = captcha
 				/passport/verify/*.html = anon
 				/passport/login* = subsys,login

@@ -4,6 +4,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
+import org.soul.commons.lang.string.EncodeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
@@ -36,6 +37,7 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -153,12 +155,34 @@ public class PromoController {
     @RequestMapping("/promoDetail")
     @Upgrade(upgrade = true)
     public String getPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
+        getPromo(vActivityMessageVo, model);
+        return PROMO_RECORDS_DETAIL;
+    }
+
+    @RequestMapping(value = "/goToPromoDetail")
+    @Upgrade(upgrade = true)
+    public String goToPromoDetail(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
+        getPromo(vActivityMessageVo, model);
+        return "/promo/GoToPromoDetail";
+    }
+
+    @RequestMapping(value = "/applyPromoDetail")
+    @Upgrade(upgrade = true)
+    public String applyPromoDetail(String msg, String state, String error, String activityName, Model model) {
+        model.addAttribute("msg", EncodeTool.urlDecode(msg));
+        model.addAttribute("activityName", EncodeTool.urlDecode(activityName));
+        model.addAttribute("state", state);
+        model.addAttribute("error", error);
+
+        return "/promo/ApplyPromoDetail";
+    }
+
+    private void getPromo(VPlayerActivityMessageVo vActivityMessageVo, Model model) {
         vActivityMessageVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageVo = ServiceActivityTool.vPlayerActivityMessageService().search(vActivityMessageVo);
 
         model.addAttribute("command", vActivityMessageVo);
         model.addAttribute("nowTime", SessionManager.getDate().getNow());
-        return PROMO_RECORDS_DETAIL;
     }
 
     @ResponseBody
