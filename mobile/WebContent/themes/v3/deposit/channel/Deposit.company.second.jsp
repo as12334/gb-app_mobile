@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="../../include/include.inc.jsp" %>
 <head>
-    <%@include file="../include/include.head.jsp" %>
+    <%@include file="../../include/include.head.jsp" %>
     <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css">
     <link rel="stylesheet" href="${resRoot}/themes/mui.poppicker.css">
 </head>
@@ -14,13 +14,16 @@
 <div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
         <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
-        <form id="confirmCompanyForm">
+        <form id="rechargeForm" onsubmit="return false">
             <c:choose>
                 <c:when test="${not empty payAccount}">
                     <div id="validateRule" style="display: none">${validateRule}</div>
                     <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
                     <input type="hidden" id="rechargeTypeJson" value='${rechargeTypeJson}' />
                     <input type="hidden" name="depositChannel" value="company"/>
+                    <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
+                    <input type="hidden" name="activityId" id="activityId"/>
+                    <input type="hidden" name="channel" value="${channel}"/>
                     <gb:token/>
                     <div class="pay_mone">
                         <div class="tit">账号信息</div>
@@ -52,28 +55,47 @@
                                     </c:otherwise>
                                     </c:choose>
                                 </div>
-                                <div class="b_c_t_i_row"> ${views.deposit_auto['银行开户名']}：脸全用 <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a></div>
-                                <div class="b_c_t_i_row"> ${views.deposit_auto['开户行']}：石家庄分行红旗支行 <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a></div>
+                                <div class="b_c_t_i_row"> ${views.deposit_auto['银行开户名']}： <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a></div>
+                                <div class="b_c_t_i_row"> ${views.deposit_auto['开户行']}： <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a></div>
                             </div>
 
                         </div>
-                        <div class="depo_row">
-                            <div class="label">存款类型</div>
-                            <div class="input">
-                                <input class="text-right" type="text" placeholder="网银存款" readonly/>
-                                <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="online_bank"/>
+                        <c:choose>
+                            <c:when test="${channel=='company'}">
+                            <div class="depo_row">
+                                <div class="label">存款类型</div>
+                                <div class="input">
+                                    <input class="text-right" type="text" placeholder="网银存款" readonly/>
+                                    <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="online_bank"/>
+                                </div>
                             </div>
-                        </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="depo_row" data-rel='{"opType":"function","target":"depositCompany.checkRechargeType"}'>
+                                    <div class="label">存款类型</div>
+                                    <div class="input">
+                                        <input id="selectRecharge" type="text" value="柜员机现金存款" readonly>
+                                        <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="atm_money"/>
+                                    </div>
+                                    <div class="ext">
+                                        <i class="mui-icon mui-icon-arrowdown"></i>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
                         <div class="depo_row">
                             <div class="label">存款人</div>
-                            <div class="input"><input class="text-right"  type="text" placeholder="转账账号对应的姓名"></div>
+                            <div class="input"><input class="text-right" id="result.payerName" name="result.payerName"  type="text" placeholder="转账账号对应的姓名"></div>
                         </div>
-                            <%--存款金额--%>
-                        <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
-                        <input type="hidden" name="activityId" id="activityId"/>
+                        <c:if test="${channel!='company'}">
+                            <div class="depo_row">
+                                <div class="label">${views.deposit_auto['交易地点']}</div>
+                                <div class="input"><input type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" maxlength="20" onchange="this.value=this.value.trim()"></div>
+                            </div>
+                        </c:if>
                     </div>
                     <div class="btn_wrap">
-                        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
+                        <a data-rel='{"opType":"function","target":"baseDeposit.activity"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -104,11 +126,12 @@
     </div>
 </div>
 </body>
-<%@ include file="../include/include.js.jsp" %>
+<%@ include file="../../include/include.js.jsp" %>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositCompany.js?v=${rcVersion}"></script>
 
 

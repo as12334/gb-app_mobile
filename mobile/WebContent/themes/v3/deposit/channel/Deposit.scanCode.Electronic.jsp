@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="../../include/include.inc.jsp" %>
 <head>
-    <%@include file="../include/include.head.jsp" %>
+    <%@include file="../../include/include.head.jsp" %>
 </head>
 <body class="deposit_2">
 <header class="mui-bar mui-bar-nav">
@@ -33,7 +33,7 @@
 <div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
         <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
-        <form id="scanForm">
+            <form id="rechargeForm" onsubmit="return false">
             <gb:token/>
             <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
@@ -41,6 +41,7 @@
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="depositChannel" value="electronic"/>
+            <input type="hidden" name="channel" id="channel" value="${channel}"/>
             <div class="pay_mone">
                 <div class="gb-panel" style="border-top-color: #fff;">
                     <div class="tit">${views.deposit_auto['账号信息']}</div>
@@ -73,10 +74,16 @@
                         </div>
                     </div>
                     <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
+
                         <div class="wechat-code">
-                            <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">
-                            <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}'><p class="tit">${views.deposit_auto['保存到手机']}</p></a>
+                            <div class="cod-img-wrap">
+                                <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">
+                            </div>
+                            <div class="cod-btn-wrap">
+                                <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}' class="mui-btn">${views.deposit_auto['保存到手机']}</a>
+                            </div>
                         </div>
+
                     </c:if>
                 </div>
             </div>
@@ -141,9 +148,10 @@
                         </div>
                     </div>
                     <div class="btn_wrap">
-                        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
+                        <a data-rel='{"opType":"function","target":"baseDeposit.activity"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
                     </div>
                 </div>
+
             </div>
             <c:choose>
                 <c:when test="${empty payAccount.remark}">
@@ -181,9 +189,10 @@
         </div>
     </div>
 </div>
-<%@ include file="../include/include.js.jsp" %>
+<%@ include file="../../include/include.js.jsp" %>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositScancode.js?v=${rcVersion}"></script>
 </body>
 
