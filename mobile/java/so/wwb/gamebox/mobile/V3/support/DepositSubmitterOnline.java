@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 在线支付方式充值提交者
  */
-public class DepositSubmitterOnline extends AbstractRechargeSubmitter {
+public class DepositSubmitterOnline extends AbstractRechargeSubmitter implements IDepositSubmitter {
 
 
     protected PlayerRechargeVo fillPlayRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request) {

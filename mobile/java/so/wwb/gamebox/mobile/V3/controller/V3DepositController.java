@@ -15,9 +15,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
 import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelperFactory;
 import so.wwb.gamebox.mobile.V3.helper.IDepositControllerHelper;
-import so.wwb.gamebox.mobile.V3.support.AbstractRechargeSubmitter;
-import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
-import so.wwb.gamebox.mobile.V3.support.DepositTool;
+import so.wwb.gamebox.mobile.V3.support.*;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -28,6 +26,8 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.digiccy.po.DigiccyAccountInfo;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
@@ -200,7 +200,21 @@ public class V3DepositController extends V3BaseDepositController {
     @ResponseBody
     @Token(valid = true)
     public AbstractRechargeSubmitter.DespositResult submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
-        return null;
+        RechargeTypeEnum rechargeTypeEnum = RechargeTypeEnum.enumOf(playerRechargeVo.getResult().getRechargeType());
+        if (rechargeTypeEnum == null) {
+            return null;
+        }
+        IDepositSubmitter submitter = null;
+        if (rechargeTypeEnum.getCode().equals("BITCOIN_FAST")) {
+            submitter = new DepositSubmitterBitcoin();
+        }
+        if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
+            submitter = new DepositSubmitterOnline();
+        }
+        if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.COMPANY_DEPOSIT)) {
+            submitter = new DepositSubmitterCompany();
+        }
+        return submitter.saveRecharge(playerRechargeVo, result, request);
     }
 
 
