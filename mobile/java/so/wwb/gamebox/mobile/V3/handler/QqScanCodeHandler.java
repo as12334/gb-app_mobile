@@ -33,15 +33,12 @@ public class QqScanCodeHandler extends BaseScanCodeControllerHandler implements 
     }
 
 
-    public String getCompanyType() {
-        return RechargeTypeEnum.QQWALLET_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.QQWALLET.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.QQWALLET_SCAN.getCode();
+    }
+
+    @Override
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.QQWALLET_FAST.getCode();
     }
 }

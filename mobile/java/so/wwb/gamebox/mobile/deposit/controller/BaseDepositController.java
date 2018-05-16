@@ -2,39 +2,27 @@ package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
-import org.soul.commons.log.Log;
-import org.soul.commons.log.LogFactory;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
-import org.soul.commons.query.sort.Order;
 import org.soul.commons.support._Module;
 import org.soul.model.session.SessionKey;
-import org.soul.model.sys.po.SysParam;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.*;
-import so.wwb.gamebox.model.common.Const;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.MessageI18nConst;
-import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
-import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
 import so.wwb.gamebox.model.master.enums.RankFeeType;
-import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
-import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
@@ -46,7 +34,6 @@ import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
 import so.wwb.gamebox.web.cache.Cache;
-import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 
@@ -57,7 +44,6 @@ import java.util.*;
  * Created by bruce on 16-12-10.
  */
 public class BaseDepositController extends BaseCommonDepositController {
-    private static Log LOG = LogFactory.getLog(BaseDepositController.class);
 
     @RequestMapping("/getPlayer")
     @ResponseBody
@@ -111,23 +97,13 @@ public class BaseDepositController extends BaseCommonDepositController {
     }
 
     /**
-     * 查询玩家可选择的存款渠道
-     *
-     * @param type String
-     */
-    protected List<Bank> searchBank(String type) {
-        Map<String, Bank> bankMap = Cache.getBank();
-        return CollectionQueryTool.query(bankMap.values(), Criteria.add(Bank.PROP_TYPE, Operator.EQ, type), Order.asc(Bank.PROP_ORDER_NUM));
-    }
-
-    /**
      * 根据存款金额、存款方式获取优惠
      *
      * @param rechargeAmount
      * @param type
      * @return
      */
-    protected List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
+    List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
         UserPlayer userPlayer = getUserPlayer();
         VActivityMessageVo vActivityMessageVo = new VActivityMessageVo();
         vActivityMessageVo.getSearch().setDepositWay(type);
@@ -155,7 +131,7 @@ public class BaseDepositController extends BaseCommonDepositController {
      * @param type
      * @return
      */
-    protected List<VActivityMessage> searchSales(String type) {
+    public List<VActivityMessage> searchSales(String type) {
         if (StringTool.isBlank(type)) {
             return null;
         }
@@ -183,7 +159,7 @@ public class BaseDepositController extends BaseCommonDepositController {
      * @param payAccountId
      * @return
      */
-    protected PayAccount getPayAccountById(Integer payAccountId) {
+    PayAccount getPayAccountById(Integer payAccountId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.getSearch().setId(payAccountId);
         payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
@@ -193,7 +169,7 @@ public class BaseDepositController extends BaseCommonDepositController {
     /**
      * 计算手续费
      */
-    protected Double calculateFee(PlayerRank rank, Double rechargeAmount) {
+    Double calculateFee(PlayerRank rank, Double rechargeAmount) {
         if (rank == null || rechargeAmount == null) {
             return 0d;
         }
@@ -273,21 +249,6 @@ public class BaseDepositController extends BaseCommonDepositController {
         return fee;
     }
 
-    protected PayAccount getPayAccountBySearchId(String searchId) {
-        PayAccountVo payAccountVo = new PayAccountVo();
-        payAccountVo.setSearchId(searchId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
-        PayAccount payAccount = payAccountVo.getResult();
-        if (payAccount == null) {
-            return null;
-        }
-        if (!PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
-            LOG.info("账号{0}已听用,故返回收款账号null", payAccount.getPayName());
-            return null;
-        }
-        return payAccount;
-    }
-
     /**
      * 返回信息
      *
@@ -312,27 +273,6 @@ public class BaseDepositController extends BaseCommonDepositController {
         return map;
     }
 
-    /**
-     * 是否隐藏收款账号
-     *
-     * @param model
-     * @param paramEnum
-     */
-    protected void isHide(Model model, SiteParamEnum paramEnum) {
-        // 查询隐藏参数
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
-        if (sysParam == null) {
-            return;
-        }
-        SysParam hideParam = ParamTool.getSysParam(paramEnum);
-        // 判断是否隐藏收款账号
-        if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
-            model.addAttribute("isHide", true);
-            model.addAttribute("hideContent", Cache.getSiteI18n(SiteI18nEnum.MASTER_CONTENT_HIDE_ACCOUNT_CONTENT).get(SessionManager.getLocale().toString()));
-            model.addAttribute("customerService", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
-        }
-    }
-
 
     /**
      * 验证码验证
@@ -346,30 +286,4 @@ public class BaseDepositController extends BaseCommonDepositController {
         return !StringTool.isEmpty(code) && code.equalsIgnoreCase((String) SessionManager.getAttribute(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_RECHARGE.getSuffix()));
     }
 
-    protected String getElectronicRechargeType(String bankCode) {
-        String rechargeType = RechargeTypeEnum.OTHER_FAST.getCode();
-        if ("wechatpay".equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.WECHATPAY_FAST.getCode();
-        } else if ("alipay".equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.ALIPAY_FAST.getCode();
-        } else if ("qqwallet".equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.QQWALLET_FAST.getCode();
-        } else if ("jdwallet".equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.JDWALLET_FAST.getCode();
-        } else if ("bdwallet".equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.BDWALLET_FAST.getCode();
-        } else if ("onecodepay".equals(bankCode)) {
-            rechargeType = RechargeTypeEnum.ONECODEPAY_FAST.getCode();
-        }
-        return rechargeType;
-    }
-
-    protected String getPlayerPerDepositName(String rechargeType, Integer userId) {
-        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
-        PlayerRecharge playerRecharge = new PlayerRecharge();
-        playerRecharge.setRechargeType(rechargeType);
-        playerRecharge.setPlayerId(userId);
-        playerRechargeVo.setResult(playerRecharge);
-        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
-    }
 }

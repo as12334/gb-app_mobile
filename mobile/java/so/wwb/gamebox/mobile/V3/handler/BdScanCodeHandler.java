@@ -32,16 +32,12 @@ public class BdScanCodeHandler extends BaseScanCodeControllerHandler implements 
         return getElectronicAccount(rank, BankCodeEnum.BDWALLET.getCode(), RechargeTypeEnum.BDWALLET_FAST.getCode());
     }
 
-
-    public String getCompanyType() {
-        return RechargeTypeEnum.BDWALLET_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.BDWALLET.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.BDWALLET_SAN.getCode();
+    }
+
+    @Override
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.BDWALLET_FAST.getCode();
     }
 }

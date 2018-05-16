@@ -86,5 +86,8 @@
 <script src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/deposit/OnlinePay.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositOnline.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositCompany.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositScancode.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositBitcoin.js?v=${rcVersion}"></script>
