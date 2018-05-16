@@ -43,6 +43,20 @@ import java.util.Map;
 @RequestMapping("/wallet/deposit/company/electronic")
 public class CompanyElectronicDepositController extends BaseCompanyDepositController {
 
+    /*支付宝*/
+    private static final String ALIPAY = "alipay";
+    /*微信支付*/
+    private static final String WECHATPAY = "wechatpay";
+    /*QQ钱包*/
+    private static final String QQWALLET = "qqwallet";
+    /*京东钱包*/
+    private static final String JDWALLET = "jdwallet";
+    /*百度钱包*/
+    private static final String BDWALLET = "bdwallet";
+    /*一码付*/
+    private static final String ONECODEPAY = "onecodepay";
+
+
     /**
      * 存款金额
      */
@@ -73,11 +87,11 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
             model.addAttribute("rank", getRank());
             model.addAttribute("currency", getCurrencySign());
 
-            String rechargeType = getElectronicRechargeType(payAccount.getBankCode());
+            String rechargeType = getRechargeType(payAccount.getBankCode());
             model.addAttribute("rechargeType", rechargeType);
             model.addAttribute("validateRule", JsRuleCreator.create(CompanyElectronicDepositForm.class));
             //上一次填写的账号/昵称
-            model.addAttribute("lastTimeAccount", getPlayerPerDepositName(rechargeType, SessionManager.getUserId()));
+            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType, SessionManager.getUserId()));
         }
         if (payAccountVo.getDepositCash() != null) {
             model.addAttribute("rechargeAmount", payAccountVo.getDepositCash());
@@ -90,8 +104,8 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyElectronicDepositForm form,
-                                       BindingResult result,HttpServletRequest request) {
-        return commonDeposit(playerRechargeVo, result,request);
+                                       BindingResult result, HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result, request);
     }
 
     /**
@@ -101,7 +115,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
+    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
@@ -135,4 +149,30 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
         return playerRechargeVo;
     }
 
+    private String getRechargeType(String bankCode) {
+        String rechargeType = RechargeTypeEnum.OTHER_FAST.getCode();
+        if (WECHATPAY.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.WECHATPAY_FAST.getCode();
+        } else if (ALIPAY.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.ALIPAY_FAST.getCode();
+        } else if (QQWALLET.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.QQWALLET_FAST.getCode();
+        } else if (JDWALLET.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.JDWALLET_FAST.getCode();
+        } else if (BDWALLET.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.BDWALLET_FAST.getCode();
+        } else if (ONECODEPAY.equals(bankCode)) {
+            rechargeType = RechargeTypeEnum.ONECODEPAY_FAST.getCode();
+        }
+        return rechargeType;
+    }
+
+    private String getLastDepositName(String rechargeType, Integer userId) {
+        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+        PlayerRecharge playerRecharge = new PlayerRecharge();
+        playerRecharge.setRechargeType(rechargeType);
+        playerRecharge.setPlayerId(userId);
+        playerRechargeVo.setResult(playerRecharge);
+        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
+    }
 }
