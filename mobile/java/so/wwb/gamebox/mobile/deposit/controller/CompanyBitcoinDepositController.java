@@ -15,7 +15,9 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.BitcoinDepositForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
@@ -31,6 +33,7 @@ import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -61,6 +64,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
             model.addAttribute("date", SessionManager.getDate().getNow());
         }
         model.addAttribute("payAccount", payAccount);
+        model.addAttribute("isOpenActivityHall", ParamTool.isOpenActivityHall());
         return BITCION_URI;
     }
 
@@ -68,10 +72,11 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
     @ResponseBody
     @Upgrade(upgrade = true)
     public String getSales() {
-        VActivityMessageListVo listVo = new VActivityMessageListVo();
-        listVo.getSearch().setDepositWay(DepositWayEnum.BITCOIN_FAST.getCode());
-        listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
-        return JsonTool.toJson(listVo.getResult());
+        if (!ParamTool.isOpenActivityHall()) {
+            return JsonTool.toJson( searchSales(DepositWayEnum.BITCOIN_FAST.getCode()));
+        } else {
+            return JsonTool.toJson(new ArrayList<>(0));
+        }
     }
 
     /**

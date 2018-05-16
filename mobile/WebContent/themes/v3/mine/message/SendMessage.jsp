@@ -11,7 +11,7 @@
                     <label for="">${views.mine_auto['类型']}：</label>
                     <div class="ct">
                         <div class="gb-select">
-                            <a href="#advisoryType" class="m-r-0"><span
+                            <a href="#advisoryType"><span
                                     id="displayType">${views.mine_auto['请选择']}</span>
                                 <input type="hidden" name="result.advisoryType">
                                 <i class="mui-icon mui-icon-arrowdown"></i>
@@ -30,12 +30,20 @@
                 <div class="mui-input-row _captcha" id="captcha_div" style="${isOpenCaptcha ? "" :'display: none;'}">
                     <div class="form-row">
                         <div class="cont">
+
+                            <%--<label style="padding: 4px 10px;height:  40px;"><img src="${root}/captcha/feedback.html"
+                                                                                 alt="" style=" width: 100%;"></label>
+                            <div class="ct">
+                                <input type="text" placeholder="请输入验证码">
+                            </div>--%>
                             <input type="text" class="mui-input ico6" maxlength="4"
                                    placeholder="${views.mine_auto['请输入验证码']}" name="captcha" id="captcha">
                             <div class="gb-vcode">
-                                <img class="_captcha_img" src="${root}/captcha/feedback.html"
-                                     data-src="${root}/captcha/feedback.html" alt="">
+                                <img id="_captcha_img"
+                                     data-rel='{"target":"refreshCode","opType":"function","src":"${root}/captcha/feedback.html"}'
+                                     src="${root}/captcha/feedback.html" alt="">
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -43,9 +51,11 @@
         </div>
         <div class="gb-form-foot" style="padding: 0 40px;">
             <div class="mui-pull-right" style="width: 47%;">
-                <a href="" class="mui-btn mui-btn-primary submit" id="advisoryReset">${views.common_report['取消']}</a>
+                <a data-rel='{"target":"formReset","opType":"function"}' class="mui-btn mui-btn-primary submit"
+                   id="advisoryReset">${views.common_report['取消']}</a>
             </div>
-            <a id="advisorySubmit" class="mui-btn mui-btn-primary submit"
+            <a id="advisorySubmit" data-rel='{"target":"advisorySubmit","opType":"function"}'
+               class="mui-btn mui-btn-primary submit"
                style="width: 47%;">${views.mine_auto['提交']}</a>
         </div>
     </form>

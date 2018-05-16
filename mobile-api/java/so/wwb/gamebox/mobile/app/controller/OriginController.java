@@ -735,6 +735,7 @@ public class OriginController extends BaseOriginController {
         appFloatPicItem.setLanguage(cttFloatPic.getLanguage());
         appFloatPicItem.setDistanceSide(cttFloatPic.getDistanceSide());
         appFloatPicItem.setDistanceTop(cttFloatPic.getDistanceTop());
+        appFloatPicItem.setShowEffect(cttFloatPic.getShowEffect());
 
         return appFloatPicItem;
     }

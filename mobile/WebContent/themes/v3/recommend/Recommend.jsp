@@ -1,5 +1,5 @@
 <%@ page import="org.soul.commons.currency.CurrencyTool" %>
-<%@ page import="org.springframework.ui.Model" %><%--@elvariable id="messageVo" type="so.wwb.gamebox.model.master.operation.vo.MobileActivityMessageVo"--%>
+<%@ page import="org.springframework.ui.Model" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
 <!DOCTYPE html>

@@ -133,8 +133,8 @@
 </div>
 </body>
 <%@include file="../include/include.js.jsp" %>
-<script src="${resComRoot}/js/mobile/layer.js"></script>
-<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js"></script>
-<script type="text/javascript" src="${resRoot}/js/game/Api.js"></script>
-<script type="text/javascript" src="${resRoot}/js/game/GoGame.js"></script>
+<script src="${resComRoot}/js/mobile/layer.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/inputNumber.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/Api.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/game/GoGame.js?v=${rcVersion}"></script>
 </html>

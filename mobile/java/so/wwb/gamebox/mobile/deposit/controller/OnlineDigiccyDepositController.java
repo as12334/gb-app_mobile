@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.digiccy.po.UserDigiccy;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyListVo;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyVo;
@@ -99,6 +100,7 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
         map.put("msg", playerRechargeVo.getErrMsg());
         if (playerRechargeVo.isSuccess()) {
             map.put("transactionNo", playerRechargeVo.getResult().getTransactionNo());
+            map.put("isOpenActivityHall", ParamTool.isOpenActivityHall());
         }
         return map;
     }

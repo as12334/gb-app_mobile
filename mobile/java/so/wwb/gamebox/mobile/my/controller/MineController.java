@@ -205,7 +205,8 @@ public class MineController{
             userInfo.put("loginTime", LocaleDateTool.formatDate(sysUser.getLoginTime(), CommonContext.getDateFormat().getDAY_SECOND(), SessionManager.getTimeZone()));
         }
         userInfo.put("currency", getCurrencySign());
-
+        //关联短信开关，是否展示手机绑定
+        userInfo.put("phone",ParamTool.isSmsSwitch());
         return JsonTool.toJson(userInfo);
     }
 

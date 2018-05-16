@@ -5,7 +5,7 @@
 <c:choose>
     <c:when test="${fn:length(command.result)>0}">
         <c:forEach items="${command.result}" var="s">
-            <li data-url="${root}/message/systemNoticeDetail.html?searchId=${command.getSearchId(s.id)}">
+            <li data-rel='{"target":"${root}/message/systemNoticeDetail.html?searchId=${command.getSearchId(s.id)}","opType":"href"}'>
                 <div class="i">
                     <div class="ct">
                         <p>${s.shortContentText50}</p>

@@ -30,7 +30,7 @@
                            class="mui-control-item ${unReadType eq 'noticeSys' ? 'mui-active':''}">${views.mine_auto['系统公告']}<i></i></a>
                         <a data-rel='{"target":"segmentedControl1","opType":"function"}'
                            data-href="noticeSite" id="siteNotice"
-                           class="mui-control-item ${unReadType eq 'sendMessage' ?'mui-active':''}">${views.mine_auto['站点消息']}<i></i></a>
+                           class="mui-control-item ${unReadType eq 'sendMessage'||unReadType eq 'sysMessage'||unReadType eq 'advisoryMessage' ?'mui-active':''}">${views.mine_auto['站点消息']}<i></i></a>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
             </div>
         </div>
         <div id="noticeSite" class="mui-control-content ${empty unReadType?'':'mui-active'}" name="notice">
-            <%@include file="./NoticeSite.jsp" %>
+            <%@include file="NoticeSite.jsp" %>
         </div>
     </div>
 </div>
@@ -178,8 +178,8 @@
     </div>
 </div>
 <%@ include file="../../include/include.js.jsp" %>
-<script src="${resRoot}/js/mui/mui.picker.min.js"></script>
-<script src="${resComRoot}/js/timeControls/moment.js"></script>
-<script type="text/javascript" src="${resRoot}/js/message/Notice.js"></script>
+<script src="${resRoot}/js/mui/mui.picker.min.js?v=${rcVersion}"></script>
+<script src="${resComRoot}/js/timeControls/moment.js?v=${rcVersion}"></script>
+<script type="text/javascript" src="${resRoot}/js/message/Notice.js?v=${rcVersion}"></script>
 </html>
 <%@ include file="/include/include.footer.jsp" %>

@@ -18,6 +18,10 @@
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-content">
     <div class="mui-scroll">
+        <c:set var="isOpenActivityHall" value="<%=ParamTool.isOpenActivityHall()%>"/>
+        <c:if test="${isOpenActivityHall}">
+            <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
+        </c:if>
         <div class="mui-row">
             <div class="mui-input-group mine-form">
                 <div class="bank-selector modes-payment">

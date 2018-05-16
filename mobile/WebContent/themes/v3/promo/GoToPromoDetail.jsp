@@ -8,11 +8,13 @@
 </head>
 
 <body>
+<%--此处把js相关引用挪到前面是因为优惠详细里图片地址带onload方法里涉及window.top.imgRoot--%>
+<%@ include file="../include/include.js.jsp" %>
 <!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap mui-draggable">
+<div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
-        <c:set var="activity" value="${command.result}"/>
+        <c:set var="activity" value="${command}"/>
         <!-- 主页面标题 -->
         <header class="mui-bar mui-bar-nav mui-bar-blue">
             <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
@@ -56,16 +58,14 @@
                         </div>
                     </div>
                 </div>
-            </div> <!--mui-scroll 闭合标签-->
-
-            <c:if test="${activity.states eq 'processing'}">
+                <%--<c:if test="${activity.states eq 'processing'}">--%>
                 <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
                 <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
                 <span class="_now_time" value="${nowTime}" type="hidden"></span>
                 <c:set var="activityCode" value="${activity.code}"/>
-                <div class="gb-form-foot">
+                <div class="gb-form-foot new_foo">
                     <c:choose>
-                        <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
+                        <c:when test="${(not empty activity.allRank) && activity.allRank}">
                             <c:set var="rankId" value="all"/>
                         </c:when>
                         <c:when test="${activityCode eq 'back_water'}">
@@ -83,37 +83,46 @@
                             <c:set var="btnText" value="${views.promo_auto['参与中']}"/>
                         </c:when>
                         <c:when test="${activityCode eq 'profit_loss' || activityCode eq 'effective_transaction'}">
-                            <c:set var="btnText" value="${views.promo_auto['报名参与']}"/>
+                            <c:set var="btnText" value="${views.promo_auto['立即报名']}"/>
                         </c:when>
                         <c:otherwise>
-                            <c:set var="btnText" value="${views.promo_auto['立即加入']}"/>
+                            <c:set var="btnText" value="${views.promo_auto['申请活动']}"/>
                         </c:otherwise>
                     </c:choose>
                     <c:if test="${activity.code ne 'content'}">
                         <c:choose>
                             <c:when test="${isLogin}">
-                                <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply submit" ${activityCode eq 'back_water'?'disabled':''}
+                                <a class="mui-btn mui-btn-primary btn-deposit"
+                                   data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
+                                <a class="mui-btn mui-btn-primary btn-apply mui-hidden"
+                                   id="notFit">${views.promo_auto['未满足条件']}</a>
+                                <a class="mui-btn mui-btn-primary btn-apply" ${activityCode eq 'back_water'?'disabled':''}
+                                   id="submit"
                                    data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
-                                "dataStates":"${activity.states}","dataType":"processing","dataSearchId":"${activity.searchId}","dataRankId":"${rankId}","activityName":"${activity.activityName}"}'>${btnText}</a>
+                                    "dataStates":"${activity.states}","dataType":"processing",
+                                    "dataSearchId":"${activity.searchId}","dataRankId":"${rankId}",
+                                    "activityName":"${activity.activityName}"}'>${btnText}</a>
                             </c:when>
                             <c:otherwise>
-                                <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply" data-rel='{"target":"login","opType":"function"}'>${views.promo_auto['登录账户']}</a>
+                                <a class="mui-btn mui-btn-primary btn-deposit"
+                                   data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
+                                <a class="mui-btn mui-btn-primary btn-apply"
+                                   data-rel='{"target":"login","opType":"function"}'>${views.promo_auto['登录账户']}</a>
                             </c:otherwise>
                         </c:choose>
                     </c:if>
                 </div>
-            </c:if>
+                <%--</c:if>--%>
+            </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
         <!--浮窗广告轮播-->
         <%@ include file="../index.include/Envelope.jsp" %>
     </div>
 </div>
 </body>
-<%@ include file="../include/include.js.jsp" %>
+
 <script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
-<script type="text/javascript" src="${resRoot}/js/common/Head.js"></script>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/discounts/GoToPromoDetail.js?v=${rcVersion}"></script>
 </html>

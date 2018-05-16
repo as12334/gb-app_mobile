@@ -137,6 +137,8 @@ public class BaseDepositController extends BaseCommonDepositController {
         }
         VActivityMessageListVo listVo = new VActivityMessageListVo();
         listVo.getSearch().setDepositWay(type);
+        listVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
+        listVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         listVo = ServiceSiteTool.playerRechargeService().searchSale(listVo, SessionManager.getUserId());
         return setClassifyKeyName(listVo.getResult());
     }
