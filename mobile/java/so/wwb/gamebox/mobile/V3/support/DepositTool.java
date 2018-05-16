@@ -37,6 +37,7 @@ import java.util.Map;
 
 public class DepositTool {
     public static final Log LOG = LogFactory.getLog(DepositTool.class);
+
     /**
      * 获取快充地址
      *
@@ -191,7 +192,7 @@ public class DepositTool {
     }
 
 
-    public static String getOnlinePayUrl(PayAccount payAccount, PlayerRechargeVo playerRecharge, HttpServletRequest request) {
+    public static String getOnlinePayUrl(PayAccount payAccount, PlayerRecharge playerRecharge, HttpServletRequest request) {
         String url = "";
         try {
             List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {

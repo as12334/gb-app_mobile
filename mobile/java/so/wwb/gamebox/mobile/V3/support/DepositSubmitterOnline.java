@@ -54,7 +54,7 @@ public class DepositSubmitterOnline extends AbstractRechargeSubmitter {
 
     @Override
     protected String loadPayUrl(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request) {
-        return DepositTool.getOnlinePayUrl(payAccount, playerRechargeVo, request);
+        return DepositTool.getOnlinePayUrl(payAccount, playerRechargeVo.getResult(), request);
     }
 
     @Override
