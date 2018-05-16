@@ -15,9 +15,9 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
 import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelperFactory;
 import so.wwb.gamebox.mobile.V3.helper.IDepositControllerHelper;
+import so.wwb.gamebox.mobile.V3.support.AbstractRechargeSubmitter;
 import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
-import so.wwb.gamebox.mobile.V3.support.DepositControllerTool;
-import so.wwb.gamebox.mobile.V3.support.DepositRechargeSubmitter;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -38,7 +38,6 @@ import so.wwb.gamebox.web.common.demomodel.DemoModel;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -179,8 +178,8 @@ public class V3DepositController extends V3BaseDepositController {
             amount = playerRechargeVo.getResult().getRechargeAmount();
         }
         double fee = calculateFee(getRank(), amount);
-        model.addAttribute("rechargeAmount", DepositControllerTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
-        model.addAttribute("counterFee", DepositControllerTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
+        model.addAttribute("rechargeAmount", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
+        model.addAttribute("counterFee", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
         model.addAttribute("fee", fee);
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         if (!isOpenActivityHall) {
@@ -200,8 +199,8 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/submit")
     @ResponseBody
     @Token(valid = true)
-    public Map<String, Object> submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
-        return DepositRechargeSubmitter.getInstance().submit(playerRechargeVo, result, request);
+    public AbstractRechargeSubmitter.DespositResult submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
+        return null;
     }
 
 
