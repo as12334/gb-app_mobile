@@ -32,15 +32,11 @@ public class OtherScanCodeHandler extends BaseScanCodeControllerHandler implemen
     }
 
 
-    public String getCompanyType() {
-        return RechargeTypeEnum.OTHER_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return "else";
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return null;
+    }
+
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.OTHER_FAST.getCode();
     }
 }

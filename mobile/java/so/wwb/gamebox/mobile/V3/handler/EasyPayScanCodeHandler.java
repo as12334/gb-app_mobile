@@ -33,15 +33,11 @@ public class EasyPayScanCodeHandler extends BaseScanCodeControllerHandler implem
     }
 
 
-    public String getCompanyType() {
-        return null;
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.EASY_PAY.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.EASY_PAY.getCode();
+    }
+
+    public String getCompanyRechargeType() {
+        return null;
     }
 }

@@ -4,10 +4,9 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelper;
+import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.so.PayAccountSo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
@@ -17,7 +16,6 @@ import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,17 +71,8 @@ public class BaseScanCodeControllerHandler {
      */
     protected List<PayAccount> searchPayAccount(PayAccountListVo payAccountListVo, Boolean supportAtmCounter, String[] accountTypes) {
         PayAccountSo payAccountSo = payAccountListVo.getSearch();
-        Map<String, Object> map = new HashMap<>(7, 1f);
-        map.put("playerId", SessionManager.getUserId());
-        map.put("type", payAccountSo.getType());
-        map.put("accountType", payAccountSo.getAccountType());
-        map.put("currency", SessionManager.getUser().getDefaultCurrency());
-        map.put("terminal", payAccountSo.getTerminal());
-        map.put("supportAtmCounter", supportAtmCounter);
-        map.put("accountTypes", accountTypes);
-        map.put(PayAccount.PROP_BANK_CODE, payAccountSo.getBankCode());
-        payAccountListVo.setConditions(map);
-        return ServiceSiteTool.payAccountService().searchPayAccountByRank(payAccountListVo);
+        return DepositAccountSearcher.getInstance().searchPayAccount(payAccountSo.getType(), payAccountSo.getAccountType(), supportAtmCounter, accountTypes, payAccountSo.getBankCode());
+
     }
 
     /**
@@ -125,7 +114,7 @@ public class BaseScanCodeControllerHandler {
      * @return
      */
     protected Map<String, PayAccount> getScanAccount(PlayerRank rank, String accountType, String[] accountTypes) {
-        List<PayAccount> payAccounts = DepositControllerHelper.getInstance().searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), accountType, TerminalEnum.MOBILE.getCode(), null, accountTypes);
+        List<PayAccount> payAccounts = DepositAccountSearcher.getInstance().searchPayAccount(PayAccountType.ONLINE_ACCOUNT.getCode(), accountType, null, accountTypes, null);
         PayAccountListVo payAccountListVo = new PayAccountListVo();
         payAccountListVo.setResult(payAccounts);
         payAccountListVo.setPlayerRank(rank);

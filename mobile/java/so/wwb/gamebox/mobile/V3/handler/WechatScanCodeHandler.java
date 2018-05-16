@@ -32,16 +32,11 @@ public class WechatScanCodeHandler extends BaseScanCodeControllerHandler impleme
         return getElectronicAccount(rank, BankCodeEnum.FAST_WECHAT.getCode(), RechargeTypeEnum.WECHATPAY_FAST.getCode());
     }
 
-
-    public String getCompanyType() {
-        return RechargeTypeEnum.WECHATPAY_FAST.getCode();
-    }
-
-    public String getBankCode() {
-        return BankCodeEnum.FAST_WECHAT.getCode();
-    }
-
-    public String getOnlineType() {
+    public String getOnlineRechargeType() {
         return RechargeTypeEnum.WECHATPAY_SCAN.getCode();
+    }
+    
+    public String getCompanyRechargeType() {
+        return RechargeTypeEnum.WECHATPAY_FAST.getCode();
     }
 }
