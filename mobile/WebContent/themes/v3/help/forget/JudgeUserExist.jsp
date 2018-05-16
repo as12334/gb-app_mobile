@@ -3,13 +3,15 @@
 <html>
 <head>
     <%@ include file="../../include/include.head.jsp" %>
-    <title>忘记密码</title>
+    <c:set var="code" value="忘记密码"/>
+    <c:if test="${!empty forgetType}"><c:set var="code" value="忘记安全码"/></c:if>
+    <title>${code}</title>
 </head>
 
 <body class="forget-password">
 <header class="mui-bar mui-bar-nav mui-bar-blue">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-    <h1 class="mui-title">忘记密码</h1>
+    <h1 class="mui-title">${code}</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper">
     <div class="mui-scroll">
@@ -17,7 +19,7 @@
             <input type="text" id="userName" placeholder="请输入账号">
         </div>
         <div class="btn-wrap">
-            <a class="mui-btn mui-btn-block btn-blo" data-rel='{"target":"judgeUserExist","opType":"function"}'>下一步</a>
+            <a class="mui-btn mui-btn-block btn-blo" data-rel='{"target":"judgeUserExist","opType":"function","forgetType":"${forgetType}"}'>下一步</a>
         </div>
     </div>
 </div>

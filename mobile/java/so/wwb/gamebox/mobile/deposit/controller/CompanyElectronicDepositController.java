@@ -27,6 +27,7 @@ import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,8 +90,8 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid CompanyElectronicDepositForm form,
-                                       BindingResult result) {
-        return commonDeposit(playerRechargeVo, result);
+                                       BindingResult result,HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result,request);
     }
 
     /**
@@ -100,7 +101,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
@@ -127,7 +128,7 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
 
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
         playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
 

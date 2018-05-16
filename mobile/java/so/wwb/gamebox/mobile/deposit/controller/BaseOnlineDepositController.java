@@ -42,6 +42,7 @@ import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
@@ -189,7 +190,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
             }
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
-                playerRechargeVo.getResult().getRechargeType());
+                playerRechargeVo.getResult().getRechargeType(),request);
         if (playerRechargeVo.isSuccess()) {
             //声音提醒站长中心
             onlineToneWarn();
@@ -241,11 +242,11 @@ public class BaseOnlineDepositController extends BaseDepositController {
      * 保存存款数据
      */
     private PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, PlayerRank rank,
-                                          String rechargeTypeParent, String rechargeType) {
+                                          String rechargeTypeParent, String rechargeType,HttpServletRequest request) {
         //设置存款其他数据
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
         if (playerRecharge.getCounterFee() == null) {
             playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));

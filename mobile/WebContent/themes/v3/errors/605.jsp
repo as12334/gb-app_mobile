@@ -20,9 +20,8 @@
             <h1>您所在地区禁止访问</h1>
             <h2>No ACCESS</h2>
             <p>由于您的所在地不在我们的服务允许范围内，我们暂时无法为您服务。如果您任何问题，请联系我们的客服。</p>
-            <c:if test="${terminal eq '2'}">
-                <a class="online-ser btn diy"
-                   href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a></c:if>
+            <a class="online-ser btn diy"
+               href="${empty customerServiceUrl?'javascript:;':customerServiceUrl}">在线客服</a>
         </div>
     </div>
     <footer></footer>
