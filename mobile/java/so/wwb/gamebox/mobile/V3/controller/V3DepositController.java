@@ -74,12 +74,7 @@ public class V3DepositController extends V3BaseDepositController {
         DigiccyAccountInfo digiccyAccountInfo = ParamTool.getDigiccyAccountInfo();
         model.addAttribute("digiccyAccountInfo", digiccyAccountInfo);
         //快速充值地址
-        model.addAttribute("isFastRecharge", true);
-        SysParam rechargeUrlParam = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL);
-        if (rechargeUrlParam == null || StringTool.isBlank(rechargeUrlParam.getParamValue())) {
-            model.addAttribute("isFastRecharge", false);
-        }
-        String fastRechargeUrl = getFastRechargeUrl();
+        String fastRechargeUrl = DepositTool.getFastRechargeUrl();
         model.addAttribute("rechargeUrlParam", fastRechargeUrl);
         return "/deposit/index/Deposit";
     }

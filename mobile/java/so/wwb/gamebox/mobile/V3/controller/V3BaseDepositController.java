@@ -45,15 +45,6 @@ public class V3BaseDepositController {
     }
 
     /**
-     * 获取快充地址
-     *
-     * @return
-     */
-    protected String getFastRechargeUrl() {
-        return DepositTool.getFastRechargeUrl();
-    }
-
-    /**
      * 获取主货币符号
      *
      * @return
