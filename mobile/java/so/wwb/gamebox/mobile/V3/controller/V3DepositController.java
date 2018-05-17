@@ -139,7 +139,6 @@ public class V3DepositController extends V3BaseDepositController {
                 if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
                     model.addAttribute("isHide", true);
                     model.addAttribute("hideContent", Cache.getSiteI18n(SiteI18nEnum.MASTER_CONTENT_HIDE_ACCOUNT_CONTENT).get(SessionManager.getLocale().toString()));
-                    model.addAttribute("customerService", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
                 }
             }
             model.addAttribute("bank", Cache.getBank().get(payAccount.getBankCode()));
@@ -148,6 +147,7 @@ public class V3DepositController extends V3BaseDepositController {
             model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType, SessionManager.getUserId()));
         }
         if (StringTool.isNotBlank(depositCash)) {
+            //上个界面的金额传入下个界面
             model.addAttribute("rechargeAmount", depositCash);
         }
         model.addAttribute("command", new PayAccountVo());

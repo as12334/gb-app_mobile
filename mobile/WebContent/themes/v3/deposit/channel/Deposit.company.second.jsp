@@ -37,9 +37,6 @@
                                         <c:when test="${isOther}">
                                             <span style="margin-right: -30px;">${payAccount.customBankName}</span>
                                         </c:when>
-                                        <c:otherwise>
-                                            <span class="pay-bank ${payAccount.bankCode}" style="margin-right: -30px;"></span>
-                                        </c:otherwise>
                                     </c:choose>
                             </div>
                             <div class="bank_car_txt_info">
@@ -74,11 +71,8 @@
                                 <div class="depo_row" data-rel='{"opType":"function","target":"depositCompany.checkRechargeType"}'>
                                     <div class="label">存款类型</div>
                                     <div class="input">
-                                        <input id="selectRecharge" type="text" value="柜员机现金存款" readonly>
+                                        <input class="text-right"  id="selectRecharge" type="text" value="柜员机现金存款" readonly>
                                         <input type="hidden" name="result.rechargeType" id="result.rechargeType" value="atm_money"/>
-                                    </div>
-                                    <div class="ext">
-                                        <i class="mui-icon mui-icon-arrowdown"></i>
                                     </div>
                                 </div>
                             </c:otherwise>
@@ -90,7 +84,7 @@
                         <c:if test="${channel!='company'}">
                             <div class="depo_row">
                                 <div class="label">${views.deposit_auto['交易地点']}</div>
-                                <div class="input"><input type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" maxlength="20" onchange="this.value=this.value.trim()"></div>
+                                <div class="input"><input class="text-right"  type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" maxlength="20" onchange="this.value=this.value.trim()"></div>
                             </div>
                         </c:if>
                     </div>
