@@ -494,7 +494,6 @@ public class BaseMineController {
                 detailApp.setTxId(String.valueOf(map.get("bankOrder")));
                 detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
 
-//                Map<String, String> dictMapByCurrency = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_CURRENCY_SYMBOL);
                 detailApp.setRechargeAmount(dictMapByCurrency.get("BTC") + map.get("bitAmount"));
             }
             Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_FUND_TYPE);

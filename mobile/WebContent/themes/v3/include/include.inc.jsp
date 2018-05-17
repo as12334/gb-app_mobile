@@ -51,6 +51,7 @@
 <c:set var="imgRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getImgRoot(),request.getServerName()) %>' />
 <c:set var="imgRoot" value='${cdnUrl}${imgRoot}' />
 <c:set var="mdRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getMdRoot(),request.getServerName()) %>' />
+<c:set var="wsRoot" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getWsRoot(),request.getServerName()) %>' />
 
 <c:set var="imgRoot_origin" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getImgRoot(),request.getServerName()) %>' />
 <c:set var="resComRoot_origin" value='<%= MessageFormat.format(BaseConfigManager.getConfigration().getResComRoot(),request.getServerName()) %>' />
