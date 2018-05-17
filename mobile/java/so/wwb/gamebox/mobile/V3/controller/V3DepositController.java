@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.V3.controller;
 
+import org.apache.tools.ant.taskdefs.optional.pvcs.Pvcs;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.sys.po.SysParam;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.security.Main;
 import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
 import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelperFactory;
 import so.wwb.gamebox.mobile.V3.helper.IDepositControllerHelper;
@@ -100,7 +102,7 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("validateRule", JsRuleCreator.create(helper.getIndexValidateFormClazz()));//表单提交验证器
         model.addAttribute("accountJson", helper.getAccountJson(payAccounts));//账号列表转json，有些页面要用到它来判断
         //根据层级获取是否需要手续费
-        model.addAttribute("common", new PayAccountVo());
+        model.addAttribute("command", new PayAccountVo());
         //当前选择的通道
         model.addAttribute("channel", channel);
         //随机额度
@@ -216,6 +218,4 @@ public class V3DepositController extends V3BaseDepositController {
         }
         return submitter.saveRecharge(playerRechargeVo, result, request);
     }
-
-
 }

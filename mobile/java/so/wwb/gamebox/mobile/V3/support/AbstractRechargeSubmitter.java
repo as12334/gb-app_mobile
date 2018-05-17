@@ -135,7 +135,9 @@ public abstract class AbstractRechargeSubmitter {
             drs.setMsg(LocaleTool.tranMessage(_Module.COMMON, MessageI18nConst.SAVE_FAILED));
             first = false;
         } else {
-            PayAccount payAccount = getPayAccountById(playerRechargeVo.getResult().getPayAccountId());
+            PayAccountVo payAccountVo = new PayAccountVo();
+            payAccountVo.setSearchId(playerRechargeVo.getAccount());
+            PayAccount payAccount = getPayAccountById(payAccountVo.getSearch().getId());
             if (payAccount == null || !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
                 drs.setState(false);
                 drs.setOrderNo(playerRechargeVo.getResult().getTransactionNo());
@@ -144,7 +146,7 @@ public abstract class AbstractRechargeSubmitter {
             }
             drs.setAccount(payAccount);
         }
-        return new Pair<Boolean, DespositResult>(false, drs);
+        return new Pair<Boolean, DespositResult>(first, drs);
     }
 
     /**
