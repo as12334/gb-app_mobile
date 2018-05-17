@@ -77,7 +77,7 @@
     <c:if test="${map['unionpay']>0}">
         <div class="list_pay_item_w"  href="#" data-rel='{"payType":"unionpay","url":"/wallet/v3/deposit/unionpay/index.html","opType":"function","target":"toolBarClick"}'>
             <div class="list_pay_item">
-                <i class="i== 0con-pay union-pay"></i>
+                <i class="con-pay union-pay"></i>
                 <div class="pay_nam">银联扫码</div>
             </div>
         </div>
