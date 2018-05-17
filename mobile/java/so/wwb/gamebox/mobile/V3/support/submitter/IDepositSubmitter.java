@@ -1,6 +1,7 @@
-package so.wwb.gamebox.mobile.V3.support;
+package so.wwb.gamebox.mobile.V3.support.submitter;
 
 import org.springframework.validation.BindingResult;
+import so.wwb.gamebox.mobile.V3.support.AbstractRechargeSubmitter;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 
 import javax.servlet.http.HttpServletRequest;
