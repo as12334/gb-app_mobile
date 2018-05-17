@@ -42,12 +42,12 @@ public class DepositSubmitterCompany extends AbstractRechargeSubmitter implement
         PlayerRank rank = DepositTool.searchRank();
         counterAndValidateFee(playerRechargeVo, rank);
         if (playerRechargeVo.isSuccess()) {
-            saveRecharge(playerRechargeVo, payAccount, request, rank);
+            fillCompanyRecharge(playerRechargeVo, payAccount, request, rank);
         }
         return playerRechargeVo;
     }
 
-    protected PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request, PlayerRank rank) {
+    protected PlayerRechargeVo fillCompanyRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request, PlayerRank rank) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
         playerRecharge.setPlayerId(SessionManager.getUserId());

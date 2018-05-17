@@ -28,11 +28,11 @@ public abstract class AbstractRechargeSubmitter {
         }
         PayAccount account = validate.getValue().getAccount();
         //计算优惠信息
-        counterDiscounts(playerRechargeVo, account);
+        playerRechargeVo = counterDiscounts(playerRechargeVo, account);
         //保存充值信息
-        fillPlayRecharge(playerRechargeVo, account, request);
+        playerRechargeVo = fillPlayRecharge(playerRechargeVo, account, request);
         //保存充值订单
-        ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
+        playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
         //进行消息提示
         doNotice(playerRechargeVo);
         String payUrl = loadPayUrl(playerRechargeVo, account, request);

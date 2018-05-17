@@ -20,7 +20,7 @@
             <c:when test="${not empty payAccount}">
                 <div id="validateRule" style="display: none">${validateRule}</div>
                 <gb:token/>
-                <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
+                <input type="hidden" name="account" id="account" value="${command.getSearchId(payAccount.id)}"/>
                 <input type="hidden" name="result.rechargeType" value="bitcoin_fast"/>
                 <input type="hidden" name="activityId" id="activityId"/>
                 <input type="hidden" name="depositChannel" value="bitcoin"/>
@@ -112,7 +112,7 @@
             </p>
         </div>
         <div class="ft">
-            <a data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
+            <a data-rel='{"opType":"function","target":"goToDepositPage"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
             <a data-rel='{"target":"goToHome","opType":"function"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>

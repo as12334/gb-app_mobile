@@ -121,12 +121,19 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/nextStep")
     @Token(generate = true)
     @Upgrade(upgrade = true)
-    public String nextStep(PayAccountVo payAccountVo, @RequestParam("channel") String channel, Model model) {
+    public String nextStep(Model model, HttpServletRequest request) {
+        String channel = request.getParameter("channel");
+        String searchId = request.getParameter("searchId");
+        String depositCash = request.getParameter("depositCash");
+        String rechargeType = request.getParameter("rechargeType");
         //当前选择的通道
         model.addAttribute("channel", channel);
         IDepositControllerHelper helper = DepositControllerHelperFactory.getHelper(channel);
         //获取收款账号
+        PayAccountVo payAccountVo = new PayAccountVo();
+        payAccountVo.setSearchId(searchId);
         PayAccount payAccount = DepositAccountSearcher.getInstance().searchById(payAccountVo.getSearch().getId());
+
         if (payAccount != null) {
             model.addAttribute("rank", getRank());
             //是否隐藏收款账号
@@ -143,13 +150,14 @@ public class V3DepositController extends V3BaseDepositController {
             model.addAttribute("bank", Cache.getBank().get(payAccount.getBankCode()));
             model.addAttribute("validateRule", JsRuleCreator.create(helper.getSecondValidateFormClazz()));
             //微信支付宝等电子支付后，自动带出上次填写的信息
-            //model.addAttribute("lastTimeAccount", getLastDepositName(playerRechargeVo.getResult().getRechargeType(), SessionManager.getUserId()));
+            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType, SessionManager.getUserId()));
         }
-        if (payAccountVo.getDepositCash() != null) {
-            model.addAttribute("rechargeAmount", payAccountVo.getDepositCash());
+        if (StringTool.isNotBlank(depositCash)) {
+            model.addAttribute("rechargeAmount", depositCash);
         }
+        model.addAttribute("command", payAccountVo);
         model.addAttribute("payAccount", payAccount);
-        model.addAttribute("rechargeType", payAccountVo.getPayType());
+        model.addAttribute("rechargeType", rechargeType);
         return helper.getNextStepUrl();
     }
 
@@ -207,13 +215,11 @@ public class V3DepositController extends V3BaseDepositController {
             return null;
         }
         IDepositSubmitter submitter = null;
-        if (rechargeTypeEnum.getCode().equals("BITCOIN_FAST")) {
+        if (rechargeTypeEnum.getCode().equals("bitcoin_fast")) {
             submitter = new DepositSubmitterBitcoin();
-        }
-        if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
+        } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
             submitter = new DepositSubmitterOnline();
-        }
-        if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.COMPANY_DEPOSIT)) {
+        } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.COMPANY_DEPOSIT)) {
             submitter = new DepositSubmitterCompany();
         }
         return submitter.saveRecharge(playerRechargeVo, result, request);

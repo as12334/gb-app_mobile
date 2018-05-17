@@ -18,7 +18,7 @@
             <c:choose>
                 <c:when test="${not empty payAccount}">
                     <div id="validateRule" style="display: none">${validateRule}</div>
-                    <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
+                    <input type="hidden" name="account" id="account" value="${command.getSearchId(payAccount.id)}"/>
                     <input type="hidden" id="rechargeTypeJson" value='${rechargeTypeJson}' />
                     <input type="hidden" name="depositChannel" value="company"/>
                     <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
@@ -55,8 +55,8 @@
                                     </c:otherwise>
                                     </c:choose>
                                 </div>
-                                <div class="b_c_t_i_row"> ${views.deposit_auto['银行开户名']}： <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a></div>
-                                <div class="b_c_t_i_row"> ${views.deposit_auto['开户行']}： <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a></div>
+                                <div class="b_c_t_i_row"> ${views.deposit_auto['银行开户名']}： ${payAccount.fullName}<a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a></div>
+                                <div class="b_c_t_i_row"> ${views.deposit_auto['开户行']}： ${payAccount.openAcountName}<a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a></div>
                             </div>
 
                         </div>

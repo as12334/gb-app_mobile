@@ -217,7 +217,7 @@ public class DepositTool {
                 ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
             }
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("获取第三方支付url出错.", e);
         }
         return url;
     }
