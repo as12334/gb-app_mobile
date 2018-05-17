@@ -99,7 +99,7 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("accounts", payAccounts);//账号列表
         model.addAttribute("validateRule", JsRuleCreator.create(helper.getIndexValidateFormClazz()));//表单提交验证器
         model.addAttribute("accountJson", helper.getAccountJson(payAccounts));//账号列表转json，有些页面要用到它来判断
-        //根据层级获取是否需要手续费
+        //设置加密工具类
         model.addAttribute("command", new PayAccountVo());
         //当前选择的通道
         model.addAttribute("channel", channel);
