@@ -87,7 +87,9 @@
                 <div class="deposit_help">
                     <p>温馨提示</p>
                     <p>* ${views.deposit_auto['正确的txid']}</p>
-                    <p>* ${views.deposit_auto['客服帮助']}<soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/></p>
+                    <p>* ${views.deposit_auto['客服帮助']}
+                        <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${views.deposit_auto['点击联系在线客服']}</a>
+                    </p>
                 </div>
             </c:when>
                 <c:otherwise>
@@ -119,6 +121,7 @@
 </div>
 </body>
 <%@ include file="../../include/include.js.jsp" %>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>

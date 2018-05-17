@@ -20,7 +20,7 @@
                     输入整数存款金额，将随机增加0.11~0.99元！</p>
                 <p>*请保留好转账单据作为核对证明。</p>
                 <p>*如出现充值失败或充值后未到账等情况，请联系在线客服获取
-                    帮助。<a href="javascript:">点击联系在线客服</a></p>
+                    帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
             </div>
         </c:if>
         <c:if test="${fn:length(map) ==0}">

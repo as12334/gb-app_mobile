@@ -190,6 +190,7 @@
     </div>
 </div>
 <%@ include file="../../include/include.js.jsp" %>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>

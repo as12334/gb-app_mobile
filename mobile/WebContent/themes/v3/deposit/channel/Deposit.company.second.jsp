@@ -127,6 +127,7 @@
 </div>
 </body>
 <%@ include file="../../include/include.js.jsp" %>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
