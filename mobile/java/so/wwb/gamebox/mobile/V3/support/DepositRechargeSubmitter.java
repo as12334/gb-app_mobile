@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.mobile.deposit.controller.BaseOnlineDepositController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -67,6 +66,8 @@ public class DepositRechargeSubmitter {
             map.put("accountNotUsing", true);
             return getVoMessage(map, playerRechargeVo);
         }
+
+
         boolean isOnline = true;
         if (isOnline) {
             PlayerRecharge playerRecharge = playerRechargeVo.getResult();
@@ -77,7 +78,7 @@ public class DepositRechargeSubmitter {
                     playerRecharge.setRechargeAmount(rechargeAmount);
                 }
             }
-            PlayerRank rank = DepositControllerTool.searchRank();
+            PlayerRank rank = DepositTool.searchRank();
             playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(), playerRechargeVo.getResult().getRechargeType());
             if (playerRechargeVo.isSuccess()) {
                 //声音提醒站长中心
@@ -236,7 +237,7 @@ public class DepositRechargeSubmitter {
         playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
         playerRechargeVo.setRankId(rank.getId());
         if (playerRecharge.getCounterFee() == null) {
-            playerRecharge.setCounterFee(DepositControllerTool.calculateFee(rank, playerRecharge.getRechargeAmount()));
+            playerRecharge.setCounterFee(DepositTool.calculateFee(rank, playerRecharge.getRechargeAmount()));
         }
         //存款总额（存款金额+手续费）>0才能继续执行
         if (playerRecharge.getCounterFee() + playerRecharge.getRechargeAmount() <= 0) {

@@ -1,22 +1,43 @@
 package so.wwb.gamebox.mobile.V3.support;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.log.Log;
+import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
+import org.soul.model.pay.enums.CommonFieldsConst;
+import org.soul.model.pay.enums.PayApiTypeConst;
+import org.soul.model.pay.vo.OnlinePayVo;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
+import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
+import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.enums.RankFeeType;
+import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
+import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-public class DepositControllerTool {
+public class DepositTool {
+    public static final Log LOG = LogFactory.getLog(DepositTool.class);
+
     /**
      * 获取快充地址
      *
@@ -169,4 +190,63 @@ public class DepositControllerTool {
         }
         return fee;
     }
+
+
+    public static String getOnlinePayUrl(PayAccount payAccount, PlayerRecharge playerRecharge, HttpServletRequest request) {
+        String url = "";
+        try {
+            List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
+            });
+            String domain = ServletTool.getDomainPath(request);
+            for (Map<String, String> map : accountJson) {
+                if (map.get("column").equals(CommonFieldsConst.PAYDOMAIN)) {
+                    domain = map.get("value");
+                    break;
+                }
+            }
+            if (domain != null && (RechargeStatusEnum.PENDING_PAY.getCode().equals(playerRecharge.getRechargeStatus())
+                    || RechargeStatusEnum.OVER_TIME.getCode().equals(playerRecharge.getRechargeStatus()))) {
+                String uri = "/onlinePay/abcefg.html?search.transactionNo=" + playerRecharge.getTransactionNo() + "&origin=" + TerminalEnum.MOBILE.getCode();
+                domain = getDomain(domain, payAccount);
+                url = domain + uri;
+                //保存订单支付网址
+                playerRecharge.setPayUrl(domain);
+                PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+                playerRechargeVo.setResult(playerRecharge);
+                playerRechargeVo.setProperties(PlayerRecharge.PROP_PAY_URL);
+                ServiceSiteTool.playerRechargeService().updateOnly(playerRechargeVo);
+            }
+        } catch (Exception e) {
+            LOG.error("获取第三方支付url出错.", e);
+        }
+        return url;
+    }
+
+    private static String getDomain(String domain, PayAccount payAccount) {
+        domain = domain.replace("http://", "");
+        VSysSiteDomain siteDomain = Cache.getSiteDomain(domain);
+        Boolean sslEnabled = false;
+        if (siteDomain != null && siteDomain.getSslEnabled() != null && siteDomain.getSslEnabled()) {
+            sslEnabled = true;
+        }
+        String sslDomain = "https://" + domain;
+        String notSslDomain = "http://" + domain;
+        ;
+        if (!sslEnabled) {
+            return notSslDomain;
+        }
+        try {
+            OnlinePayVo onlinePayVo = new OnlinePayVo();
+            onlinePayVo.setChannelCode(payAccount.getBankCode());
+            onlinePayVo.setApiType(PayApiTypeConst.PAY_SSL_ENABLE);
+            sslEnabled = ServiceTool.onlinePayService().getSslEnabled(onlinePayVo);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        if (sslEnabled) {
+            return sslDomain;
+        }
+        return notSslDomain;
+    }
+
 }

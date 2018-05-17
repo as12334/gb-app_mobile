@@ -24,6 +24,7 @@ public class BitCoinDepositControllerHelper extends BaseDepositControllerHelper<
     }
 
 
+
     public Class<? extends IForm> getIndexValidateFormClazz() {
         return BitcoinDepositForm.class;
     }

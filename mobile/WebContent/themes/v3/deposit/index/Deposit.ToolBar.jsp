@@ -77,12 +77,12 @@
     <c:if test="${map['unionpay']>0}">
         <div class="list_pay_item_w"  href="#" data-rel='{"payType":"unionpay","url":"/wallet/v3/deposit/unionpay/index.html","opType":"function","target":"toolBarClick"}'>
             <div class="list_pay_item">
-                <i class="i== 0con-pay union-pay"></i>
+                <i class="icon-pay union-pay"></i>
                 <div class="pay_nam">银联扫码</div>
             </div>
         </div>
     </c:if>
-    <c:if test="${isFastRecharge}">
+    <c:if test="${isFastRecharge && !empty rechargeUrlParam}">
         <div class="list_pay_item_w" data-rel='{"opType":"href","target":"${rechargeUrlParam}"}'>
             <div class="list_pay_item">
                 <i class="icon-pay kuaichong"></i>

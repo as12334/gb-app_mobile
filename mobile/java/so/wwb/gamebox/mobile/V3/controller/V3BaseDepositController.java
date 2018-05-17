@@ -2,22 +2,15 @@ package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
-import org.soul.model.sys.po.SysParam;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.V3.support.DepositControllerTool;
-import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.TerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
@@ -35,7 +28,7 @@ public class V3BaseDepositController {
      * @return
      */
     protected double calculateFee(PlayerRank rank, double rechargeAmount) {
-        return DepositControllerTool.calculateFee(rank, rechargeAmount);
+        return DepositTool.calculateFee(rank, rechargeAmount);
     }
 
 
@@ -45,7 +38,7 @@ public class V3BaseDepositController {
      * @return
      */
     protected PlayerRank getRank() {
-        return DepositControllerTool.searchRank();
+        return DepositTool.searchRank();
     }
 
     /**
@@ -54,7 +47,7 @@ public class V3BaseDepositController {
      * @return
      */
     protected String getFastRechargeUrl() {
-        return DepositControllerTool.getFastRechargeUrl();
+        return DepositTool.getFastRechargeUrl();
     }
 
     /**

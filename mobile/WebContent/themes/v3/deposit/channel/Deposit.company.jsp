@@ -24,7 +24,7 @@
                 <div class="bank_list" id="company_bank_list">
                     <c:forEach items="${accounts}" var="i" varStatus="vs">
                         <div class="bank_list_i_w"
-                             data-rel='{"bankCode":"${i.bankCode}","accountId":"${i.id}","opType":"function","target":"depositCompany.checkAccount"}'>
+                             data-rel='{"bankCode":"${i.bankCode}","accountId":"${command.getSearchId(i.id)}","opType":"function","target":"depositCompany.checkAccount"}'>
                             <div class="bank_list_i">
                                 <i class="bank_n ${i.bankCode}"></i>
                                 <div class="bank_n_txt">

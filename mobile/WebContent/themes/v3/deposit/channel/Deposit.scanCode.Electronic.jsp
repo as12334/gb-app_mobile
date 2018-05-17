@@ -36,7 +36,7 @@
             <form id="rechargeForm" onsubmit="return false">
             <gb:token/>
             <div id="validateRule" style="display: none">${validateRule}</div>
-            <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
+            <input type="hidden" name="account" id="account" value="${command.getSearchId(payAccount.id)}"/>
             <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
@@ -190,6 +190,7 @@
     </div>
 </div>
 <%@ include file="../../include/include.js.jsp" %>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>

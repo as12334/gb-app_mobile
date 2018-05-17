@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.V3.controller;
 
+import org.apache.tools.ant.taskdefs.optional.pvcs.Pvcs;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.sys.po.SysParam;
@@ -12,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.common.security.Main;
 import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
 import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelperFactory;
 import so.wwb.gamebox.mobile.V3.helper.IDepositControllerHelper;
-import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
-import so.wwb.gamebox.mobile.V3.support.DepositControllerTool;
-import so.wwb.gamebox.mobile.V3.support.DepositRechargeSubmitter;
+import so.wwb.gamebox.mobile.V3.support.*;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -28,6 +28,8 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.digiccy.po.DigiccyAccountInfo;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
@@ -38,7 +40,6 @@ import so.wwb.gamebox.web.common.demomodel.DemoModel;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +102,7 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("validateRule", JsRuleCreator.create(helper.getIndexValidateFormClazz()));//表单提交验证器
         model.addAttribute("accountJson", helper.getAccountJson(payAccounts));//账号列表转json，有些页面要用到它来判断
         //根据层级获取是否需要手续费
-        model.addAttribute("common", new PayAccountVo());
+        model.addAttribute("command", new PayAccountVo());
         //当前选择的通道
         model.addAttribute("channel", channel);
         //随机额度
@@ -120,12 +121,19 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/nextStep")
     @Token(generate = true)
     @Upgrade(upgrade = true)
-    public String nextStep(PayAccountVo payAccountVo, @RequestParam("channel") String channel, Model model) {
+    public String nextStep(Model model, HttpServletRequest request) {
+        String channel = request.getParameter("channel");
+        String searchId = request.getParameter("searchId");
+        String depositCash = request.getParameter("depositCash");
+        String rechargeType = request.getParameter("rechargeType");
         //当前选择的通道
         model.addAttribute("channel", channel);
         IDepositControllerHelper helper = DepositControllerHelperFactory.getHelper(channel);
         //获取收款账号
+        PayAccountVo payAccountVo = new PayAccountVo();
+        payAccountVo.setSearchId(searchId);
         PayAccount payAccount = DepositAccountSearcher.getInstance().searchById(payAccountVo.getSearch().getId());
+
         if (payAccount != null) {
             model.addAttribute("rank", getRank());
             //是否隐藏收款账号
@@ -142,13 +150,14 @@ public class V3DepositController extends V3BaseDepositController {
             model.addAttribute("bank", Cache.getBank().get(payAccount.getBankCode()));
             model.addAttribute("validateRule", JsRuleCreator.create(helper.getSecondValidateFormClazz()));
             //微信支付宝等电子支付后，自动带出上次填写的信息
-            //model.addAttribute("lastTimeAccount", getLastDepositName(playerRechargeVo.getResult().getRechargeType(), SessionManager.getUserId()));
+            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType, SessionManager.getUserId()));
         }
-        if (payAccountVo.getDepositCash() != null) {
-            model.addAttribute("rechargeAmount", payAccountVo.getDepositCash());
+        if (StringTool.isNotBlank(depositCash)) {
+            model.addAttribute("rechargeAmount", depositCash);
         }
+        model.addAttribute("command", payAccountVo);
         model.addAttribute("payAccount", payAccount);
-        model.addAttribute("rechargeType", payAccountVo.getPayType());
+        model.addAttribute("rechargeType", rechargeType);
         return helper.getNextStepUrl();
     }
 
@@ -179,8 +188,8 @@ public class V3DepositController extends V3BaseDepositController {
             amount = playerRechargeVo.getResult().getRechargeAmount();
         }
         double fee = calculateFee(getRank(), amount);
-        model.addAttribute("rechargeAmount", DepositControllerTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
-        model.addAttribute("counterFee", DepositControllerTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
+        model.addAttribute("rechargeAmount", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
+        model.addAttribute("counterFee", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
         model.addAttribute("fee", fee);
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         if (!isOpenActivityHall) {
@@ -200,9 +209,19 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/submit")
     @ResponseBody
     @Token(valid = true)
-    public Map<String, Object> submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
-        return DepositRechargeSubmitter.getInstance().submit(playerRechargeVo, result, request);
+    public AbstractRechargeSubmitter.DespositResult submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
+        RechargeTypeEnum rechargeTypeEnum = RechargeTypeEnum.enumOf(playerRechargeVo.getResult().getRechargeType());
+        if (rechargeTypeEnum == null) {
+            return null;
+        }
+        IDepositSubmitter submitter = null;
+        if (rechargeTypeEnum.getCode().equals("bitcoin_fast")) {
+            submitter = new DepositSubmitterBitcoin();
+        } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
+            submitter = new DepositSubmitterOnline();
+        } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.COMPANY_DEPOSIT)) {
+            submitter = new DepositSubmitterCompany();
+        }
+        return submitter.saveRecharge(playerRechargeVo, result, request);
     }
-
-
 }

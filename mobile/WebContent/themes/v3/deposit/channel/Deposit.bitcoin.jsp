@@ -14,7 +14,7 @@
             <div class="bank_list" id="scan_Bank_List">
                     <%--迭代页面返回的账号信息--%>
                 <c:forEach items="${accounts}" var="i">
-                    <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","accountId":"${i.id}","target":"depositBitCoin.checkAccount"}'>
+                    <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","accountId":"${command.getSearchId(i.id)}","target":"depositBitCoin.checkAccount"}'>
                         <div class="bank_list_i">
                             <i class="bank_n ${i.bankCode}"></i>
                             <div class="bank_n_txt">
