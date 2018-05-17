@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.support;
+package so.wwb.gamebox.mobile.V3.support.submitter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.soul.commons.bean.Pair;
@@ -7,6 +7,7 @@ import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.support._Module;
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
