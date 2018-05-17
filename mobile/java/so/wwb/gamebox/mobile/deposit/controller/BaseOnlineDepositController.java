@@ -174,11 +174,13 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (StringTool.isNotBlank(playerRechargeVo.getAccount())) {
             payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         }
+
         if (payAccount == null) {
             Map<String, Object> resultMsg = getResultMsg(false, LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_PAY_ACCOUNT_LOST), null);
             resultMsg.put("accountNotUsing", true);
             return resultMsg;
         }
+
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         if (payAccount.getRandomAmount() != null && payAccount.getRandomAmount()) {
@@ -190,6 +192,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
         }
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
                 playerRechargeVo.getResult().getRechargeType());
+
         if (playerRechargeVo.isSuccess()) {
             //声音提醒站长中心
             onlineToneWarn();

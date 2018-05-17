@@ -3,6 +3,7 @@
 <div class="pro_ite">${views.deposit_auto['金额']}：<span>${rechargeAmount}</span></div>
 <div class="pro_ite">${views.deposit_auto['手续费']}：<span>${empty counterFee?"免手续费":counterFee}</span></div>
 <c:if test="${!isOpenActivityHall}">
+<div>
 <div class="pro_ite">${views.deposit_auto['优惠']}：</div>
     <div class="pro_lis">
         <div class="mui-scroll-wrapper">
@@ -22,3 +23,5 @@
     </div>
 </c:if>
 <div class="btn_wrap"><a href="javascript:" data-rel='{"opType":"function","target":"baseDeposit.submitDeposit"}' class="mui-btn mui-btn-block btn_dep">马上存款</a></div>
+<span style="display: none" id="failureCount" failureCount="${failureCount}"></span>
+</div>

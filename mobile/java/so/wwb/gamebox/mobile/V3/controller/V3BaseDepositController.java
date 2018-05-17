@@ -10,7 +10,10 @@ import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
+import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
@@ -98,5 +101,20 @@ public class V3BaseDepositController {
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult();
+    }
+
+    protected String getLastDepositName(String rechargeType, Integer userId) {
+        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+        PlayerRecharge playerRecharge = new PlayerRecharge();
+        playerRecharge.setRechargeType(rechargeType);
+        playerRecharge.setPlayerId(userId);
+        playerRechargeVo.setResult(playerRecharge);
+        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
+    }
+
+    protected Integer convertAccountId(String searchId) {
+        PayAccountVo payAccountVo = new PayAccountVo();
+        payAccountVo.setSearchId(searchId);
+        return payAccountVo.getSearch().getId();
     }
 }
