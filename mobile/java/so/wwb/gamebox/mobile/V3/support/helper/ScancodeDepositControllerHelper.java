@@ -33,6 +33,7 @@ public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper
                 payaccounts.add(account);
             }
         }
+
         //获取电子账号
         List<PayAccount> electronicAccount = handler.getElectronicAccount(rank);
         boolean display = rank != null && rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
@@ -44,7 +45,7 @@ public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper
         }
         if (CollectionTool.isNotEmpty(electronicAccount)) {
             for (PayAccount account : electronicAccount) {
-                payaccounts.add(new PayAccountScancode("electroin", handler.getOnlineRechargeType(), account));
+                payaccounts.add(new PayAccountScancode("electroin", handler.getCompanyRechargeType(), account));
             }
         }
         return payaccounts;
