@@ -6,6 +6,9 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 所有扫码通道的公用方法抽取类
+ */
 public interface IScanCodeControllerHandler {
 
     /**

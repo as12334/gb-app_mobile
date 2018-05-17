@@ -7,7 +7,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 充值最终提交者
+ * 充值最终的执行器
  */
 public interface IDepositSubmitter {
     /**
