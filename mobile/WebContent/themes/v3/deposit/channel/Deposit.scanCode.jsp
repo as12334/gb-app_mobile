@@ -64,7 +64,7 @@
                         </div>
                     </div>
                     <div class="depo_row">
-                        <a data-rel='{"opType":"function","target":"reScanCourse"}' style="width:35%;text-align:left;float:left;height:58px;"><p class="depositHelp">${views.deposit_auto['获取授权码教程']}<span>?</span></p></a>
+                        <a href="#" data-rel='{"opType":"function","target":"depositScanCode.showReScanCourse"}'>${views.deposit_auto['获取授权码教程']}?</a>
                     </div>
                 </div>
             </div>

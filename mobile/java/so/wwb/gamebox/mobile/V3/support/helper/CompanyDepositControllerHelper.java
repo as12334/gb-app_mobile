@@ -1,25 +1,17 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
-import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.data.json.JsonTool;
-import org.soul.commons.lang.string.I18nTool;
-import org.soul.commons.lang.string.StringTool;
 import org.soul.web.support.IForm;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.support.helper.BaseDepositControllerHelper;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2Form;
-import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class CompanyDepositControllerHelper extends BaseDepositControllerHelper<PayAccount> {

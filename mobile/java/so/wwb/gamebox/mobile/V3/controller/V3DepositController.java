@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.V3.controller;
 
-import org.apache.tools.ant.taskdefs.optional.pvcs.Pvcs;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.sys.po.SysParam;
@@ -13,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.common.security.Main;
 import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
-import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelperFactory;
-import so.wwb.gamebox.mobile.V3.helper.IDepositControllerHelper;
-import so.wwb.gamebox.mobile.V3.support.*;
+import so.wwb.gamebox.mobile.V3.support.submitter.AbstractRechargeSubmitter;
+import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
+import so.wwb.gamebox.mobile.V3.support.helper.DepositControllerHelperFactory;
+import so.wwb.gamebox.mobile.V3.support.helper.IDepositControllerHelper;
+import so.wwb.gamebox.mobile.V3.support.submitter.DepositSubmitterBitcoin;
+import so.wwb.gamebox.mobile.V3.support.submitter.DepositSubmitterCompany;
+import so.wwb.gamebox.mobile.V3.support.submitter.DepositSubmitterOnline;
+import so.wwb.gamebox.mobile.V3.support.submitter.IDepositSubmitter;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -30,7 +34,6 @@ import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.digiccy.po.DigiccyAccountInfo;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
-import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
@@ -130,10 +133,7 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("channel", channel);
         IDepositControllerHelper helper = DepositControllerHelperFactory.getHelper(channel);
         //获取收款账号
-        PayAccountVo payAccountVo = new PayAccountVo();
-        payAccountVo.setSearchId(searchId);
-        PayAccount payAccount = DepositAccountSearcher.getInstance().searchById(payAccountVo.getSearch().getId());
-
+        PayAccount payAccount = DepositAccountSearcher.getInstance().searchById(convertAccountId(searchId));
         if (payAccount != null) {
             model.addAttribute("rank", getRank());
             //是否隐藏收款账号
@@ -155,19 +155,10 @@ public class V3DepositController extends V3BaseDepositController {
         if (StringTool.isNotBlank(depositCash)) {
             model.addAttribute("rechargeAmount", depositCash);
         }
-        model.addAttribute("command", payAccountVo);
+        model.addAttribute("command", new PayAccountVo());
         model.addAttribute("payAccount", payAccount);
         model.addAttribute("rechargeType", rechargeType);
         return helper.getNextStepUrl();
-    }
-
-    private String getLastDepositName(String rechargeType, Integer userId) {
-        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
-        PlayerRecharge playerRecharge = new PlayerRecharge();
-        playerRecharge.setRechargeType(rechargeType);
-        playerRecharge.setPlayerId(userId);
-        playerRechargeVo.setResult(playerRecharge);
-        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
     }
 
     /**
@@ -187,15 +178,26 @@ public class V3DepositController extends V3BaseDepositController {
         } else {
             amount = playerRechargeVo.getResult().getRechargeAmount();
         }
+        //计算优惠显示
         double fee = calculateFee(getRank(), amount);
         model.addAttribute("rechargeAmount", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
         model.addAttribute("counterFee", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
         model.addAttribute("fee", fee);
+        //检查是否开启活动
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         if (!isOpenActivityHall) {
             model.addAttribute("sales", searchSaleByAmount(amount, playerRechargeVo.getResult().getRechargeType()));
         }
         model.addAttribute("isOpenActivityHall", isOpenActivityHall);
+        //统计该渠道失败次数
+        Integer failureCount = 0;
+        RechargeTypeEnum rechargeTypeEnum = RechargeTypeEnum.enumOf(playerRechargeVo.getResult().getRechargeType());
+        if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
+            PlayerRechargeVo playerRechargeVo4Count = new PlayerRechargeVo();
+            playerRechargeVo4Count.getSearch().setPayAccountId(convertAccountId(playerRechargeVo.getAccount()));
+            failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo4Count, SessionManager.getUserId());
+        }
+        model.addAttribute("failureCount", failureCount);
         return "/deposit/Sale2";
     }
 

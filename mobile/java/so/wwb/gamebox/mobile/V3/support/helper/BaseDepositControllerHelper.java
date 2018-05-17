@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
@@ -15,7 +15,6 @@ import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.company.po.Bank;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
-import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.cache.Cache;
 
 import java.util.*;

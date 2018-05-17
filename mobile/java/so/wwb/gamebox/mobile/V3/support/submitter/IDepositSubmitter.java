@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.support;
+package so.wwb.gamebox.mobile.V3.support.submitter;
 
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
@@ -6,7 +6,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 充值最终提交者
+ * 充值最终的执行器
  */
 public interface IDepositSubmitter {
     /**

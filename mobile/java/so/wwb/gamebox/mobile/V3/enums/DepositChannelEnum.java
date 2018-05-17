@@ -2,7 +2,8 @@ package so.wwb.gamebox.mobile.V3.enums;
 
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.enums.ICodeEnum;
-import so.wwb.gamebox.mobile.V3.helper.*;
+import so.wwb.gamebox.mobile.V3.support.helper.CompanyDepositControllerHelper;
+import so.wwb.gamebox.mobile.V3.support.helper.*;
 
 public enum DepositChannelEnum implements ICodeEnum {
     ONLINE("online", "在线支付", OnlineDepositControllerHelper.class),

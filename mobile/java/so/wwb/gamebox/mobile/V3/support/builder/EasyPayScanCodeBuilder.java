@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class UniontScanCodeHandler extends BaseScanCodeControllerHandler implements IScanCodeControllerHandler {
+public class EasyPayScanCodeBuilder extends BaseScanCodeControllerBuilder implements IScanCodeControllerBuilder {
     /**
      * 返回扫码支付渠道
      *
@@ -19,7 +19,7 @@ public class UniontScanCodeHandler extends BaseScanCodeControllerHandler impleme
      * @return
      */
     public Map<String, PayAccount> getScanAccount(PlayerRank rank) {
-        return getScanAccount(rank, PayAccountAccountType.UNION_PAY.getCode(), null);
+        return getScanAccount(rank, PayAccountAccountType.EASY_PAY.getCode(), null);
     }
 
     /**
@@ -34,7 +34,7 @@ public class UniontScanCodeHandler extends BaseScanCodeControllerHandler impleme
 
 
     public String getOnlineRechargeType() {
-        return RechargeTypeEnum.UNION_PAY_SCAN.getCode();
+        return RechargeTypeEnum.EASY_PAY.getCode();
     }
 
     public String getCompanyRechargeType() {

@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
@@ -7,7 +7,8 @@ import org.soul.web.support.IForm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.mobile.V3.enums.ScanCodeTypeEnum;
-import so.wwb.gamebox.mobile.V3.handler.IScanCodeControllerHandler;
+import so.wwb.gamebox.mobile.V3.support.builder.IScanCodeControllerBuilder;
+import so.wwb.gamebox.mobile.V3.support.helper.BaseDepositControllerHelper;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper<ScancodeDepositControllerHelper.PayAccountScancode> {
     public List<PayAccountScancode> getPayAccounts(PlayerRank rank, String channel) {
         ScanCodeTypeEnum scanCodeEnum = ScanCodeTypeEnum.enumOf(channel);
-        IScanCodeControllerHandler handler = SpringTool.getBean(scanCodeEnum.getHandlerClazz());
+        IScanCodeControllerBuilder handler = SpringTool.getBean(scanCodeEnum.getHandlerClazz());
         List<PayAccountScancode> payaccounts = new ArrayList<>();
         //获取扫码账号
         Map<String, PayAccount> scanAccount = handler.getScanAccount(rank);

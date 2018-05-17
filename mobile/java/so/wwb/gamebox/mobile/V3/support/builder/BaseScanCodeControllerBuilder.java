@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.lang.string.I18nTool;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BaseScanCodeControllerHandler {
+public class BaseScanCodeControllerBuilder {
     /**
      * 获取电子支付账号
      *

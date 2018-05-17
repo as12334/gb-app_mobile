@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
@@ -42,8 +42,8 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
         if (!MapTool.isEmpty(payAccountMap)) {
             Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
             List<PayAccountOnline> results = new ArrayList<>();
-            for (String bank : payAccountMap.keySet()) {
-                PayAccountOnline pay = new PayAccountOnline(bank, i18nMap.get(bank), payAccountMap.get(bank));
+            for (Map.Entry<String, PayAccount> bank : payAccountMap.entrySet()) {
+                PayAccountOnline pay = new PayAccountOnline(bank.getKey(), i18nMap.get(bank.getKey()), bank.getValue());
                 results.add(pay);
             }
             return results;

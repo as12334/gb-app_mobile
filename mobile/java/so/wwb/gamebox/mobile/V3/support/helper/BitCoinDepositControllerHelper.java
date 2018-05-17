@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.web.support.IForm;
