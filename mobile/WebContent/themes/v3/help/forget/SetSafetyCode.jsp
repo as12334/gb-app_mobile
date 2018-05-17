@@ -16,13 +16,13 @@
         <div class="diy-list">
             <div class="label label_txt">新安全码</div>
             <div class="input">
-                <input type="password" class="text-right" id="pwd1" maxlength="6" placeholder="请输入安全码">
+                <input type="password" class="text-right" name="pwd1" maxlength="6" placeholder="请输入安全码">
             </div>
         </div>
         <div class="diy-list">
             <div class="label label_txt">确认安全码</div>
             <div class="input">
-                <input type="password" class="text-right" id="pwd2" maxlength="6" placeholder="再次输入安全码">
+                <input type="password" class="text-right" name="pwd2" maxlength="6" placeholder="再次输入安全码">
             </div>
         </div>
         <div class="btn-wrap">
