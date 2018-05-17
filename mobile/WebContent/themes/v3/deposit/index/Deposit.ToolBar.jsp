@@ -82,7 +82,7 @@
             </div>
         </div>
     </c:if>
-    <c:if test="${isFastRecharge}">
+    <c:if test="${isFastRecharge && !empty rechargeUrlParam}">
         <div class="list_pay_item_w" data-rel='{"opType":"href","target":"${rechargeUrlParam}"}'>
             <div class="list_pay_item">
                 <i class="icon-pay kuaichong"></i>

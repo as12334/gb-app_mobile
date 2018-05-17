@@ -59,4 +59,6 @@ public interface IDepositControllerHelper<P extends PayAccount> {
      * @return
      */
     String getRechargeType(String channel);
+
+
 }
