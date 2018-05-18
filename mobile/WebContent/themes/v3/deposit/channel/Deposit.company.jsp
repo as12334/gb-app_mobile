@@ -13,8 +13,10 @@
             <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="result.rechargeType" value="online_bank"/>
             <input type="hidden" id="siteCurrencySign" value="${siteCurrencySign}"/>
-            <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="0.01"/>
-            <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="9999999"/>
+            <c:set var="min" value="${empty rank.onlinePayMin || rank.onlinePayMin <= 0 ?0.01:rank.onlinePayMin}" />
+            <c:set var="max" value="${empty rank.onlinePayMax || rank.onlinePayMax <= 0 ?99999999:rank.onlinePayMax}" />
+            <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="${min}"/>
+            <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="${max}"/>
             <input type="hidden" name="account" id="account" value=""/>
             <input type="hidden" name="result.payerBank" id="result.payerBank" value=""/>
             <input type="hidden" name="bankCode" value="" id="bankCode"/>
@@ -37,13 +39,11 @@
                 <%@include file="../ChooseAmount.jsp" %>
                 <div class="depo_row">
                     <div class="label">存款金额</div>
-                    <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text"
-                                              placeholder="${siteCurrencySign}${soulFn:formatCurrency(0.01)}~${siteCurrencySign}${soulFn:formatCurrency(9999999)}"/>
+                    <div class="input">
+                        <input id="result.rechargeAmount" name="result.rechargeAmount" type="text"  placeholder="${siteCurrencySign}${soulFn:formatCurrency(min)}~${siteCurrencySign}${soulFn:formatCurrency(max)}"/>
+                            <input type="hidden" name="result.randomCash" value="0"/>
                     </div>
-                    <div class="ext" style="display: none">
-                        <input type="hidden" name="result.randomCash" value="${rechargeDecimals}"/>
-                        <div class="cha">.${rechargeDecimals}</div>
-                    </div>
+
                 </div>
             </div>
             <div class="btn_wrap">
