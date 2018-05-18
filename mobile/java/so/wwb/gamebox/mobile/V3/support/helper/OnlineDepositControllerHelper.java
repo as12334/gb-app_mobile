@@ -58,15 +58,16 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
      * @return
      */
     public String getAccountJson(List<PayAccountOnline> accouts) {
-        List<Map<String, String>> bankList = new ArrayList<>();
+        List<Map<String, Object>> bankList = new ArrayList<>();
         PayAccountVo payAccountVo = new PayAccountVo();
         for (PayAccountOnline online : accouts) {
-            Map<String, String> map = new HashMap<>(4, 1f);
+            Map<String, Object> map = new HashMap<>(4, 1f);
             map.put("value", online.getBank());
             map.put("text", online.getBankName());
             map.put("min", online.getSingleDepositMin() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMin()));
             map.put("max", online.getSingleDepositMax() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMax()));
             map.put("account", payAccountVo.getSearchId(online.getId()));
+            map.put("random",online.getRandomAmount());
             bankList.add(map);
         }
         return JsonTool.toJson(bankList);

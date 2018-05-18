@@ -48,17 +48,16 @@
                     <div class="bank_car_item">
                         <div class="top">
                             <c:set var="flag" value="${empty payAccount.customBankName || dicts.common.bankname[payAccount.bankCode]==payAccount.customBankName}"/>
-                            <p class="${!flag ? '':'pay-third '} ${!flag ? '':payAccount.bankCode}">
-                                <c:if test="${!flag}">
-                                    ${payAccount.customBankName}
-                                </c:if>
-                            </p>
+                            <i class="pay-third ${payAccount.bankCode}"></i>
+                            <c:if test="${!flag}">
+                                <div style="float: right;"><p>${payAccount.customBankName}</p></div>
+                            </c:if>
                         </div>
                         <div class="bank_car_txt_info">
                             <div class="b_c_t_i_row">
                                 <c:choose>
                                     <c:when test="${isHide}">
-                                        ${payAccount.code},${views.deposit_auto['请联系客服']}
+                                        <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${payAccount.code},${views.deposit_auto['请联系客服']}</a>
                                     </c:when>
                                     <c:otherwise>
                                         ${payAccount.account}
@@ -74,7 +73,6 @@
                         </div>
                     </div>
                     <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
-
                         <div class="wechat-code">
                             <div class="cod-img-wrap">
                                 <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">

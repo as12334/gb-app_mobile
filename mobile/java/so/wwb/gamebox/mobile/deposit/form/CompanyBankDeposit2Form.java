@@ -48,7 +48,7 @@ public class CompanyBankDeposit2Form implements IForm {
     }
 
     @Comment("交易地点")
-    @Length(max = 20)
+    @Length(max = 30)
     public String getResult_rechargeAddress() {
         return result_rechargeAddress;
     }

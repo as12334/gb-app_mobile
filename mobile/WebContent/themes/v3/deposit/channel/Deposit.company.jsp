@@ -41,7 +41,7 @@
                     <div class="label">存款金额</div>
                     <div class="input">
                         <input id="result.rechargeAmount" name="result.rechargeAmount" type="text"  placeholder="${siteCurrencySign}${soulFn:formatCurrency(min)}~${siteCurrencySign}${soulFn:formatCurrency(max)}"/>
-                            <input type="hidden" name="result.randomCash" value="0"/>
+                        <input type="hidden" name="result.randomCash" value="0"/>
                     </div>
 
                 </div>
