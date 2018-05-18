@@ -57,6 +57,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -190,7 +191,7 @@ public class TransferController extends WalletBaseController {
     @RequestMapping(value = "/transfersMoney", method = RequestMethod.POST)
     @ResponseBody
     //@Token(valid = true)
-    public Map transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid PlayerTransferForm form, BindingResult result) {
+    public Map transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid PlayerTransferForm form, BindingResult result,HttpServletRequest request) {
         LOG.info("【玩家[{0}]转账】:从[{1}]转到[{2}]", SessionManager.getUserName(), playerTransferVo.getTransferOut(), playerTransferVo.getTransferInto());
         if (!isTimeToTransfer()) {//是否已经过了允许转账的间隔
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_TIME_INTERVAL.getCode(), playerTransferVo.getResult().getApiId());
@@ -198,7 +199,7 @@ public class TransferController extends WalletBaseController {
         if (result.hasErrors()) {
             return getErrorMessage(TransferResultStatusEnum.TRANSFER_INTERFACE_BUSY.getCode(), playerTransferVo.getResult().getApiId());
         }
-        loadTransferInfo(playerTransferVo);
+        loadTransferInfo(playerTransferVo,request);
         Map<String, Object> resultMap = isAbleToTransfer(playerTransferVo);
         if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
             return resultMap;
@@ -249,7 +250,7 @@ public class TransferController extends WalletBaseController {
      *
      * @param playerTransferVo
      */
-    private void loadTransferInfo(PlayerTransferVo playerTransferVo) {
+    private void loadTransferInfo(PlayerTransferVo playerTransferVo,HttpServletRequest request) {
         if (TRANSFER_WALLET.equals(playerTransferVo.getTransferInto())) {//转入钱包
             playerTransferVo.getResult().setTransferType(FundTypeEnum.TRANSFER_INTO.getCode());
             playerTransferVo.getResult().setApiId(NumberTool.toInt(playerTransferVo.getTransferOut()));
@@ -258,7 +259,7 @@ public class TransferController extends WalletBaseController {
             playerTransferVo.getResult().setApiId(NumberTool.toInt(playerTransferVo.getTransferInto()));
         }
         playerTransferVo.setSysUser(SessionManager.getUser());
-        playerTransferVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerTransferVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerTransferVo.getResult().setUserId(SessionManager.getUserId());
         playerTransferVo.getResult().setUserName(SessionManager.getUserName());
         playerTransferVo.getResult().setIp(SessionManager.getIpDb().getIp());

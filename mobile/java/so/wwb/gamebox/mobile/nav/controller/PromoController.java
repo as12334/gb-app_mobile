@@ -70,7 +70,7 @@ public class PromoController {
         vPreferentialRecodeListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vPreferentialRecodeListVo.getSearch().setUserId(SessionManager.getUserId());
         vPreferentialRecodeListVo.getSearch().setCurrentDate(SessionManager.getDate().getNow());
-        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
+        vPreferentialRecodeListVo.getSearch().setActivityTerminalType(SessionManagerCommon.getTerminal(request));
         /*if (ServletTool.isAjaxSoulRequest(request)) {
             vPreferentialRecodeListVo = ServiceSiteTool.vPreferentialRecodeService().search(vPreferentialRecodeListVo);
         }*/
@@ -99,7 +99,7 @@ public class PromoController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
+        vActivityMessageListVo.getSearch().setActivityTerminalType(SessionManagerCommon.getTerminal(request));
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
         //首页只展示部分优惠
         if (isTwoCount) {
@@ -135,7 +135,7 @@ public class PromoController {
      * 已经结束的活动
      */
     @RequestMapping("/finishedPromo")
-    public String finishedPromoRecords(VActivityMessageListVo vActivityMessageListVo, Model model) {
+    public String finishedPromoRecords(VActivityMessageListVo vActivityMessageListVo, Model model,HttpServletRequest request) {
         vActivityMessageListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageListVo.getSearch().setStates(ActivityStateEnum.FINISHED.getCode());
         vActivityMessageListVo.getSearch().setIsDeleted(Boolean.FALSE);
@@ -147,7 +147,7 @@ public class PromoController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
+        vActivityMessageListVo.getSearch().setActivityTerminalType(SessionManagerCommon.getTerminal(request));
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
 
         model.addAttribute("command", vActivityMessageListVo);

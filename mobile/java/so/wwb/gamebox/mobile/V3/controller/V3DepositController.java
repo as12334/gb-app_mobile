@@ -36,6 +36,7 @@ import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.demomodel.DemoMenuEnum;
@@ -58,12 +59,12 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/index")
     @DemoModel(menuCode = DemoMenuEnum.CKZQ)
     @Upgrade(upgrade = true)
-    public String index(Model model) {
+    public String index(Model model,HttpServletRequest request) {
         //设置foot所选择的位置
         model.addAttribute("skip", 0);
         //取得用户所支持的存款通道
         PayAccountListVo payAccountListVo = new PayAccountListVo();
-        payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
+        payAccountListVo.getSearch().setTerminal(SessionManagerCommon.getTerminal(request));
         payAccountListVo.setPlayerId(SessionManager.getUserId());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
 

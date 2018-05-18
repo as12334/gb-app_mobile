@@ -743,7 +743,7 @@ public class BaseUserInfoController {
      *
      * @param playerTransferVo
      */
-    protected void loadTransferInfo(PlayerTransferVo playerTransferVo) {
+    protected void loadTransferInfo(PlayerTransferVo playerTransferVo,HttpServletRequest request) {
         if (TRANSFER_WALLET.equals(playerTransferVo.getTransferInto())) {//转入钱包
             playerTransferVo.getResult().setTransferType(FundTypeEnum.TRANSFER_INTO.getCode());
             playerTransferVo.getResult().setApiId(NumberTool.toInt(playerTransferVo.getTransferOut()));
@@ -752,7 +752,7 @@ public class BaseUserInfoController {
             playerTransferVo.getResult().setApiId(NumberTool.toInt(playerTransferVo.getTransferInto()));
         }
         playerTransferVo.setSysUser(SessionManager.getUser());
-        playerTransferVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerTransferVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerTransferVo.getResult().setUserId(SessionManager.getUserId());
         playerTransferVo.getResult().setUserName(SessionManager.getUserName());
         playerTransferVo.getResult().setIp(SessionManager.getIpDb().getIp());

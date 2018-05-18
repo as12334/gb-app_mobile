@@ -489,7 +489,7 @@ public class BaseWithDrawController {
         transaction.setDeductFavorable(deductFavorable);
         transaction.setPlayerId(SessionManagerCommon.getUserId());
         transaction.setTransactionMoney(vo.getWithdrawAmount());
-        transaction.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        transaction.setOrigin(SessionManagerCommon.getTerminal(request));
         vo.setResult(transaction);
         vo.setIpWithdraw(SessionManagerBase.getIpDb().getIp());
         vo.setIpDictCode(SessionManagerBase.getIpDictCode());
