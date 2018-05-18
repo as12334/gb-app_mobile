@@ -209,6 +209,16 @@
                                     <p>绑定手机</p>
                                 </a>
                             </li>
+                            <ul class="mui-list-unstyled list-mine-item"><!--第五行-->
+                                <li class="mui-col-xs-4">
+                                    <a data-rel='{"target":"${root}/help/forgetSafetyCode.html","opType":"href"}'>
+						<span class="item-img-wrap">
+							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;"/>
+						</span>
+                                        <p>忘记安全码</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </c:if>
                     </ul>
                     <c:if test="${len ==2}">
@@ -219,6 +229,14 @@
 							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;"/>
 						</span>
                                     <p>绑定手机</p>
+                                </a>
+                            </li>
+                            <li class="mui-col-xs-4" >
+                                <a data-rel='{"target":"${root}/help/forgetSafetyCode.html","opType":"href"}'>
+						<span class="item-img-wrap">
+							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;"/>
+						</span>
+                                    <p>忘记安全码</p>
                                 </a>
                             </li>
                         </ul>
