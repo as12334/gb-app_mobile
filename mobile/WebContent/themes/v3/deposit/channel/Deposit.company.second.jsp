@@ -84,7 +84,7 @@
                         <c:if test="${channel!='company'}">
                             <div class="depo_row">
                                 <div class="label">${views.deposit_auto['交易地点']}</div>
-                                <div class="input"><input class="text-right"  type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" maxlength="20" onchange="this.value=this.value.trim()"></div>
+                                <div class="input"><input class="text-right"  type="text" name="result.rechargeAddress" placeholder="${views.deposit_auto['请输入地点']}" maxlength="30" onchange="this.value=this.value.trim()"></div>
                             </div>
                         </c:if>
                     </div>
