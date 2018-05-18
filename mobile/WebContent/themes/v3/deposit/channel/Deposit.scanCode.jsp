@@ -50,7 +50,7 @@
                 <%@include file="../ChooseAmount.jsp"%>
                 <div class="depo_row">
                     <div class="label">存款金额</div>
-                    <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text" placeholder="请选择存款方式"/></div>
+                    <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text" placeholder="${siteCurrencySign}0.01-${siteCurrencySign}9999999.00"/></div>
                     <div class="ext" id="random_amount" style="display: none">
                         <input type="hidden" name="result.randomCash" value="${rechargeDecimals}"/>
                         <div class="cha">.${rechargeDecimals}</div>
@@ -69,7 +69,8 @@
                 </div>
             </div>
             <div class="btn_wrap">
-                <a id="btn_scan" style="display: none" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"baseDeposit.activity","payType":"scan"}'>提交</a>
+                <a id="btn_default" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"depositScanCode.defBtnTap","payType":"scan"}'>提交</a>
+                <a id="btn_scan" style="display: none"  class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"baseDeposit.activity","payType":"scan"}'>提交</a>
                 <a id="btn_electronicPay" style="display: none" class="mui-btn btn_submit mui-btn-block" data-rel='{"opType":"function","target":"baseDeposit.nextStep","payType":"electronicPay"}'>提交</a>
             </div>
     </c:when>
