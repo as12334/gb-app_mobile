@@ -6,12 +6,14 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
 import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
@@ -24,6 +26,13 @@ import so.wwb.gamebox.web.cache.Cache;
 import java.util.*;
 
 public class V3BaseDepositController {
+    protected String getDepositWay(String channel, String rechargeType) {
+        if (DepositChannelEnum.COUNTER.getCode().equals(channel) || DepositChannelEnum.E_BANK.getCode().equals(channel)) {
+            return DepositWayEnum.COMPANY_DEPOSIT.getCode();
+        }
+        return rechargeType;
+    }
+
     /**
      * 计算手续费
      *
@@ -51,6 +60,7 @@ public class V3BaseDepositController {
      */
 
     protected List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
+
         UserPlayer userPlayer = getUserPlayer();
         VActivityMessageVo vActivityMessageVo = new VActivityMessageVo();
         vActivityMessageVo.getSearch().setDepositWay(type);
@@ -60,6 +70,7 @@ public class V3BaseDepositController {
         vActivityMessageVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageVo = ServiceActivityTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
+
         if (CollectionTool.isEmpty(vActivityMessages)) {
             return new ArrayList<>();
         }

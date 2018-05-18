@@ -30,7 +30,7 @@
                         <c:set var="isOther" value="${payAccount.bankCode=='other_bank'}"/>
                         <div class="bank_car_item">
                             <div class="top">
-                                <span class="pay-bank icbc"></span>
+                                <span class="pay-bank ${isOther?'other':payAccount.bankCode}"></span>
                                 <span class="car_type">
                                     ${views.deposit_auto['储蓄卡']}</span>
                                     <c:choose>
@@ -44,7 +44,7 @@
                                     <c:choose>
                                     <c:when test="${isHide}">
                                         <span class="text-green">${account.code}&nbsp;&nbsp;</span>
-                                        <a open-href="${root}/index/gotoCustomer.html">${hideContent.value}</a>
+                                        <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${hideContent.value}</a>
                                     </c:when>
                                     <c:otherwise>
                                         ${soulFn:formatBankCard(payAccount.account)}

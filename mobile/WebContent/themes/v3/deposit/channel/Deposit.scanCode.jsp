@@ -40,7 +40,7 @@
                                 <div class="bank_list_i">
                                     <i class="bank_n ${channel}"></i>
                                     <div class="bank_n_txt">
-                                            ${empty i.aliasName ? i.customBankName:i.aliasName}
+                                            ${empty i.aliasName ? dicts.common.bankname[i.bankCode]:i.aliasName}
                                     </div>
                                 </div>
                             </div>

@@ -103,9 +103,11 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("command", new PayAccountVo());
         //当前选择的通道
         model.addAttribute("channel", channel);
+
         //随机额度
         Double rechargeDecimals = Math.random() * 99 + 1;
         model.addAttribute("rechargeDecimals", rechargeDecimals.intValue());
+
         model.addAttribute("rechargeType", helper.getRechargeType(channel));
         return helper.getIndexUrl();
     }
@@ -134,7 +136,13 @@ public class V3DepositController extends V3BaseDepositController {
             //是否隐藏收款账号
             SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
             if (sysParam != null) {
-                SysParam hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING);
+                SysParam hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT);//默认为电子支付
+                if (DepositChannelEnum.E_BANK.getCode().equals(channel)) {//如果是网银支付
+                    hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING);
+                }
+                if (DepositChannelEnum.COUNTER.getCode().equals(channel)) {//如果是柜台支付
+                    hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_ATM_COUNTER);
+                }
                 // 判断是否隐藏收款账号
                 if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
                     model.addAttribute("isHide", true);
@@ -181,7 +189,7 @@ public class V3DepositController extends V3BaseDepositController {
         //检查是否开启活动
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         if (!isOpenActivityHall) {
-            model.addAttribute("sales", searchSaleByAmount(amount, playerRechargeVo.getResult().getRechargeType()));
+            model.addAttribute("sales", searchSaleByAmount(amount, getDepositWay(channel, playerRechargeVo.getResult().getRechargeType())));
         }
         model.addAttribute("isOpenActivityHall", isOpenActivityHall);
         //统计该渠道失败次数

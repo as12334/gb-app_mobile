@@ -32,18 +32,23 @@
                             <span class="pay-third BTC"></span>
                         </div>
                         <div class="bank_car_txt_info">
-                            <div class="b_c_t_i_row"> 扫码支付存款到比特币账户， <br>
-                                自动到账。</div>
+                            <div class="b_c_t_i_row">
                             <c:choose>
                                 <c:when test="${isHide}">
                                     <c:set var="copyText" value="${payAccount.code}"/>
-                                    ${payAccount.code} ${views.deposit_auto['请联系客服']}
+                                    <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${payAccount.code} ${views.deposit_auto['请联系客服']}</a>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="copyText" value="${payAccount.account}"/>
                                     ${payAccount.account}
+                                    <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
                                 </c:otherwise>
                             </c:choose>
+                            </div>
+                            <div class="b_c_t_i_row">
+                                    ${views.deposit_auto['姓名']}： ${payAccount.fullName}
+                                    <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
+                            </div>
                         </div>
                     </div>
                     <div class="wechat-code bit_coin_c">
