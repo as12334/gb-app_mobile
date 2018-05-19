@@ -39,7 +39,6 @@ import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferSourceEnum;

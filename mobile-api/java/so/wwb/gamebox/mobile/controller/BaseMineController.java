@@ -175,9 +175,6 @@ public class BaseMineController {
         if (MapTool.isNotEmpty(map) && !MapTool.getBooleanValue(map, "isSuccess")) {
             return map;
         }
-        if (StringTool.isBlank(playerApiVo.getOrigin())) {
-            playerApiVo.setOrigin(TransactionOriginEnum.PC.getCode());
-        }
         SysUser user = SessionManagerBase.getUser();
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo._setSiteId(playerApiVo._getSiteId());

@@ -6,7 +6,6 @@ import org.soul.commons.net.ServletTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
 import so.wwb.gamebox.web.SessionManagerCommon;

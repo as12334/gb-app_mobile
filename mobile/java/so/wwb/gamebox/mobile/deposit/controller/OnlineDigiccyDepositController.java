@@ -15,7 +15,6 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.digiccy.po.UserDigiccy;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyListVo;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyVo;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;

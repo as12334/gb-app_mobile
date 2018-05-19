@@ -9,10 +9,10 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.SiteParamEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.notice.enums.CometSubscribeType;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
@@ -36,7 +36,7 @@ public class DepositSubmitterOnline extends AbstractRechargeSubmitter implements
         }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(TerminalEnum.MOBILE.getCode());
         playerRechargeVo.setRankId(rank.getId());
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
         playerRecharge.setRechargeType(playerRechargeVo.getResult().getRechargeType());

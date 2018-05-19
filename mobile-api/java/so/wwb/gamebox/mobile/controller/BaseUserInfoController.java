@@ -43,7 +43,6 @@ import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.enums.UserPlayerTransferStateEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;

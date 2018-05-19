@@ -35,7 +35,6 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
