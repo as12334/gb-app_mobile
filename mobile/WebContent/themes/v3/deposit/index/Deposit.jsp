@@ -43,56 +43,56 @@
             </div>
         </div>
     </div>
-    <%--微信反扫教程：--%>
-    <div id="depositHelpBox10" class="depositHelpBox" style="display: none">
-        <div class="swiper-container">
-            <div class="swiper-wrapper wechat-fansao">
-                <div class="swiper-slide step-1"><img src="${resRoot}/images/wechat-step-1.png"/>
-                    <div class="circle"></div>
-                </div>
-                <div class="swiper-slide step-2"><img src="${resRoot}/images/wechat-step-2.png"/>
-                    <div class="circle"></div>
-                </div>
-                <div class="swiper-slide step-3"><img src="${resRoot}/images/wechat-step-3.png"/>
-                    <div class="circle"></div>
-                </div>
+</div>
+<%--微信反扫教程：--%>
+<div id="depositHelpBox10" class="depositHelpBox" style="display: none">
+    <div class="swiper-container">
+        <div class="swiper-wrapper wechat-fansao">
+            <div class="swiper-slide step-1"><img src="${resRoot}/images/wechat-step-1.png"/>
+                <div class="circle"></div>
             </div>
-            <div class="swiper-pagination swiper-pagination-bullets"></div>
-            <a data-rel='{"opType":"function","target":"depositScanCode.closeReScanCourse"}' class="closeHelpBox">+</a>
+            <div class="swiper-slide step-2"><img src="${resRoot}/images/wechat-step-2.png"/>
+                <div class="circle"></div>
+            </div>
+            <div class="swiper-slide step-3"><img src="${resRoot}/images/wechat-step-3.png"/>
+                <div class="circle"></div>
+            </div>
         </div>
+        <div class="swiper-pagination swiper-pagination-bullets"></div>
+        <div data-rel='{"opType":"function","target":"depositScanCode.closeReScanCourse"}' class="closeHelpBox">+</div>
     </div>
-    <!--qq反扫教程：-->
-    <div id="depositHelpBox12" class="depositHelpBox" style="display:none;">
-        <div class="swiper-container">
-            <div class="swiper-wrapper qq-fansao" style="">
-                <div class="swiper-slide step-1"><img src="${resRoot}/images/qq-step-1.png" alt=""/>
-                    <div class="circle"></div>
-                </div>
-                <div class="swiper-slide step-2"><img src="${resRoot}/images/qq-step-2.png" alt=""/>
-                    <div class="circle"></div>
-                </div>
-                <div class="swiper-slide step-3"><img src="${resRoot}/images/qq-step-3.png" alt=""/>
-                    <div class="circle"></div>
-                </div>
+</div>
+<!--qq反扫教程：-->
+<div id="depositHelpBox12" class="depositHelpBox" style="display:none;">
+    <div class="swiper-container">
+        <div class="swiper-wrapper qq-fansao" style="">
+            <div class="swiper-slide step-1"><img src="${resRoot}/images/qq-step-1.png" alt=""/>
+                <div class="circle"></div>
             </div>
-            <div class="swiper-pagination"></div>
-            <a data-rel='{"opType":"function","target":"depositScanCode.closeReScanCourse"}' class="closeHelpBox">+</a>
+            <div class="swiper-slide step-2"><img src="${resRoot}/images/qq-step-2.png" alt=""/>
+                <div class="circle"></div>
+            </div>
+            <div class="swiper-slide step-3"><img src="${resRoot}/images/qq-step-3.png" alt=""/>
+                <div class="circle"></div>
+            </div>
         </div>
+        <div class="swiper-pagination"></div>
+        <a data-rel='{"opType":"function","target":"depositScanCode.closeReScanCourse"}' class="closeHelpBox">+</a>
     </div>
-    <%--支付宝反扫教程：--%>
-    <div id="depositHelpBox11" class="depositHelpBox" style="display:none;">
-        <div class="swiper-container">
-            <div class="swiper-wrapper alipay-fansao" style="">
-                <div class="swiper-slide step-1"><img src="${resRoot}/images/alipay-step-1.png" alt=""/>
-                    <div class="circle"></div>
-                </div>
-                <div class="swiper-slide step-2"><img src="${resRoot}/images/alipay-step-2.png" alt=""/>
-                    <div class="circle"></div>
-                </div>
+</div>
+<%--支付宝反扫教程：--%>
+<div id="depositHelpBox11" class="depositHelpBox" style="display:none;">
+    <div class="swiper-container">
+        <div class="swiper-wrapper alipay-fansao" style="">
+            <div class="swiper-slide step-1"><img src="${resRoot}/images/alipay-step-1.png" alt=""/>
+                <div class="circle"></div>
             </div>
-            <div class="swiper-pagination"></div>
-            <a data-rel='{"opType":"function","target":"depositScanCode.closeReScanCourse"}' class="closeHelpBox">+</a>
+            <div class="swiper-slide step-2"><img src="${resRoot}/images/alipay-step-2.png" alt=""/>
+                <div class="circle"></div>
+            </div>
         </div>
+        <div class="swiper-pagination"></div>
+        <a data-rel='{"opType":"function","target":"depositScanCode.closeReScanCourse"}' class="closeHelpBox">+</a>
     </div>
 </div>
 <%@ include file="Deposit.footer.jsp" %>
