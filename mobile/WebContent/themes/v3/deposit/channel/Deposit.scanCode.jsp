@@ -40,7 +40,7 @@
                                 <div class="bank_list_i">
                                     <i class="bank_n ${channel}"></i>
                                     <div class="bank_n_txt">
-                                            ${empty i.aliasName ? dicts.common.bankname[i.bankCode]:i.aliasName}
+                                            ${empty i.aliasName ? (empty i.customBankName ? views.deposit[i.rechargeType]:i.customBankName):i.aliasName}
                                     </div>
                                 </div>
                             </div>

@@ -1,8 +1,11 @@
 package so.wwb.gamebox.mobile.V3.support.helper;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.web.support.IForm;
 import org.springframework.stereotype.Component;
+import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
 import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.V3.support.helper.BaseDepositControllerHelper;
 import so.wwb.gamebox.mobile.deposit.form.CompanyBankDeposit2Form;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -11,18 +14,26 @@ import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class CompanyDepositControllerHelper extends BaseDepositControllerHelper<PayAccount> {
     public List<PayAccount> getPayAccounts(PlayerRank rank, String channel) {
-        List<PayAccount> payAccounts = DepositAccountSearcher.getInstance().searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), null, null, null);
-        boolean display = rank != null && rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
-        if (!display) {
-            return distinctAccountByBankCode(payAccounts);
+        List<PayAccount> allAccount = DepositAccountSearcher.getInstance().searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), null, null, null);
+        List<PayAccount> payAccounts = new ArrayList<>();
+        //如果是柜员机，则根据账号过滤柜员机开关
+        if (DepositChannelEnum.COUNTER.equals(channel)) {
+            for (PayAccount acc : allAccount) {
+                if (acc.getSupportAtmCounter()) {
+                    payAccounts.add(acc);
+                }
+            }
         } else {
-            //相同账号设置别名
-            convertAliasName(payAccounts);
+            payAccounts.addAll(allAccount);
+        }
+        if (CollectionTool.isNotEmpty(payAccounts)) {
+            return DepositTool.convertCompanyAccount(rank, payAccounts, getRechargeType(channel));
         }
         return payAccounts;
     }

@@ -28,7 +28,7 @@ public class OneCodePayScanCodeBuilder extends BaseScanCodeControllerBuilder imp
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.ONECODEPAY.getCode(), RechargeTypeEnum.ONECODEPAY_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.ONECODEPAY.getCode());
     }
 
 

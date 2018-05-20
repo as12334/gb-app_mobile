@@ -29,7 +29,7 @@ public class JdScanCodeBuilder extends BaseScanCodeControllerBuilder implements 
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.JDWALLET.getCode(), RechargeTypeEnum.JDWALLET_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.JDWALLET.getCode());
     }
 
 

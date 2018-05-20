@@ -29,7 +29,7 @@ public class AlipayScanCodeBuilder extends BaseScanCodeControllerBuilder impleme
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.FAST_ALIPAY.getCode(), RechargeTypeEnum.ALIPAY_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.FAST_ALIPAY.getCode());
     }
 
 

@@ -7,6 +7,7 @@ import org.soul.web.support.IForm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.mobile.V3.enums.ScanCodeTypeEnum;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.V3.support.builder.IScanCodeControllerBuilder;
 import so.wwb.gamebox.mobile.V3.support.helper.BaseDepositControllerHelper;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
@@ -33,22 +34,21 @@ public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper
                 payaccounts.add(account);
             }
         }
-
+        //根据在线支付是否显示多个账号进行处理
+        List<PayAccountScancode> result = new ArrayList<>();
+        if (CollectionTool.isNotEmpty(payaccounts)) {
+            result = DepositTool.convertOnlineAccount(rank, payaccounts, handler.getOnlineRechargeType());
+        }
         //获取电子账号
         List<PayAccount> electronicAccount = handler.getElectronicAccount(rank);
-        boolean display = rank != null && rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
-        if (!display) {
-            electronicAccount = distinctAccountByBankCode(electronicAccount);
-        } else {
-            //相同账号设置别名
-            electronicAccount = convertAliasName(electronicAccount);
-        }
         if (CollectionTool.isNotEmpty(electronicAccount)) {
-            for (PayAccount account : electronicAccount) {
-                payaccounts.add(new PayAccountScancode("electroin", handler.getCompanyRechargeType(), account));
+            //根据公司入款是否显示多个账号处理
+            List<PayAccount> eleaList = DepositTool.convertCompanyAccount(rank, electronicAccount, handler.getCompanyRechargeType());
+            for (PayAccount acc : eleaList) {
+                result.add(new PayAccountScancode("electroin", handler.getCompanyRechargeType(), acc));
             }
         }
-        return payaccounts;
+        return result;
     }
 
     public String getAccountJson(List<PayAccountScancode> accouts) {

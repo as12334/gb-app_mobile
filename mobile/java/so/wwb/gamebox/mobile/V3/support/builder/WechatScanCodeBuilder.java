@@ -29,7 +29,7 @@ public class WechatScanCodeBuilder extends BaseScanCodeControllerBuilder impleme
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.FAST_WECHAT.getCode(), RechargeTypeEnum.WECHATPAY_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.FAST_WECHAT.getCode());
     }
 
     public String getOnlineRechargeType() {

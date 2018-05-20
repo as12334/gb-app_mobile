@@ -29,7 +29,7 @@ public class OtherScanCodeBuilder extends BaseScanCodeControllerBuilder implemen
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.OTHER.getCode(), RechargeTypeEnum.OTHER_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.OTHER.getCode());
     }
 
 

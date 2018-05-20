@@ -29,7 +29,7 @@ public class QqScanCodeBuilder extends BaseScanCodeControllerBuilder implements 
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.QQWALLET.getCode());
     }
 
 

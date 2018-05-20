@@ -29,7 +29,7 @@ public class BdScanCodeBuilder extends BaseScanCodeControllerBuilder implements 
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.BDWALLET.getCode(), RechargeTypeEnum.BDWALLET_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.BDWALLET.getCode());
     }
 
     public String getOnlineRechargeType() {
