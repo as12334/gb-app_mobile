@@ -64,8 +64,10 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
             Map<String, Object> map = new HashMap<>(4, 1f);
             map.put("value", online.getBank());
             map.put("text", online.getBankName());
-            map.put("min", online.getSingleDepositMin() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMin()));
-            map.put("max", online.getSingleDepositMax() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMax()));
+            map.put("min", online.getSingleDepositMin());
+            map.put("max", online.getSingleDepositMax());
+            map.put("minStr", online.getSingleDepositMin()==null?null:CurrencyTool.formatCurrency(online.getSingleDepositMin()));
+            map.put("maxStr", online.getSingleDepositMax()==null?null:CurrencyTool.formatCurrency(online.getSingleDepositMax()));
             map.put("account", payAccountVo.getSearchId(online.getId()));
             map.put("random",online.getRandomAmount());
             bankList.add(map);

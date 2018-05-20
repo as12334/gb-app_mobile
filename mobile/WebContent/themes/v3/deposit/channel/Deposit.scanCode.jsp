@@ -58,7 +58,7 @@
                 </div>
                 <div style="display: none;" id="reverseSacn_div">
                     <div class="depo_row">
-                        <div class="label">${views.deposit_auto['授权码']}</div>
+                        <label for="result.payerBankcard">${views.deposit_auto['授权码']}</label>
                         <div class="input">
                             <input type="text" placeholder="${views.deposit_auto['请输入12~20位授权码']}" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off" style="display:inline-block;width:50%;text-align: right;float:right;height:40px;padding-right:12px;"/>
                         </div>

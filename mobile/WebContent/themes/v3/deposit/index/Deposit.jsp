@@ -3,7 +3,7 @@
 <div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
         <c:if test="${fn:length(map) >0 || !empty digiccyAccountInfo}">
-            <c:if test="${activityHall==false}">
+            <c:if test="${activityHall==true}">
                 <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
             </c:if>
             <%@ include file="Deposit.ToolBar.jsp" %>

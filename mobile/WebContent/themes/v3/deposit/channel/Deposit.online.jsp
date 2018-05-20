@@ -27,7 +27,7 @@
             <%@include file="../ChooseAmount.jsp"%>
             <div class="depo_row">
                 <div class="label">存款金额</div>
-                <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text" placeholder="${soulFn:formatCurrency(onlinePayMin)}~${onlinePayMax}"/></div>
+                <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text" placeholder="${siteCurrencySign}${soulFn:formatCurrency(onlinePayMin)}~${siteCurrencySign}${soulFn:formatCurrency(onlinePayMax)}"/></div>
                 <div class="ext" id="random_area" style="display: ${account.randomAmount?"":"none"}">
                     <input type="hidden" name="result.randomCash" value="${rechargeDecimals}"/>
                     <div class="cha">.${rechargeDecimals}</div>
