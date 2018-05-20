@@ -1,8 +1,10 @@
 package so.wwb.gamebox.mobile.V3.support;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.DateTool;
+import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -15,9 +17,10 @@ import org.soul.model.sys.po.SysParam;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.TerminalEnum;
+import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -31,10 +34,7 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DepositTool {
     public static final Log LOG = LogFactory.getLog(DepositTool.class);
@@ -250,4 +250,83 @@ public class DepositTool {
         return notSslDomain;
     }
 
+    /**
+     * 公司入款账号根据层级来设置显示
+     *
+     * @param rank
+     * @param accounts
+     * @return
+     */
+    public static <T extends PayAccount> List<T> convertCompanyAccount(PlayerRank rank, List<T> accounts, String rechargeType) {
+        boolean display = rank != null && rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
+        //如果公司入款设置不显示多个，则根据银行去重显示一个
+        if (!display) {
+            return distinctAccoutsByBankCode(accounts);
+        } else {
+            return convertPayAliasAccounts(accounts, rechargeType);
+        }
+    }
+
+    /**
+     * 线上支付账号根据层级来显示
+     *
+     * @param rank
+     * @param accounts
+     * @return
+     */
+    public static <T extends PayAccount> List<T> convertOnlineAccount(PlayerRank rank, List<T> accounts, String rechargeType) {
+        return convertCompanyAccount(rank, accounts, rechargeType);
+    }
+
+    /**
+     * 根据银行code去重账号
+     *
+     * @param accounts
+     * @param <T>
+     * @return
+     */
+    private static <T extends PayAccount> List<T> distinctAccoutsByBankCode(List<T> accounts) {
+        List<String> bankCodes = new ArrayList<>();
+        List<T> payAccounts = new ArrayList<>();
+        for (T payAccount : accounts) {
+            if (!bankCodes.contains(payAccount.getBankCode())) {
+                payAccounts.add(payAccount);
+                bankCodes.add(payAccount.getBankCode());
+            }
+        }
+        return payAccounts;
+    }
+
+    /**
+     * 如果有相同的支付类型，则按照相同支付类型命名+序列号
+     *
+     * @param accounts
+     * @param <T>
+     * @return
+     */
+    private static <T extends PayAccount> List<T> convertPayAliasAccounts(List<T> accounts, String rechargeType) {
+        Map<String, Integer> countMap = new HashMap<>();
+        Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.BANKNAME);
+        Map<String, List<T>> accountMap = CollectionTool.groupByProperty(accounts, PayAccount.PROP_BANK_CODE, String.class);
+        for (T payAccount : accounts) {
+            if (StringTool.isBlank(payAccount.getAliasName())) {
+                String bankCode = payAccount.getBankCode();
+                if (countMap.get(bankCode) == null) {
+                    countMap.put(bankCode, 1);
+                } else {
+                    countMap.put(bankCode, countMap.get(bankCode) + 1);
+                }
+                if (BankCodeEnum.OTHER.getCode().equals(bankCode) || BankCodeEnum.OTHER_BANK.getCode().equals(bankCode)) {
+                    payAccount.setAliasName(payAccount.getCustomBankName());
+                } else {
+                    if (accountMap.get(bankCode).size() > 1) {
+                        payAccount.setAliasName(i18n.get(rechargeType) + countMap.get(bankCode));
+                    } else {
+                        payAccount.setAliasName(i18n.get(rechargeType));
+                    }
+                }
+            }
+        }
+        return accounts;
+    }
 }
