@@ -320,9 +320,9 @@ public class DepositTool {
                     payAccount.setAliasName(payAccount.getCustomBankName());
                 } else {
                     if (accountMap.get(bankCode).size() > 1) {
-                        payAccount.setAliasName(i18n.get(rechargeType) + countMap.get(bankCode));
+                        payAccount.setAliasName(i18n.get(bankCode) + countMap.get(bankCode));
                     } else {
-                        payAccount.setAliasName(i18n.get(rechargeType));
+                        payAccount.setAliasName(i18n.get(bankCode));
                     }
                 }
             }

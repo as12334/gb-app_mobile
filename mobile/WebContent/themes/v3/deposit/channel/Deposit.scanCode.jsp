@@ -27,7 +27,7 @@
                     <c:forEach items="${accounts}" var="i">
                         <c:if test="${i.scanType=='sacn'}">
                             <div class="bank_list_i_w" href="#" data-rel='{"opType":"function","target":"depositScanCode.checkAccount"}'>
-                                <input type="hidden" depositChannel="scan"  rechargeType="${i.rechargeType}" accountType="${i.accountType}" randomAmount="${i.randomAmount}" onlinePayMax="${i.singleDepositMax}" onlinePayMin="${i.singleDepositMin}" account="${command.getSearchId(i.id)}" payerBank="${i.bankCode}" />
+                                <input type="hidden" depositChannel="scan"  rechargeType="${i.rechargeType}" accountType="${i.accountType}" randomAmount="${i.randomAmount}" onlinePayMax="${i.singleDepositMax==null?99999999:i.singleDepositMax}" onlinePayMin="${i.singleDepositMin==null?0.01:i.singleDepositMin}" account="${command.getSearchId(i.id)}" payerBank="${i.bankCode}" />
                                 <div class="bank_list_i">
                                     <i class="bank_n ${channel}"></i>
                                     <div class="bank_n_txt">${views.deposit[i.bankCode]}支付</div>
