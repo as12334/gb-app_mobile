@@ -18,6 +18,9 @@
     $(function () {
         var obj = $("#list_pay").find(".list_pay_item_w:first");
         var options = obj.attr("data-rel");
-        toolBarClick(obj, eval('(' + options + ')'));
+        toolBarClick(obj, eval('(' + options + ')'));//默认选择第一个充值通道
+        //固定底部导航栏
+        var bottomEl = document.querySelector('.mui-bar-tab');
+        bottomEl.style.top = document.documentElement.clientHeight - 52 + 'px';
     });
 </script>
