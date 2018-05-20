@@ -930,14 +930,14 @@ public abstract class BaseOriginController {
             GameVo gameVo = new GameVo();
             gameVo.getSearch().setApiId(apiId);
             gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(GameSupportTerminalEnum.PHONE.getCode());
+            gameVo.getSearch().setSupportTerminal(SessionManagerCommon.getTerminal(request));
             gameVo = ServiceTool.gameService().search(gameVo);
             if (gameVo.getResult() != null) {
                 playerApiAccountVo.setGameId(gameVo.getResult().getId());
                 playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
             }
         }
-        playerApiAccountVo.setPlatformType(SupportTerminal.PHONE.getCode());
+        playerApiAccountVo.setPlatformType(SessionManagerCommon.getTerminal(request));
     }
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
@@ -976,7 +976,7 @@ public abstract class BaseOriginController {
         playerApiVo.setLobbyUrl(domain);
         playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
         playerApiVo.setSysUser(SessionManager.getUser());
-        playerApiVo.setPlatformType(SupportTerminal.PHONE.getCode());
+        playerApiVo.setPlatformType(SessionManagerCommon.getTerminal(request));
         return playerApiVo;
     }
 

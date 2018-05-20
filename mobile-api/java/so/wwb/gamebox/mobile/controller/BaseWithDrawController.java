@@ -34,7 +34,6 @@ import so.wwb.gamebox.model.master.dataRight.po.SysUserDataRight;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightListVo;
 import so.wwb.gamebox.model.master.dataRight.vo.SysUserDataRightVo;
 import so.wwb.gamebox.model.master.enums.RankFeeType;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.enums.UserTaskEnum;
 import so.wwb.gamebox.model.master.fund.enums.WithdrawStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerWithdraw;
@@ -489,7 +488,7 @@ public class BaseWithDrawController {
         transaction.setDeductFavorable(deductFavorable);
         transaction.setPlayerId(SessionManagerCommon.getUserId());
         transaction.setTransactionMoney(vo.getWithdrawAmount());
-        transaction.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        transaction.setOrigin(SessionManagerCommon.getTerminal(request));
         vo.setResult(transaction);
         vo.setIpWithdraw(SessionManagerBase.getIpDb().getIp());
         vo.setIpDictCode(SessionManagerBase.getIpDictCode());

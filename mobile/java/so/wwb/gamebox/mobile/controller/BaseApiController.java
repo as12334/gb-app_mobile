@@ -32,6 +32,7 @@ import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 
@@ -456,14 +457,14 @@ public abstract class BaseApiController extends BaseDemoController {
             GameVo gameVo = new GameVo();
             gameVo.getSearch().setApiId(apiId);
             gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(GameSupportTerminalEnum.PHONE.getCode());
+            gameVo.getSearch().setSupportTerminal(SessionManagerCommon.getTerminal(request));
             gameVo = ServiceTool.gameService().search(gameVo);
             if (gameVo.getResult() != null) {
                 playerApiAccountVo.setGameId(gameVo.getResult().getId());
                 playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
             }
         }
-        playerApiAccountVo.setPlatformType(SupportTerminal.PHONE.getCode());
+        playerApiAccountVo.setPlatformType(SessionManagerCommon.getTerminal(request));
     }
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
