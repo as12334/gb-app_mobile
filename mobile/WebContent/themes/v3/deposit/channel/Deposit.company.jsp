@@ -50,6 +50,10 @@
                 <a class="mui-btn btn_submit mui-btn-block"
                    data-rel='{"opType":"function","target":"baseDeposit.nextStep","payType":"online"}'>提交</a>
             </div>
+            <div class="deposit_help">
+                <p>温馨提示</p>
+                <p>* 存款金额请加小数点或尾数,以便区分.如充值200元,请输入201或200.1之类小数.</p>
+            </div>
     </c:when>
     <c:otherwise>
         <div class="ct">

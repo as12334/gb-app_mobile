@@ -76,6 +76,8 @@ public class V3DepositController extends V3BaseDepositController {
         //快速充值地址
         String fastRechargeUrl = DepositTool.getFastRechargeUrl();
         model.addAttribute("rechargeUrlParam", fastRechargeUrl);
+        //是否开启最新活动
+        model.addAttribute("activityHall", ParamTool.isOpenActivityHall());
         return "/deposit/index/Deposit";
     }
 
@@ -158,6 +160,8 @@ public class V3DepositController extends V3BaseDepositController {
             //上个界面的金额传入下个界面
             model.addAttribute("rechargeAmount", depositCash);
         }
+        //是否开启最新活动
+        model.addAttribute("activityHall", ParamTool.isOpenActivityHall());
         model.addAttribute("command", new PayAccountVo());
         model.addAttribute("payAccount", payAccount);
         model.addAttribute("rechargeType", rechargeType);

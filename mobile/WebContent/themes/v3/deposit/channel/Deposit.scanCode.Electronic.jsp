@@ -32,7 +32,9 @@
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
-        <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
+        <c:if test="${activityHall==false}">
+            <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
+        </c:if>
             <form id="rechargeForm" onsubmit="return false">
             <gb:token/>
             <div id="validateRule" style="display: none">${validateRule}</div>
@@ -47,11 +49,7 @@
                     <div class="tit">${views.deposit_auto['账号信息']}</div>
                     <div class="bank_car_item">
                         <div class="top">
-                            <c:set var="flag" value="${empty payAccount.customBankName || dicts.common.bankname[payAccount.bankCode]==payAccount.customBankName}"/>
-                            <i class="pay-third ${payAccount.bankCode}"></i>
-                            <c:if test="${!flag}">
-                                <div style="float: right;"><p>${payAccount.customBankName}</p></div>
-                            </c:if>
+                            <span class="pay-third sm ${payAccount.bankCode}"></span><span class='pay-txt'>${payAccount.customBankName}</span>
                         </div>
                         <div class="bank_car_txt_info">
                             <div class="b_c_t_i_row">
@@ -149,15 +147,21 @@
                         <a data-rel='{"opType":"function","target":"baseDeposit.activity"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
                     </div>
                 </div>
-
             </div>
             <c:choose>
                 <c:when test="${empty payAccount.remark}">
                     <div class="deposit_help">
                         <p>温馨提示</p>
-                        <p>* ${views.deposit_auto['请先加好友']}</p>
-                        <p>* ${views.deposit_auto['请输入订单号后5位']}</p>
-                        <p>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                        <c:if test="${channel!='onecodepay'}">
+                            <p>* ${views.deposit_auto['请先加好友']}</p>
+                            <p>* ${views.deposit_auto['请输入订单号后5位']}</p>
+                            <p>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                        </c:if>
+                        <c:if test="${channel=='onecodepay'}">
+                            <p>* 五码合一，使用网银，支付宝，微信，QQ钱包，京东钱包均可扫描二维码进行存款.</p>
+                            <p>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                            <p>* 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                        </c:if>
                     </div>
                 </c:when>
                 <c:otherwise>
