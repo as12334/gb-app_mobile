@@ -52,8 +52,8 @@
             </div>
             <div class="deposit_help">
                 <p>温馨提示</p>
-                <p>* 存款金额请加小数点或尾数,以便区分.如充值200元,请输入201或200.1之类小数.</p>
-                <p>* 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
+                <p>• 存款金额请加小数点或尾数,以便区分.如充值200元,请输入201或200.1之类小数.</p>
+                <p>• 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
             </div>
     </c:when>
     <c:otherwise>
