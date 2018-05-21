@@ -75,7 +75,7 @@
                                                     <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
                                                             "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
                                                             "dataApiName":"${game.name}","target":"goGame","opType":"function"}'>
-                                                        <div class="img-wrap"><img style="height: 100px;" data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
+                                                        <div class="img-wrap"><img style="height: 70px;" data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
                                                         <p>${game.name}</p>
                                                         <p class='hot'>所有游戏</p>
                                                         <span class="name">${apiName}</span>
@@ -99,7 +99,7 @@
                                                             <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
                                                             "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
                                                             "dataApiName":"${game.name}","target":"goGame","opType":"function"}'>
-                                                                <div class="img-wrap"><img style="height: 100px;" data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
+                                                                <div class="img-wrap"><img style="height: 70px;" data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
                                                                 <p>${game.name}</p>
                                                                 <p class='hot'>${t.value}</p>
                                                                 <span class="name">${apiName}</span>
