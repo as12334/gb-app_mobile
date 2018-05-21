@@ -1,9 +1,10 @@
+<%--@elvariable id="command" type="so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/include/include.inc.jsp" %>
 <html>
 
 <head>
-    <c:set var="activity" value="${command.result}" />
+    <c:set var="activity" value="${command}" />
     <title>${activity.activityName}</title>
     <%@ include file="/themes/default/include/include.head.jsp" %>
     <link rel="stylesheet" type="text/css" href="${resRoot}/themes/hb/style.css?v=${rcVersion}" />
@@ -42,7 +43,7 @@
                     <span class="_now_time" value="${nowTime}" hidden></span>
                     <div class="gb-form-foot" style="margin-top: -10px;">
                         <c:choose>
-                            <c:when test="${(not empty activity.isAllRank) && activity.isAllRank}">
+                            <c:when test="${(not empty activity.allRank) && activity.allRank}">
                                 <c:set var="rankId" value="all" />
                             </c:when>
                             <c:when test="${activity.code eq 'back_water'}">
