@@ -156,8 +156,8 @@ public class BaseMineController {
      *
      * @return
      */
-    protected Map appRecovery(PlayerApiVo playerApiVo) {
-        playerApiVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+    protected Map appRecovery(PlayerApiVo playerApiVo,HttpServletRequest request) {
+        playerApiVo.setOrigin(SessionManagerCommon.getTerminal(request));
         Map map = doRecovery(playerApiVo);
         return map;
     }
@@ -174,9 +174,6 @@ public class BaseMineController {
         Map map = isAllowRecovery(apiId);
         if (MapTool.isNotEmpty(map) && !MapTool.getBooleanValue(map, "isSuccess")) {
             return map;
-        }
-        if (StringTool.isBlank(playerApiVo.getOrigin())) {
-            playerApiVo.setOrigin(TransactionOriginEnum.PC.getCode());
         }
         SysUser user = SessionManagerBase.getUser();
         SysUserVo sysUserVo = new SysUserVo();
@@ -494,7 +491,6 @@ public class BaseMineController {
                 detailApp.setTxId(String.valueOf(map.get("bankOrder")));
                 detailApp.setBitcoinAdress(String.valueOf(map.get("payerBankcard")));
 
-//                Map<String, String> dictMapByCurrency = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_CURRENCY_SYMBOL);
                 detailApp.setRechargeAmount(dictMapByCurrency.get("BTC") + map.get("bitAmount"));
             }
             Map<String, String> i18n = I18nTool.getDictMapByEnum(SessionManager.getLocale(), DictEnum.COMMON_FUND_TYPE);

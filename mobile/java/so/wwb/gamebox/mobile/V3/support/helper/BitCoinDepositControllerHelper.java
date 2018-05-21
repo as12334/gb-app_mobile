@@ -1,9 +1,10 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.web.support.IForm;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.deposit.form.BitcoinDepositForm;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
@@ -20,7 +21,11 @@ public class BitCoinDepositControllerHelper extends BaseDepositControllerHelper<
         List<PayAccount> payAccounts = DepositAccountSearcher.getInstance().searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.THIRTY.getCode(), null, null, null);
         List<PayAccount> accounts = distinctAccountByBankCode(payAccounts);
         Map<String, List<PayAccount>> payAccountMap = CollectionTool.groupByProperty(accounts, PayAccount.PROP_BANK_CODE, String.class);
-        return payAccountMap.get("bitcoin");
+        List<PayAccount> result = payAccountMap.get("bitcoin");
+        if (CollectionTool.isEmpty(result)) {
+            return result;
+        }
+        return DepositTool.convertCompanyAccount(rank, result, getRechargeType(channel));
     }
 
 

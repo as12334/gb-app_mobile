@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
-import so.wwb.gamebox.mobile.V3.helper.DepositControllerHelperFactory;
-import so.wwb.gamebox.mobile.V3.helper.IDepositControllerHelper;
+import so.wwb.gamebox.mobile.V3.support.submitter.AbstractRechargeSubmitter;
 import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
-import so.wwb.gamebox.mobile.V3.support.DepositControllerTool;
-import so.wwb.gamebox.mobile.V3.support.DepositRechargeSubmitter;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
+import so.wwb.gamebox.mobile.V3.support.helper.DepositControllerHelperFactory;
+import so.wwb.gamebox.mobile.V3.support.helper.IDepositControllerHelper;
+import so.wwb.gamebox.mobile.V3.support.submitter.DepositSubmitterBitcoin;
+import so.wwb.gamebox.mobile.V3.support.submitter.DepositSubmitterCompany;
+import so.wwb.gamebox.mobile.V3.support.submitter.DepositSubmitterOnline;
+import so.wwb.gamebox.mobile.V3.support.submitter.IDepositSubmitter;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -28,9 +32,11 @@ import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountListVo;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.digiccy.po.DigiccyAccountInfo;
-import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.demomodel.DemoMenuEnum;
@@ -38,7 +44,6 @@ import so.wwb.gamebox.web.common.demomodel.DemoModel;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -54,12 +59,12 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/index")
     @DemoModel(menuCode = DemoMenuEnum.CKZQ)
     @Upgrade(upgrade = true)
-    public String index(Model model) {
+    public String index(Model model,HttpServletRequest request) {
         //设置foot所选择的位置
         model.addAttribute("skip", 0);
         //取得用户所支持的存款通道
         PayAccountListVo payAccountListVo = new PayAccountListVo();
-        payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
+        payAccountListVo.getSearch().setTerminal(SessionManagerCommon.getTerminal(request));
         payAccountListVo.setPlayerId(SessionManager.getUserId());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
 
@@ -70,13 +75,10 @@ public class V3DepositController extends V3BaseDepositController {
         DigiccyAccountInfo digiccyAccountInfo = ParamTool.getDigiccyAccountInfo();
         model.addAttribute("digiccyAccountInfo", digiccyAccountInfo);
         //快速充值地址
-        model.addAttribute("isFastRecharge", true);
-        SysParam rechargeUrlParam = ParamTool.getSysParam(SiteParamEnum.SETTING_RECHARGE_URL);
-        if (rechargeUrlParam == null || StringTool.isBlank(rechargeUrlParam.getParamValue())) {
-            model.addAttribute("isFastRecharge", false);
-        }
-        String fastRechargeUrl = getFastRechargeUrl();
+        String fastRechargeUrl = DepositTool.getFastRechargeUrl();
         model.addAttribute("rechargeUrlParam", fastRechargeUrl);
+        //是否开启最新活动
+        model.addAttribute("activityHall", ParamTool.isOpenActivityHall());
         return "/deposit/index/Deposit";
     }
 
@@ -100,13 +102,15 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("accounts", payAccounts);//账号列表
         model.addAttribute("validateRule", JsRuleCreator.create(helper.getIndexValidateFormClazz()));//表单提交验证器
         model.addAttribute("accountJson", helper.getAccountJson(payAccounts));//账号列表转json，有些页面要用到它来判断
-        //根据层级获取是否需要手续费
-        model.addAttribute("common", new PayAccountVo());
+        //设置加密工具类
+        model.addAttribute("command", new PayAccountVo());
         //当前选择的通道
         model.addAttribute("channel", channel);
+
         //随机额度
         Double rechargeDecimals = Math.random() * 99 + 1;
         model.addAttribute("rechargeDecimals", rechargeDecimals.intValue());
+
         model.addAttribute("rechargeType", helper.getRechargeType(channel));
         return helper.getIndexUrl();
     }
@@ -120,45 +124,49 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/nextStep")
     @Token(generate = true)
     @Upgrade(upgrade = true)
-    public String nextStep(PayAccountVo payAccountVo, @RequestParam("channel") String channel, Model model) {
+    public String nextStep(Model model, HttpServletRequest request) {
+        String channel = request.getParameter("channel");
+        String searchId = request.getParameter("searchId");
+        String depositCash = request.getParameter("depositCash");
+        String rechargeType = request.getParameter("rechargeType");
         //当前选择的通道
         model.addAttribute("channel", channel);
         IDepositControllerHelper helper = DepositControllerHelperFactory.getHelper(channel);
         //获取收款账号
-        PayAccount payAccount = DepositAccountSearcher.getInstance().searchById(payAccountVo.getSearch().getId());
+        PayAccount payAccount = DepositAccountSearcher.getInstance().searchById(convertAccountId(searchId));
         if (payAccount != null) {
             model.addAttribute("rank", getRank());
             //是否隐藏收款账号
             SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CONTENT_PAY_ACCOUNT_HIDE);
             if (sysParam != null) {
-                SysParam hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING);
+                SysParam hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_E_PAYMENT);//默认为电子支付
+                if (DepositChannelEnum.E_BANK.getCode().equals(channel)) {//如果是网银支付
+                    hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_ONLINE_BANKING);
+                }
+                if (DepositChannelEnum.COUNTER.getCode().equals(channel)) {//如果是柜台支付
+                    hideParam = ParamTool.getSysParam(SiteParamEnum.PAY_ACCOUNT_HIDE_ATM_COUNTER);
+                }
                 // 判断是否隐藏收款账号
                 if ("true".equals(sysParam.getParamValue()) && "true".equals(hideParam.getParamValue())) {
                     model.addAttribute("isHide", true);
                     model.addAttribute("hideContent", Cache.getSiteI18n(SiteI18nEnum.MASTER_CONTENT_HIDE_ACCOUNT_CONTENT).get(SessionManager.getLocale().toString()));
-                    model.addAttribute("customerService", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
                 }
             }
             model.addAttribute("bank", Cache.getBank().get(payAccount.getBankCode()));
             model.addAttribute("validateRule", JsRuleCreator.create(helper.getSecondValidateFormClazz()));
             //微信支付宝等电子支付后，自动带出上次填写的信息
-            //model.addAttribute("lastTimeAccount", getLastDepositName(playerRechargeVo.getResult().getRechargeType(), SessionManager.getUserId()));
+            model.addAttribute("lastTimeAccount", getLastDepositName(rechargeType, SessionManager.getUserId()));
         }
-        if (payAccountVo.getDepositCash() != null) {
-            model.addAttribute("rechargeAmount", payAccountVo.getDepositCash());
+        if (StringTool.isNotBlank(depositCash)) {
+            //上个界面的金额传入下个界面
+            model.addAttribute("rechargeAmount", depositCash);
         }
+        //是否开启最新活动
+        model.addAttribute("activityHall", ParamTool.isOpenActivityHall());
+        model.addAttribute("command", new PayAccountVo());
         model.addAttribute("payAccount", payAccount);
-        model.addAttribute("rechargeType", payAccountVo.getPayType());
+        model.addAttribute("rechargeType", rechargeType);
         return helper.getNextStepUrl();
-    }
-
-    private String getLastDepositName(String rechargeType, Integer userId) {
-        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
-        PlayerRecharge playerRecharge = new PlayerRecharge();
-        playerRecharge.setRechargeType(rechargeType);
-        playerRecharge.setPlayerId(userId);
-        playerRechargeVo.setResult(playerRecharge);
-        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
     }
 
     /**
@@ -178,15 +186,26 @@ public class V3DepositController extends V3BaseDepositController {
         } else {
             amount = playerRechargeVo.getResult().getRechargeAmount();
         }
+        //计算优惠显示
         double fee = calculateFee(getRank(), amount);
-        model.addAttribute("rechargeAmount", DepositControllerTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
-        model.addAttribute("counterFee", DepositControllerTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
+        model.addAttribute("rechargeAmount", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
+        model.addAttribute("counterFee", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
         model.addAttribute("fee", fee);
+        //检查是否开启活动
         boolean isOpenActivityHall = ParamTool.isOpenActivityHall();
         if (!isOpenActivityHall) {
-            model.addAttribute("sales", searchSaleByAmount(amount, playerRechargeVo.getResult().getRechargeType()));
+            model.addAttribute("sales", searchSaleByAmount(amount, getDepositWay(channel, playerRechargeVo.getResult().getRechargeType())));
         }
         model.addAttribute("isOpenActivityHall", isOpenActivityHall);
+        //统计该渠道失败次数
+        Integer failureCount = 0;
+        RechargeTypeEnum rechargeTypeEnum = RechargeTypeEnum.enumOf(playerRechargeVo.getResult().getRechargeType());
+        if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
+            PlayerRechargeVo playerRechargeVo4Count = new PlayerRechargeVo();
+            playerRechargeVo4Count.getSearch().setPayAccountId(convertAccountId(playerRechargeVo.getAccount()));
+            failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo4Count, SessionManager.getUserId());
+        }
+        model.addAttribute("failureCount", failureCount);
         return "/deposit/Sale2";
     }
 
@@ -200,9 +219,19 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/submit")
     @ResponseBody
     @Token(valid = true)
-    public Map<String, Object> submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
-        return DepositRechargeSubmitter.getInstance().submit(playerRechargeVo, result, request);
+    public AbstractRechargeSubmitter.DespositResult submit(PlayerRechargeVo playerRechargeVo, BindingResult result, HttpServletRequest request) {
+        RechargeTypeEnum rechargeTypeEnum = RechargeTypeEnum.enumOf(playerRechargeVo.getResult().getRechargeType());
+        if (rechargeTypeEnum == null) {
+            return null;
+        }
+        IDepositSubmitter submitter = null;
+        if (rechargeTypeEnum.getCode().equals("bitcoin_fast")) {
+            submitter = new DepositSubmitterBitcoin();
+        } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
+            submitter = new DepositSubmitterOnline();
+        } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.COMPANY_DEPOSIT)) {
+            submitter = new DepositSubmitterCompany();
+        }
+        return submitter.saveRecharge(playerRechargeVo, result, request);
     }
-
-
 }

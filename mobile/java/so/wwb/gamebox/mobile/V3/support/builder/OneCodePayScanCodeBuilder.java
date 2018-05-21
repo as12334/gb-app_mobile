@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class OtherScanCodeHandler extends BaseScanCodeControllerHandler implements IScanCodeControllerHandler {
+public class OneCodePayScanCodeBuilder extends BaseScanCodeControllerBuilder implements IScanCodeControllerBuilder {
     /**
      * 返回扫码支付渠道
      *
@@ -28,7 +28,7 @@ public class OtherScanCodeHandler extends BaseScanCodeControllerHandler implemen
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.OTHER.getCode(), RechargeTypeEnum.OTHER_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.ONECODEPAY.getCode());
     }
 
 
@@ -37,6 +37,6 @@ public class OtherScanCodeHandler extends BaseScanCodeControllerHandler implemen
     }
 
     public String getCompanyRechargeType() {
-        return RechargeTypeEnum.OTHER_FAST.getCode();
+        return RechargeTypeEnum.ONECODEPAY_FAST.getCode();
     }
 }

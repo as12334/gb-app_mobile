@@ -38,6 +38,7 @@ import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.SessionManagerCommon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -60,7 +61,7 @@ public class DepositAppController extends BaseDepositController {
     @ResponseBody
     public String index(AppRequestModelVo model, HttpServletRequest request) {
         PayAccountListVo payAccountListVo = new PayAccountListVo();
-        payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
+        payAccountListVo.getSearch().setTerminal(SessionManagerCommon.getTerminal(request));
         payAccountListVo.setPlayerId(SessionManager.getUserId());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         Map<String, Long> channelCountMap = ServiceSiteTool.payAccountService().queryChannelCount(payAccountListVo);

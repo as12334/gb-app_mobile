@@ -1,8 +1,9 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
+import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class OneCodePayScanCodeHandler extends BaseScanCodeControllerHandler implements IScanCodeControllerHandler {
+public class AlipayScanCodeBuilder extends BaseScanCodeControllerBuilder implements IScanCodeControllerBuilder {
     /**
      * 返回扫码支付渠道
      *
@@ -18,7 +19,7 @@ public class OneCodePayScanCodeHandler extends BaseScanCodeControllerHandler imp
      * @return
      */
     public Map<String, PayAccount> getScanAccount(PlayerRank rank) {
-        return null;
+        return getScanAccount(rank, null, new String[]{PayAccountAccountType.ALIPAY.getCode(), PayAccountAccountType.ALIPAY_MICROPAY.getCode()});
     }
 
     /**
@@ -28,15 +29,16 @@ public class OneCodePayScanCodeHandler extends BaseScanCodeControllerHandler imp
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.ONECODEPAY.getCode(), RechargeTypeEnum.ONECODEPAY_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.FAST_ALIPAY.getCode());
     }
 
 
     public String getOnlineRechargeType() {
-        return null;
+        return RechargeTypeEnum.ALIPAY_SCAN.getCode();
     }
 
+    @Override
     public String getCompanyRechargeType() {
-        return RechargeTypeEnum.ONECODEPAY_FAST.getCode();
+        return RechargeTypeEnum.ALIPAY_FAST.getCode();
     }
 }

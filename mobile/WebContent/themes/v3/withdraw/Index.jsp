@@ -90,7 +90,7 @@
                                                 </c:if>
                                             </div>
                                             <a class="mui-btn mui-btn-blue btn-deposit"
-                                               data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.withdraw_auto['快速存款']}</a>
+                                               data-rel='{"target":"${root}/wallet/v3/deposit/index.html","opType":"href"}'>${views.withdraw_auto['快速存款']}</a>
                                         </div>
                                     </div>
                                 </div>

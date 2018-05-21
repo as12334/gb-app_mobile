@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class QqScanCodeHandler extends BaseScanCodeControllerHandler implements IScanCodeControllerHandler {
+public class OtherScanCodeBuilder extends BaseScanCodeControllerBuilder implements IScanCodeControllerBuilder {
     /**
      * 返回扫码支付渠道
      *
@@ -19,7 +19,7 @@ public class QqScanCodeHandler extends BaseScanCodeControllerHandler implements 
      * @return
      */
     public Map<String, PayAccount> getScanAccount(PlayerRank rank) {
-        return getScanAccount(rank, null, new String[]{PayAccountAccountType.QQWALLET.getCode(), PayAccountAccountType.QQ_MICROPAY.getCode()});
+        return null;
     }
 
     /**
@@ -29,16 +29,15 @@ public class QqScanCodeHandler extends BaseScanCodeControllerHandler implements 
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.QQWALLET.getCode(), RechargeTypeEnum.QQWALLET_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.OTHER.getCode());
     }
 
 
     public String getOnlineRechargeType() {
-        return RechargeTypeEnum.QQWALLET_SCAN.getCode();
+        return null;
     }
 
-    @Override
     public String getCompanyRechargeType() {
-        return RechargeTypeEnum.QQWALLET_FAST.getCode();
+        return RechargeTypeEnum.OTHER_FAST.getCode();
     }
 }

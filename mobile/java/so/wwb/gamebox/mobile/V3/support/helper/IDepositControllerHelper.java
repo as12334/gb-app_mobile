@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -6,6 +6,11 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
 import java.util.List;
 
+/**
+ * 所有充值通道入口的controller辅助类
+ *
+ * @param <P>
+ */
 public interface IDepositControllerHelper<P extends PayAccount> {
     /**
      * 获取账号列表
@@ -59,4 +64,6 @@ public interface IDepositControllerHelper<P extends PayAccount> {
      * @return
      */
     String getRechargeType(String channel);
+
+
 }

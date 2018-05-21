@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
@@ -6,7 +6,10 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import java.util.List;
 import java.util.Map;
 
-public interface IScanCodeControllerHandler {
+/**
+ * 扫码\电子支付
+ */
+public interface IScanCodeControllerBuilder {
 
     /**
      * 获取扫码账号

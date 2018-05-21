@@ -1,7 +1,6 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.springframework.stereotype.Component;
-import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class BdScanCodeHandler extends BaseScanCodeControllerHandler implements IScanCodeControllerHandler {
+public class UniontScanCodeBuilder extends BaseScanCodeControllerBuilder implements IScanCodeControllerBuilder {
     /**
      * 返回扫码支付渠道
      *
@@ -19,7 +18,7 @@ public class BdScanCodeHandler extends BaseScanCodeControllerHandler implements 
      * @return
      */
     public Map<String, PayAccount> getScanAccount(PlayerRank rank) {
-        return getScanAccount(rank, PayAccountAccountType.BAIFU_PAY.getCode(), null);
+        return getScanAccount(rank, PayAccountAccountType.UNION_PAY.getCode(), null);
     }
 
     /**
@@ -29,15 +28,15 @@ public class BdScanCodeHandler extends BaseScanCodeControllerHandler implements 
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.BDWALLET.getCode(), RechargeTypeEnum.BDWALLET_FAST.getCode());
+        return null;
     }
+
 
     public String getOnlineRechargeType() {
-        return RechargeTypeEnum.BDWALLET_SAN.getCode();
+        return RechargeTypeEnum.UNION_PAY_SCAN.getCode();
     }
 
-    @Override
     public String getCompanyRechargeType() {
-        return RechargeTypeEnum.BDWALLET_FAST.getCode();
+        return null;
     }
 }

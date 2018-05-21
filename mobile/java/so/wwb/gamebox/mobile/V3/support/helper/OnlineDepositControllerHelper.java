@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.currency.CurrencyTool;
@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
@@ -39,14 +40,14 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
         payAccountListVo.setBanks(searchBank(BankEnum.TYPE_BANK.getCode()));
         Map<String, PayAccount> payAccountMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
         //根据银行和账号对应关系
-        if (!MapTool.isEmpty(payAccountMap)) {
+        if (MapTool.isNotEmpty(payAccountMap)) {
             Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
             List<PayAccountOnline> results = new ArrayList<>();
-            for (String bank : payAccountMap.keySet()) {
-                PayAccountOnline pay = new PayAccountOnline(bank, i18nMap.get(bank), payAccountMap.get(bank));
+            for (Map.Entry<String, PayAccount> bank : payAccountMap.entrySet()) {
+                PayAccountOnline pay = new PayAccountOnline(bank.getKey(), i18nMap.get(bank.getKey()), bank.getValue());
                 results.add(pay);
             }
-            return results;
+            return DepositTool.convertOnlineAccount(rank, results, getRechargeType(channel));
         }
         return new ArrayList<PayAccountOnline>();
     }
@@ -58,15 +59,18 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
      * @return
      */
     public String getAccountJson(List<PayAccountOnline> accouts) {
-        List<Map<String, String>> bankList = new ArrayList<>();
+        List<Map<String, Object>> bankList = new ArrayList<>();
         PayAccountVo payAccountVo = new PayAccountVo();
         for (PayAccountOnline online : accouts) {
-            Map<String, String> map = new HashMap<>(4, 1f);
+            Map<String, Object> map = new HashMap<>(4, 1f);
             map.put("value", online.getBank());
             map.put("text", online.getBankName());
-            map.put("min", online.getSingleDepositMin() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMin()));
-            map.put("max", online.getSingleDepositMax() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMax()));
+            map.put("min", online.getSingleDepositMin());
+            map.put("max", online.getSingleDepositMax());
+            map.put("minStr", online.getSingleDepositMin() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMin()));
+            map.put("maxStr", online.getSingleDepositMax() == null ? null : CurrencyTool.formatCurrency(online.getSingleDepositMax()));
             map.put("account", payAccountVo.getSearchId(online.getId()));
+            map.put("random", online.getRandomAmount());
             bankList.add(map);
         }
         return JsonTool.toJson(bankList);

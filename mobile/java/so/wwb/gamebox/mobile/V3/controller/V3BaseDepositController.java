@@ -2,22 +2,20 @@ package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
-import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
-import org.soul.model.sys.po.SysParam;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.V3.support.DepositControllerTool;
-import so.wwb.gamebox.mobile.V3.support.DepositAccountSearcher;
+import so.wwb.gamebox.mobile.V3.enums.DepositChannelEnum;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ParamTool;
-import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.TerminalEnum;
-import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
+import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
@@ -28,6 +26,13 @@ import so.wwb.gamebox.web.cache.Cache;
 import java.util.*;
 
 public class V3BaseDepositController {
+    protected String getDepositWay(String channel, String rechargeType) {
+        if (DepositChannelEnum.COUNTER.getCode().equals(channel) || DepositChannelEnum.E_BANK.getCode().equals(channel)) {
+            return DepositWayEnum.COMPANY_DEPOSIT.getCode();
+        }
+        return rechargeType;
+    }
+
     /**
      * 计算手续费
      *
@@ -35,7 +40,7 @@ public class V3BaseDepositController {
      * @return
      */
     protected double calculateFee(PlayerRank rank, double rechargeAmount) {
-        return DepositControllerTool.calculateFee(rank, rechargeAmount);
+        return DepositTool.calculateFee(rank, rechargeAmount);
     }
 
 
@@ -45,16 +50,7 @@ public class V3BaseDepositController {
      * @return
      */
     protected PlayerRank getRank() {
-        return DepositControllerTool.searchRank();
-    }
-
-    /**
-     * 获取快充地址
-     *
-     * @return
-     */
-    protected String getFastRechargeUrl() {
-        return DepositControllerTool.getFastRechargeUrl();
+        return DepositTool.searchRank();
     }
 
     /**
@@ -64,6 +60,7 @@ public class V3BaseDepositController {
      */
 
     protected List<VActivityMessage> searchSaleByAmount(Double rechargeAmount, String type) {
+
         UserPlayer userPlayer = getUserPlayer();
         VActivityMessageVo vActivityMessageVo = new VActivityMessageVo();
         vActivityMessageVo.getSearch().setDepositWay(type);
@@ -73,6 +70,7 @@ public class V3BaseDepositController {
         vActivityMessageVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageVo = ServiceActivityTool.vActivityMessageService().searchDepositPromotions(vActivityMessageVo);
         LinkedHashSet<VActivityMessage> vActivityMessages = vActivityMessageVo.getvActivityMessageList();
+
         if (CollectionTool.isEmpty(vActivityMessages)) {
             return new ArrayList<>();
         }
@@ -105,5 +103,20 @@ public class V3BaseDepositController {
         userPlayerVo.getSearch().setId(SessionManager.getUserId());
         userPlayerVo = ServiceSiteTool.userPlayerService().get(userPlayerVo);
         return userPlayerVo.getResult();
+    }
+
+    protected String getLastDepositName(String rechargeType, Integer userId) {
+        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+        PlayerRecharge playerRecharge = new PlayerRecharge();
+        playerRecharge.setRechargeType(rechargeType);
+        playerRecharge.setPlayerId(userId);
+        playerRechargeVo.setResult(playerRecharge);
+        return ServiceSiteTool.playerRechargeService().searchLastPayerBankcard(playerRechargeVo);
+    }
+
+    protected Integer convertAccountId(String searchId) {
+        PayAccountVo payAccountVo = new PayAccountVo();
+        payAccountVo.setSearchId(searchId);
+        return payAccountVo.getSearch().getId();
     }
 }

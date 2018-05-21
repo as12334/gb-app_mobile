@@ -13,8 +13,10 @@
             <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="result.rechargeType" value="online_bank"/>
             <input type="hidden" id="siteCurrencySign" value="${siteCurrencySign}"/>
-            <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="0.01"/>
-            <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="9999999"/>
+            <c:set var="min" value="${empty rank.onlinePayMin || rank.onlinePayMin <= 0 ?0.01:rank.onlinePayMin}" />
+            <c:set var="max" value="${empty rank.onlinePayMax || rank.onlinePayMax <= 0 ?99999999:rank.onlinePayMax}" />
+            <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="${min}"/>
+            <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="${max}"/>
             <input type="hidden" name="account" id="account" value=""/>
             <input type="hidden" name="result.payerBank" id="result.payerBank" value=""/>
             <input type="hidden" name="bankCode" value="" id="bankCode"/>
@@ -24,11 +26,11 @@
                 <div class="bank_list" id="company_bank_list">
                     <c:forEach items="${accounts}" var="i" varStatus="vs">
                         <div class="bank_list_i_w"
-                             data-rel='{"bankCode":"${i.bankCode}","accountId":"${i.id}","opType":"function","target":"depositCompany.checkAccount"}'>
+                             data-rel='{"bankCode":"${i.bankCode}","accountId":"${command.getSearchId(i.id)}","opType":"function","target":"depositCompany.checkAccount"}'>
                             <div class="bank_list_i">
                                 <i class="bank_n ${i.bankCode}"></i>
                                 <div class="bank_n_txt">
-                                     ${empty i.aliasName ? dicts.common.bankname[i.bankCode]:i.aliasName}
+                                     ${empty i.aliasName ? (empty i.customBankName ? dicts.common.bankname[i.bankCode] :i.customBankName):i.aliasName}
                                 </div>
                             </div>
                         </div>
@@ -37,18 +39,20 @@
                 <%@include file="../ChooseAmount.jsp" %>
                 <div class="depo_row">
                     <div class="label">存款金额</div>
-                    <div class="input"><input id="result.rechargeAmount" name="result.rechargeAmount" type="text"
-                                              placeholder="${siteCurrencySign}${soulFn:formatCurrency(0.01)}~${siteCurrencySign}${soulFn:formatCurrency(9999999)}"/>
+                    <div class="input">
+                        <input id="result.rechargeAmount" name="result.rechargeAmount" type="text"  placeholder="${siteCurrencySign}${soulFn:formatCurrency(min)}~${siteCurrencySign}${soulFn:formatCurrency(max)}"/>
+                        <input type="hidden" name="result.randomCash" value="0"/>
                     </div>
-                    <div class="ext" style="display: none">
-                        <input type="hidden" name="result.randomCash" value="${rechargeDecimals}"/>
-                        <div class="cha">.${rechargeDecimals}</div>
-                    </div>
+
                 </div>
             </div>
             <div class="btn_wrap">
                 <a class="mui-btn btn_submit mui-btn-block"
                    data-rel='{"opType":"function","target":"baseDeposit.nextStep","payType":"online"}'>提交</a>
+            </div>
+            <div class="deposit_help">
+                <p>温馨提示</p>
+                <p>* 存款金额请加小数点或尾数,以便区分.如充值200元,请输入201或200.1之类小数.</p>
             </div>
     </c:when>
     <c:otherwise>

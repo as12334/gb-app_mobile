@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.handler;
+package so.wwb.gamebox.mobile.V3.support.builder;
 
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.model.company.enums.BankCodeEnum;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class JdScanCodeHandler extends BaseScanCodeControllerHandler implements IScanCodeControllerHandler {
+public class WechatScanCodeBuilder extends BaseScanCodeControllerBuilder implements IScanCodeControllerBuilder {
     /**
      * 返回扫码支付渠道
      *
@@ -19,7 +19,7 @@ public class JdScanCodeHandler extends BaseScanCodeControllerHandler implements 
      * @return
      */
     public Map<String, PayAccount> getScanAccount(PlayerRank rank) {
-        return getScanAccount(rank, PayAccountAccountType.JD_PAY.getCode(), null);
+        return getScanAccount(rank, null, new String[]{PayAccountAccountType.WECHAT.getCode(), PayAccountAccountType.WECHAT_MICROPAY.getCode()});
     }
 
     /**
@@ -29,15 +29,14 @@ public class JdScanCodeHandler extends BaseScanCodeControllerHandler implements 
      * @return
      */
     public List<PayAccount> getElectronicAccount(PlayerRank rank) {
-        return getElectronicAccount(rank, BankCodeEnum.JDWALLET.getCode(), RechargeTypeEnum.JDWALLET_FAST.getCode());
+        return getElectronicAccount(BankCodeEnum.FAST_WECHAT.getCode());
     }
 
-
     public String getOnlineRechargeType() {
-        return RechargeTypeEnum.JDPAY_SCAN.getCode();
+        return RechargeTypeEnum.WECHATPAY_SCAN.getCode();
     }
 
     public String getCompanyRechargeType() {
-        return RechargeTypeEnum.JDWALLET_FAST.getCode();
+        return RechargeTypeEnum.WECHATPAY_FAST.getCode();
     }
 }

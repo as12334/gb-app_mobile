@@ -20,7 +20,7 @@
             <c:when test="${not empty payAccount}">
                 <div id="validateRule" style="display: none">${validateRule}</div>
                 <gb:token/>
-                <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
+                <input type="hidden" name="account" id="account" value="${command.getSearchId(payAccount.id)}"/>
                 <input type="hidden" name="result.rechargeType" value="bitcoin_fast"/>
                 <input type="hidden" name="activityId" id="activityId"/>
                 <input type="hidden" name="depositChannel" value="bitcoin"/>
@@ -32,18 +32,23 @@
                             <span class="pay-third BTC"></span>
                         </div>
                         <div class="bank_car_txt_info">
-                            <div class="b_c_t_i_row"> 扫码支付存款到比特币账户， <br>
-                                自动到账。</div>
+                            <div class="b_c_t_i_row">
                             <c:choose>
                                 <c:when test="${isHide}">
                                     <c:set var="copyText" value="${payAccount.code}"/>
-                                    ${payAccount.code} ${views.deposit_auto['请联系客服']}
+                                    <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${payAccount.code} ${views.deposit_auto['请联系客服']}</a>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="copyText" value="${payAccount.account}"/>
                                     ${payAccount.account}
+                                    <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
                                 </c:otherwise>
                             </c:choose>
+                            </div>
+                            <div class="b_c_t_i_row">
+                                    ${views.deposit_auto['姓名']}： ${payAccount.fullName}
+                                    <a href="#" class="btn_copy copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
+                            </div>
                         </div>
                     </div>
                     <div class="wechat-code bit_coin_c">
@@ -87,7 +92,9 @@
                 <div class="deposit_help">
                     <p>温馨提示</p>
                     <p>* ${views.deposit_auto['正确的txid']}</p>
-                    <p>* ${views.deposit_auto['客服帮助']}<soul:button target="loadCustomer" text="${views.deposit_auto['点击联系在线客服']}" opType="function"/></p>
+                    <p>* ${views.deposit_auto['客服帮助']}
+                        <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${views.deposit_auto['点击联系在线客服']}</a>
+                    </p>
                 </div>
             </c:when>
                 <c:otherwise>
@@ -112,13 +119,14 @@
             </p>
         </div>
         <div class="ft">
-            <a data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
+            <a data-rel='{"opType":"function","target":"goToDepositPage"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["再存一次"]}</a>
             <a data-rel='{"target":"goToHome","opType":"function"}' class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>
 </div>
 </body>
 <%@ include file="../../include/include.js.jsp" %>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.poppicker.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.dtpicker.js?v=${rcVersion}"></script>

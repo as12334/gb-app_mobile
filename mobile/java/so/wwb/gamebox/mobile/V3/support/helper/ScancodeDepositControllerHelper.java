@@ -1,4 +1,4 @@
-package so.wwb.gamebox.mobile.V3.helper;
+package so.wwb.gamebox.mobile.V3.support.helper;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
@@ -7,7 +7,9 @@ import org.soul.web.support.IForm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import so.wwb.gamebox.mobile.V3.enums.ScanCodeTypeEnum;
-import so.wwb.gamebox.mobile.V3.handler.IScanCodeControllerHandler;
+import so.wwb.gamebox.mobile.V3.support.DepositTool;
+import so.wwb.gamebox.mobile.V3.support.builder.IScanCodeControllerBuilder;
+import so.wwb.gamebox.mobile.V3.support.helper.BaseDepositControllerHelper;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
 import so.wwb.gamebox.mobile.deposit.form.OnlineScanDepositForm;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
@@ -21,7 +23,7 @@ import java.util.Map;
 public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper<ScancodeDepositControllerHelper.PayAccountScancode> {
     public List<PayAccountScancode> getPayAccounts(PlayerRank rank, String channel) {
         ScanCodeTypeEnum scanCodeEnum = ScanCodeTypeEnum.enumOf(channel);
-        IScanCodeControllerHandler handler = SpringTool.getBean(scanCodeEnum.getHandlerClazz());
+        IScanCodeControllerBuilder handler = SpringTool.getBean(scanCodeEnum.getHandlerClazz());
         List<PayAccountScancode> payaccounts = new ArrayList<>();
         //获取扫码账号
         Map<String, PayAccount> scanAccount = handler.getScanAccount(rank);
@@ -32,21 +34,21 @@ public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper
                 payaccounts.add(account);
             }
         }
+        //根据在线支付是否显示多个账号进行处理
+        List<PayAccountScancode> result = new ArrayList<>();
+        if (CollectionTool.isNotEmpty(payaccounts)) {
+            result = DepositTool.convertOnlineAccount(rank, payaccounts, handler.getOnlineRechargeType());
+        }
         //获取电子账号
         List<PayAccount> electronicAccount = handler.getElectronicAccount(rank);
-        boolean display = rank != null && rank.getDisplayCompanyAccount() != null && rank.getDisplayCompanyAccount();
-        if (!display) {
-            electronicAccount = distinctAccountByBankCode(electronicAccount);
-        } else {
-            //相同账号设置别名
-            electronicAccount = convertAliasName(electronicAccount);
-        }
         if (CollectionTool.isNotEmpty(electronicAccount)) {
-            for (PayAccount account : electronicAccount) {
-                payaccounts.add(new PayAccountScancode("electroin", handler.getOnlineRechargeType(), account));
+            //根据公司入款是否显示多个账号处理
+            List<PayAccount> eleaList = DepositTool.convertCompanyAccount(rank, electronicAccount, handler.getCompanyRechargeType());
+            for (PayAccount acc : eleaList) {
+                result.add(new PayAccountScancode("electroin", handler.getCompanyRechargeType(), acc));
             }
         }
-        return payaccounts;
+        return result;
     }
 
     public String getAccountJson(List<PayAccountScancode> accouts) {

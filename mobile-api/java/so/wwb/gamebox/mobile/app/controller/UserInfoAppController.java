@@ -312,7 +312,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping(value = "/transfersMoney", method = RequestMethod.POST)
     @ResponseBody
     @Token(valid = true)
-    public String transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid AppPlayerTransferForm form, BindingResult result) {
+    public String transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid AppPlayerTransferForm form, BindingResult result,HttpServletRequest request) {
         LOG.info("【玩家[{0}]转账】:从[{1}]转到[{2}]", SessionManager.getUserName(), playerTransferVo.getTransferOut(), playerTransferVo.getTransferInto());
         if (!isTimeToTransfer()) {//是否已经过了允许转账的间隔
             Map map = getErrorMessage(TransferResultStatusEnum.TRANSFER_TIME_INTERVAL.getCode(), playerTransferVo.getResult().getApiId());
@@ -339,7 +339,7 @@ public class UserInfoAppController extends BaseUserInfoController {
                     map,
                     APP_VERSION);
         }
-        loadTransferInfo(playerTransferVo);
+        loadTransferInfo(playerTransferVo,request);
         Map<String, Object> resultMap = isAbleToTransfer(playerTransferVo);
         if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
             return AppModelVo.getAppModeVoJson(true,
