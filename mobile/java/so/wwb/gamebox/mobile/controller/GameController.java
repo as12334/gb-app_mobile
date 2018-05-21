@@ -140,6 +140,7 @@ public class GameController extends BaseApiController {
             return redirectUrl;
         }
         model.addAttribute("apiId", apiId);
+        model.addAttribute("casinoApis", Cache.getMobileApiCacheEntity(String.valueOf(ApiTypeEnum.CASINO.getCode())));
         Map<String, LinkedHashMap<String, GameCacheEntity>> gameByApiMap = Cache.getMobileGameCacheEntity(String.valueOf(ApiTypeEnum.CASINO.getCode()));
         LinkedHashMap<String, GameCacheEntity> gameMap = gameByApiMap == null ? null : gameByApiMap.get(String.valueOf(apiId));
         if (MapTool.isEmpty(gameMap)) {
