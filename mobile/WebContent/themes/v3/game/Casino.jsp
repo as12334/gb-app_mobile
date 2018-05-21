@@ -42,7 +42,7 @@
                         <c:forEach items="${casinoApis}" var="i">
                             <div class="swiper-slide">
                                 <div class="img-wrap">
-                                    <i class='api-icon-2-${i.key}'></i>
+                                    <i class='api-item api-icon-2-${i.key}'></i>
                                 </div>
                                 <span class='title'>${i.value.relationName}</span>
                             </div>
