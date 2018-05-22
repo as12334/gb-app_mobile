@@ -84,9 +84,9 @@
 							        <img src="${resRoot}/images/my-ico3.png" class="mine-item-img"/>
 						        </span>
                                 <p>${views.themes_auto['额度转换']}</p>
-                                <p>
-                                    <small id="transferAmount"></small>
-                                </p>
+                                <span>
+                                    <small class="ext-info withdrawAmount" id="transferAmount"></small>
+                                </span>
                             </soul:button>
                         </li>
                     </ul>
