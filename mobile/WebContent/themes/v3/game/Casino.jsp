@@ -31,16 +31,17 @@
             <a data-rel='{"target":"toggleSearch","opType":"function"}' class="mui-icon mui-icon-search mui-pull-right"></a>
         </header>
         <div class="mui-content mui-content-casino-page">
+            <div class="electronic-search" name="searchDiv" style="display: none">
+                <a class="btn-search" data-rel='{"target":"searchGame","opType":"function"}'>搜索</a>
+                <input type="text" name="gameName" class="mui-input-clear" placeholder="输入游戏名称" data-input-clear="3"><span class="mui-icon mui-icon-clear mui-hidden"></span>
+            </div>
+            <div class="search-shadow" data-rel='{"target":"hideShadow","opType":"function"}' style="display: none;"></div>
             <!-- 主界面具体展示内容 -->
             <div id="pull_apiScroll">
                 <div class="api-scroll swiper-container">
-                    <div class="electronic-search" name="searchDiv">
-                        <a class="btn-search" data-rel='{"target":"searchGame","opType":"function"}'>搜索</a>
-                        <input type="text" name="gameName" class="mui-input-clear" placeholder="输入游戏名称" data-input-clear="3"><span class="mui-icon mui-icon-clear mui-hidden"></span>
-                    </div>
                     <div class="swiper-wrapper">
                         <c:forEach items="${casinoApis}" var="i">
-                            <div class="swiper-slide">
+                            <div data-rel='{"target":"/game/getCasinoByApiId.html?search.apiId=${i.key}&search.apiTypeId=2","opType":"href"}' class="swiper-slide ${i.key eq apiId?'api-index':''}">
                                 <div class="img-wrap">
                                     <i class='api-item api-icon-2-${i.key}'></i>
                                 </div>
@@ -75,7 +76,7 @@
                                                     <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
                                                             "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
                                                             "dataApiName":"${game.name}","target":"goGame","opType":"function"}'>
-                                                        <div class="img-wrap"><img style="height: 70px;" data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
+                                                        <div class="img-wrap"><img data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
                                                         <p>${game.name}</p>
                                                         <p class='hot'>所有游戏</p>
                                                         <span class="name">${apiName}</span>
@@ -99,7 +100,7 @@
                                                             <a href="#" data-rel='{"dataApiTypeId":"2","dataApiId":"${game.apiId}","dataStatus":"${game.status}",
                                                             "dataGameCode":"${game.code}","dataGameId":"${game.gameId}",
                                                             "dataApiName":"${game.name}","target":"goGame","opType":"function"}'>
-                                                                <div class="img-wrap"><img style="height: 70px;" data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
+                                                                <div class="img-wrap"><img data-lazyload="${soulFn:getImagePath(domain, game.cover)}"/></div>
                                                                 <p>${game.name}</p>
                                                                 <p class='hot'>${t.value}</p>
                                                                 <span class="name">${apiName}</span>
