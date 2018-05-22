@@ -91,8 +91,8 @@
                 </div>
                 <div class="deposit_help">
                     <p>温馨提示</p>
-                    <p>* ${views.deposit_auto['正确的txid']}</p>
-                    <p>* ${views.deposit_auto['客服帮助']}
+                    <p>• ${views.deposit_auto['正确的txid']}</p>
+                    <p>• ${views.deposit_auto['客服帮助']}
                         <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${views.deposit_auto['点击联系在线客服']}</a>
                     </p>
                 </div>
