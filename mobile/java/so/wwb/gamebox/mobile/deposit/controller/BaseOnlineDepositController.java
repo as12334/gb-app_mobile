@@ -328,13 +328,13 @@ public class BaseOnlineDepositController extends BaseDepositController {
         playerRechargeVo4Count.getSearch().setPayAccountId(payAccount.getId());
         Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo4Count, SessionManager.getUserId());
         model.addAttribute("failureCount", failureCount);
-        Integer max = payAccount.getSingleDepositMax();
-        Integer min = payAccount.getSingleDepositMin();
+        Long max = payAccount.getSingleDepositMax();
+        Long min = payAccount.getSingleDepositMin();
         if (min == null) {
-            min = Const.MIN_MONEY;
+            min = Const.MIN_MONEY.longValue();
         }
         if (max == null) {
-            max = Const.MAX_MONEY;
+            max = Const.MAX_MONEY.longValue();
         }
         //验证存款金额的合法性
         if (rechargeAmount == null || rechargeAmount <= 0) {
