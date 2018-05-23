@@ -23,7 +23,7 @@ public class CompanyDepositControllerHelper extends BaseDepositControllerHelper<
         List<PayAccount> allAccount = DepositAccountSearcher.getInstance().searchPayAccount(PayAccountType.COMPANY_ACCOUNT.getCode(), PayAccountAccountType.BANKACCOUNT.getCode(), null, null, null);
         List<PayAccount> payAccounts = new ArrayList<>();
         //如果是柜员机，则根据账号过滤柜员机开关
-        if (DepositChannelEnum.COUNTER.equals(channel)) {
+        if (DepositChannelEnum.COUNTER.getCode().equals(channel)) {
             for (PayAccount acc : allAccount) {
                 if (acc.getSupportAtmCounter()) {
                     payAccounts.add(acc);
