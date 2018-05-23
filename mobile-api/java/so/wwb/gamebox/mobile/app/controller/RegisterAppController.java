@@ -538,7 +538,10 @@ public class RegisterAppController {
         Map map = new HashMap();
         Map<String, Object> params = new HashMap<>();
         String recommendRegisterCode = "";
-        if (StringTool.equals(request.getParameter("utype"), "agent")) {
+        if(StringTool.isNotBlank(request.getParameter("registerCode"))){
+            recommendRegisterCode = request.getParameter("registerCode");
+            LOG.debug("介绍人加密原码{0}-", recommendRegisterCode);
+        }else if (StringTool.equals(request.getParameter("utype"), "agent")) {
             recommendRegisterCode = SessionManager.getAgentRecommendUserCode();
             LOG.debug("代理注册-介绍人加密原码{0}-", recommendRegisterCode);
         } else {

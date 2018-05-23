@@ -50,8 +50,8 @@
         <div class="deposit_help">
             <p>温馨提示</p>
             <p class="scan_code_random">* 为了提高对账速度及成功率，当前支付方式已开随机额度，请输入整数存款金额，将随机增加0.11~0.99元！</p>
-            <p>* 请保留好转账单据作为核对证明。</p>
-            <p>* 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+            <p>• 请保留好转账单据作为核对证明。</p>
+            <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
         </div>
     </c:when>
     <c:otherwise>

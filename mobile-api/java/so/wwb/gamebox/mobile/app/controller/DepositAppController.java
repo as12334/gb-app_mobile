@@ -387,8 +387,8 @@ public class DepositAppController extends BaseDepositController {
                     AppErrorCodeEnum.MONEY_ERROR.getMsg(),
                     null, APP_VERSION);
         }
-        Integer min = Const.MIN_MONEY;
-        Integer max = Const.MAX_MONEY;
+        Long min = Const.MIN_MONEY.longValue();
+        Long max = Const.MAX_MONEY.longValue();
         PlayerRank rank = getRank();
         if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             max = rank.getOnlinePayMax();
@@ -397,10 +397,10 @@ public class DepositAppController extends BaseDepositController {
             max = payAccount.getSingleDepositMax();
             min = payAccount.getSingleDepositMin();
             if (min == null) {
-                min = Const.MIN_MONEY;
+                min = Const.MIN_MONEY.longValue();
             }
             if (max == null) {
-                max = Const.MAX_MONEY;
+                max = Const.MAX_MONEY.longValue();
             }
             PlayerRechargeVo playerRechargeVo4Count = new PlayerRechargeVo();
             playerRechargeVo4Count.getSearch().setPayAccountId(payAccount.getId());

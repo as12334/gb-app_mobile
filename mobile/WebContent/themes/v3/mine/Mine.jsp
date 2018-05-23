@@ -84,9 +84,9 @@
 							        <img src="${resRoot}/images/my-ico3.png" class="mine-item-img"/>
 						        </span>
                                 <p>${views.themes_auto['额度转换']}</p>
-                                <p>
-                                    <small id="transferAmount"></small>
-                                </p>
+                                <span>
+                                    <small class="ext-info withdrawAmount" id="transferAmount"></small>
+                                </span>
                             </soul:button>
                         </li>
                     </ul>
@@ -209,18 +209,18 @@
                                     <p>绑定手机</p>
                                 </a>
                             </li>
-                            <ul class="mui-list-unstyled list-mine-item"><!--第五行-->
-                                <li class="mui-col-xs-4">
-                                    <a data-rel='{"target":"${root}/help/forgetSafetyCode.html","opType":"href"}'>
+                        </c:if>
+                    </ul>
+                    <c:if test="${len !=2}"><ul class="mui-list-unstyled list-mine-item"><!--第五行-->
+                        <li class="mui-col-xs-4">
+                            <a data-rel='{"target":"${root}/help/forgetSafetyCode.html","opType":"href"}'>
 						<span class="item-img-wrap">
 							<img src="${resRoot}/images/my-ico14.png" class="mine-item-img" style="transform: none;"/>
 						</span>
-                                        <p>忘记安全码</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </c:if>
-                    </ul>
+                                <p>忘记安全码</p>
+                            </a>
+                        </li>
+                    </ul></c:if>
                     <c:if test="${len ==2}">
                         <ul class="mui-list-unstyled list-mine-item" id="phone"><!--第五行-->
                             <li class="mui-col-xs-4">

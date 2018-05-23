@@ -79,7 +79,9 @@
                                 <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}' class="mui-btn">${views.deposit_auto['保存到手机']}</a>
                             </div>
                         </div>
-
+                    </c:if>
+                    <c:if test="${not empty payAccount.remark}">
+                        <p>${payAccount.remark}</p>
                     </c:if>
                 </div>
             </div>
@@ -148,28 +150,20 @@
                     </div>
                 </div>
             </div>
-            <c:choose>
-                <c:when test="${empty payAccount.remark}">
-                    <div class="deposit_help">
-                        <p>温馨提示</p>
-                        <c:if test="${channel!='onecodepay'}">
-                            <p>* ${views.deposit_auto['请先加好友']}</p>
-                            <p>* ${views.deposit_auto['请输入订单号后5位']}</p>
-                            <p>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
-                        </c:if>
-                        <c:if test="${channel=='onecodepay'}">
-                            <p>* 五码合一，使用网银，支付宝，微信，QQ钱包，京东钱包均可扫描二维码进行存款.</p>
-                            <p>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
-                            <p>* 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
-                        </c:if>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="deposit_help">
-                        <p>${payAccount.remark}</p>
-                </div>
-                </c:otherwise>
-            </c:choose>
+            <div class="deposit_help">
+                <p>温馨提示</p>
+                <c:if test="${channel!='onecodepay'}">
+                    <p>• ${views.deposit_auto['请先加好友']}</p>
+                    <p>• ${views.deposit_auto['请输入订单号后5位']}</p>
+                    <p>• ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                </c:if>
+                <c:if test="${channel=='onecodepay'}">
+                    <p>• 五码合一，使用网银，支付宝，微信，QQ钱包，京东钱包均可扫描二维码进行存款.</p>
+                    <p>• ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                </c:if>
+            </div>
         </form>
     </div>
 </div>

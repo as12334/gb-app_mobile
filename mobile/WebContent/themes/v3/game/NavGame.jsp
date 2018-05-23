@@ -39,7 +39,7 @@
                     <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
-                        <img data-lazyload="${root}/${g.cover}" class="lottery-img">
+                        <img data-lazyload="${g.cover}" class="lottery-img">
                         <div class="mui-media-body">${g.name}</div>
                     </a>
                 </li>--%>
@@ -49,7 +49,7 @@
                             <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"fishGameLogin","opType":"function"}' class="_api">
-                                <img data-lazyload="${root}/${g.cover}" class="lottery-img">
+                                <img data-lazyload="${g.cover}" class="lottery-img">
                                 <div class="mui-media-body">${g.name}</div>
                             </a>
                         </li>
@@ -59,7 +59,7 @@
                             <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
-                                <img data-lazyload="${root}/${g.cover}" class="lottery-img">
+                                <img data-lazyload="${g.cover}" class="lottery-img">
                                 <div class="mui-media-body">${g.name}</div>
                             </a>
                         </li>
