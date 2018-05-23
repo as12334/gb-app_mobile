@@ -36,15 +36,15 @@
                   ||background_type eq 'green_white'
                   ||background_type eq 'orange_white'}">
         <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css?v=${rcVersion}"/>
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+        <c:set var="appLogo" value="${cdnUrl}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:when>
     <c:when test="${background_type eq 'white' || background_type eq 'golden'}">
         <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css?v=${rcVersion}"/>
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
+        <c:set var="appLogo" value="${cdnUrl}/ftl/commonPage/images/app_logo/app_logo_${siteId}_c.png"/>
     </c:when>
     <c:otherwise>
         <link rel="stylesheet" href="${resRoot}/themes/default/style.css?v=${rcVersion}"/>
-        <c:set var="appLogo" value="${root}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
+        <c:set var="appLogo" value="${cdnUrl}/ftl/commonPage/images/app_logo/app_logo_${siteId}.png"/>
     </c:otherwise>
 </c:choose>
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css?v=${rcVersion}"/>
