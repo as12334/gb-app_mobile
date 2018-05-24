@@ -60,7 +60,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     private static Log LOG = LogFactory.getLog(BaseOnlineDepositController.class);
 
     /*站长中心-线上支付链接*/
-    private static final String MCENTER_ONLINE_RECHARGE_URL = "/fund/deposit/online/list.html";
+    private static final String MCENTER_ONLINE_RECHARGE_URL = "fund/deposit/online/list.html";
 
     /**
      * 调用第三方接口

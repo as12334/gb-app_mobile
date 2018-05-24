@@ -25,7 +25,7 @@ public class CompanyDepositControllerHelper extends BaseDepositControllerHelper<
         //如果是柜员机，则根据账号过滤柜员机开关
         if (DepositChannelEnum.COUNTER.getCode().equals(channel)) {
             for (PayAccount acc : allAccount) {
-                if (acc.getSupportAtmCounter()) {
+                if (acc.getSupportAtmCounter() == null || acc.getSupportAtmCounter()) {
                     payAccounts.add(acc);
                 }
             }
