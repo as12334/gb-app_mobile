@@ -81,7 +81,7 @@
                         </div>
                     </c:if>
                     <c:if test="${not empty payAccount.remark}">
-                        <p>${payAccount.remark}</p>
+                        <p><c:out value="${payAccount.remark}"></c:out></p>
                     </c:if>
                 </div>
             </div>

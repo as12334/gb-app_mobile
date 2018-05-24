@@ -225,7 +225,7 @@ public class V3DepositController extends V3BaseDepositController {
             return null;
         }
         IDepositSubmitter submitter = null;
-        if (rechargeTypeEnum.getCode().equals("bitcoin_fast")) {
+        if (rechargeTypeEnum.getCode().equals(RechargeTypeEnum.BITCOIN_FAST.getCode())) {
             submitter = new DepositSubmitterBitcoin();
         } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
             submitter = new DepositSubmitterOnline();
