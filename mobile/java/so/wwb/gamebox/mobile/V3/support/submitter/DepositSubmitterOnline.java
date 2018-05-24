@@ -80,7 +80,7 @@ public class DepositSubmitterOnline extends AbstractRechargeSubmitter implements
         message.setMasterId(SessionManager.getSiteUserId());
         message.setMsgBody(SiteParamEnum.WARMING_TONE_ONLINEPAY.getType());
         SysResourceListVo sysResourceListVo = new SysResourceListVo();
-        sysResourceListVo.getSearch().setUrl("/fund/deposit/online/list.html");
+        sysResourceListVo.getSearch().setUrl("fund/deposit/online/list.html");
         List<Integer> userIdByUrl = ServiceSiteTool.playerRechargeService().findUserIdByUrl(sysResourceListVo);
         userIdByUrl.add(Const.MASTER_BUILT_IN_ID);
         message.addUserIds(userIdByUrl);

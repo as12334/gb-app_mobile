@@ -35,6 +35,7 @@ import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
+import so.wwb.gamebox.web.support.CdnConf;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -266,6 +267,7 @@ public abstract class BaseApiController extends BaseDemoController {
         Map<String, GameCacheEntity> apiGameMap;
         String locale = SessionManager.getLocale().toString();
         List<GameCacheEntity> games;
+        String cdnUrl = new CdnConf().getCndUrl();
         //因为只是取彩票、棋牌类api游戏，相对数据量比较小，故循环取缓存数据
         for (Integer apiTypeId : navType) {
             apiTypeCacheEntity = apiTypeCacheEntityMap.get(String.valueOf(apiTypeId));
@@ -280,7 +282,7 @@ public abstract class BaseApiController extends BaseDemoController {
                 }
                 games = new ArrayList<>();
                 for (GameCacheEntity game : apiGameMap.values()) {
-                    game.setCover(String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
+                    game.setCover(cdnUrl+String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
                     games.add(game);
                 }
                 apiCacheEntity.setGames(games);
@@ -292,7 +294,7 @@ public abstract class BaseApiController extends BaseDemoController {
         StringBuffer fishName;
         List<GameCacheEntity> fishGames = new ArrayList<>();
         for (GameCacheEntity game : fishGameMap.values()) {
-            game.setCover(String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
+            game.setCover(cdnUrl+String.format(MobileConst.GAME_COVER_URL, locale, game.getApiId(), game.getCode()));
             //捕鱼游戏名称=api名称 + 游戏名称
             fishName = new StringBuffer();
             fishName.append(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId()))).append(" ").append(game.getName());

@@ -60,7 +60,7 @@ public class BaseOnlineDepositController extends BaseDepositController {
     private static Log LOG = LogFactory.getLog(BaseOnlineDepositController.class);
 
     /*站长中心-线上支付链接*/
-    private static final String MCENTER_ONLINE_RECHARGE_URL = "/fund/deposit/online/list.html";
+    private static final String MCENTER_ONLINE_RECHARGE_URL = "fund/deposit/online/list.html";
 
     /**
      * 调用第三方接口
@@ -328,13 +328,13 @@ public class BaseOnlineDepositController extends BaseDepositController {
         playerRechargeVo4Count.getSearch().setPayAccountId(payAccount.getId());
         Integer failureCount = ServiceSiteTool.playerRechargeService().statisticalFailureCount(playerRechargeVo4Count, SessionManager.getUserId());
         model.addAttribute("failureCount", failureCount);
-        Integer max = payAccount.getSingleDepositMax();
-        Integer min = payAccount.getSingleDepositMin();
+        Long max = payAccount.getSingleDepositMax();
+        Long min = payAccount.getSingleDepositMin();
         if (min == null) {
-            min = Const.MIN_MONEY;
+            min = Const.MIN_MONEY.longValue();
         }
         if (max == null) {
-            max = Const.MAX_MONEY;
+            max = Const.MAX_MONEY.longValue();
         }
         //验证存款金额的合法性
         if (rechargeAmount == null || rechargeAmount <= 0) {

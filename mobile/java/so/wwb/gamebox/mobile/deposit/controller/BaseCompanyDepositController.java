@@ -133,8 +133,8 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
             model.addAttribute("tips", tips);
         } else if (rechargeAmount > 0) {
             PlayerRank rank = getRank();
-            Integer max = rank.getOnlinePayMax();
-            Integer min = rank.getOnlinePayMin();
+            Long max = rank.getOnlinePayMax();
+            Long min = rank.getOnlinePayMin();
             //单笔存款金额提示
             if ((max != null && max < rechargeAmount) || (min != null && min > rechargeAmount)) {
                 tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountOver", min, max);
