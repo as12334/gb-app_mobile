@@ -476,7 +476,7 @@ public class RegisterAppController {
             userRegisterVo.getSysUser().setDefaultCurrency(getSysSite().getMainCurrency());
         }
         UserPlayer userPlayer = new UserPlayer();
-        userPlayer.setCreateChannel(CreateChannelEnum.MOBILE.getCode());
+        userPlayer.setCreateChannel(SessionManager.getCreateChannel(request));
         userRegisterVo.setUserPlayer(userPlayer);
         return ServiceSiteTool.userPlayerService().register(userRegisterVo);
     }
