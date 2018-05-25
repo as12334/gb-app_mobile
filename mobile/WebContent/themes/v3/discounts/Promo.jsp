@@ -28,32 +28,30 @@
                         <div class="swiper-slide">
                             <div class="mui-scroll-wrapper">
                                 <div class="mui-scroll">
-                                    <c:forEach var="map" items="${activityMap}">
-                                        <c:forEach var="message" items="${map.value}">
-                                            <div class="promo-item" data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'>
-                                                    <%--<a href="${root}/promo/promoDetail.html?search.id=${message.id}"
-                                                           data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'>--%>
-                                                <c:choose>
-                                                    <c:when test="${!empty message.activityAffiliated}">
-                                                        <c:set var="imgSrc"
-                                                               value="${soulFn:getImagePath(domain, message.activityAffiliated)}"/>
-                                                    </c:when>
-                                                    <c:when test="${!empty message.activityCover}">
-                                                        <c:set var="imgSrc"
-                                                               value="${soulFn:getImagePath(domain, message.activityCover)}"/>
-                                                    </c:when>
-                                                </c:choose>
-                                                <div class="img-wrap">
-                                                    <img src="${empty imgSrc?defaultSaleImg:''}"
-                                                         data-lazyload="${imgSrc}"/>
-                                                </div>
-                                                <div class="pro-txt">
-                                                    <div class="mui-pull-left">${message.activityName}</div>
-                                                    <a class="mui-pull-right">查看详情</a>
-                                                </div>
-                                                    <%--</a>--%>
+                                    <c:forEach var="message" items="${activityMessages}">
+                                        <div class="promo-item" data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'>
+                                                <%--<a href="${root}/promo/promoDetail.html?search.id=${message.id}"
+                                                       data-rel='{"target":"${root}/promo/promoDetail.html?search.id=${message.id}","opType":"href"}'>--%>
+                                            <c:choose>
+                                                <c:when test="${!empty message.activityAffiliated}">
+                                                    <c:set var="imgSrc"
+                                                           value="${soulFn:getImagePath(domain, message.activityAffiliated)}"/>
+                                                </c:when>
+                                                <c:when test="${!empty message.activityCover}">
+                                                    <c:set var="imgSrc"
+                                                           value="${soulFn:getImagePath(domain, message.activityCover)}"/>
+                                                </c:when>
+                                            </c:choose>
+                                            <div class="img-wrap">
+                                                <img src="${empty imgSrc?defaultSaleImg:''}"
+                                                     data-lazyload="${imgSrc}"/>
                                             </div>
-                                        </c:forEach>
+                                            <div class="pro-txt">
+                                                <div class="mui-pull-left">${message.activityName}</div>
+                                                <a class="mui-pull-right">查看详情</a>
+                                            </div>
+                                                <%--</a>--%>
+                                        </div>
                                     </c:forEach>
                                 </div>
                             </div>

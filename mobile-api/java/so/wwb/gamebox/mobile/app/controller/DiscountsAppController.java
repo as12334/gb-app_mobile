@@ -140,7 +140,7 @@ public class DiscountsAppController {
         for (PlayerActivityMessage playerActivityMessage : activityMessageMap.values()) {
             isDisplay = playerActivityMessage.getIsDisplay() != null && playerActivityMessage.getIsDisplay();
             isDelete = playerActivityMessage.getIsDeleted() != null && playerActivityMessage.getIsDeleted();
-            if (release.equals(playerActivityMessage.getActivityState()) && locale.equals(playerActivityMessage.getActivityVersion()) && !isDelete && isDisplay && (StringTool.isBlank(activityClassifyKey) || activityClassifyKey.equals(playerActivityMessage.getActivityClassifyKey())) && playerActivityMessage.getStartTime().getTime() <= nowTime && playerActivityMessage.getEndTime().getTime() > nowTime) {
+            if (release.equals(playerActivityMessage.getActivityState()) && locale.equals(playerActivityMessage.getActivityVersion()) && !isDelete && isDisplay && (StringTool.isBlank(activityClassifyKey) || activityClassifyKey.equals(playerActivityMessage.getActivityClassifyKey())) && playerActivityMessage.getEndTime().getTime() > nowTime) {
                 isAllRank = playerActivityMessage.getAllRank() != null && playerActivityMessage.getAllRank();
                 hasRank = true;
                 if (rankId != null && !isAllRank && playerActivityMessage.getRankid() != null && !playerActivityMessage.getRankid().contains(rankId + ",")
