@@ -691,19 +691,13 @@ public class RegisterAppController {
             Iterator<FieldSort> iter = fieldSorts.iterator();
             while (iter.hasNext()) {
                 FieldSort fieldSort = iter.next();
-                if (FieldSortEnum.NOT_REG_FIELD.getCode().equals(fieldSort.getIsRegField())) {
-                    if (RegisterConst.REGCODE.equals(fieldSort.getName())) {
-                        registCodeField = false;
-                        isRequiredForRegisterCode = !FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired());
-                        map.put("isRequiredForRegisterCode", isRequiredForRegisterCode);
-                    }
+                if (FieldSortEnum.NOT_REG_FIELD.getCode().equals(fieldSort.getIsRegField()) && !RegisterConst.REGCODE.equals(fieldSort.getName())) {
                     iter.remove();
                     continue;
-                } else {
-                    if (RegisterConst.REGCODE.equals(fieldSort.getName())) {
-                        isRequiredForRegisterCode = !FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired());
-                        map.put("isRequiredForRegisterCode", isRequiredForRegisterCode);
-                    }
+                }
+                if (RegisterConst.REGCODE.equals(fieldSort.getName())) {
+                    isRequiredForRegisterCode = !FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired());
+                    map.put("isRequiredForRegisterCode", isRequiredForRegisterCode);
                 }
                 if (!FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired())) {
                     requiredJson.add(fieldSort.getName());
