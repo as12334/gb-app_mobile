@@ -937,7 +937,7 @@ public abstract class BaseOriginController {
                 playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
             }
         }
-        playerApiAccountVo.setPlatformType(SessionManagerCommon.getTerminal(request));
+        playerApiAccountVo.setPlatformType(TerminalEnum.MOBILE.getCode());
     }
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
@@ -976,7 +976,7 @@ public abstract class BaseOriginController {
         playerApiVo.setLobbyUrl(domain);
         playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
         playerApiVo.setSysUser(SessionManager.getUser());
-        playerApiVo.setPlatformType(SessionManagerCommon.getTerminal(request));
+        playerApiVo.setPlatformType(TerminalEnum.MOBILE.getCode());
         return playerApiVo;
     }
 
