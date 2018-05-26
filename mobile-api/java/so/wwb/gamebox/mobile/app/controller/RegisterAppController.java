@@ -176,12 +176,12 @@ public class RegisterAppController {
                     APP_VERSION);
         }
         //手机验证短信注册，手机号为已验证
-        if(isValid(SiteParamEnum.SETTING_REG_SETTING_PHONE_VERIFCATION)){
+        if (isValid(SiteParamEnum.SETTING_REG_SETTING_PHONE_VERIFCATION)) {
             userRegisterVo.getPhone().setStatus(ContactWayStatusEnum.CONTENT_STATUS_USING.getCode());
         }
         userRegisterVo.setEditType(userRegisterVo.EDIT_TYPE_PLAYER);
         userRegisterVo = doRegister(userRegisterVo, request);
-        sendRegSuccessMsg(request,userRegisterVo);
+        sendRegSuccessMsg(request, userRegisterVo);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
         if (!userRegisterVo.isSuccess()) {
@@ -231,7 +231,7 @@ public class RegisterAppController {
                     new Pair<String, String>(NoticeParamEnum.YEAR.getCode(), String.valueOf(calendar.get(Calendar.YEAR))),
                     new Pair<String, String>(NoticeParamEnum.MONTH.getCode(), String.valueOf(calendar.get(Calendar.MONTH) + 1)),
                     new Pair<String, String>(NoticeParamEnum.DAY.getCode(), String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)))
-                    );
+            );
             try {
                 ServiceTool.noticeService().publish(noticeVo);
             } catch (Exception ex) {
@@ -538,10 +538,10 @@ public class RegisterAppController {
         Map map = new HashMap();
         Map<String, Object> params = new HashMap<>();
         String recommendRegisterCode = "";
-        if(StringTool.isNotBlank(request.getParameter("registerCode"))){
+        if (StringTool.isNotBlank(request.getParameter("registerCode"))) {
             recommendRegisterCode = request.getParameter("registerCode");
             LOG.debug("介绍人加密原码{0}-", recommendRegisterCode);
-        }else if (StringTool.equals(request.getParameter("utype"), "agent")) {
+        } else if (StringTool.equals(request.getParameter("utype"), "agent")) {
             recommendRegisterCode = SessionManager.getAgentRecommendUserCode();
             LOG.debug("代理注册-介绍人加密原码{0}-", recommendRegisterCode);
         } else {
@@ -696,6 +696,10 @@ public class RegisterAppController {
                     continue;
                 }
                 if (RegisterConst.REGCODE.equals(fieldSort.getName())) {
+                    //app默认展示邀请人
+                    if (FieldSortEnum.NOT_REG_FIELD.getCode().equals(fieldSort.getIsRegField())) {
+                        fieldSort.setIsRegField(FieldSortEnum.IS_REG_FIELD.getCode());
+                    }
                     isRequiredForRegisterCode = !FieldSortEnum.NOT_REQUIRED.getCode().equals(fieldSort.getIsRequired());
                     map.put("isRequiredForRegisterCode", isRequiredForRegisterCode);
                 }
