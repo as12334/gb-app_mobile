@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.nav.controller;
 
+import org.apache.http.HttpRequest;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.enums.EnumTool;
 import org.soul.commons.init.context.CommonContext;
@@ -135,7 +136,7 @@ public class PromoController {
      * 已经结束的活动
      */
     @RequestMapping("/finishedPromo")
-    public String finishedPromoRecords(VActivityMessageListVo vActivityMessageListVo, Model model,HttpServletRequest request) {
+    public String finishedPromoRecords(VActivityMessageListVo vActivityMessageListVo, Model model, HttpServletRequest request) {
         vActivityMessageListVo.getSearch().setActivityVersion(SessionManager.getLocale().toString());
         vActivityMessageListVo.getSearch().setStates(ActivityStateEnum.FINISHED.getCode());
         vActivityMessageListVo.getSearch().setIsDeleted(Boolean.FALSE);
@@ -213,12 +214,13 @@ public class PromoController {
 
     @ResponseBody
     @RequestMapping("/applyActivities")
-    public Map applyActivities(VPlayerActivityMessageVo vPlayerActivityMessageVo) {
+    public Map applyActivities(VPlayerActivityMessageVo vPlayerActivityMessageVo, HttpServletRequest request) {
         Map map = new HashMap(2, 1f);
         String code = vPlayerActivityMessageVo.getCode();
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(vPlayerActivityMessageVo.getResultId(), "PlayerActivityMessageListVo"));
         PlayerActivityMessage activityMessage = Cache.getMobileActivityMessageInfo(id.toString());
         vPlayerActivityMessageVo.setId(id);
+        vPlayerActivityMessageVo.setTerminalType(SessionManagerCommon.getTerminal(request));
         if (StringTool.equals(code, ActivityTypeEnum.REGIST_SEND.getCode())) {
             applyRegisterSend(map, vPlayerActivityMessageVo, activityMessage);
         } else if (StringTool.equals(code, ActivityTypeEnum.EFFECTIVE_TRANSACTION.getCode())
@@ -239,7 +241,7 @@ public class PromoController {
                 setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, APPLY_EXPIRED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_FAIL_TITLE));
             } else {
                 setApplyFailReturnStates(map, LocaleTool.tranMessage(Module.ACTIVITY, REGIST_APPLIED), LocaleTool.tranMessage(Module.ACTIVITY, APPLY_HAVE_TITLE));
-               /* map.put("msg", LocaleTool.tranMessage("player","已申请"));*/
+                /* map.put("msg", LocaleTool.tranMessage("player","已申请"));*/
             }
         } else {
             if ((Boolean) activityMessage.getRegistSendEffectiveTime().get("flag")) {
@@ -423,7 +425,7 @@ public class PromoController {
                 if (StringTool.equals(m.getActivityVersion(), SessionManager.getLocale().toString())
                         && m.getIsDisplay() && isContainUserRank(m, rankId)
                         && (StringTool.equals(m.getStates(), ActivityStateEnum.PROCESSING.getCode()) || StringTool.equals(m.getStates(), ActivityStateEnum.NOTSTARTED.getCode()))) {
-                   /*过滤前端活动筛选*/
+                    /*过滤前端活动筛选*/
                     if (StringTool.isBlank(classifyKey) || StringTool.equals(classifyKey, m.getActivityClassifyKey())) {
                         resultIdList.add(m.getSearchId());
                     }
