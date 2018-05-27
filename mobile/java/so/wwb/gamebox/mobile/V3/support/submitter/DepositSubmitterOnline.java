@@ -36,7 +36,7 @@ public class DepositSubmitterOnline extends AbstractRechargeSubmitter implements
         }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TerminalEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManager.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
         playerRecharge.setRechargeType(playerRechargeVo.getResult().getRechargeType());

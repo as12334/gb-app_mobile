@@ -501,7 +501,7 @@ public class SignUpController extends BaseDemoController {
             userRegisterVo.getSysUser().setDefaultCurrency(getSysSite().getMainCurrency());
         }
         UserPlayer userPlayer = new UserPlayer();
-        userPlayer.setCreateChannel(CreateChannelEnum.MOBILE.getCode());
+        userPlayer.setCreateChannel(CreateChannelEnum.H5.getCode());
         userRegisterVo.setUserPlayer(userPlayer);
         return ServiceSiteTool.userPlayerService().register(userRegisterVo);
     }
