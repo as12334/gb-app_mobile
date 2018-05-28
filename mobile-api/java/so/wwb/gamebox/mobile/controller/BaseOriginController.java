@@ -976,7 +976,7 @@ public abstract class BaseOriginController {
         playerApiVo.setLobbyUrl(domain);
         playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
         playerApiVo.setSysUser(SessionManager.getUser());
-        playerApiVo.setPlatformType(TerminalEnum.MOBILE.getCode());
+        playerApiVo.setPlatformType(SessionManager.getTerminal(request));
         return playerApiVo;
     }
 
@@ -1075,7 +1075,7 @@ public abstract class BaseOriginController {
     private GameVo fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
         GameVo gameVo = new GameVo();
         gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
-        gameVo.getSearch().setSupportTerminal(playerApiAccountVo.getPlatformType());
+        gameVo.getSearch().setSupportTerminal(TerminalEnum.MOBILE.getCode());
         gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
         gameVo = ServiceTool.gameService().search(gameVo);
         return gameVo;
