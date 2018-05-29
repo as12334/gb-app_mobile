@@ -211,7 +211,7 @@
                             </li>
                         </c:if>
                     </ul>
-                    <c:if test="${len !=2}"><ul class="mui-list-unstyled list-mine-item"><!--第五行-->
+                  <%--  <c:if test="${len !=2}"><ul class="mui-list-unstyled list-mine-item"><!--第五行-->
                         <li class="mui-col-xs-4">
                             <a data-rel='{"target":"${root}/help/forgetSafetyCode.html","opType":"href"}'>
 						<span class="item-img-wrap">
@@ -220,8 +220,8 @@
                                 <p>忘记安全码</p>
                             </a>
                         </li>
-                    </ul></c:if>
-                    <c:if test="${len ==2}">
+                    </ul></c:if>--%>
+                    <%--<c:if test="${len ==2}">
                         <ul class="mui-list-unstyled list-mine-item" id="phone"><!--第五行-->
                             <li class="mui-col-xs-4">
                                 <a data-rel='{"target":"${root}/help/bindMobile.html","opType":"href"}'>
@@ -240,7 +240,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </c:if>
+                    </c:if>--%>
                 </div>
             </div> <!--mui-scroll 闭合标签-->
         </div>  <!--mui-content 闭合标签-->
