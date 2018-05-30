@@ -64,7 +64,7 @@ public class V3DepositController extends V3BaseDepositController {
         model.addAttribute("skip", 0);
         //取得用户所支持的存款通道
         PayAccountListVo payAccountListVo = new PayAccountListVo();
-        payAccountListVo.getSearch().setTerminal(SessionManagerCommon.getTerminal(request));
+        payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
         payAccountListVo.setPlayerId(SessionManager.getUserId());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
 
