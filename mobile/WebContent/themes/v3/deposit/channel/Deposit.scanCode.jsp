@@ -61,7 +61,7 @@
                         <label for="result.payerBankcard" style="display: none">${views.deposit_auto['授权码']}</label>
                         <div class="label">${views.deposit_auto['授权码']}</div>
                         <div class="input">
-                            <input type="text" placeholder="${views.deposit_auto['请输入12~20位授权码']}" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off" style="display:inline-block;width:50%;text-align: right;float:right;height:40px;padding-right:12px;"/>
+                            <input type="text" placeholder="${views.deposit_auto['请输入12~20位授权码']}" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off" style="display:inline-block;text-align: right;float:right;height:40px;padding-right:12px;"/>
                         </div>
                     </div>
                     <div class="depo_row">
