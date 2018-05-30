@@ -185,9 +185,12 @@ public class V3DepositController extends V3BaseDepositController {
             amount = playerRechargeVo.getResult().getBitAmount();
         } else {
             amount = playerRechargeVo.getResult().getRechargeAmount();
-            Double randomCash = playerRechargeVo.getResult().getRandomCash();
-            if (randomCash != null && randomCash > 0) {
-                amount += randomCash / 100;
+            //如果用户输入不包含小数点，切开启随机额度，则增加随机额度
+            if (playerRechargeVo.getResult().getRechargeAmount().intValue() == playerRechargeVo.getResult().getRechargeAmount()) {
+                Double randomCash = playerRechargeVo.getResult().getRandomCash();
+                if (randomCash != null && randomCash > 0) {
+                    amount += randomCash / 100;
+                }
             }
         }
         //计算优惠显示

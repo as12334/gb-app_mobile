@@ -64,8 +64,10 @@ public class DepositSubmitterOnline extends AbstractRechargeSubmitter implements
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         if (payAccount.getRandomAmount() != null && payAccount.getRandomAmount()) {
             Double rechargeAmount = playerRecharge.getRechargeAmount();
-            rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
-            playerRecharge.setRechargeAmount(rechargeAmount);
+            if (rechargeAmount.intValue() == rechargeAmount) {
+                rechargeAmount += playerRechargeVo.getResult().getRandomCash() / 100;
+                playerRecharge.setRechargeAmount(rechargeAmount);
+            }
         }
         return playerRechargeVo;
     }
