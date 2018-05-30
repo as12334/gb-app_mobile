@@ -460,7 +460,7 @@ public abstract class BaseOriginController {
      */
     private AppSiteApiTypeRelationI18n changeApiTypeRelationI18nModelToApp(ApiCacheEntity apiEntity, String apiLogoUrl) {
         AppSiteApiTypeRelationI18n appRelation = new AppSiteApiTypeRelationI18n();
-        appRelation.setName(apiEntity.getApiName());
+        appRelation.setName(apiEntity.getRelationName());
         appRelation.setApiId(apiEntity.getApiId());
         appRelation.setApiTypeId(apiEntity.getApiTypeId());
         List<Integer> siteIds = API_SITE_SPECIAL.get(apiEntity.getApiId());
