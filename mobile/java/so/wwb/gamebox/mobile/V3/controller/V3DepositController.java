@@ -59,7 +59,7 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/index")
     @DemoModel(menuCode = DemoMenuEnum.CKZQ)
     @Upgrade(upgrade = true)
-    public String index(Model model,HttpServletRequest request) {
+    public String index(Model model, HttpServletRequest request) {
         //设置foot所选择的位置
         model.addAttribute("skip", 0);
         //取得用户所支持的存款通道
@@ -185,6 +185,10 @@ public class V3DepositController extends V3BaseDepositController {
             amount = playerRechargeVo.getResult().getBitAmount();
         } else {
             amount = playerRechargeVo.getResult().getRechargeAmount();
+            Double randomCash = playerRechargeVo.getResult().getRandomCash();
+            if (randomCash != null && randomCash > 0) {
+                amount += randomCash / 100;
+            }
         }
         //计算优惠显示
         double fee = calculateFee(getRank(), amount);
