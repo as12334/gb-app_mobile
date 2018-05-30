@@ -355,6 +355,8 @@ public abstract class BaseOriginController {
         LinkedHashMap<String, ApiCacheEntity> apiMap;
         AppSiteApiTypeRelastionVo appApiType;
         AppSiteApiTypeRelationI18n appSite;
+        int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
+        int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             apiTypeId = apiTypeCacheEntity.getApiTypeId();
             apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
@@ -364,8 +366,11 @@ public abstract class BaseOriginController {
 
             appApis = new ArrayList<>();
             for (ApiCacheEntity apiCacheEntity : apiMap.values()) {
+                //BB体育不展示
+                if (apiTypeId == sportType && apiCacheEntity.getApiId() == bb) {
+                    continue;
+                }
                 appSite = changeApiTypeRelationI18nModelToApp(apiCacheEntity, apiLogoUrl);
-
                 //彩票，棋牌
                 if (navApiTypes.contains(apiTypeId)) {
                     gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
