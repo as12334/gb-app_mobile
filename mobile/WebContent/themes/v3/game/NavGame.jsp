@@ -3,29 +3,40 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
 <c:if test="${fn:length(apis)>1}">
-    <div class="lottery-nav" name="nav-${apiTypeId}">
-        <div class="mui-scroll-wrapper mui-slider-indicatorcode mui-segmented-control mui-segmented-control-inverted" data-scroll="7">
-            <div class="mui-scroll">
-                <ul class="mui-list-unstyled mui-clearfix mui-bar-tab">
-                    <c:forEach var="i" items="${apis}" varStatus="vs">
-                        <c:set var="centerId" value="<%=CommonContext.get().getSiteParentId() %>"/>
-                        <c:choose>
-                            <c:when test="${centerId == -3 && i.apiId == 22}">
-                                <c:set var="api_icon" value="4-22-2" />
-                            </c:when>
-                            <c:when test="${i.apiId == 22}">
-                                <c:set var="api_icon" value="4-22-1" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="api_icon" value="${i.apiTypeId}-${i.apiId}" />
-                            </c:otherwise>
-                        </c:choose>
-                        <li><a data-rel='{"target":"changeNavGame","opType":"function","apiTypeId":"${i.apiTypeId}","apiId":"${i.apiId}"}' class="mui-tab-item ${vs.index==0?'mui-active':''} api-icon-${api_icon}">${i.relationName}</a></li>
-                    </c:forEach>
-                </ul>
+    <% int apiCount = 0; %>
+    <c:forEach var="i" items="${apis}" varStatus="vs">
+        <c:set var="gameCount" value="${i.games}"/>
+        <c:if test="${fn:length(gameCount)>0}"><% apiCount = ++apiCount;%> </c:if>
+    </c:forEach>
+    <c:set var="apiCount" value="<%=apiCount%>"/>
+    <c:if test="${apiCount > 1}">
+        <div class="lottery-nav" name="nav-${apiTypeId}">
+            <div class="mui-scroll-wrapper mui-slider-indicatorcode mui-segmented-control mui-segmented-control-inverted" data-scroll="7">
+                <div class="mui-scroll">
+                    <ul class="mui-list-unstyled mui-clearfix mui-bar-tab">
+                        <c:forEach var="i" items="${apis}" varStatus="vs">
+                            <c:set var="centerId" value="<%=CommonContext.get().getSiteParentId() %>"/>
+                            <c:choose>
+                                <c:when test="${centerId == -3 && i.apiId == 22}">
+                                    <c:set var="api_icon" value="4-22-2" />
+                                </c:when>
+                                <c:when test="${i.apiId == 22}">
+                                    <c:set var="api_icon" value="4-22-1" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="api_icon" value="${i.apiTypeId}-${i.apiId}" />
+                                </c:otherwise>
+                            </c:choose>
+                            <c:set var="gameCount" value="${i.games}"/>
+                            <c:if test="${fn:length(gameCount)>0}">
+                                <li><a data-rel='{"target":"changeNavGame","opType":"function","apiTypeId":"${i.apiTypeId}","apiId":"${i.apiId}"}' class="mui-tab-item ${vs.index==0?'mui-active':''} api-icon-${api_icon}">${i.relationName}</a></li>
+                            </c:if>
+                        </c:forEach>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    </c:if>
 </c:if>
 <div class="lottery-content" name="nav-content-${apiTypeId}">
     <c:forEach var="i" items="${apis}" varStatus="vs">
