@@ -47,7 +47,7 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
                 PayAccountOnline pay = new PayAccountOnline(bank.getKey(), i18nMap.get(bank.getKey()), bank.getValue());
                 results.add(pay);
             }
-            return DepositTool.convertOnlineAccount(rank, results, getRechargeType(channel));
+            return results;
         }
         return new ArrayList<PayAccountOnline>();
     }
