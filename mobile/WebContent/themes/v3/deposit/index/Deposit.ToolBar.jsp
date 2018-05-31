@@ -82,14 +82,21 @@
             </div>
         </div>
     </c:if>
+
     <c:if test="${!empty rechargeUrlParam}">
-        <div class="list_pay_item_w" data-rel='{"opType":"href","target":"${rechargeUrlParam}"}'>
+        <c:set var="url" value="${rechargeUrlParam}"/>
+        <c:if test="${!fn:startsWith(url, 'http')}">
+            <c:set var="url" value="http://${rechargeUrlParam}"/>
+        </c:if>
+        <div class="list_pay_item_w" data-rel='{"opType":"href","target":"${url}"}'>
             <div class="list_pay_item">
                 <i class="icon-pay kuaichong"></i>
                 <div class="pay_nam">快充中心</div>
             </div>
         </div>
+
     </c:if>
+
     <c:if test="${map['counter']>0}">
         <div class="list_pay_item_w" href="#" data-rel='{"payType":"counter","url":"/wallet/v3/deposit/counter/index.html","opType":"function","target":"toolBarClick"}'>
             <div class="list_pay_item">
