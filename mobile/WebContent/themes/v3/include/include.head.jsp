@@ -49,7 +49,3 @@
 </c:choose>
 <link rel="stylesheet" href="${resRoot}/themes/hongbao.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/loading.css?v=${rcVersion}"/>
-<link rel="stylesheet" href="${resRoot}/themes/default/style.css" />
-
-
-

@@ -61,7 +61,7 @@ public class DepositAppController extends BaseDepositController {
     @ResponseBody
     public String index(AppRequestModelVo model, HttpServletRequest request) {
         PayAccountListVo payAccountListVo = new PayAccountListVo();
-        payAccountListVo.getSearch().setTerminal(SessionManagerCommon.getTerminal(request));
+        payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
         payAccountListVo.setPlayerId(SessionManager.getUserId());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         Map<String, Long> channelCountMap = ServiceSiteTool.payAccountService().queryChannelCount(payAccountListVo);

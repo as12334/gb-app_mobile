@@ -81,7 +81,7 @@
                         </div>
                     </c:if>
                     <c:if test="${not empty payAccount.remark}">
-                        <p>${payAccount.remark}</p>
+                        <p><c:out value="${payAccount.remark}"></c:out></p>
                     </c:if>
                 </div>
             </div>
@@ -153,14 +153,15 @@
             <div class="deposit_help">
                 <p>温馨提示</p>
                 <c:if test="${channel!='onecodepay'}">
-                    <p>• ${views.deposit_auto['请先加好友']}</p>
-                    <p>• ${views.deposit_auto['请输入订单号后5位']}</p>
+                    <p>• 请先查看入款账号信息或扫描二维码。</p>
                     <p>• ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    <p>• ${views.deposit_auto['请输入订单号后5位']}</p>
                     <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
                 </c:if>
                 <c:if test="${channel=='onecodepay'}">
                     <p>• 五码合一，使用网银，支付宝，微信，QQ钱包，京东钱包均可扫描二维码进行存款.</p>
                     <p>• ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    <p>• ${views.deposit_auto['请输入订单号后5位']}</p>
                     <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
                 </c:if>
             </div>

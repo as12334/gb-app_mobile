@@ -37,7 +37,7 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
-import java.io.Serializable;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
@@ -137,7 +137,7 @@ public class ActivityMoneyAppController {
     @RequestMapping(value = "/getPacket")
     @ResponseBody
     @Token(valid = true)
-    public String getPacket(String activityMessageId) {
+    public String getPacket(HttpServletRequest request, String activityMessageId) {
         if (StringTool.isBlank(activityMessageId)) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),
                     AppErrorCodeEnum.ACTIVITY_END.getMsg(),
@@ -195,10 +195,10 @@ public class ActivityMoneyAppController {
             boolean allDayLottery = isAllDayLottery(playerId, moneyActivity.getId());
             if (allDayLottery) {//全天开奖
                 LOG.info("[玩家-{0}拆红包]全天抽奖", SessionManagerBase.getUserId().toString());
-                allDayLottery(map, playerId, moneyActivity);
+                allDayLottery(request, map, playerId, moneyActivity);
             } else {//按时段开奖
                 LOG.info("[玩家-{0}拆红包]按时段抽奖", SessionManagerBase.getUserId().toString());
-                lotteryByPeriod(map, playerId, moneyActivity);
+                lotteryByPeriod(request, map, playerId, moneyActivity);
             }
             ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
             awardsRulesVo.setPlayerId(playerId);
@@ -374,7 +374,7 @@ public class ActivityMoneyAppController {
         return startTime;
     }
 
-    private void lotteryByPeriod(Map map, Integer playerId, PlayerActivityMessage moneyActivity) {
+    private void lotteryByPeriod(HttpServletRequest request, Map map, Integer playerId, PlayerActivityMessage moneyActivity) {
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
         awardsRulesVo.getSearch().setActivityMessageId(moneyActivity.getId());
@@ -384,11 +384,11 @@ public class ActivityMoneyAppController {
             if (CollectionTool.isEmpty(moneyCounts)) {//没有内定次数
                 //没有内定红包数
                 LOG.info("[玩家-{0}拆红包]没有内定红包数", SessionManagerBase.getUserId().toString());
-                lotteryByRules(map, moneyActivity, period);
+                lotteryByRules(request, map, moneyActivity, period);
             } else {
                 //有内定次数
                 LOG.info("[玩家-{0}拆红包]有内定次数", SessionManagerBase.getUserId().toString());
-                hasDefaultCount(map, moneyCounts, period, moneyActivity, playerId);
+                hasDefaultCount(request, map, moneyCounts, period, moneyActivity, playerId);
             }
         } else {
             map.put("gameNum", -1);
@@ -396,17 +396,17 @@ public class ActivityMoneyAppController {
         }
     }
 
-    private void allDayLottery(Map map, Integer playerId, PlayerActivityMessage moneyActivity) {
+    private void allDayLottery(HttpServletRequest request, Map map, Integer playerId, PlayerActivityMessage moneyActivity) {
         //查询内定红包数
         List<Map> moneyCounts = findCountByPlayerId(moneyActivity, playerId);
         if (CollectionTool.isEmpty(moneyCounts)) {//没有内定次数
             //
             LOG.info("[玩家-{0}拆红包]没有内定红包数", SessionManagerBase.getUserId().toString());
-            lotteryByRules(map, moneyActivity, null);
+            lotteryByRules(request, map, moneyActivity, null);
         } else {
             //有内定次数
             LOG.info("[玩家-{0}拆红包]有内定次数", SessionManagerBase.getUserId().toString());
-            hasDefaultCount(map, moneyCounts, null, moneyActivity, playerId);
+            hasDefaultCount(request, map, moneyCounts, null, moneyActivity, playerId);
         }
     }
 
@@ -453,7 +453,7 @@ public class ActivityMoneyAppController {
      *
      * @param map
      */
-    private void lotteryByRules(Map map, PlayerActivityMessage moneyActivity, ActivityOpenPeriod openPeriod) {
+    private void lotteryByRules(HttpServletRequest request, Map map, PlayerActivityMessage moneyActivity, ActivityOpenPeriod openPeriod) {
         //查询玩家剩余抽奖次数
         Integer integer = queryPlayerBetCountByRules(moneyActivity);
         if (integer > 0) {
@@ -464,7 +464,7 @@ public class ActivityMoneyAppController {
             activityMoneyAwardsRulesVo.setMoneyOpenPeriod(openPeriod);
             activityMoneyAwardsRulesVo.setActivityMessage(moneyActivity);
             VUserPlayer vUserPlayer = fetchUserPlayer(SessionManagerCommon.getUserId());
-            ActivityPlayerApply activityPlayerApply = buildPlayerApplyData(moneyActivity, vUserPlayer, ActivityApplyCheckStatusEnum.TO_BE_CONFIRM.getCode());
+            ActivityPlayerApply activityPlayerApply = buildPlayerApplyData(request, moneyActivity, vUserPlayer, ActivityApplyCheckStatusEnum.TO_BE_CONFIRM.getCode());
             activityMoneyAwardsRulesVo.setActivityPlayerApply(activityPlayerApply);
             if (openPeriod == null) {
                 activityMoneyAwardsRulesVo.getSearch().setStartTime(DateQuickPicker.getInstance().getToday());
@@ -502,7 +502,7 @@ public class ActivityMoneyAppController {
      * @param map
      * @param moneyCounts
      */
-    private void hasDefaultCount(Map map, List<Map> moneyCounts, ActivityOpenPeriod openPeriod, PlayerActivityMessage moneyActivity, Integer playerId) {
+    private void hasDefaultCount(HttpServletRequest request, Map map, List<Map> moneyCounts, ActivityOpenPeriod openPeriod, PlayerActivityMessage moneyActivity, Integer playerId) {
         int gameNum = countAll(moneyActivity, playerId);
         if (gameNum <= 0) {
             map.put("gameNum", -1);
@@ -513,7 +513,7 @@ public class ActivityMoneyAppController {
         Map money = swithDefaultWin(moneyCounts, openPeriod);
         if (money == null) {
             //看下是否按条件的红包
-            lotteryByRules(map, moneyActivity, openPeriod);
+            lotteryByRules(request, map, moneyActivity, openPeriod);
             Integer num = MapTool.getInteger(map, "gameNum");
             if (num != null && num == -1) {
                 map.put("gameNum", -5);
@@ -529,7 +529,7 @@ public class ActivityMoneyAppController {
         map.put("id", winId);
         //剩余抽奖次数-1
         gameNum--;
-        ActivityMoneyDefaultWinPlayerVo winPlayerVo = reduceCount(money, openPeriod, moneyActivity);
+        ActivityMoneyDefaultWinPlayerVo winPlayerVo = reduceCount(request, money, openPeriod, moneyActivity);
         if (winPlayerVo.isSuccess()) {
             map.put("gameNum", gameNum);
             map.put("award", award);
@@ -558,7 +558,7 @@ public class ActivityMoneyAppController {
      * @param vUserPlayer
      * @return
      */
-    private ActivityPlayerApply buildPlayerApplyData(PlayerActivityMessage activityMessage, VUserPlayer vUserPlayer, String checkState) {
+    private ActivityPlayerApply buildPlayerApplyData(HttpServletRequest request, PlayerActivityMessage activityMessage, VUserPlayer vUserPlayer, String checkState) {
         ActivityPlayerApply activityPlayerApply = new ActivityPlayerApply();
         activityPlayerApply.setActivityMessageId(activityMessage.getId());
         activityPlayerApply.setUserId(vUserPlayer.getId());
@@ -573,6 +573,7 @@ public class ActivityMoneyAppController {
         activityPlayerApply.setEndTime(activityMessage.getEndTime());
         activityPlayerApply.setIpApply(vUserPlayer.getLoginIp());
         activityPlayerApply.setIpDictCode(vUserPlayer.getLoginIpDictCode());
+        activityPlayerApply.setActivityTerminalType(SessionManagerCommon.getTerminal(request));
         return activityPlayerApply;
     }
 
@@ -603,7 +604,7 @@ public class ActivityMoneyAppController {
      *
      * @param money
      */
-    private ActivityMoneyDefaultWinPlayerVo reduceCount(Map money, ActivityOpenPeriod openPeriod, PlayerActivityMessage moneyActivity) {
+    private ActivityMoneyDefaultWinPlayerVo reduceCount(HttpServletRequest request, Map money, ActivityOpenPeriod openPeriod, PlayerActivityMessage moneyActivity) {
         ActivityMoneyDefaultWinPlayerVo winPlayerVo = new ActivityMoneyDefaultWinPlayerVo();
         winPlayerVo.setMoneyOpenPeriod(openPeriod);
         Integer id = MapTool.getInteger(money, "id");
@@ -615,7 +616,7 @@ public class ActivityMoneyAppController {
         winPlayerVo.getSearch().setId(id);
         winPlayerVo.setActivityMessage(moneyActivity);
         VUserPlayer vUserPlayer = fetchUserPlayer(SessionManagerCommon.getUserId());
-        ActivityPlayerApply activityPlayerApply = buildPlayerApplyData(moneyActivity, vUserPlayer, ActivityApplyCheckStatusEnum.TO_BE_CONFIRM.getCode());
+        ActivityPlayerApply activityPlayerApply = buildPlayerApplyData(request, moneyActivity, vUserPlayer, ActivityApplyCheckStatusEnum.TO_BE_CONFIRM.getCode());
         winPlayerVo.setActivityPlayerApply(activityPlayerApply);
         ActivityPlayerPreferential activityPlayerPreferential = buildPlayerPreferential(moneyActivity, rules_id);
         winPlayerVo.setPreferential(activityPlayerPreferential);

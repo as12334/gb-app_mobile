@@ -355,6 +355,8 @@ public abstract class BaseOriginController {
         LinkedHashMap<String, ApiCacheEntity> apiMap;
         AppSiteApiTypeRelastionVo appApiType;
         AppSiteApiTypeRelationI18n appSite;
+        int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
+        int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             apiTypeId = apiTypeCacheEntity.getApiTypeId();
             apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
@@ -364,8 +366,11 @@ public abstract class BaseOriginController {
 
             appApis = new ArrayList<>();
             for (ApiCacheEntity apiCacheEntity : apiMap.values()) {
+                //BB体育不展示
+                if (apiTypeId == sportType && apiCacheEntity.getApiId() == bb) {
+                    continue;
+                }
                 appSite = changeApiTypeRelationI18nModelToApp(apiCacheEntity, apiLogoUrl);
-
                 //彩票，棋牌
                 if (navApiTypes.contains(apiTypeId)) {
                     gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
@@ -460,7 +465,7 @@ public abstract class BaseOriginController {
      */
     private AppSiteApiTypeRelationI18n changeApiTypeRelationI18nModelToApp(ApiCacheEntity apiEntity, String apiLogoUrl) {
         AppSiteApiTypeRelationI18n appRelation = new AppSiteApiTypeRelationI18n();
-        appRelation.setName(apiEntity.getApiName());
+        appRelation.setName(apiEntity.getRelationName());
         appRelation.setApiId(apiEntity.getApiId());
         appRelation.setApiTypeId(apiEntity.getApiTypeId());
         List<Integer> siteIds = API_SITE_SPECIAL.get(apiEntity.getApiId());
@@ -937,7 +942,7 @@ public abstract class BaseOriginController {
                 playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
             }
         }
-        playerApiAccountVo.setPlatformType(SessionManagerCommon.getTerminal(request));
+        playerApiAccountVo.setPlatformType(TerminalEnum.MOBILE.getCode());
     }
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
@@ -976,7 +981,7 @@ public abstract class BaseOriginController {
         playerApiVo.setLobbyUrl(domain);
         playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
         playerApiVo.setSysUser(SessionManager.getUser());
-        playerApiVo.setPlatformType(SessionManagerCommon.getTerminal(request));
+        playerApiVo.setPlatformType(SessionManager.getTerminal(request));
         return playerApiVo;
     }
 
@@ -1075,7 +1080,7 @@ public abstract class BaseOriginController {
     private GameVo fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
         GameVo gameVo = new GameVo();
         gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
-        gameVo.getSearch().setSupportTerminal(playerApiAccountVo.getPlatformType());
+        gameVo.getSearch().setSupportTerminal(TerminalEnum.MOBILE.getCode());
         gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
         gameVo = ServiceTool.gameService().search(gameVo);
         return gameVo;

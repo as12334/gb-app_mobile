@@ -140,13 +140,27 @@ public class IndexController extends BaseApiController {
             if (StringTool.isNotBlank(path)) {
                 getAboutAndTerms(path, model, request);
             }
+        } else {
+            initFloatPic(model);
         }
         //手机弹窗广告、查询Banner和公告
         getBannerAndAd(model, request);
-        initFloatPic(model);
-
         model.addAttribute("isShowQrCode", ParamTool.isLoginShowQrCode()); //这是二维码开启开关
         return "/Index";
+    }
+
+    @RequestMapping("/index/floatPic")
+    @Upgrade(upgrade = true)
+    public String floatPic(Model model) {
+        initFloatPic(model);
+        return "/index.include/Envelope";
+    }
+
+    @RequestMapping("/index/dialog")
+    @Upgrade(upgrade = true)
+    public String dialog(HttpServletRequest request, Model model) {
+        getBannerAndAd(model, request);
+        return "/index.include/include.dialog";
     }
 
     /**
@@ -241,7 +255,7 @@ public class IndexController extends BaseApiController {
         model.addAttribute("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         //活动规则
         Map siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE);
-        if(MapTool.isNotEmpty(siteI18nMap)){
+        if (MapTool.isNotEmpty(siteI18nMap)) {
             model.addAttribute("activityRules", siteI18nMap.get(SessionManager.getLocale().toString()));
         }
 

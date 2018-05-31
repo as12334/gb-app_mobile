@@ -59,12 +59,12 @@ public class V3DepositController extends V3BaseDepositController {
     @RequestMapping("/index")
     @DemoModel(menuCode = DemoMenuEnum.CKZQ)
     @Upgrade(upgrade = true)
-    public String index(Model model,HttpServletRequest request) {
+    public String index(Model model, HttpServletRequest request) {
         //设置foot所选择的位置
         model.addAttribute("skip", 0);
         //取得用户所支持的存款通道
         PayAccountListVo payAccountListVo = new PayAccountListVo();
-        payAccountListVo.getSearch().setTerminal(SessionManagerCommon.getTerminal(request));
+        payAccountListVo.getSearch().setTerminal(TerminalEnum.MOBILE.getCode());
         payAccountListVo.setPlayerId(SessionManager.getUserId());
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
 
@@ -185,6 +185,13 @@ public class V3DepositController extends V3BaseDepositController {
             amount = playerRechargeVo.getResult().getBitAmount();
         } else {
             amount = playerRechargeVo.getResult().getRechargeAmount();
+            //如果用户输入不包含小数点，切开启随机额度，则增加随机额度
+            if (playerRechargeVo.getResult().getRechargeAmount().intValue() == playerRechargeVo.getResult().getRechargeAmount()) {
+                Double randomCash = playerRechargeVo.getResult().getRandomCash();
+                if (randomCash != null && randomCash > 0) {
+                    amount += randomCash / 100;
+                }
+            }
         }
         //计算优惠显示
         double fee = calculateFee(getRank(), amount);
@@ -225,7 +232,7 @@ public class V3DepositController extends V3BaseDepositController {
             return null;
         }
         IDepositSubmitter submitter = null;
-        if (rechargeTypeEnum.getCode().equals("bitcoin_fast")) {
+        if (rechargeTypeEnum.getCode().equals(RechargeTypeEnum.BITCOIN_FAST.getCode())) {
             submitter = new DepositSubmitterBitcoin();
         } else if (rechargeTypeEnum.getParentEnum().equals(RechargeTypeParentEnum.ONLINE_DEPOSIT)) {
             submitter = new DepositSubmitterOnline();

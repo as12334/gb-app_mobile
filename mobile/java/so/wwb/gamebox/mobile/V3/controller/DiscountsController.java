@@ -8,17 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
 import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  */
@@ -76,6 +72,7 @@ public class DiscountsController {
         long time = SessionManager.getDate().getNow().getTime();
         String classify;
         String locale = SessionManager.getLocale().toString();
+        List<PlayerActivityMessage> activityMessages = new ArrayList<>();
         for (PlayerActivityMessage playerActivityMessage : activityMap.values()) {
             if (playerActivityMessage.getIsDisplay() == null) {
                 continue;
@@ -95,7 +92,9 @@ public class DiscountsController {
                 activityGroupByClassify.put(classify, new ArrayList<>());
             }
             activityGroupByClassify.get(classify).add(playerActivityMessage);
+            activityMessages.add(playerActivityMessage);
         }
+        model.addAttribute("activityMessages", activityMessages);
         model.addAttribute("activityMap", activityGroupByClassify);
     }
 

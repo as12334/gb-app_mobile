@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.V3.support.submitter;
 
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
@@ -60,7 +61,7 @@ public class DepositSubmitterCompany extends AbstractRechargeSubmitter implement
         //ip处理
         playerRecharge.setIpDeposit(SessionManagerBase.getIpDb().getIp());
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
-        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
+        playerRechargeVo.setOrigin(SupportTerminal.H5.getCode());
         playerRechargeVo.setSysUser(SessionManager.getUser());
         playerRechargeVo.setRankId(rank.getId());
         playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
