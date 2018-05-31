@@ -382,9 +382,11 @@ public abstract class BaseOriginController {
                             appSiteGames.add(changeSiteGameToApp(game));
                         }
                         appSite.setGameList(appSiteGames);
+                        appApis.add(appSite);
                     }
+                } else {
+                    appApis.add(appSite);
                 }
-                appApis.add(appSite);
             }
             //转换实体提供给app原生
             appApiType = new AppSiteApiTypeRelastionVo();
