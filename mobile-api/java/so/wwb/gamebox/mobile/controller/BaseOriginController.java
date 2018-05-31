@@ -1077,6 +1077,7 @@ public abstract class BaseOriginController {
         gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
         gameVo.getSearch().setSupportTerminal(TerminalEnum.MOBILE.getCode());
         gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
+        gameVo.getSearch().setStatusArray(new String[]{GameStatusEnum.NORMAL.getCode(), GameStatusEnum.MAINTAIN.getCode()});
         gameVo = ServiceTool.gameService().search(gameVo);
         return gameVo;
     }
