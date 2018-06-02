@@ -43,7 +43,7 @@
                         <input type="text" class="mui-input-clear" name="captcha" id="captcha" maxlength="4"
                                placeholder="${views.passport_auto['请输入验证码']}">
                         <img class="captcha_img" data-rel='{"target":"captchaChange","opType":"function"}'
-                             src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
+                             src="${root}/captcha/code.html?t=${random}" data-src="${root}/captcha/code.html" alt="">
                     </div>
                 </div>
                 <c:if test="${isRecover}">
