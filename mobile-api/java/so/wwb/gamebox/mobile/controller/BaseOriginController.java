@@ -37,8 +37,7 @@ import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
-import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
-import so.wwb.gamebox.model.company.site.vo.SiteGameTagVo;
+import so.wwb.gamebox.model.company.site.vo.*;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -50,13 +49,11 @@ import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_SITE_SPECIAL;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.API_TYPE_LOGO_URL;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.FISH_API_TYPE_ID;
 
 /**
@@ -290,6 +287,214 @@ public abstract class BaseOriginController {
     protected List<SiteApiType> getApiTypes() {
         Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
         return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_MOBILE_ORDER_NUM));
+    }
+
+    /**
+     * 获取游戏类型api
+     *
+     * @param model
+     * @param request
+     * @return
+     */
+    protected List<AppSiteApiTypeRelastionVo> getApiTypeGames(AppRequestModelVo model, HttpServletRequest request) {
+        Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
+        Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
+
+        String gameCover = String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
+        String apiLogoUrl = setApiLogoUrl(model, request);
+        List<AppSiteApiTypeRelastionVo> appApiTypes = changeToAppSiteApiRelation(apiCacheMap, apiLogoUrl, apiType, gameCover);
+
+        //处理捕鱼数据
+        Map<String, GameCacheEntity> fishGameMap = Cache.getMobileFishGameCache();
+        StringBuffer fishName;
+        List<AppSiteGame> fishGames = new ArrayList<>();
+        for (GameCacheEntity game : fishGameMap.values()) {
+            game.setCover(MessageFormat.format(gameCover, game.getApiId(), game.getCode()));
+            //捕鱼游戏名称=api名称 + 游戏名称
+            fishName = new StringBuffer();
+            fishName.append(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId()))).append(" ").append(game.getName());
+            game.setName(fishName.toString());
+            fishGames.add(changeSiteGameToApp(game));
+        }
+        if (CollectionTool.isNotEmpty(fishGames)) {
+            AppSiteApiTypeRelastionVo fish = new AppSiteApiTypeRelastionVo();
+            fish.setApiType(FISH_API_TYPE_ID);
+            fish.setCover(setApiLogoUrl(model, request) + "/fish.png");
+            fish.setLevel(true);
+            fish.setApiTypeName(LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode()));
+            AppSiteApiTypeRelationI18n appSiteApiTypeRelationI18n = new AppSiteApiTypeRelationI18n();
+            appSiteApiTypeRelationI18n.setApiId(FISH_API_TYPE_ID);
+            appSiteApiTypeRelationI18n.setGameList(fishGames);
+            List<AppSiteApiTypeRelationI18n> appApis = new ArrayList<>(1);
+            appApis.add(appSiteApiTypeRelationI18n);
+            fish.setSiteApis(appApis);
+            appApiTypes.add(fish);
+        }
+
+        return appApiTypes;
+    }
+
+    /**
+     * 取api缓存数据转换到app原生api
+     *
+     * @param apiCacheMap
+     * @param apiLogoUrl
+     * @return
+     */
+    private List<AppSiteApiTypeRelastionVo> changeToAppSiteApiRelation(Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap,
+                                                                       String apiLogoUrl,
+                                                                       Map<String, ApiTypeCacheEntity> apiType,
+                                                                       String gameCover) {
+        List<AppSiteApiTypeRelastionVo> appApiTypes = new ArrayList<>();
+        List<AppSiteApiTypeRelationI18n> appApis;
+        Integer apiTypeId;
+        List<Integer> navApiTypes = navApiTypes();
+        Map<String, LinkedHashMap<String, GameCacheEntity>> gameMap;
+        Map<String, GameCacheEntity> apiGameMap;
+        List<AppSiteGame> appSiteGames;
+        LinkedHashMap<String, ApiCacheEntity> apiMap;
+        AppSiteApiTypeRelastionVo appApiType;
+        AppSiteApiTypeRelationI18n appSite;
+        int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
+        int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
+        for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
+            apiTypeId = apiTypeCacheEntity.getApiTypeId();
+            apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
+            if (MapTool.isEmpty(apiMap)) {
+                continue;
+            }
+
+            appApis = new ArrayList<>();
+            for (ApiCacheEntity apiCacheEntity : apiMap.values()) {
+                //BB体育不展示
+                if (apiTypeId == sportType && apiCacheEntity.getApiId() == bb) {
+                    continue;
+                }
+                appSite = changeApiTypeRelationI18nModelToApp(apiCacheEntity, apiLogoUrl);
+                //彩票，棋牌
+                if (navApiTypes.contains(apiTypeId)) {
+                    gameMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
+                    apiGameMap = gameMap.get(String.valueOf(apiCacheEntity.getApiId()));
+                    if (MapTool.isNotEmpty(apiGameMap)) {
+                        appSiteGames = new ArrayList<>();
+                        for (GameCacheEntity game : apiGameMap.values()) {
+                            game.setCover(MessageFormat.format(gameCover, game.getApiId(), game.getCode()));
+                            appSiteGames.add(changeSiteGameToApp(game));
+                        }
+                        appSite.setGameList(appSiteGames);
+                        appApis.add(appSite);
+                    }
+                } else {
+                    appApis.add(appSite);
+                }
+            }
+            //转换实体提供给app原生
+            appApiType = new AppSiteApiTypeRelastionVo();
+            appApiType.setApiType(apiTypeId);
+            appApiType.setApiTypeName(apiTypeCacheEntity.getName());
+            appApiType.setCover(String.format(API_TYPE_LOGO_URL, apiLogoUrl, apiTypeId));
+            appApiType.setSiteApis(appApis);
+            if (navApiTypes.contains(apiTypeId)) {
+                appApiType.setLevel(true);
+            }
+            appApiTypes.add(appApiType);
+        }
+
+        return appApiTypes;
+    }
+
+    /**
+     * 转换彩票,棋牌实体到原生app
+     *
+     * @param siteGame
+     * @return
+     */
+    private AppSiteGame changeSiteGameToApp(GameCacheEntity siteGame) {
+        AppSiteGame appSiteGame = new AppSiteGame();
+        appSiteGame.setGameId(siteGame.getGameId());
+        appSiteGame.setApiId(siteGame.getApiId());
+        appSiteGame.setGameType(siteGame.getGameType());
+        //appSiteGame.setOrderNum(siteGame.getOrderNum());
+        appSiteGame.setStatus(siteGame.getStatus());
+        appSiteGame.setApiTypeId(siteGame.getApiTypeId());
+        appSiteGame.setCode(siteGame.getCode());
+        appSiteGame.setName(siteGame.getName());
+        appSiteGame.setCover(siteGame.getCover());
+        //appSiteGame.setSystemStatus(siteGame.getSystemStatus());
+        appSiteGame.setGameLink(getCasinoGameRequestUrl(siteGame));
+        appSiteGame.setAutoPay(SessionManager.isAutoPay());
+        return appSiteGame;
+    }
+
+    /**
+     * 获取电子游戏请求路劲
+     *
+     * @param siteGame
+     * @return
+     */
+    private String getCasinoGameRequestUrl(GameCacheEntity siteGame) {
+        //kg需进入大厅，不支持直接进入游戏
+        StringBuilder sb = new StringBuilder();
+        if (ApiTypeEnum.CASINO.getCode() == siteGame.getApiTypeId()) {
+            sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+            if (siteGame.getGameId() != null && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
+                sb.append("&gameId=").append(siteGame.getGameId());
+            }
+            if (StringTool.isNotBlank(siteGame.getCode()) && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId()) {
+                sb.append("&gameCode=").append(siteGame.getCode());
+            }
+        } else {
+            if (SessionManager.isAutoPay()) {
+                sb.append(String.format(AUTO_GAME_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && siteGame.getGameId() != null) {
+                    sb.append("&gameId=").append(siteGame.getGameId());
+                }
+                if (NumberTool.toInt(ApiProviderEnum.BBIN.getCode()) != siteGame.getApiId() && NumberTool.toInt(ApiProviderEnum.KG.getCode()) != siteGame.getApiId() && StringTool.isNotBlank(siteGame.getCode())) {
+                    sb.append("&gameCode=").append(siteGame.getCode());
+                }
+            } else {
+                sb.append(String.format(API_DETAIL_LINK, siteGame.getApiId(), siteGame.getApiTypeId()));
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 转换apiTypeRelation到原生实体
+     *
+     * @param apiEntity
+     * @return
+     */
+    private AppSiteApiTypeRelationI18n changeApiTypeRelationI18nModelToApp(ApiCacheEntity apiEntity, String apiLogoUrl) {
+        AppSiteApiTypeRelationI18n appRelation = new AppSiteApiTypeRelationI18n();
+        appRelation.setName(apiEntity.getRelationName());
+        appRelation.setApiId(apiEntity.getApiId());
+        appRelation.setApiTypeId(apiEntity.getApiTypeId());
+        List<Integer> siteIds = API_SITE_SPECIAL.get(apiEntity.getApiId());
+        if (siteIds != null && siteIds.contains(SessionManager.getSiteId())) {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiEntity.getApiId() + "_site" + SessionManager.getSiteId()));
+        } else {
+            appRelation.setCover(String.format(AppConstant.API_LOGO_URL, apiLogoUrl, apiEntity.getApiId()));
+        }
+        appRelation.setGameLink(getAutoPayGameLink(apiEntity));
+
+        appRelation.setAutoPay(SessionManager.isAutoPay());
+        return appRelation;
+    }
+
+    /**
+     * 设置api链接地址
+     *
+     * @return
+     */
+    private String getAutoPayGameLink(ApiCacheEntity apiEntity) {
+        if (ApiTypeEnum.CASINO.getCode() == apiEntity.getApiTypeId()) {
+            return String.format(CASINO_GAME_LINK, apiEntity.getApiId(), apiEntity.getApiTypeId());
+        } else if (SessionManager.isAutoPay()) {
+            return String.format(AUTO_GAME_LINK, apiEntity.getApiId(), apiEntity.getApiTypeId());
+        } else {
+            return String.format(API_DETAIL_LINK, apiEntity.getApiId(), apiEntity.getApiTypeId());
+        }
     }
 
     /**
@@ -732,14 +937,14 @@ public abstract class BaseOriginController {
             GameVo gameVo = new GameVo();
             gameVo.getSearch().setApiId(apiId);
             gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(GameSupportTerminalEnum.PHONE.getCode());
+            gameVo.getSearch().setSupportTerminal(SessionManagerCommon.getTerminal(request));
             gameVo = ServiceTool.gameService().search(gameVo);
             if (gameVo.getResult() != null) {
                 playerApiAccountVo.setGameId(gameVo.getResult().getId());
                 playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
             }
         }
-        playerApiAccountVo.setPlatformType(SupportTerminal.PHONE.getCode());
+        playerApiAccountVo.setPlatformType(TerminalEnum.MOBILE.getCode());
     }
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {
@@ -778,7 +983,7 @@ public abstract class BaseOriginController {
         playerApiVo.setLobbyUrl(domain);
         playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
         playerApiVo.setSysUser(SessionManager.getUser());
-        playerApiVo.setPlatformType(SupportTerminal.PHONE.getCode());
+        playerApiVo.setPlatformType(SessionManager.getTerminal(request));
         return playerApiVo;
     }
 
@@ -877,7 +1082,7 @@ public abstract class BaseOriginController {
     private GameVo fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
         GameVo gameVo = new GameVo();
         gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
-        gameVo.getSearch().setSupportTerminal(playerApiAccountVo.getPlatformType());
+        gameVo.getSearch().setSupportTerminal(TerminalEnum.MOBILE.getCode());
         gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
         gameVo = ServiceTool.gameService().search(gameVo);
         return gameVo;

@@ -25,21 +25,28 @@
                     </c:if>
                     <div class="mui-slider-item">
                         <a data-rel='{"target":"${link}","opType":"href"}'>
-                            <img src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                            <c:if test="${vs.index == 0}">
+                                <img src="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                            </c:if>
+                            <c:if test="${vs.index != 0}">
+                                <img data-lazyload="${soulFn:getImagePath(domain, carousel["cover"])}"/>
+                            </c:if>
                         </a>
                     </div>
                     <c:if test="${fn:length(carousels)-1 == vs.index}">
                         <div class="mui-slider-item mui-slider-item-duplicate">
                             <a data-rel='{"target":"${link}","opType":"href"}'>
-                                <img src="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
+                                <img data-lazyload="${soulFn:getImagePath(domain, carousels.get(0)["cover"])}"/>
                             </a>
                         </div>
                     </c:if>
                 </c:forEach>
             </c:when>
-            <c:otherwise>
+            <c:otherwise >
                 <div class="mui-slider-item">
-                    <a><img src="${resRoot}/images/banner-01.jpg" /></a>
+                    <a>
+                        <img src="${resRoot}/images/banner-01.jpg" />
+                    </a>
                 </div>
             </c:otherwise>
         </c:choose>

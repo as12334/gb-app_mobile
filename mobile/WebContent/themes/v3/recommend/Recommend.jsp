@@ -45,7 +45,7 @@
                     <div class="input-wrap">
                         <input type="text" value="${domain}${code}">
                         <a href="#" data-clipboard-text="${domain}${code}" data-rel='{"target":"copyCode","opType":"function"}' class="btn-copy copy">${views.themes_auto['复制']}</a>
-                        <input type="hidden" value="${activityRules}" id="activityRules"> <%--接收活动规则，在通过jQuery显示--%>
+                        <input type="hidden" value="${activityRules.getValue()}" id="activityRules"> <%--接收活动规则，在通过jQuery显示--%>
                     </div>
                 </div>
 

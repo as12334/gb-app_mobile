@@ -45,11 +45,11 @@ public class AppPayAccount {
     /**
      * 单笔存款最小值
      */
-    private Integer singleDepositMin;
+    private Long singleDepositMin;
     /**
      * 单笔存款最大值
      */
-    private Integer singleDepositMax;
+    private Long singleDepositMax;
     /**
      * 开户行
      */
@@ -160,19 +160,19 @@ public class AppPayAccount {
         this.bankCode = bankCode;
     }
 
-    public Integer getSingleDepositMin() {
+    public Long getSingleDepositMin() {
         return singleDepositMin;
     }
 
-    public void setSingleDepositMin(Integer singleDepositMin) {
+    public void setSingleDepositMin(Long singleDepositMin) {
         this.singleDepositMin = singleDepositMin;
     }
 
-    public Integer getSingleDepositMax() {
+    public Long getSingleDepositMax() {
         return singleDepositMax;
     }
 
-    public void setSingleDepositMax(Integer singleDepositMax) {
+    public void setSingleDepositMax(Long singleDepositMax) {
         this.singleDepositMax = singleDepositMax;
     }
 

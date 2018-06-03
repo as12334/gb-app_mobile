@@ -34,6 +34,7 @@ import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
+import so.wwb.gamebox.model.company.site.vo.ApiCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.GameCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.company.site.vo.SiteGameTagVo;
@@ -132,7 +133,7 @@ public class GameController extends BaseApiController {
     @RequestMapping("/getCasinoByApiId")
     @Upgrade(upgrade = true)
     public String getGameByApiIdV3(SiteGameListVo listVo, Model model) {
-        String redirectUrl = "/game/%sPartial";
+        String redirectUrl = "/game/%s";
         SiteGameSo so = listVo.getSearch();
         redirectUrl = getRedirectUrl(listVo, redirectUrl);
         Integer apiId = so.getApiId();
@@ -140,6 +141,12 @@ public class GameController extends BaseApiController {
             return redirectUrl;
         }
         model.addAttribute("apiId", apiId);
+        LinkedHashMap<String, ApiCacheEntity> casinoApis = Cache.getMobileApiCacheEntity(String.valueOf(ApiTypeEnum.CASINO.getCode()));
+        model.addAttribute("casinoApis", casinoApis);
+        ApiCacheEntity api = casinoApis.get(String.valueOf(apiId));
+        if (api != null) {
+            model.addAttribute("apiName", api.getRelationName());
+        }
         Map<String, LinkedHashMap<String, GameCacheEntity>> gameByApiMap = Cache.getMobileGameCacheEntity(String.valueOf(ApiTypeEnum.CASINO.getCode()));
         LinkedHashMap<String, GameCacheEntity> gameMap = gameByApiMap == null ? null : gameByApiMap.get(String.valueOf(apiId));
         if (MapTool.isEmpty(gameMap)) {

@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="../include/include.inc.jsp" %>
+<%@ include file="../../include/include.inc.jsp" %>
 <head>
-    <%@include file="../include/include.head.jsp" %>
+    <%@include file="../../include/include.head.jsp" %>
 </head>
-<body class="exchange-wechat exchange-bank">
+<body class="deposit_2">
 <header class="mui-bar mui-bar-nav">
     <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"opType":"function","target":"goToLastPage"}'></a>
     <h1 class="mui-title">
@@ -30,55 +30,58 @@
         </c:if>
     </h1>
 </header>
-<div class="mui-content mui-scroll-wrapper">
+<div class="mui-content mui-scroll-wrapper deposit-2-content">
     <div class="mui-scroll">
-        <form id="electronicForm">
+        <c:if test="${activityHall==true}">
+            <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
+        </c:if>
+            <form id="rechargeForm" onsubmit="return false">
             <gb:token/>
             <div id="validateRule" style="display: none">${validateRule}</div>
-            <input type="hidden" name="result.payAccountId" value="${payAccount.id}"/>
+            <input type="hidden" name="account" id="account" value="${command.getSearchId(payAccount.id)}"/>
             <input type="hidden" name="result.rechargeType" value="${rechargeType}"/>
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="displayFee" value="${!(empty rank.isFee && empty rank.isReturnFee)}"/>
             <input type="hidden" name="depositChannel" value="electronic"/>
-            <div class="mui-row">
+            <input type="hidden" name="channel" id="channel" value="${channel}"/>
+            <div class="pay_mone">
                 <div class="gb-panel" style="border-top-color: #fff;">
-                    <p class="tit">${views.deposit_auto['账号信息']}</p>
-                    <div class="gb-bankcard">
-                        <div class="hd">
-                            <c:set var="flag" value="${empty payAccount.customBankName || dicts.common.bankname[payAccount.bankCode]==payAccount.customBankName}"/>
-                            <p class="${!flag ? '':'pay-third '} ${!flag ? '':payAccount.bankCode}">
-                                <c:if test="${!flag}">
-                                    ${payAccount.customBankName}
-                                </c:if>
-                            </p>
+                    <div class="tit">${views.deposit_auto['账号信息']}</div>
+                    <div class="bank_car_item">
+                        <div class="top">
+                            <span class="pay-third sm ${payAccount.bankCode}"></span><span class='pay-txt'>${payAccount.customBankName}</span>
                         </div>
-                        <div class="ct" style="padding-left:20px;">
-                            <p>
-                                <span class="text-green" style="color:#f49e2e;line-height:40px;">
+                        <div class="bank_car_txt_info">
+                            <div class="b_c_t_i_row">
                                 <c:choose>
                                     <c:when test="${isHide}">
-                                        ${payAccount.code},${views.deposit_auto['请联系客服']}
+                                        <a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>${payAccount.code},${views.deposit_auto['请联系客服']}</a>
                                     </c:when>
                                     <c:otherwise>
                                         ${payAccount.account}
                                     </c:otherwise>
                                 </c:choose>
-                                </span>
-                                <a href="#" class="copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
-                            </p>
-                            <div class="ct">
-                                <p><span style="float:left;">${views.deposit_auto['姓名']}:</span>
+                                <a href="#" class="copy btn_copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
+                            </div>
+                            <div class="b_c_t_i_row">
+                                    ${views.deposit_auto['姓名']}:
                                     ${payAccount.fullName}
-                                    <a href="#" class="copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
-                                </p>
+                                    <a href="#" class=" btn_copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
                             </div>
                         </div>
                     </div>
                     <c:if test="${not empty payAccount.qrCodeUrl && !isHide}">
                         <div class="wechat-code">
-                            <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">
-                            <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}'><p class="tit">${views.deposit_auto['保存到手机']}</p></a>
+                            <div class="cod-img-wrap">
+                                <img src="${soulFn:getThumbPath(domain,payAccount.qrCodeUrl,135,135)}" alt="">
+                            </div>
+                            <div class="cod-btn-wrap">
+                                <a data-rel='{"url":"${soulFn:getImagePath(domain, payAccount.qrCodeUrl)}","opType":"function","target":"savePicture"}' class="mui-btn">${views.deposit_auto['保存到手机']}</a>
+                            </div>
                         </div>
+                    </c:if>
+                    <c:if test="${not empty payAccount.remark}">
+                        <p><c:out value="${payAccount.remark}"></c:out></p>
                     </c:if>
                 </div>
             </div>
@@ -142,30 +145,27 @@
                             <input type="text" id="result.bankOrder" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
                         </div>
                     </div>
+                    <div class="btn_wrap">
+                        <a data-rel='{"opType":"function","target":"baseDeposit.activity"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
+                    </div>
                 </div>
             </div>
-            <c:choose>
-                <c:when test="${empty payAccount.remark}">
-                    <ul class="info">
-                        <li>* ${views.deposit_auto['请先加好友']}</li>
-                        <li>* ${views.deposit_auto['请输入订单号后5位']}</li>
-                        <li>* ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</li>
-                    </ul>
-                </c:when>
-                <c:otherwise>
-                    <div class="info">
-                    <ul>
-                        <li> ${payAccount.remark}</li>
-                    </ul>
-                </div>
-                </c:otherwise>
-            </c:choose>
+            <div class="deposit_help">
+                <p>温馨提示</p>
+                <c:if test="${channel!='onecodepay'}">
+                    <p>• 请先查看入款账号信息或扫描二维码。</p>
+                    <p>• ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    <p>• ${views.deposit_auto['请输入订单号后5位']}</p>
+                    <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                </c:if>
+                <c:if test="${channel=='onecodepay'}">
+                    <p>• 五码合一，使用网银，支付宝，微信，QQ钱包，京东钱包均可扫描二维码进行存款.</p>
+                    <p>• ${views.deposit_auto['提示']}${views.deposit_auto['支付成功']}${views.deposit_auto['关闭支付窗口']}</p>
+                    <p>• ${views.deposit_auto['请输入订单号后5位']}</p>
+                    <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                </c:if>
+            </div>
         </form>
-    </div>
-</div>
-<div class="mui-row">
-    <div class="gb-form-foot bank-pay-btn">
-        <a data-rel='{"opType":"function","target":"seachDiscount"}' class="mui-btn mui-btn-primary submit">${views.deposit_auto['提交']}</a>
     </div>
 </div>
 <!--弹窗-->
@@ -186,9 +186,11 @@
         </div>
     </div>
 </div>
-<%@ include file="../include/include.js.jsp" %>
+<%@ include file="../../include/include.js.jsp" %>
+<script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/dist/clipboard.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositCenter.js?v=${rcVersion}"></script>
-<script src="${resRoot}/js/deposit/CompanyDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/deposit/DepositScancode.js?v=${rcVersion}"></script>
 </body>
 

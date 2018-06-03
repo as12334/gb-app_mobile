@@ -43,10 +43,11 @@
                         <input type="text" class="mui-input-clear" name="captcha" id="captcha" maxlength="4"
                                placeholder="${views.passport_auto['请输入验证码']}">
                         <img class="captcha_img" data-rel='{"target":"captchaChange","opType":"function"}'
-                             src="${root}/captcha/code.html" data-src="${root}/captcha/code.html" alt="">
+                             src="${root}/captcha/code.html?t=${random}" data-src="${root}/captcha/code.html" alt="">
                     </div>
                 </div>
-                <%--<p class='forget-pas'><a href="javascript:;">忘记密码？</a></p>暂时隐藏--%>
+                <c:if test="${isRecover}">
+                <p class='forget-pas'><a data-rel='{"target":"${root}/help/forgetPassword.html","opType":"href"}'>忘记密码？</a></p></c:if>
                 <a data-rel='{"target":"loginOk","opType":"function"}' type="button"
                    class="btn btn-login btn-ok">立即登录</a>
                 <a data-rel='{"target":"${root}/signUp/index.html","opType":"href"}' type="button"

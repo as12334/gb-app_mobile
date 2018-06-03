@@ -17,18 +17,16 @@ import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
-import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
 import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.DepositWayEnum;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
-import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
+import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.token.Token;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,8 +89,8 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
     @ResponseBody
     @Token(valid = true)
     public Map<String, Object> deposit(PlayerRechargeVo playerRechargeVo, @FormModel @Valid BitcoinDepositForm form,
-                                       BindingResult result) {
-        return commonDeposit(playerRechargeVo, result);
+                                       BindingResult result,HttpServletRequest request) {
+        return commonDeposit(playerRechargeVo, result,request);
     }
 
     /**
@@ -102,7 +100,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount) {
+    public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
         playerRecharge.setRechargeAmount(0d);
@@ -117,7 +115,7 @@ public class CompanyBitcoinDepositController extends BaseCompanyDepositControlle
         playerRecharge.setIpDictCode(SessionManagerBase.getIpDictCode());
         playerRecharge.setRechargeType(RechargeTypeEnum.BITCOIN_FAST.getCode());
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setCustomBankName(payAccount.getCustomBankName());
         return playerRechargeVo;
     }

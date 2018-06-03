@@ -15,13 +15,14 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.digiccy.po.UserDigiccy;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyListVo;
 import so.wwb.gamebox.model.master.digiccy.vo.UserDigiccyVo;
-import so.wwb.gamebox.model.master.enums.TransactionOriginEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
+import so.wwb.gamebox.web.SessionManagerCommon;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,14 +83,14 @@ public class OnlineDigiccyDepositController extends BaseDepositController {
      */
     @RequestMapping("/exchange")
     @ResponseBody
-    public Map<String, Object> exchange(String currency) {
+    public Map<String, Object> exchange(String currency,HttpServletRequest request) {
         UserDigiccyVo userDigiccyVo = new UserDigiccyVo();
         userDigiccyVo.setSysUser(SessionManager.getUser());
         userDigiccyVo.getSearch().setCurrency(currency);
         userDigiccyVo.getSearch().setUserId(SessionManager.getUserId());
         PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
         try {
-            playerRechargeVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+            playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
             playerRechargeVo = ServiceSiteTool.playerRechargeService().digiccyExchange(playerRechargeVo, userDigiccyVo);
         } catch (Exception e) {
             LOG.error(e);

@@ -501,7 +501,7 @@ public class SignUpController extends BaseDemoController {
             userRegisterVo.getSysUser().setDefaultCurrency(getSysSite().getMainCurrency());
         }
         UserPlayer userPlayer = new UserPlayer();
-        userPlayer.setCreateChannel(CreateChannelEnum.MOBILE.getCode());
+        userPlayer.setCreateChannel(CreateChannelEnum.H5.getCode());
         userRegisterVo.setUserPlayer(userPlayer);
         return ServiceSiteTool.userPlayerService().register(userRegisterVo);
     }
@@ -526,8 +526,9 @@ public class SignUpController extends BaseDemoController {
         sysUserVo.getSearch().setSubsysCode(SubSysCodeEnum.PCENTER.getCode());
         sysUserVo.getSearch().setUsername(userName);
         sysUserVo.getSearch().setSiteId(SessionManager.getSiteId());
-        boolean exists = ServiceTool.sysUserService().isExists(sysUserVo);
-        return (!exists) + "";
+        /*boolean exists = ServiceTool.sysUserService().isExists(sysUserVo);
+        return (!exists) + "";*/
+        return ServiceSiteTool.userAgentService().isExistAgent(sysUserVo);
     }
 
     @RequestMapping("/checkEmailCode")

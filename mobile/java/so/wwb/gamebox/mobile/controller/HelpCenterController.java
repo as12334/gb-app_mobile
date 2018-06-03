@@ -168,10 +168,59 @@ public class HelpCenterController {
         return typeName;
     }
 
+    /**
+     * 进入找回密码页面
+     *
+     * @return
+     */
     @RequestMapping(value = "/forgetPassword")
     @Upgrade(upgrade = true)
     public String gotoFindPassword() {
         return "/help/forget/ForgetPassword";
+    }
+
+    /**
+     * 找回密码，判断用户是否存在
+     *
+     * @return
+     */
+    @RequestMapping(value = "/judgeUserExist")
+    @Upgrade(upgrade = true)
+    public String judgeUserExist(String forgetType,Model model) {
+        model.addAttribute("forgetType",forgetType);
+        return "/help/forget/JudgeUserExist";
+    }
+
+    /**
+     * 发送手机短信
+     *
+     * @param encryptedId
+     * @param phone
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/sendPhoneCode")
+    @Upgrade(upgrade = true)
+    public String sendPhoneCode(String encryptedId, String phone,String forgetType, Model model) {
+        model.addAttribute("encryptedId", encryptedId);
+        model.addAttribute("forgetType", forgetType);
+        model.addAttribute("phone", phone);
+        return "/help/forget/SendPhoneCode";
+    }
+
+    /**
+     * 设置新密码
+     *
+     * @return
+     */
+    @RequestMapping(value = "/setLoginPassword")
+    @Upgrade(upgrade = true)
+    public String setLoginPassword(Model model, String encryptedId,String forgetType) {
+        model.addAttribute("encryptedId", encryptedId);
+        if ("forgetSafetyCode".equals(forgetType)){
+            return "/help/forget/SetSafetyCode";
+        }
+        return "/help/forget/SetLoginPassword";
     }
 
     /**
@@ -202,7 +251,7 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/updataMobile")
     @Upgrade(upgrade = true)
-    public String UpdateMobile(Model model) {
+    public String updateMobile(Model model) {
         model.addAttribute("rule", JsRuleCreator.create(BindMobileForm.class, "result"));
         model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
         return "/help/bind/UpDataMobile";
@@ -215,7 +264,7 @@ public class HelpCenterController {
      */
     @RequestMapping(value = "/phoneNumber")
     @Upgrade(upgrade = true)
-    public String PhoneNumber(Model model, NoticeContactWayVo contactVo) {
+    public String setPhoneNumber(Model model, NoticeContactWayVo contactVo) {
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         model.addAttribute("phone", StringTool.overlayTel(contactWay.getContactValue()));
         model.addAttribute("customer", SiteCustomerServiceHelper.getMobileCustomerServiceUrl());
@@ -341,4 +390,16 @@ public class HelpCenterController {
         resultMap.put("msg", LocaleTool.tranMessage(Module.REGISTER, messageCode));
         return resultMap;
     }
+
+    /**
+     * 进入找回安全码
+     * @return
+     */
+    @RequestMapping(value = "/forgetSafetyCode")
+    @Upgrade(upgrade = true)
+    public String gotoforgetSafetyCode(Model model) {
+        model.addAttribute("forgetType","forgetSafetyCode");
+        return "/help/forget/ForgetPassword";
+    }
+
 }

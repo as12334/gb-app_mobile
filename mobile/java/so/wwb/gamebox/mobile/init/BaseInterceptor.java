@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.init;
 
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -33,11 +34,13 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
                 SysParam param = ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_IS_LOTTERY_SITE);
                 if (param != null && param.getParamValue() != null && param.getParamValue().equals("true")) {
                     modelAndView.setViewName("/themes/lottery" + url);
-                } else if(isNative(request)){ //app原生走mobile-v3 H5
+                } else if (isNative(request)) { //app原生走mobile-v3 H5
                     modelAndView.setViewName("/themes/v3" + url);
                 } else {
+                    Integer siteId = CommonContext.get().getSiteId();
                     boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
-                    if (isMobileUpgrade && handler instanceof HandlerMethod && isAppUpdate(request)) {
+                    //todo::by cherry 185先写死固定 185强制走v2
+                    if (siteId != 185 && isMobileUpgrade && handler instanceof HandlerMethod && isAppUpdate(request)) {
                         HandlerMethod handlerMethod = (HandlerMethod) handler;
                         Upgrade upgrade = handlerMethod.getMethodAnnotation(Upgrade.class);
                         if (upgrade != null && upgrade.upgrade()) {
@@ -56,15 +59,16 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
 
     /**
      * 是否是app原生 如果是原生直接走H5
+     *
      * @param request
      * @return
      */
     private boolean isNative(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
-        if(StringTool.isBlank(userAgent)) {
+        if (StringTool.isBlank(userAgent)) {
             return false;
         }
-        if(userAgent.contains("is_native")) {
+        if (userAgent.contains("is_native")) {
             return true;
         }
         return false;

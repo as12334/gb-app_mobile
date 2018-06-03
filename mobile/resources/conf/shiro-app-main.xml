@@ -93,6 +93,7 @@
 				/discounts/index.html = anon
 				/discounts/activityType.html = anon
 				/discounts/promo.html = anon
+				/forgetPassword/*.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>

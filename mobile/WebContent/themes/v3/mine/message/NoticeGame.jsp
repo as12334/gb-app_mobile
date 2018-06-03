@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dawoo</title>
+    <title>消息</title>
     <%@ include file="../../include/include.head.jsp" %>
     <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css"/>
     <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css"/>
@@ -39,7 +39,7 @@
             <div class="mui-row">
                 <div class="mui-input-group mine-form">
                     <div class="gb-datafilter">
-                        <div class="mui-pull-right" style="width: 30%; margin-bottom: 0;">
+                        <div class="mui-pull-right" style="width: 80px; margin-bottom: 0;">
                                     <span class="input-drop">
                                         <a href="#popover">
                                             <span id="displayGameType">${views.mine_auto['游戏类型']}</span>

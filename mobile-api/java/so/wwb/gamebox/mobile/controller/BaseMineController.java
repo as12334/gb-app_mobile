@@ -156,8 +156,8 @@ public class BaseMineController {
      *
      * @return
      */
-    protected Map appRecovery(PlayerApiVo playerApiVo) {
-        playerApiVo.setOrigin(TransactionOriginEnum.MOBILE.getCode());
+    protected Map appRecovery(PlayerApiVo playerApiVo,HttpServletRequest request) {
+        playerApiVo.setOrigin(SessionManagerCommon.getTerminal(request));
         Map map = doRecovery(playerApiVo);
         return map;
     }
@@ -174,9 +174,6 @@ public class BaseMineController {
         Map map = isAllowRecovery(apiId);
         if (MapTool.isNotEmpty(map) && !MapTool.getBooleanValue(map, "isSuccess")) {
             return map;
-        }
-        if (StringTool.isBlank(playerApiVo.getOrigin())) {
-            playerApiVo.setOrigin(TransactionOriginEnum.PC.getCode());
         }
         SysUser user = SessionManagerBase.getUser();
         SysUserVo sysUserVo = new SysUserVo();

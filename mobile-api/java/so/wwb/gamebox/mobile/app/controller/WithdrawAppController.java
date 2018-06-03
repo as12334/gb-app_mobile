@@ -234,8 +234,8 @@ public class WithdrawAppController extends BaseWithDrawController {
         SessionManager.refreshUser();
         SysUser user = SessionManager.getUser();
         Map<String, Object> map = initSecurityPwdMap();
-        Boolean captcha = (Boolean) map.get(KEY_CAPTCHA);
-        /*if (captcha == null ? false : captcha) {
+         /*Boolean captcha = (Boolean) map.get(KEY_CAPTCHA);
+       if (captcha == null ? false : captcha) {
             String sysCode = (String) SessionManager.getAttribute(SessionKey.S_CAPTCHA_PREFIX + CaptchaUrlEnum.CODE_PRIVILEGE.getSuffix());
             if (!code.equalsIgnoreCase(sysCode)) {
                 return AppModelVo.getAppModeVoJson(true,
