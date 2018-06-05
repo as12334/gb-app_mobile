@@ -1090,7 +1090,7 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
-        Map map = appRecovery(playerApiVo,request);
+        Map map = appRecovery(playerApiVo, request);
         if (map == null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
@@ -1187,6 +1187,22 @@ public class MineAppController extends BaseMineController {
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 getPlayerRecommend(request, listVo),
+                APP_VERSION);
+    }
+
+    /**
+     * 查询分享记录
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getPlayerRecommendRecord")
+    @ResponseBody
+    public String getPlayerRecommendList(HttpServletRequest request, PlayerRecommendAwardListVo listVo) {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                findPlayerRecommentRecord(request, listVo),
                 APP_VERSION);
     }
 
