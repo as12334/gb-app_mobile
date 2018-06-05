@@ -68,9 +68,6 @@
                         </c:otherwise>
                     </c:choose>
                     <c:choose>
-                        <c:when test="${activity.status}">
-
-                        </c:when>
                         <c:when test="${activityCode eq 'money'}">
                             <c:set var="btnText" value="${views.promo_auto['抢红包']}"/>
                         </c:when>
@@ -84,9 +81,12 @@
                             <c:set var="btnText" value="${views.promo_auto['申请活动']}"/>
                         </c:otherwise>
                     </c:choose>
+                    <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
+                    <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
+                    <span class="_now_time" value="${nowTime}" type="hidden"></span>
                     <c:if test="${activity.code ne 'content'}">
                         <div name="loginPromoDiv" style="display: none">
-                            <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
+                            <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"${root}/wallet/v3/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
                             <a class="mui-btn mui-btn-primary btn-apply mui-hidden" id="notFit">${views.promo_auto['未满足条件']}</a>
                             <a class="mui-btn mui-btn-primary btn-apply" ${activityCode eq 'back_water'?'disabled':''}  id="submit"
                                data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
@@ -96,7 +96,7 @@
                         </div>
                         <div name="unLoginPromoDiv">
                             <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
-                            <a class="mui-btn mui-btn-primary btn-apply" data-rel='{"target":"login","opType":"function"}'>${views.promo_auto['登录账户']}</a>
+                            <a class="mui-btn mui-btn-primary btn-apply" data-rel='{"target":"goLogin","opType":"function"}'>${views.promo_auto['登录账户']}</a>
                         </div>
                     </c:if>
                 </div>
