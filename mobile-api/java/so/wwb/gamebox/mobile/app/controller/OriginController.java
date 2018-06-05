@@ -52,16 +52,13 @@ import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
-import sun.misc.Request;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.FORGET_PASSWORD;
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.USER_REGISTER;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 @Controller
 @RequestMapping("/origin")
@@ -117,7 +114,7 @@ public class OriginController extends BaseOriginController {
         Map<String, Object> map = new HashMap<>(5, 1f);
         getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getApiTypeGames(model,request));
+        map.put("siteApiRelation", getApiTypeGames(model, request));
         map.put("activity", getMoneyActivityFloat(request));
         map.put("language", SessionManager.getLocale().toString());
 
@@ -176,7 +173,7 @@ public class OriginController extends BaseOriginController {
         //游戏
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                getApiTypeGames(model,request),
+                getApiTypeGames(model, request),
                 APP_VERSION);
     }
 
@@ -211,20 +208,10 @@ public class OriginController extends BaseOriginController {
     @RequestMapping(value = "/getCasinoGame")
     @ResponseBody
     public String getCasinoGame(SiteGameListVo listVo, HttpServletRequest request, SiteGameTag tag) {
-        //电子游戏
-        listVo = getGameByApiIdAndApiTypeId(listVo, tag);
-        //处理游戏结果
-        Map<String, Object> map = new HashMap<>(2, 1f);
-        map.put("casinoGames", handleCasinoGames(listVo.getResult(), ServletTool.getDomainFullAddress(request), SessionManager.isAutoPay()));
-        Map<String, Object> pageTotal = new HashMap<>(1, 1f);
-        //总数
-        pageTotal.put("pageTotal", listVo.getPaging().getTotalCount());
-        map.put("page", pageTotal);
-
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
-                map,
+                getGameByApiIdAndApiTypeId(request, listVo, tag),
                 APP_VERSION);
     }
 
