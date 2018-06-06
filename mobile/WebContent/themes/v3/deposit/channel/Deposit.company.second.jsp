@@ -147,7 +147,7 @@
         <div class="ft">
             <a class="btn mui-btn mui-btn-outlined"
                data-rel='{"opType":"function","target":"goToDepositPage"}'>${views.deposit_auto["再存一次"]}</a>
-            <a data-rel='{"target":"goToHome","opType":"function"}'
+            <a data-rel='{"target":"goToHomePageOnly","opType":"function"}'
                class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>
