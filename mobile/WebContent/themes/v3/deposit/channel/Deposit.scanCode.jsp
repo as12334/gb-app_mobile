@@ -87,6 +87,7 @@
                     <p>• 当前支付额度必须精确到小数点，请严格核对您的转账金额精确到分，如：100.51，否则无法提高对账速度及成功率，谢谢您的配合。</p>
                     <p>• 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
                 </c:if>
+                </br>
             </div>
     </c:when>
     <c:otherwise>
