@@ -35,36 +35,14 @@
                 <div class="deficiency-nots">没有找到符合的游戏</div>
             </c:if>
             <c:forEach var="g" items="${games}">
-                <%--<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                     <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
                                             "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
                                             "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
                         <img data-lazyload="${g.cover}" class="lottery-img">
                         <div class="mui-media-body">${g.name}</div>
                     </a>
-                </li>--%>
-                <c:choose>
-                    <c:when test="${g.apiTypeId == 5}">
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                            <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
-                                            "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
-                                            "dataStatus":"${g.status}","target":"fishGameLogin","opType":"function"}' class="_api">
-                                <img data-lazyload="${g.cover}" class="lottery-img">
-                                <div class="mui-media-body">${g.name}</div>
-                            </a>
-                        </li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                            <a data-rel='{"dataApiTypeId":"${g.apiTypeId}","dataApiId":"${g.apiId}","dataApiName":"${g.name}",
-                                            "dataGameId":"${g.gameId}","dataGameCode":"${g.apiId == 10||g.apiId==2?'':g.code}",
-                                            "dataStatus":"${g.status}","target":"goApiGame","opType":"function"}' class="_api">
-                                <img data-lazyload="${g.cover}" class="lottery-img">
-                                <div class="mui-media-body">${g.name}</div>
-                            </a>
-                        </li>
-                    </c:otherwise>
-                </c:choose>
+                </li>
             </c:forEach>
         </div>
     </c:forEach>
