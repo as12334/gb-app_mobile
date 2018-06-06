@@ -10,12 +10,15 @@
     <title>${views.withdraw_auto['取款']}</title>
 </head>
 <body class="withdraw">
-<c:if test="${os ne 'android'}">
-    <header class="mui-bar mui-bar-nav">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-        <h1 class="mui-title">${views.withdraw_auto['取款']}</h1>
-    </header>
-</c:if>
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">${views.withdraw_auto['取款']}</h1>
+    <div id="login-info" class="mui-hidden login-info">
+        <div class="money-shadow" style="display: none;"></div>
+        <div class="user_name"></div>
+        <div class="money"></div>
+    </div>
+</header>
 <div class="mui-content mui-scroll-wrapper widthdraw-content">
     <div class="mui-scroll">
         <form name="withdrawform">
@@ -89,8 +92,14 @@
                                                     <p>${views.withdraw_auto['您当前钱包余额不足']}</p>
                                                 </c:if>
                                             </div>
+                                            <p>
+                                            <a class="mui-btn mui-btn-blue btn-deposit"
+                                               data-rel='{"target":"recovery","opType":"function"}'>一键回收</a>
+                                            </p>
+                                            <p>
                                             <a class="mui-btn mui-btn-blue btn-deposit"
                                                data-rel='{"target":"${root}/wallet/v3/deposit/index.html","opType":"href"}'>${views.withdraw_auto['快速存款']}</a>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -224,6 +233,7 @@
 </div>
 </body>
 <%@include file="../include/include.js.jsp" %>
+<script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/password/SafePasswordCommon.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/game/inputNumber.js?v=${rcVersion}"></script>
 <script type="text/javascript" src="${resRoot}/js/withdraw/Index.js?v=${rcVersion}"></script>

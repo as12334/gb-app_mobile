@@ -16,7 +16,7 @@
     <div class="mui-inner-wrap">
         <c:set var="activity" value="${command}"/>
         <!-- 主页面标题 -->
-        <header class="mui-bar mui-bar-nav mui-bar-blue">
+        <header class="mui-bar mui-bar-nav">
             <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
                data-rel='{"target":"goToLastPage","opType":"function"}'></a>
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>

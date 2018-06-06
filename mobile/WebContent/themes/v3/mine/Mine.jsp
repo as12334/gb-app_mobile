@@ -15,7 +15,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
-        <header class="mui-bar mui-bar-nav mui-bar-blue mui-bar-mine">
+        <header class="mui-bar mui-bar-nav mui-bar-mine">
             <soul:button target="leftMenu" text="" opType="function"
                          cssClass="mui-icon mui-action-menu mui-icon-bars mui-pull-left"/>
             <h1 class="mui-title">${views.themes_auto['我的']}</h1>

@@ -12,7 +12,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
-        <header class="mui-bar mui-bar-nav mui-bar-blue">
+        <header class="mui-bar mui-bar-nav">
             <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">活动申请</h1>
         </header>

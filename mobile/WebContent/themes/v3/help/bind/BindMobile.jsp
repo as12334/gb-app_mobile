@@ -11,7 +11,7 @@
 </head>
 
 <body class="bind-mobile">
-<header class="mui-bar mui-bar-nav mui-bar-blue">
+<header class="mui-bar mui-bar-nav">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
     <h1 class="mui-title">手机绑定</h1>
 </header>

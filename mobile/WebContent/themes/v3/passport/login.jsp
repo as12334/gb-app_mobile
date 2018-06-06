@@ -8,7 +8,7 @@
 </head>
 <body class="login">
 <!-- 主页面标题 -->
-<header class="mui-bar mui-bar-nav mui-bar-blue">
+<header class="mui-bar mui-bar-nav">
     <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
     <h1 class="mui-title">${views.passport_auto['登录']}</h1>
     <a class="mui-icon mui-icon-home mui-pull-right " data-rel='{"target":"goToHomePageOnly","opType":"function"}'></a>
