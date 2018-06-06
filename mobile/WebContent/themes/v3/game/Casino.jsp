@@ -21,7 +21,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
-        <header class="mui-bar mui-bar-nav casino-page-bar">
+        <header class="mui-bar mui-bar-blue mui-bar-nav casino-page-bar">
             <a data-rel='{"target":"${root}/mainIndex.html","opType":"href"}' class="mui-icon mui-icon-back mui-pull-left"></a>
             <%---列表展示--%>
             <a class="icon-list2 mui-pull-right" data-rel='{"target":"listDisplay","opType":"function"}'></a>

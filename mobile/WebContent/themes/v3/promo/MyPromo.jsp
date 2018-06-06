@@ -13,7 +13,7 @@
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <!-- 主页面标题 -->
-        <header class="mui-bar mui-bar-nav promo-record">
+        <header class="mui-bar mui-bar-nav promo-record mui-bar-blue">
             <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">${views.promo_auto['我的优惠记录']}</h1>
             <div class="top-info">
