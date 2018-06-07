@@ -262,6 +262,12 @@ public abstract class BaseOriginController {
         return sb.toString();
     }
 
+    //获取API类型
+    protected List<SiteApiType> getApiTypes() {
+        Criteria siteId = Criteria.add(SiteApiType.PROP_SITE_ID, Operator.EQ, SessionManager.getSiteId());
+        return CollectionQueryTool.query(Cache.getSiteApiType().values(), siteId, Order.asc(SiteApiType.PROP_MOBILE_ORDER_NUM));
+    }
+
     /**
      * 获取游戏类型api
      *
