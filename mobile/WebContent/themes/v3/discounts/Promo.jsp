@@ -69,7 +69,7 @@
                             <div class="swiper-slide" name="${type.key}">
                                 <div class="mui-scroll-wrapper">
                                     <div class="mui-scroll">
-                                        <c:if test="${type.key=='6d371839-5bc5-4b33-90a7-7395782dc710'&&site=='270'}">
+                                        <c:if test="${type.key=='6d371839-5bc5-4b33-90a7-7395782dc710'&&siteId=='270'}">
                                             <div class="promo-item" data-rel='{"target":"https://lovebet2018.com","opType":"href"}'>
                                                 <div class="img-wrap">
                                                     <img src="${resRoot}/images/promo/270_top_sjb.jpg"/>
