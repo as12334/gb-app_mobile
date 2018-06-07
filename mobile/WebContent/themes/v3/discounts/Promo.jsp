@@ -28,7 +28,7 @@
                         <div class="swiper-slide">
                             <div class="mui-scroll-wrapper">
                                 <div class="mui-scroll">
-                                    <c:if test="${siteId=='270'}">
+                                    <c:if test="${siteId=='270'||siteId=='71'}">
                                         <div class="promo-item" data-rel='{"target":"https://lovebet2018.com","opType":"href"}'>
                                             <div class="img-wrap">
                                                 <img src="${resRoot}/images/promo/270_top_sjb.jpg"/>
