@@ -12,7 +12,7 @@
 </head>
 <body>
 <!-- 主页面标题 -->
-<header class="mui-bar mui-bar-nav mui-bar-blue">
+<header class="mui-bar mui-bar-nav">
     <a style="color: #fff;" class="mui-icon mui-icon-arrowleft mui-pull-left"
        data-rel='{"target":"goToLastPage","opType":"function"}'></a>
     <h1 class="mui-title">${views.passport_auto['会员注册']}</h1>
