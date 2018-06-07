@@ -38,7 +38,9 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
         payAccountListVo.setCurrency(SessionManager.getUser().getDefaultCurrency());
         payAccountListVo.setPlayerRank(rank);
         payAccountListVo.setBanks(searchBank(BankEnum.TYPE_BANK.getCode()));
+
         Map<String, PayAccount> payAccountMap = ServiceSiteTool.payAccountService().getOnlineAccount(payAccountListVo);
+
         //根据银行和账号对应关系
         if (MapTool.isNotEmpty(payAccountMap)) {
             Map<String, String> i18nMap = I18nTool.getDictsMap(SessionManagerBase.getLocale().toString()).get(Module.COMMON.getCode()).get(DictEnum.BANKNAME.getType());
@@ -47,7 +49,7 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
                 PayAccountOnline pay = new PayAccountOnline(bank.getKey(), i18nMap.get(bank.getKey()), bank.getValue());
                 results.add(pay);
             }
-            return DepositTool.convertOnlineAccount(rank, results, getRechargeType(channel));
+            return results;
         }
         return new ArrayList<PayAccountOnline>();
     }
@@ -65,8 +67,8 @@ public class OnlineDepositControllerHelper extends BaseDepositControllerHelper<O
             Map<String, Object> map = new HashMap<>(4, 1f);
             map.put("value", online.getBank());
             map.put("text", online.getBankName());
-            map.put("min", online.getSingleDepositMin()==null?0.01:online.getSingleDepositMin());
-            map.put("max", online.getSingleDepositMax()==null?99999999:online.getSingleDepositMax());
+            map.put("min", online.getSingleDepositMin() == null ? 0.01 : online.getSingleDepositMin());
+            map.put("max", online.getSingleDepositMax() == null ? 99999999 : online.getSingleDepositMax());
             map.put("minStr", CurrencyTool.formatCurrency(Double.parseDouble(map.get("min").toString())));
             map.put("maxStr", CurrencyTool.formatCurrency(Double.parseDouble(map.get("max").toString())));
             map.put("account", payAccountVo.getSearchId(online.getId()));

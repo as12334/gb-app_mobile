@@ -63,9 +63,9 @@
         </c:when>
         <c:otherwise>
             <tbody>
-            <tr>
-                <td style="height: 40px"><p>${views.fund_auto['暂无内容']}</p></td>
-            </tr>
+                <tr>
+                    <td colspan="4">${views.fund_auto['暂无内容']}</td>
+                </tr>
             </tbody>
         </c:otherwise>
     </c:choose>

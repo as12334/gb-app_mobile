@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.V3.support.submitter;
 
+import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
@@ -36,7 +37,7 @@ public class DepositSubmitterOnline extends AbstractRechargeSubmitter implements
         }
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
-        playerRechargeVo.setOrigin(TerminalEnum.MOBILE.getCode());
+        playerRechargeVo.setOrigin(SupportTerminal.H5.getCode());
         playerRechargeVo.setRankId(rank.getId());
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode());
         playerRecharge.setRechargeType(playerRechargeVo.getResult().getRechargeType());

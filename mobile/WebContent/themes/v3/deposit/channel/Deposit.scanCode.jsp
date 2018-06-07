@@ -61,7 +61,7 @@
                         <label for="result.payerBankcard" style="display: none">${views.deposit_auto['授权码']}</label>
                         <div class="label">${views.deposit_auto['授权码']}</div>
                         <div class="input">
-                            <input type="text" placeholder="${views.deposit_auto['请输入12~20位授权码']}" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off" style="display:inline-block;width:50%;text-align: right;float:right;height:40px;padding-right:12px;"/>
+                            <input type="text" placeholder="${views.deposit_auto['请输入12~20位授权码']}" name="result.payerBankcard" id="result.payerBankcard" autocomplete="off" style="display:inline-block;text-align: right;float:right;height:40px;padding-right:12px;"/>
                         </div>
                     </div>
                     <div class="depo_row">
@@ -85,6 +85,7 @@
                 </c:if>
                 <c:if test="${channel=='easypay'}">
                     <p>• 当前支付额度必须精确到小数点，请严格核对您的转账金额精确到分，如：100.51，否则无法提高对账速度及成功率，谢谢您的配合。</p>
+                    <p>• 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
                 </c:if>
             </div>
     </c:when>
