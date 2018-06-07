@@ -4,6 +4,7 @@ import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.RandomStringTool;
+import org.soul.commons.lang.string.StringEscapeTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -357,7 +358,21 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getHelpDetail(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
+        if(searchId == null) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
         VHelpTypeAndDocument vHelpTypeAndDocument = Cache.getHelpTypeAndDocument().get(searchId.toString());
+        if(vHelpTypeAndDocument == null) {
+            return AppModelVo.getAppModeVoJson(true,
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
+                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
+                    null,
+                    APP_VERSION);
+        }
         List<Map<String, String>> list = JsonTool.fromJson(vHelpTypeAndDocument.getDocumentIdJson(), List.class);
         List<HelpDocumentI18n> documentI18nList = new ArrayList<>();
         if (list != null) {
@@ -365,7 +380,7 @@ public class OriginController extends BaseOriginController {
                 HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
                 if (helpDocumentI18n != null) {
                     String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
-                    helpDocumentI18n.setHelpContent(content);
+                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(content));
                 }
                 documentI18nList.add(helpDocumentI18n);
             }
