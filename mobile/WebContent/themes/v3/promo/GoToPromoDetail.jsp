@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../include/include.inc.jsp" %>
-<c:set var="isLogin" value="<%=SessionManagerCommon.getUser() != null ? true :false %>"/>
 <html>
 <head>
     <title>${siteName}</title>
@@ -19,9 +18,8 @@
         <header class="mui-bar mui-bar-nav mui-bar-blue">
             <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
                data-rel='{"target":"goToLastPage","opType":"function"}'></a>
-            <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
-            <a class="mui-icon mui-pull-right icon-gift"
-               data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}'><i></i></a>
+            <h1 class="mui-title">优惠详情</h1>
+            <a class="mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}'><i></i></a>
         </header>
         <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
             <div class="mui-scroll">
@@ -35,12 +33,10 @@
                                         <a>
                                             <c:choose>
                                                 <c:when test="${!empty activity.activityAffiliated}">
-                                                    <c:set var="imgSrc"
-                                                           value="${soulFn:getImagePath(domain, activity.activityAffiliated)}"/>
+                                                    <c:set var="imgSrc" value="${soulFn:getImagePath(domain, activity.activityAffiliated)}"/>
                                                 </c:when>
                                                 <c:when test="${!empty activity.activityCover}">
-                                                    <c:set var="imgSrc"
-                                                           value="${soulFn:getImagePath(domain, activity.activityCover)}"/>
+                                                    <c:set var="imgSrc" value="${soulFn:getImagePath(domain, activity.activityCover)}"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg"/>
@@ -58,10 +54,6 @@
                         </div>
                     </div>
                 </div>
-                <%--<c:if test="${activity.states eq 'processing'}">--%>
-                <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
-                <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
-                <span class="_now_time" value="${nowTime}" type="hidden"></span>
                 <c:set var="activityCode" value="${activity.code}"/>
                 <div class="gb-form-foot new_foo">
                     <c:choose>
@@ -89,27 +81,23 @@
                             <c:set var="btnText" value="${views.promo_auto['申请活动']}"/>
                         </c:otherwise>
                     </c:choose>
+                    <span class="_vr_promo_ostart" value="${activity.startTime}" type="hidden"></span>
+                    <span class="_vr_promo_oend" value="${activity.endTime}" type="hidden"></span>
+                    <span class="_now_time" value="${nowTime}" type="hidden"></span>
                     <c:if test="${activity.code ne 'content'}">
-                        <c:choose>
-                            <c:when test="${isLogin}">
-                                <a class="mui-btn mui-btn-primary btn-deposit"
-                                   data-rel='{"target":"${root}/wallet/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply mui-hidden"
-                                   id="notFit">${views.promo_auto['未满足条件']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply" ${activityCode eq 'back_water'?'disabled':''}
-                                   id="submit"
-                                   data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
+                        <div name="loginPromoDiv" style="display: none">
+                            <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"${root}/wallet/v3/deposit/index.html","opType":"href"}'>${views.promo_auto['前往存款']}</a>
+                            <a class="mui-btn mui-btn-primary btn-apply mui-hidden" id="notFit">${views.promo_auto['未满足条件']}</a>
+                            <a class="mui-btn mui-btn-primary btn-apply" ${activityCode eq 'back_water'?'disabled':''}  id="submit"
+                               data-rel='{"target":"submitPromo","opType":"function","dataCode":"${activity.code}",
                                     "dataStates":"${activity.states}","dataType":"processing",
                                     "dataSearchId":"${activity.searchId}","dataRankId":"${rankId}",
                                     "activityName":"${activity.activityName}"}'>${btnText}</a>
-                            </c:when>
-                            <c:otherwise>
-                                <a class="mui-btn mui-btn-primary btn-deposit"
-                                   data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
-                                <a class="mui-btn mui-btn-primary btn-apply"
-                                   data-rel='{"target":"login","opType":"function"}'>${views.promo_auto['登录账户']}</a>
-                            </c:otherwise>
-                        </c:choose>
+                        </div>
+                        <div name="unLoginPromoDiv">
+                            <a class="mui-btn mui-btn-primary btn-deposit" data-rel='{"target":"goRegister","opType":"function","src":"${root}/signUp/index.html"}'>${views.promo_auto['注册新会员']}</a>
+                            <a class="mui-btn mui-btn-primary btn-apply" data-rel='{"target":"goLogin","opType":"function"}'>${views.promo_auto['登录账户']}</a>
+                        </div>
                     </c:if>
                 </div>
                 <%--</c:if>--%>
@@ -120,9 +108,8 @@
     </div>
 </div>
 </body>
-
-<script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/envelope/Envelope.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/discounts/GoToPromoDetail.js?v=${rcVersion}"></script>
 </html>

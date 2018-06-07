@@ -8,8 +8,6 @@
 </head>
 
 <body>
-<!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap mui-draggable">
     <!-- 菜单容器 -->
     <%@ include file="../common/LeftMenu.jsp" %>
     <!-- 主页面容器 -->
@@ -249,7 +247,6 @@
         <!-- off-canvas backdrop -->
         <div class="mui-off-canvas-backdrop"></div>
     </div>
-</div>
 </body>
 <%@ include file="../include/include.js.jsp" %>
 <script type="text/javascript" src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>

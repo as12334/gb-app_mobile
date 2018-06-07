@@ -8,8 +8,7 @@
 
 <body class="deposit_2">
 <header class="mui-bar mui-bar-nav">
-    <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
-       data-rel='{"opType":"function","target":"goToLastPage"}'></a>
+    <a class="mui-action-back mui-icon mui-icon mui-icon-left-nav mui-pull-left"></a>
     <h1 class="mui-title">${views.deposit_auto['银行卡转账']}</h1>
 </header>
 <div class="mui-content mui-scroll-wrapper deposit-2-content">
@@ -148,7 +147,7 @@
         <div class="ft">
             <a class="btn mui-btn mui-btn-outlined"
                data-rel='{"opType":"function","target":"goToDepositPage"}'>${views.deposit_auto["再存一次"]}</a>
-            <a data-rel='{"target":"goToHome","opType":"function"}'
+            <a data-rel='{"target":"goToHomePageOnly","opType":"function"}'
                class="btn mui-btn mui-btn-outlined">${views.deposit_auto["返回首页"]}</a>
         </div>
     </div>
