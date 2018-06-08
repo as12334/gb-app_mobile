@@ -17,11 +17,9 @@
                 <c:when test="${apiTypeId == 3}">
                     <c:set var="type" value="sports"/>
                 </c:when>
-                <c:when test="${apiTypeId == 4}">
+                <%--棋牌类样式要与彩票一致，故type一致--%>
+                <c:when test="${apiTypeId == 4 || apiTypeId == 5}">
                     <c:set var="type" value="lottery"/>
-                </c:when>
-                <c:when test="${apiTypeId == 5}">
-                    <c:set var="type" value="chess-and-card"/>
                 </c:when>
             </c:choose>
             <c:set var="apis" value="${apiType.apis}"/>
