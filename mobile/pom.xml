@@ -8,7 +8,7 @@
     <packaging>war</packaging>
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <soul.version>1.0.8.5-SNAPSHOT</soul.version>
+        <soul.version>1.0.8.6-SNAPSHOT</soul.version>
         <api.version>2.0.2.5-SNAPSHOT</api.version>
         <monitor.version>2.0.2.5-SNAPSHOT</monitor.version>
         <gamebox.version>2.0.2.5-SNAPSHOT</gamebox.version>
