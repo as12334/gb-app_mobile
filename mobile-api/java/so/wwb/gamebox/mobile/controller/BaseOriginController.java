@@ -113,6 +113,7 @@ public abstract class BaseOriginController {
                 continue;
             }
             if (i < fromIndex) {
+                i++;
                 continue;
             }
             if (i >= endIndex) {
