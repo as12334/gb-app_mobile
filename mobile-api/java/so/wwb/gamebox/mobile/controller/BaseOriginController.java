@@ -112,6 +112,10 @@ public abstract class BaseOriginController {
             if (StringTool.isNotBlank(name) && !game.getName().contains(name)) {
                 continue;
             }
+            //不符标签
+            if(CollectionTool.isNotEmpty(gameIds) && !gameIds.contains(game.getGameId())) {
+                continue;
+            }
             if (i < fromIndex) {
                 i++;
                 continue;
