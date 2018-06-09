@@ -21,20 +21,20 @@ import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
+import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.*;
+import so.wwb.gamebox.model.DictEnum;
+import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.SiteI18nEnum;
+import so.wwb.gamebox.model.TerminalEnum;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
-import so.wwb.gamebox.model.company.enums.GameSupportTerminalEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
-import so.wwb.gamebox.model.company.setting.po.ApiI18n;
-import so.wwb.gamebox.model.company.setting.po.Game;
-import so.wwb.gamebox.model.company.setting.po.GameI18n;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -47,6 +47,7 @@ import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.web.support.CdnConf;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -153,7 +154,7 @@ public abstract class BaseOriginController {
         casinoGame.setApiTypeId(game.getApiTypeId());
         casinoGame.setCode(game.getCode());
         casinoGame.setName(game.getName());
-        casinoGame.setCover(getImagePath(domain, game.getCover()));
+        casinoGame.setCover(ImageTag.getImagePath(domain, game.getCover()));
         casinoGame.setSystemStatus(game.getStatus());
         casinoGame.setGameLink(getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()));
         casinoGame.setAutoPay(isAutoPay);
@@ -278,10 +279,10 @@ public abstract class BaseOriginController {
     protected List<AppSiteApiTypeRelastionVo> getApiTypeGames(AppRequestModelVo model, HttpServletRequest request) {
         Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
-
-        String gameCover = String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
+        String cdnUrl = new CdnConf().getCndUrl();
+        String gameCover = cdnUrl + String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
         String apiLogoUrl = setApiLogoUrl(model, request);
-        List<AppSiteApiTypeRelastionVo> appApiTypes = changeToAppSiteApiRelation(apiCacheMap, apiLogoUrl, apiType, gameCover);
+        List<AppSiteApiTypeRelastionVo> appApiTypes = changeToAppSiteApiRelation(apiCacheMap, apiLogoUrl, apiType, gameCover, cdnUrl);
 
         //处理捕鱼数据
         Map<String, GameCacheEntity> fishGameMap = Cache.getMobileFishGameCache();
@@ -323,7 +324,7 @@ public abstract class BaseOriginController {
     private List<AppSiteApiTypeRelastionVo> changeToAppSiteApiRelation(Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap,
                                                                        String apiLogoUrl,
                                                                        Map<String, ApiTypeCacheEntity> apiType,
-                                                                       String gameCover) {
+                                                                       String gameCover, String cdnUrl) {
         List<AppSiteApiTypeRelastionVo> appApiTypes = new ArrayList<>();
         List<AppSiteApiTypeRelationI18n> appApis;
         Integer apiTypeId;
@@ -336,6 +337,7 @@ public abstract class BaseOriginController {
         AppSiteApiTypeRelationI18n appSite;
         int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
         int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
+        String apiTypeLogoUrl = cdnUrl + API_TYPE_LOGO_URL;
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             apiTypeId = apiTypeCacheEntity.getApiTypeId();
             apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
@@ -371,7 +373,7 @@ public abstract class BaseOriginController {
             appApiType = new AppSiteApiTypeRelastionVo();
             appApiType.setApiType(apiTypeId);
             appApiType.setApiTypeName(apiTypeCacheEntity.getName());
-            appApiType.setCover(String.format(API_TYPE_LOGO_URL, apiLogoUrl, apiTypeId));
+            appApiType.setCover(String.format(apiTypeLogoUrl, apiLogoUrl, apiTypeId));
             appApiType.setSiteApis(appApis);
             if (navApiTypes.contains(apiTypeId)) {
                 appApiType.setLevel(true);
