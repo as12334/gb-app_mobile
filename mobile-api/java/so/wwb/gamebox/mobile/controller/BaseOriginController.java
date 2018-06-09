@@ -540,7 +540,6 @@ public abstract class BaseOriginController {
         GameApiResult gameApiResult = playerApiAccountVo.getGameApiResult();
         String url = (gameApiResult instanceof RegisterResult) ?
                 ((RegisterResult) gameApiResult).getDefaultLink() : ((LoginResult) gameApiResult).getDefaultLink();
-        url = buildGameUrl(url, model, apiId);
         appI18n.setGameLink(url);
 
         return appI18n;
@@ -607,7 +606,6 @@ public abstract class BaseOriginController {
         }
         String url = (gameApiResult instanceof RegisterResult) ?
                 ((RegisterResult) gameApiResult).getDefaultLink() : ((LoginResult) gameApiResult).getDefaultLink();
-        url = buildGameUrl(url, model, playerApiAccountVo.getApiId());
         appI18n.setGameLink(url);
         return appI18n;
     }
