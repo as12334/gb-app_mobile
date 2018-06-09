@@ -53,7 +53,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static org.soul.web.tag.ImageTag.getImagePath;
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 
 /**
@@ -90,40 +89,40 @@ public abstract class BaseOriginController {
                 return defaultCasinoGameMap();
             }
         }
-        //筛选的条件 类型、apiId、游戏标签、游戏名称
-        String name = so.getName();
+
         Map<String, LinkedHashMap<String, GameCacheEntity>> gameGroupByApiMap = Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId));
         LinkedHashMap<String, GameCacheEntity> gameCacheMap = gameGroupByApiMap.get(String.valueOf(apiId));
         if (MapTool.isEmpty(gameCacheMap)) {
             return defaultCasinoGameMap();
         }
-        int totalCount = gameCacheMap.size();
         Paging paging = listVo.getPaging();
-        paging.setTotalCount(totalCount);
         int pageSize = paging.getPageSize();
         int pageNum = paging.getPageNumber();
         int fromIndex = (pageNum - 1) * pageSize;
         int endIndex = pageSize * pageNum;
-        if (fromIndex > totalCount) {
-            return defaultCasinoGameMap();
-        }
-        if (endIndex > totalCount) {
-            endIndex = totalCount;
-        }
         List<AppSiteGame> appGames = new ArrayList<>();
         int i = 0;
         String domain = ServletTool.getDomainFullAddress(request);
         boolean isAutoPay = SessionManager.isAutoPay();
         Integer siteId = CommonContext.get().getSiteId();
+        //筛选的条件 游戏名称
+        String name = so.getName();
         for (GameCacheEntity game : gameCacheMap.values()) {
+            //不符合游戏
+            if (StringTool.isNotBlank(name) && !game.getName().contains(name)) {
+                continue;
+            }
             if (i < fromIndex) {
                 continue;
             }
             if (i >= endIndex) {
                 break;
             }
+            i++;
             appGames.add(changeGameToApp(game, domain, isAutoPay, siteId));
         }
+        int totalCount = appGames.size();
+        paging.setTotalCount(totalCount);
         //处理游戏结果
         Map<String, Object> map = new HashMap<>(2, 1f);
         map.put("casinoGames", appGames);
