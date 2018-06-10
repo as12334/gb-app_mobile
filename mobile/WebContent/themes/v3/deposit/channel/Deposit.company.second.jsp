@@ -34,7 +34,7 @@
                         <div class="bank_car_item">
                             <div class="top">
                                 <span class="${isOther?'':'pay-bank '} ${isOther?'':payAccount.bankCode}"></span>
-                                <span style="margin-right: -30px;">${payAccount.customBankName}</span>
+                                <span class="pay-txt" style="margin-right: -30px;">${payAccount.customBankName}</span>
                                 <span class="car_type">${views.deposit_auto['储蓄卡']}</span>
                             </div>
                             <div class="bank_car_txt_info">
