@@ -37,7 +37,7 @@ public class ScancodeDepositControllerHelper extends BaseDepositControllerHelper
         //根据在线支付是否显示多个账号进行处理
         List<PayAccountScancode> result = new ArrayList<>();
         if (CollectionTool.isNotEmpty(payaccounts)) {
-            result = DepositTool.convertOnlineAccount(rank, payaccounts, handler.getOnlineRechargeType());
+            result.addAll(payaccounts);
         }
         //获取电子账号
         List<PayAccount> electronicAccount = handler.getElectronicAccount(rank);

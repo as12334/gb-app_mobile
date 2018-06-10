@@ -33,14 +33,9 @@
                         <c:set var="isOther" value="${payAccount.bankCode=='other_bank'}"/>
                         <div class="bank_car_item">
                             <div class="top">
-                                <span class="pay-bank ${isOther?'other':payAccount.bankCode}"></span>
-                                <span class="car_type">
-                                        ${views.deposit_auto['储蓄卡']}</span>
-                                <c:choose>
-                                    <c:when test="${isOther}">
-                                        <span style="margin-right: -30px;">${payAccount.customBankName}</span>
-                                    </c:when>
-                                </c:choose>
+                                <span class="${isOther?'':'pay-bank '} ${isOther?'':payAccount.bankCode}"></span>
+                                <span class="pay-txt" style="margin-right: -30px;">${payAccount.customBankName}</span>
+                                <span class="car_type">${views.deposit_auto['储蓄卡']}</span>
                             </div>
                             <div class="bank_car_txt_info">
                                 <div class="b_c_t_i_row">
