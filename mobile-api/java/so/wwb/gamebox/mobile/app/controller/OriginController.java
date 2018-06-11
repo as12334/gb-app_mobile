@@ -67,6 +67,18 @@ public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
+    /**
+     * 获取进入app时广告
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getIntoAppAd")
+    @ResponseBody
+    public String getIntoAppAd(HttpServletRequest request, AppRequestModelVo model) {
+        Map<String, Object> map = new HashMap<>(5, 1f);
+        getBannerAndPhoneDialog(map, request,CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
+    }
 
     /**
      * 获取当前时区
@@ -113,7 +125,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = new HashMap<>(5, 1f);
-        getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
+        getBannerAndPhoneDialog(map, request,CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
         map.put("siteApiRelation", getApiTypeGames(model, request));
         map.put("activity", getMoneyActivityFloat(request));
@@ -136,7 +148,7 @@ public class OriginController extends BaseOriginController {
     public String getCarouse(HttpServletRequest request) {
         //轮播图和弹窗广告
         Map<String, Object> map = new HashMap<>(2, 1f);
-        getBannerAndPhoneDialog(map, request);
+        getBannerAndPhoneDialog(map, request,CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
@@ -645,12 +657,12 @@ public class OriginController extends BaseOriginController {
     }
 
     /**
-     * 获取轮播图和手机弹窗广告
+     * 获取启动页广告图、轮播图和手机弹窗广告
      *
      * @param map
      * @param request
      */
-    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request) {
+    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request,CttCarouselTypeEnum typeEnum) {
         Map<String, Map> carouselMap = (Map) Cache.getSiteCarousel();
         if (MapTool.isEmpty(carouselMap)) {
             return;
@@ -658,14 +670,12 @@ public class OriginController extends BaseOriginController {
         String webSite = ServletTool.getDomainFullAddress(request);
         List<Map> phoneDialog = new ArrayList<>();
         List<Map> carousels = new ArrayList<>();
-        String phoneDialogType = CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG.getCode();
+        String phoneDialogType = typeEnum.getCode();
         String bannerType = CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode();
-        Date date = new Date();
         String local = SessionManager.getLocale().toString();
+        String appStartAd = null;
         for (Map m : carouselMap.values()) {
-            if ((StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local))
-                    && (((Date) m.get("start_time")).before(date) && ((Date) m.get("end_time")).after(date))
-                    && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
+            if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local)&&checkActive(m)) {
                 String link = MapTool.getString(m, "link");
                 if (StringTool.isNotBlank(link)) {
                     if (link.contains("${website}")) {
@@ -677,11 +687,16 @@ public class OriginController extends BaseOriginController {
                 cover = getImagePath(ServletTool.getDomainFullAddress(request), cover);
                 m.put("cover", cover);
                 if (phoneDialogType.equals(m.get("type"))) {
+                    appStartAd = cover;
                     phoneDialog.add(m);
                 } else if (bannerType.equals(m.get("type"))) {
                     carousels.add(m);
                 }
             }
+        }
+        if(CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE.getCode().equals(phoneDialogType)){
+            map.put("initAppAd", appStartAd);
+            return;
         }
         //手机弹窗广告
         map.put("phoneDialog", phoneDialog);
@@ -693,6 +708,28 @@ public class OriginController extends BaseOriginController {
             carousels.add(defaultMap);
         }
         map.put("banner", carousels);
+    }
+
+    /**
+     * 检查缓存配置是否有效
+     * @return
+     */
+    private boolean checkActive(Map m){
+        if(MapTool.getBoolean(m, "status") == false){
+            return false;
+        }
+
+        Date date = new Date();
+        Calendar instance = Calendar.getInstance();
+        instance.set(1979,01,01);
+        Date min = instance.getTime();
+
+        instance.set(2099,12,31);
+        Date maxDate =instance.getTime();
+
+        Date sdate = (Date) m.get("start_time")==null?min:(Date) m.get("start_time");
+        Date edate =(Date) m.get("end_time")==null? maxDate :(Date) m.get("end_time");
+        return  sdate.before(date) && edate.after(date);
     }
 
     /**
