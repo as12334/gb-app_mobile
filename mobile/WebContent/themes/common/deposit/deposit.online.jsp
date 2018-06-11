@@ -21,9 +21,11 @@
             <div class="mui-input-group mine-form m-t-sm">
                 <div class="mui-input-row">
                     <label>${views.deposit_auto['选择您所使用的银行']}</label>
-                    <div class="ct">
+                    <div class="ct" id="selectBank">
                         <p class="text-gray-light gb-select">
-                            <input id="selectBank"  type="text" value="${bankList[0]["text"]}" readonly>
+                            <a id="selectText" style="margin-right: 0px">
+                                    ${bankList[0]["text"]}
+                            </a>
                         </p>
                         <input type="hidden" name="result.payerBank" id="result.payerBank" value="${bank}"/>
                     </div>
