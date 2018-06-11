@@ -440,9 +440,9 @@ public abstract class BaseApiController extends BaseDemoController {
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
         playerApiAccountVo.setLobbyUrl(fullAddress);
-        if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
+        /*if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
-        }
+        }*/
 
         playerApiAccountVo.setSysUser(SessionManager.getUser());
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
