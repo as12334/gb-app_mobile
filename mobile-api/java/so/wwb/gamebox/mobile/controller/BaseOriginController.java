@@ -315,6 +315,19 @@ public abstract class BaseOriginController {
             appApiTypes.add(fish);
         }
 
+        AppSiteApiTypeRelationI18n relationI18n;
+        for (AppSiteApiTypeRelastionVo vo : appApiTypes){
+            if(vo.getApiType() != null && ApiTypeEnum.CASINO.getCode() == vo.getApiType()){
+                Iterator<AppSiteApiTypeRelationI18n> itSiteApis = vo.getSiteApis().iterator();
+                while (itSiteApis.hasNext()){
+                    relationI18n = itSiteApis.next();
+                    if(ApiProviderEnum.PT.getCode().equals(relationI18n.getApiId().toString())){
+                        itSiteApis.remove();
+                    }
+                }
+            }
+        }
+
         return appApiTypes;
     }
 
@@ -627,9 +640,9 @@ public abstract class BaseOriginController {
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
         playerApiAccountVo.setLobbyUrl(domain.toString());
-        if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
+      /*  if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
-        }
+        }*/
 
         playerApiAccountVo.setSysUser(SessionManager.getUser());
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
