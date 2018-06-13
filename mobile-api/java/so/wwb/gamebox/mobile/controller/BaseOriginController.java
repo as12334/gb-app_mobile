@@ -315,6 +315,19 @@ public abstract class BaseOriginController {
             appApiTypes.add(fish);
         }
 
+        AppSiteApiTypeRelationI18n relationI18n;
+        for (AppSiteApiTypeRelastionVo vo : appApiTypes){
+            if(vo.getApiType() != null && ApiTypeEnum.CASINO.getCode() == vo.getApiType()){
+                Iterator<AppSiteApiTypeRelationI18n> itSiteApis = vo.getSiteApis().iterator();
+                while (itSiteApis.hasNext()){
+                    relationI18n = itSiteApis.next();
+                    if(ApiProviderEnum.PT.getCode().equals(relationI18n.getApiId().toString())){
+                        itSiteApis.remove();
+                    }
+                }
+            }
+        }
+
         return appApiTypes;
     }
 

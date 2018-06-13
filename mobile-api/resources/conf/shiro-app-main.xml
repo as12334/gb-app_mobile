@@ -69,6 +69,7 @@
 				/discountsOrigin/*.html = anon
 				/registerOrigin/*.html = anon
 				/findPasswordOrigin/*.html = anon
+				/depositOrigin/saveFastRecharge.html = anon
 				/** = subsys,kickout,authc,access,autho
 			</value>
 		</property>

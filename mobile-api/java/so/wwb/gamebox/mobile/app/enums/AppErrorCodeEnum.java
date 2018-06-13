@@ -76,6 +76,8 @@ public enum AppErrorCodeEnum {
     ORDER_ERROR("1607","订单号有误，请重新存款"),
     TXIDISEMPTY("1608","比特币TxId不能为空，请重新输入"),
     TXIDISEXISTS("1609","比特币TxId已存在，请重新输入"),
+    RECHARGE_NOT_EXIT_USER("1610","存款失败，用户不存在"),
+    RECHARGE_TIME_INTERVAL("1611","存款太过频繁,休息片刻")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;
