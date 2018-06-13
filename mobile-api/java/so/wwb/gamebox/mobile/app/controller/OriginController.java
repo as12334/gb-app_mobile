@@ -122,21 +122,7 @@ public class OriginController extends BaseOriginController {
         map.put("activity", getMoneyActivityFloat(request));
         map.put("language", SessionManager.getLocale().toString());
 
-        List<AppSiteApiTypeRelastionVo> apiTypeGames = getApiTypeGames(model, request);
-        AppSiteApiTypeRelationI18n relationI18n;
-        for (AppSiteApiTypeRelastionVo vo : apiTypeGames){
-            if(vo.getApiType() != null && ApiTypeEnum.CASINO.getCode() == vo.getApiType()){
-                Iterator<AppSiteApiTypeRelationI18n> itSiteApis = vo.getSiteApis().iterator();
-                while (itSiteApis.hasNext()){
-                    relationI18n = itSiteApis.next();
-                    if(ApiProviderEnum.PT.getCode().equals(relationI18n.getApiId().toString())){
-                        itSiteApis.remove();
-                    }
-                }
-            }
-        }
-
-        map.put("siteApiRelation", apiTypeGames);
+        map.put("siteApiRelation", getApiTypeGames(model, request));
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
