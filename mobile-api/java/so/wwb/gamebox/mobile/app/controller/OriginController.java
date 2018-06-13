@@ -38,6 +38,8 @@ import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
 import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
+import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
+import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
@@ -117,10 +119,10 @@ public class OriginController extends BaseOriginController {
         Map<String, Object> map = new HashMap<>(5, 1f);
         getBannerAndPhoneDialog(map, request);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
-        map.put("siteApiRelation", getApiTypeGames(model,request));
         map.put("activity", getMoneyActivityFloat(request));
         map.put("language", SessionManager.getLocale().toString());
 
+        map.put("siteApiRelation", getApiTypeGames(model, request));
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
