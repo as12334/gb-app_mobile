@@ -6,6 +6,8 @@ import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.net.IpTool;
+import org.soul.model.security.privilege.po.SysUser;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
@@ -33,12 +35,11 @@ import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.enums.PayAccountAccountType;
 import so.wwb.gamebox.model.master.enums.PayAccountType;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.RechargeTypeParentEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
-import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
-import so.wwb.gamebox.web.SessionManagerCommon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -566,5 +567,30 @@ public class DepositAppController extends BaseDepositController {
     public String bitcoinPay(PlayerRechargeVo playerRechargeVo, @FormModel @Valid BitcoinDepositForm form, BindingResult result, HttpServletRequest request) {
         String type = AppDepositPayEnum.BITCOIN_PAY.getCode();
         return companyCommonDeposit(playerRechargeVo, result, type, request);
+    }
+
+    @RequestMapping("/saveFastRecharge")
+    @ResponseBody
+    public String saveFastRecharge(HttpServletRequest request, PlayerRecharge playerRecharge, @FormModel @Valid FastRechargeForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(), null, APP_VERSION);
+        }
+        playerRecharge.setRechargeType(RechargeTypeEnum.ONLINE_BANK.getCode());
+        playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
+        playerRecharge.setPayAccountId(-1);
+        playerRecharge.setCounterFee(0d);
+        playerRecharge.setCreateTime(SessionManager.getDate().getNow());
+        playerRecharge.setIpDeposit(IpTool.ipv4StringToLong(form.get$ip()));
+        PlayerRechargeVo playerRechargeVo = new PlayerRechargeVo();
+        playerRechargeVo.setResult(playerRecharge);
+        playerRechargeVo.setOrigin(SessionManager.getTerminal(request));
+        SysUser sysUser = new SysUser();
+        sysUser.setUsername(form.get$userName());
+        playerRechargeVo.setSysUser(sysUser);
+        playerRechargeVo = ServiceSiteTool.playerRechargeService().saveFastRecharge(playerRechargeVo);
+        if(playerRechargeVo.isSuccess()) {
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), null, APP_VERSION);
+        }
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECHARGE_TIME_INTERVAL.getCode(), playerRechargeVo.getErrMsg(), null, APP_VERSION);
     }
 }
