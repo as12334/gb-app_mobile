@@ -587,6 +587,7 @@ public class DepositAppController extends BaseDepositController {
         SysUser sysUser = new SysUser();
         sysUser.setUsername(form.get$userName());
         playerRechargeVo.setSysUser(sysUser);
+        playerRechargeVo.setCustomBankName(form.getReceiveName());
         playerRechargeVo = ServiceSiteTool.playerRechargeService().saveFastRecharge(playerRechargeVo);
         if(playerRechargeVo.isSuccess()) {
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), null, APP_VERSION);
