@@ -237,7 +237,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         listVo.getSearch().setPlayerId(playerId);
         listVo.getSearch().setCreateTime(new Date());
         List<PlayerTransaction> list = ServiceSiteTool.getPlayerTransactionService().searchAuditLog(listVo);
-        map.put("list", handleAuditData(playerId, list));
+        map.put("withdrawAudit", handleAuditData(playerId, list));
         map.put("currencySign", getCurrencySign(sysUser.getDefaultCurrency()));
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),

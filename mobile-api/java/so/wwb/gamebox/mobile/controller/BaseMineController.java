@@ -1009,10 +1009,10 @@ public class BaseMineController {
         listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecodeToApp(listVo);
         List<PlayerRecommendAwardRecord> list = changeToApp(listVo.getRecommendAwardRecords());
         map.put("command", list);
-        if (listVo == null || CollectionTool.isEmpty(listVo.getResult())) {
+        if (listVo == null || CollectionTool.isEmpty(listVo.getRecommendAwardRecords())) {
             map.put("total", 0);
         } else {
-            map.put("total", listVo.getResult().size());
+            map.put("total", listVo.getPaging().getTotalCount());
         }
         return map;
     }

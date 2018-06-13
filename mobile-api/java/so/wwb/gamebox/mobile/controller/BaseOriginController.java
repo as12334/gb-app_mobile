@@ -627,9 +627,9 @@ public abstract class BaseOriginController {
         playerApiAccountVo.setTransfersUrl(transferUrl);
 
         playerApiAccountVo.setLobbyUrl(domain.toString());
-        if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
+      /*  if (request.getHeader("User-Agent").contains(AppTypeEnum.APP_ANDROID.getCode())) {
             playerApiAccountVo.setLobbyUrl("javascript:window.gb.finish()");
-        }
+        }*/
 
         playerApiAccountVo.setSysUser(SessionManager.getUser());
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
