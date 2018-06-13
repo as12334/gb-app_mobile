@@ -61,8 +61,10 @@
                                         data-clipboard-text="${payAccount.openAcountName}">${views.themes_auto['复制']}</a>
                                 </div>
                             </div>
-
                         </div>
+                        <c:if test="${not empty payAccount.remark}">
+                            <p><c:out value="${payAccount.remark}"></c:out></p>
+                        </c:if>
                         <c:choose>
                             <c:when test="${channel=='company'}">
                                 <div class="depo_row">
