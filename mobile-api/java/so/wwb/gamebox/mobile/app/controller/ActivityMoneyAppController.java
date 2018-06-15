@@ -131,9 +131,7 @@ public class ActivityMoneyAppController {
     @Token(valid = true)
     public String getPacket(HttpServletRequest request, String activityMessageId) {
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),null);
         }
 
         Map map = new HashMap();
