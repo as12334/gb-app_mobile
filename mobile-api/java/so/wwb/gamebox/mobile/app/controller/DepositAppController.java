@@ -370,9 +370,7 @@ public class DepositAppController extends BaseDepositController {
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
-                    AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),null);
         }
         if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())) {
             return bitcoinSeachDiscount(playerRechargeVo);
@@ -384,9 +382,7 @@ public class DepositAppController extends BaseDepositController {
             rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
         }
         if (rechargeAmount == null || rechargeAmount <= 0) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.MONEY_ERROR.getCode(),
-                    AppErrorCodeEnum.MONEY_ERROR.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.MONEY_ERROR.getCode(),null);
         }
         Long min = Const.MIN_MONEY.longValue();
         Long max = Const.MAX_MONEY.longValue();
@@ -493,9 +489,7 @@ public class DepositAppController extends BaseDepositController {
     public String bitcoinSeachDiscount(PlayerRechargeVo playerRechargeVo) {
         boolean isExistsTxId = checkTxId(playerRechargeVo.getResult().getBankOrder());
         if (!isExistsTxId) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEXISTS.getCode(),
-                    AppErrorCodeEnum.TXIDISEXISTS.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.TXIDISEXISTS.getCode(), null);
         }
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("counterFee", null);
@@ -573,7 +567,7 @@ public class DepositAppController extends BaseDepositController {
     @ResponseBody
     public String saveFastRecharge(HttpServletRequest request, PlayerRecharge playerRecharge, @FormModel @Valid FastRechargeForm form, BindingResult result) {
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(), null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), null);
         }
         playerRecharge.setRechargeType(RechargeTypeEnum.ONLINE_BANK.getCode());
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
