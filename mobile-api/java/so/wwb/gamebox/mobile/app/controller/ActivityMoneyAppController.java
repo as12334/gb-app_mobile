@@ -58,9 +58,7 @@ public class ActivityMoneyAppController {
     @ResponseBody
     public String countDrawTimes(String activityMessageId) {
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getCode(), null);
         }
 
         Map<String, Object> map = new HashMap<>(4, 1f);
@@ -69,26 +67,20 @@ public class ActivityMoneyAppController {
         Integer id = Integer.valueOf(CryptoTool.aesDecrypt(activityMessageId, "PlayerActivityMessageListVo"));
         if (playerId == null || moneyActivity == null || !moneyActivity.getId().equals(id)) {
             LOG.info("[玩家-{0}计算红包次数]没有红包活动，没有抽奖", playerId);
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_NOT_EXIST.getCode(),null);
         }
 
         Date now = new Date();
         if (now.after(moneyActivity.getEndTime())) {
             LOG.info("[玩家-{0}计算红包次数]红包活动已经结束", playerId.toString());
             map.put("drawTimes", -1);
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    map, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),map);
         }
         Integer rankId = getPlayerRankId(SessionManagerBase.getUserId());
         boolean containUserRank = isContainUserRank(moneyActivity, rankId);
         if (!containUserRank) {
             map.put("drawTimes", -1);
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    map, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_END.getCode(),map);
         }
         ActivityMoneyAwardsRulesVo awardsRulesVo = new ActivityMoneyAwardsRulesVo();
         awardsRulesVo.setPlayerId(playerId);
@@ -139,9 +131,7 @@ public class ActivityMoneyAppController {
     @Token(valid = true)
     public String getPacket(HttpServletRequest request, String activityMessageId) {
         if (StringTool.isBlank(activityMessageId)) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),
-                    AppErrorCodeEnum.ACTIVITY_END.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_END.getCode(),null);
         }
 
         Map map = new HashMap();

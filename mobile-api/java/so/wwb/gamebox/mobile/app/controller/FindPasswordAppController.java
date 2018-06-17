@@ -13,6 +13,7 @@ import org.soul.model.msg.notice.vo.NoticeContactWayVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.so.SysUserSo;
 import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,8 @@ import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.SubSysCodeEnum;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.listop.FreezeType;
@@ -45,6 +48,17 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 public class FindPasswordAppController {
     private Log LOG = LogFactory.getLog(FindPasswordAppController.class);
 
+    @RequestMapping(value = "/openFindByPhone")
+    @ResponseBody
+    public String canFindByPhone() {
+        //根据站长中心设置,是否开启手机找回密码
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_REG_SETTING_RECOVER_PASSWORD);
+        if (sysParam != null && sysParam.getActive()) {
+            return "1";
+        }
+        return "0";
+    }
+
     /**
      * 根据用户名判断用户是否绑定手机号
      *
@@ -55,27 +69,15 @@ public class FindPasswordAppController {
     @ResponseBody
     public String findUserPhone(SysUser user) {
         if (StringTool.isBlank(user.getUsername())) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_NAME_NOT_NULL.getCode(),
-                    AppErrorCodeEnum.USER_NAME_NOT_NULL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_NAME_NOT_NULL.getCode(), null);
         }
         //根据用户名查找用户信息
         Map map = findWay(user);
         if (MapTool.isEmpty(map)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(), null);
         }
         if (map.get("phone") != null && StringTool.isBlank(map.get("phone").toString())) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UNBOUND_PHONE.getCode(),
-                    AppErrorCodeEnum.UNBOUND_PHONE.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.UNBOUND_PHONE.getCode(), null);
         }
         Map dataMap = new HashMap(2, 1f);
         dataMap.put("encryptedId", map.get("encryptedId"));
@@ -98,18 +100,10 @@ public class FindPasswordAppController {
     @ResponseBody
     public String checkPhoneCode(String phone, String code) {
         if (StringTool.isBlank(phone) && StringTool.isBlank(code)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
-                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.VALIDATE_ERROR.getCode(), null);
         }
         if (!checkPhoneCode(code)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
-                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.VALIDATE_ERROR.getCode(), null);
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -127,28 +121,16 @@ public class FindPasswordAppController {
     @ResponseBody
     public String findLoginPassword(SysUser user, UpdatePasswordVo updatePasswordVo) {
         if (StringTool.isBlank(user.getUsername())) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_NAME_NOT_NULL.getCode(),
-                    AppErrorCodeEnum.USER_NAME_NOT_NULL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_NAME_NOT_NULL.getCode(), null);
         }
         //验证密码强度
         if (!checkWeakPassword(updatePasswordVo.getNewPassword())) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(),
-                    AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SAFE_PASSWORD_TOO_SIMPLE.getCode(), null);
         }
         //用户信息
         user = getUserInfo(user);
         if (user == null) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(), null);
         }
         String newPwd = AuthTool.md5SysUserPassword(updatePasswordVo.getNewPassword(), user.getUsername());
         SysUserVo sysUserVo = new SysUserVo();
@@ -162,11 +144,7 @@ public class FindPasswordAppController {
         sysUserVo.setProperties(SysUser.PROP_PASSWORD, SysUser.PROP_PASSWORD_LEVEL, SysUser.PROP_LOGIN_ERROR_TIMES);
         sysUserVo = ServiceTool.sysUserService().updateOnly(sysUserVo);
         if (!sysUserVo.isSuccess()) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode(),
-                    AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode(), null);
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -186,34 +164,18 @@ public class FindPasswordAppController {
     @ResponseBody
     public String findSafePassword(SecurityPassword password, SysUser user) {
         if (StringTool.isBlank(user.getUsername())) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_NAME_NOT_NULL.getCode(),
-                    AppErrorCodeEnum.USER_NAME_NOT_NULL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_NAME_NOT_NULL.getCode(), null);
         }
         if (StringTool.isBlank(password.getPwd1())) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
-                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(), null);
         }
         //用户信息
         user = getUserInfo(user);
         if (user == null) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(), null);
         }
         if (!savePassword(password.getPwd1(), user)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode(),
-                    AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.UPDATE_PASSWORD_FAIL.getCode(), null);
         }
         SessionManager.clearPrivilegeStatus();
 

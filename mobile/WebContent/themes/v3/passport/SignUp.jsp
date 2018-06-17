@@ -1,7 +1,21 @@
 <%--@elvariable id="field" type="java.util.List<so.wwb.gamebox.model.master.setting.po.FieldSort>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
+<%
+    String m = request.getParameter("m");
+    if(SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)){
+        pageContext.setAttribute("registCodeField",false);
+        pageContext.setAttribute("fromMovie",m);
+    }
+%>
 <!DOCTYPE html>
+<%
+    String m = request.getParameter("m");
+    if(SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)){
+        pageContext.setAttribute("registCodeField",false);
+        pageContext.setAttribute("fromMovie",m);
+    }
+%>
 <html>
 <head>
     <title>${views.passport_auto['注册']}</title>
@@ -28,6 +42,7 @@
                     <input type="hidden" value='${requiredJson}' name="requiredJson">
                     <input type="hidden" value="${registCode}" name="recommendRegisterCode"/>
                     <input type="hidden" name="editType" value="player">
+                    <input type="hidden" name="fromMovie" value="${fromMovie}">
                     <c:if test="${registCodeField}">
                         <div class="mui-input-row">
                             <label>${views.register['signUp.recommendUserInputCode']}${isRequiredForRegisterCode?'<i class="icon-star"></i>':''}</label>
