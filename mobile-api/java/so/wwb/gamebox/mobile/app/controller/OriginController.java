@@ -716,7 +716,7 @@ public class OriginController extends BaseOriginController {
      * @return
      */
     private boolean checkActive(Map m){
-        if(MapTool.getBoolean(m, "status") == false){
+        if(MapTool.getBoolean(m, "status", false) == false){
             return false;
         }
 
