@@ -32,7 +32,7 @@ public enum AppErrorCodeEnum {
     VALIDATE_ERROR("1301", "验证码输入错误"),
     REAL_NAME_ERROR("1302", "真实姓名不正确"),
     ORIGIN_SAFE_PASSWORD_ERROR("1303", "原始密码有误"),
-    SAFE_PASSWORD_ERROR("1303", "安全密码有误"),
+    SAFE_PASSWORD_ERROR("1313", "安全密码有误"),
     UPDATE_REAL_NAME_FAIL("1304", "真实姓名修改失败"),
     SAFE_PASSWORD_NOT_NULL("1305", "安全密码不能为空"),
     NEW_PASSWORD_NOT_NULL("1306", "新密码不能为空"),
@@ -76,6 +76,8 @@ public enum AppErrorCodeEnum {
     ORDER_ERROR("1607","订单号有误，请重新存款"),
     TXIDISEMPTY("1608","比特币TxId不能为空，请重新输入"),
     TXIDISEXISTS("1609","比特币TxId已存在，请重新输入"),
+    RECHARGE_NOT_EXIT_USER("1610","存款失败，用户不存在"),
+    RECHARGE_TIME_INTERVAL("1611","存款太过频繁,休息片刻")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.passport.form.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
@@ -62,6 +63,7 @@ public class RegisterController {
     };
 
     @RequestMapping("/register")
+    @Upgrade(upgrade = true)
     public String  toRegister(Model model, HttpServletRequest request) {
         String rule = JsRuleCreator.create(SignUpForm.class, "result");
         model.addAttribute("rule",rule);
