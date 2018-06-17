@@ -377,7 +377,7 @@ public class SignUpController extends BaseDemoController {
         boolean success = userRegisterVo.isSuccess();
         String messageCode = success ? MessageI18nConst.REGISTER_SUCCESS : MessageI18nConst.REGISTER_FAIL;
         if(success && StringTool.isNotBlank(userRegisterVo.getFromMovie())){
-            return moviePlayerRegister(getMessage(success, messageCode),request,userRegisterVo);
+           return moviePlayerRegister(getMessage(success, messageCode),request,userRegisterVo);
         }
         return getMessage(success, messageCode);
     }
