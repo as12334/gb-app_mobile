@@ -15,6 +15,9 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.IpTool;
 import org.soul.commons.net.ServletTool;
+import org.soul.commons.net.http.HttpClientParam;
+import org.soul.commons.net.http.HttpClientTool;
+import org.soul.commons.net.http.HttpRequestMethod;
 import org.soul.model.common.BaseObjectVo;
 import org.soul.model.ip.IpBean;
 import org.soul.model.msg.notice.enums.NoticePublishMethod;
@@ -323,6 +326,24 @@ public class SignUpController extends BaseDemoController {
         }
     }
 
+    public Map moviePlayerRegister(Map resultMap,HttpServletRequest request, UserRegisterVo userRegisterVo){
+        //获取站点参数-影城路径
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.TO_MOVIE_REQUEST_PATH);
+        if(sysParam != null){
+            String url = StringTool.isNotBlank(sysParam.getParamValue()) ? sysParam.getParamValue() : sysParam.getDefaultValue();
+            if(StringTool.isNotBlank(url)){
+                Map<String, String> paramMap = new HashMap<>();
+                paramMap.put("act", "add");
+                paramMap.put("ip", ServletTool.getIpAddr(request));
+                paramMap.put("m", userRegisterVo.getFromMovie());
+                HttpClientParam param = new HttpClientParam(url , paramMap);
+                param.setMethod(HttpRequestMethod.GET);
+                String result = HttpClientTool.sync(param);
+            }
+        }
+        return resultMap;
+    }
+
     /**
      * 玩家注册
      *
@@ -353,8 +374,12 @@ public class SignUpController extends BaseDemoController {
         sendRegSuccessMsg(request, userRegisterVo);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
-        String messageCode = userRegisterVo.isSuccess() ? MessageI18nConst.REGISTER_SUCCESS : MessageI18nConst.REGISTER_FAIL;
-        return getMessage(userRegisterVo.isSuccess(), messageCode);
+        boolean success = userRegisterVo.isSuccess();
+        String messageCode = success ? MessageI18nConst.REGISTER_SUCCESS : MessageI18nConst.REGISTER_FAIL;
+        if(success && StringTool.isNotBlank(userRegisterVo.getFromMovie())){
+            return moviePlayerRegister(getMessage(success, messageCode),request,userRegisterVo);
+        }
+        return getMessage(success, messageCode);
     }
 
     private Map<String, Object> getMessage(boolean isSuccess, String messageCode) {
