@@ -242,10 +242,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String gameRecordDetail(PlayerGameOrderVo playerGameOrderVo) {
         if (playerGameOrderVo.getSearch().getId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(), null);
         }
         playerGameOrderVo = ServiceSiteTool.playerGameOrderService().getGameOrderDetail(playerGameOrderVo);
         PlayerGameOrder playerGameOrder = playerGameOrderVo.getResult();
@@ -517,10 +514,7 @@ public class MineAppController extends BaseMineController {
     public String addNoticeSite(@FormModel @Valid PlayerAdvisoryAppForm form, BindingResult result, String code) {
         if (result.hasErrors()) {
             LOG.info("申请优惠发送消息错误：{0}", JsonTool.toJson(result.getAllErrors()));
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), null);
         }
 
         PlayerAdvisoryVo playerAdvisoryVo = new PlayerAdvisoryVo();
@@ -546,16 +540,10 @@ public class MineAppController extends BaseMineController {
             map.put("isOpenCaptcha", true);
             map.put("captcha_value", "/captcha/" + CaptchaUrlEnum.CODE_FEEDBACK.getSuffix() + ".html?t=" + System.currentTimeMillis());
             if (!StringTool.isNotBlank(code)) {
-                return AppModelVo.getAppModeVoJson(false,
-                        AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(),
-                        AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getMsg(),
-                        null, APP_VERSION);
+                return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_VALIDATE_NOT_NULL.getCode(), null);
             }
             if (!checkFeedCode(code)) {
-                return AppModelVo.getAppModeVoJson(true,
-                        AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
-                        AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
-                        null, APP_VERSION);
+                return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.VALIDATE_ERROR.getCode(), null);
             }
 
         }
@@ -1008,11 +996,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String deleteSiteSysNotice(NoticeReceiveVo noticeVo, String ids) {
         if (StringTool.isBlank(ids)) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(), null);
         }
 
         String[] idArray = ids.split(SPLIT_REGEX);
@@ -1023,11 +1007,7 @@ public class MineAppController extends BaseMineController {
         noticeVo.setIds(list);
         boolean bool = ServiceTool.noticeService().deleteSiteMsg(noticeVo);
         if (!bool) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
-                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(), null);
         }
 
         return AppModelVo.getAppModeVoJson(true,
@@ -1046,11 +1026,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getSiteSysNoticeDetail(VNoticeReceivedTextVo vReceivedVo, NoticeReceiveVo noticeReceiveVo, HttpServletRequest request) {
         if (noticeReceiveVo.getSearch().getId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(), null);
         }
 
         return AppModelVo.getAppModeVoJson(true,
@@ -1090,7 +1066,7 @@ public class MineAppController extends BaseMineController {
                     null,
                     APP_VERSION);
         }
-        Map map = appRecovery(playerApiVo,request);
+        Map map = appRecovery(playerApiVo, request);
         if (map == null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
@@ -1191,6 +1167,22 @@ public class MineAppController extends BaseMineController {
     }
 
     /**
+     * 查询分享记录
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getPlayerRecommendRecord")
+    @ResponseBody
+    public String getPlayerRecommendList(HttpServletRequest request, PlayerRecommendAwardListVo listVo) {
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                findPlayerRecommentRecord(request, listVo),
+                APP_VERSION);
+    }
+
+    /**
      * 验证安全密码
      *
      * @param password
@@ -1200,18 +1192,10 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String checkSafePassword(SecurityPassword password) {
         if (StringTool.isBlank(password.getOriginPwd())) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(),
-                    AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SAFE_PASSWORD_NOT_NULL.getCode(), null);
         }
         if (!verifyOriginPwd(password)) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(),
-                    AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR.getCode(), null);
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),

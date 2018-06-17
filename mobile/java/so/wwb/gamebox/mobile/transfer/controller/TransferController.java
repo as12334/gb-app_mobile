@@ -154,7 +154,7 @@ public class TransferController extends WalletBaseController {
         for (String apiId : siteApis.keySet()) {
             api = apis.get(apiId);
             //额度转换的ｂｓｇ不支持
-            if(ApiProviderEnum.BSG.getCode().equals(apiId)){
+            if(ApiProviderEnum.BSG.getCode().equals(apiId) || ApiProviderEnum.QLY.getCode().equals(apiId)){
                 continue;
             }
             siteApi = siteApis.get(apiId);

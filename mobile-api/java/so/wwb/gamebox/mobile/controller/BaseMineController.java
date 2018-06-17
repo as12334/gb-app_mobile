@@ -156,7 +156,7 @@ public class BaseMineController {
      *
      * @return
      */
-    protected Map appRecovery(PlayerApiVo playerApiVo,HttpServletRequest request) {
+    protected Map appRecovery(PlayerApiVo playerApiVo, HttpServletRequest request) {
         playerApiVo.setOrigin(SessionManagerCommon.getTerminal(request));
         Map map = doRecovery(playerApiVo);
         return map;
@@ -986,14 +986,6 @@ public class BaseMineController {
         });
         map.put("gradientTempArrayList", gradientTempArrayList);
 
-        //查询被该玩家推荐的好友记录奖励表
-        listVo.getSearch().setUserId(SessionManager.getUserId());
-        initSearchDate(listVo);
-        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecodeToApp(listVo);
-        List<PlayerRecommendAwardRecord> list = changeToApp(listVo.getRecommendAwardRecords());
-        map.put("command", list);
-
-        //查询推荐人数 获取奖励 红利
         PlayerRecommendAwardVo playerVo = new PlayerRecommendAwardVo();
         playerVo.getSearch().setUserId(SessionManager.getUserId());
         map.put("sign", getCurrencySign());
@@ -1001,6 +993,30 @@ public class BaseMineController {
         map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
         return map;
     }
+
+    /**
+     * 根据条件获取分享好友记录
+     *
+     * @param request
+     * @param listVo
+     * @return
+     */
+    protected Map<String, Object> findPlayerRecommentRecord(HttpServletRequest request, PlayerRecommendAwardListVo listVo) {
+        Map<String, Object> map = new HashMap<>();
+        //查询被该玩家推荐的好友记录奖励表
+        listVo.getSearch().setUserId(SessionManager.getUserId());
+        initSearchDate(listVo);
+        listVo = ServiceSiteTool.playerRecommendAwardService().searchRewardRecodeToApp(listVo);
+        List<PlayerRecommendAwardRecord> list = changeToApp(listVo.getRecommendAwardRecords());
+        map.put("command", list);
+        if (listVo == null || CollectionTool.isEmpty(listVo.getRecommendAwardRecords())) {
+            map.put("total", 0);
+        } else {
+            map.put("total", listVo.getPaging().getTotalCount());
+        }
+        return map;
+    }
+
 
     /**
      * 转换推荐记录到原生

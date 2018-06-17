@@ -35,7 +35,7 @@
         <c:if test="${activityHall==true}">
             <div class="deposit_tips">温馨提示：完成存款后，请前往活动大厅申请活动优惠。</div>
         </c:if>
-            <form id="rechargeForm" onsubmit="return false">
+        <form id="rechargeForm" onsubmit="return false">
             <gb:token/>
             <div id="validateRule" style="display: none">${validateRule}</div>
             <input type="hidden" name="account" id="account" value="${command.getSearchId(payAccount.id)}"/>
@@ -49,7 +49,8 @@
                     <div class="tit">${views.deposit_auto['账号信息']}</div>
                     <div class="bank_car_item">
                         <div class="top">
-                            <span class="pay-third sm ${payAccount.bankCode}"></span><span class='pay-txt'>${payAccount.customBankName}</span>
+                            <span class="${payAccount.bankCode eq 'other'?'':'pay-third sm '} ${payAccount.bankCode eq 'other'?'':payAccount.bankCode}"></span>
+                            <span class='pay-txt'>${payAccount.customBankName}</span>
                         </div>
                         <div class="bank_car_txt_info">
                             <div class="b_c_t_i_row">
@@ -64,9 +65,9 @@
                                 <a href="#" class="copy btn_copy" data-clipboard-text="${payAccount.account}">${views.themes_auto['复制']}</a>
                             </div>
                             <div class="b_c_t_i_row">
-                                    ${views.deposit_auto['姓名']}:
-                                    ${payAccount.fullName}
-                                    <a href="#" class=" btn_copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
+                                ${views.deposit_auto['姓名']}:
+                                ${payAccount.fullName}
+                                <a href="#" class=" btn_copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
                             </div>
                         </div>
                     </div>
@@ -193,4 +194,3 @@
 <script src="${resRoot}/js/deposit/BaseDeposit.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/deposit/DepositScancode.js?v=${rcVersion}"></script>
 </body>
-

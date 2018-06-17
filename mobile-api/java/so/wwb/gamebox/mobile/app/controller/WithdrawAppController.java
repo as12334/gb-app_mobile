@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.app.controller;
 
 
 import org.soul.commons.bean.Pair;
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
@@ -15,7 +16,6 @@ import org.soul.commons.math.NumberTool;
 import org.soul.model.msg.notice.vo.NoticeVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
-import org.soul.model.session.SessionKey;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +27,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.model.WithdrawAuditApp;
 import so.wwb.gamebox.mobile.controller.BaseWithDrawController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -35,9 +36,13 @@ import so.wwb.gamebox.model.common.notice.enums.AutoNoticeEvent;
 import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.listop.FreezeTime;
 import so.wwb.gamebox.model.listop.FreezeType;
+import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.model.master.player.po.PlayerTransaction;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.AccountVo;
+import so.wwb.gamebox.model.master.player.vo.PlayerTransactionListVo;
 import so.wwb.gamebox.model.master.player.vo.PlayerTransactionVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
@@ -45,7 +50,6 @@ import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
-import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -218,6 +222,85 @@ public class WithdrawAppController extends BaseWithDrawController {
     }
 
     /**
+     * 获取用户稽核
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getAuditLog")
+    @ResponseBody
+    public String getAuditLog(HttpServletRequest request) {
+        Map map = new HashMap<>();
+        SysUser sysUser = SessionManager.getUser();
+        Integer playerId = sysUser.getId();
+        PlayerTransactionListVo listVo = new PlayerTransactionListVo();
+        listVo.getSearch().setPlayerId(playerId);
+        listVo.getSearch().setCreateTime(new Date());
+        List<PlayerTransaction> list = ServiceSiteTool.getPlayerTransactionService().searchAuditLog(listVo);
+        map.put("withdrawAudit", handleAuditData(playerId, list));
+        map.put("currencySign", getCurrencySign(sysUser.getDefaultCurrency()));
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                map,
+                APP_VERSION);
+    }
+
+    private List<WithdrawAuditApp> handleAuditData(Integer playerId, List<PlayerTransaction> playerTransactions) {
+        if (playerId == null || CollectionTool.isEmpty(playerTransactions)) {
+            return null;
+        }
+        PlayerRank playerRank = getRank();
+        double withdrawNormalAudit = playerRank != null && playerRank.getWithdrawNormalAudit() != null ? playerRank.getWithdrawNormalAudit() : 0d;
+        List<WithdrawAuditApp> withdrawAudits = new ArrayList<>();
+        String depositType = TransactionTypeEnum.DEPOSIT.getCode();
+        String artificialDepositType = FundTypeEnum.ARTIFICIAL_DEPOSIT.getCode();
+        WithdrawAuditApp withdrawAuditApp;
+        Double auditPoints;
+        for (PlayerTransaction playerTransaction : playerTransactions) {
+            if (playerTransaction.getRechargeAuditPoints() == null && depositType.equals(playerTransaction.getTransactionType())
+                    && !artificialDepositType.equals(playerTransaction.getFundType())) {
+                playerTransaction.setRechargeAuditPoints(playerTransaction.getTransactionMoney() * withdrawNormalAudit);
+            }
+            withdrawAuditApp = new WithdrawAuditApp();
+            withdrawAuditApp.setCreateTime(playerTransaction.getCreateTime());
+            if (depositType.equals(playerTransaction.getTransactionType())) {
+                withdrawAuditApp.setRechargeAmount(playerTransaction.getTransactionMoney());
+                auditPoints = playerTransaction.getRechargeAuditPoints();
+                if (auditPoints != null && playerTransaction.getEffectiveTransaction() == null) {
+                    withdrawAuditApp.setRechargeRemindAudit(playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRelaxingQuota());
+                } else if (auditPoints != null && playerTransaction.getEffectiveTransaction() != null) {
+                    withdrawAuditApp.setRechargeRemindAudit(playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRelaxingQuota());
+                }
+                if (auditPoints != null) {
+                    withdrawAuditApp.setRechargeAudit(auditPoints < 0 ? 0 : auditPoints);
+                }
+                if (playerTransaction.getAdministrativeFee() != null) {
+                    withdrawAuditApp.setRechargeFee(-playerTransaction.getAdministrativeFee());
+                }
+            } else {
+                withdrawAuditApp.setFavorableAmount(playerTransaction.getTransactionMoney());
+                auditPoints = playerTransaction.getFavorableAuditPoints();
+                if (auditPoints != null && playerTransaction.getEffectiveTransaction() == null) {
+                    withdrawAuditApp.setFavorableRemindAudit(playerTransaction.getFavorableRemainderEffectiveTransaction());
+                } else {
+                    withdrawAuditApp.setFavorableRemindAudit(playerTransaction.getFavorableRemainderEffectiveTransaction() + playerTransaction.getEffectiveTransaction());
+                }
+                if (auditPoints != null && playerTransaction.getRelaxingQuota() != null) {
+                    withdrawAuditApp.setFavorableAudit(auditPoints - playerTransaction.getRelaxingQuota() < 0 ? 0 : auditPoints);
+                } else if (auditPoints != null) {
+                    withdrawAuditApp.setFavorableAudit(auditPoints);
+                }
+                if (playerTransaction.getDeductFavorable() != null) {
+                    withdrawAuditApp.setFavorableFee(-playerTransaction.getDeductFavorable());
+                }
+            }
+            withdrawAudits.add(withdrawAuditApp);
+        }
+        return withdrawAudits;
+    }
+
+    /**
      * 验证原密码
      */
     private boolean verifyOriginPwd(SecurityPassword password) {
@@ -273,7 +356,7 @@ public class WithdrawAppController extends BaseWithDrawController {
                 tokenMap.put(KEY_TIMES_KEY, (APP_ERROR_TIMES - 1) - errorTimes);
                 return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SAFE_PASSWORD_ERROR.getCode(),
-                        String.format(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR_TIME.getMsg(),(APP_ERROR_TIMES - 1) - errorTimes),
+                        String.format(AppErrorCodeEnum.ORIGIN_SAFE_PASSWORD_ERROR_TIME.getMsg(), (APP_ERROR_TIMES - 1) - errorTimes),
                         tokenMap,
                         APP_VERSION);
             }
