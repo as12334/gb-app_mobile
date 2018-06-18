@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
+import so.wwb.gamebox.common.security.Main;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -48,15 +49,12 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 public class FindPasswordAppController {
     private Log LOG = LogFactory.getLog(FindPasswordAppController.class);
 
-    @RequestMapping(value = "/openFindByPhone")
-    @ResponseBody
-    public String canFindByPhone() {
-        //根据站长中心设置,是否开启手机找回密码
-        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_REG_SETTING_RECOVER_PASSWORD);
-        if (sysParam != null && sysParam.getActive()) {
-            return "1";
-        }
-        return "0";
+    public static void main(String[] args) {
+        System.out.println(AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                true,
+                APP_VERSION));
     }
 
     /**
@@ -341,5 +339,21 @@ public class FindPasswordAppController {
             LOG.error(e, "验证手机验证码错误！");
         }
         return false;
+    }
+
+    @RequestMapping(value = "/openFindByPhone")
+    @ResponseBody
+    public String canFindByPhone() {
+        //根据站长中心设置,是否开启手机找回密码
+        String isOpen = "0";
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_REG_SETTING_RECOVER_PASSWORD);
+        if (sysParam != null && sysParam.getActive()) {
+            isOpen = "1";
+        }
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                isOpen,
+                APP_VERSION);
     }
 }
