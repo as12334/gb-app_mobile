@@ -39,8 +39,6 @@ import so.wwb.gamebox.model.company.help.po.VHelpTypeAndDocument;
 import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
 import so.wwb.gamebox.model.company.site.po.SiteGameTag;
 import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
-import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
-import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
@@ -69,6 +67,7 @@ public class OriginController extends BaseOriginController {
     private Log LOG = LogFactory.getLog(OriginController.class);
 
     //region mainIndex
+
     /**
      * 获取进入app时广告
      *
@@ -78,7 +77,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getIntoAppAd(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = new HashMap<>(5, 1f);
-        getBannerAndPhoneDialog(map, request,CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE);
+        getBannerAndPhoneDialog(map, request, CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), map, APP_VERSION);
     }
 
@@ -127,7 +126,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = new HashMap<>(5, 1f);
-        getBannerAndPhoneDialog(map, request,CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);//获取轮播图和手机弹窗广告
+        getBannerAndPhoneDialog(map, request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);//获取轮播图和手机弹窗广告
         map.put("announcement", getAnnouncement());
         map.put("activity", getMoneyActivityFloat(request));
         map.put("language", SessionManager.getLocale().toString());
@@ -149,7 +148,7 @@ public class OriginController extends BaseOriginController {
     public String getCarouse(HttpServletRequest request) {
         //轮播图和弹窗广告
         Map<String, Object> map = new HashMap<>(2, 1f);
-        getBannerAndPhoneDialog(map, request,CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);
+        getBannerAndPhoneDialog(map, request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
@@ -257,11 +256,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getGameLink(AppRequestGameLink siteGame, HttpServletRequest request, AppRequestModelVo modelVo) {
         if (siteGame.getApiId() == null || siteGame.getApiTypeId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.GAME_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.GAME_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.GAME_NOT_EXIST.getCode(), null);
         }
         Map map = new HashMap<>(2, 1f);
 
@@ -342,11 +337,7 @@ public class OriginController extends BaseOriginController {
     public String getHelpChildType(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
         if (searchId == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(), null);
         }
         Criteria criteria = Criteria.add(VHelpTypeAndDocument.PROP_PARENT_ID, Operator.EQ, searchId);
         List<VHelpTypeAndDocument> typeList;
@@ -371,7 +362,7 @@ public class OriginController extends BaseOriginController {
     @ResponseBody
     public String getHelpDetail(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
-        if(searchId == null) {
+        if (searchId == null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
@@ -379,7 +370,7 @@ public class OriginController extends BaseOriginController {
                     APP_VERSION);
         }
         VHelpTypeAndDocument vHelpTypeAndDocument = Cache.getHelpTypeAndDocument().get(searchId.toString());
-        if(vHelpTypeAndDocument == null) {
+        if (vHelpTypeAndDocument == null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
                     AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
@@ -663,7 +654,7 @@ public class OriginController extends BaseOriginController {
      * @param map
      * @param request
      */
-    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request,CttCarouselTypeEnum typeEnum) {
+    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request, CttCarouselTypeEnum typeEnum) {
         Map<String, Map> carouselMap = (Map) Cache.getSiteCarousel();
         if (MapTool.isEmpty(carouselMap)) {
             return;
@@ -676,7 +667,7 @@ public class OriginController extends BaseOriginController {
         String local = SessionManager.getLocale().toString();
         String appStartAd = null;
         for (Map m : carouselMap.values()) {
-            if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local)&&checkActive(m)) {
+            if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local) && checkActive(m)) {
                 String link = MapTool.getString(m, "link");
                 if (StringTool.isNotBlank(link)) {
                     if (link.contains("${website}")) {
@@ -695,7 +686,7 @@ public class OriginController extends BaseOriginController {
                 }
             }
         }
-        if(CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE.getCode().equals(phoneDialogType)){
+        if (CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE.getCode().equals(phoneDialogType)) {
             map.put("initAppAd", appStartAd);
             return;
         }
@@ -713,24 +704,25 @@ public class OriginController extends BaseOriginController {
 
     /**
      * 检查缓存配置是否有效
+     *
      * @return
      */
-    private boolean checkActive(Map m){
-        if(MapTool.getBoolean(m, "status", false) == false){
+    private boolean checkActive(Map m) {
+        if (MapTool.getBoolean(m, "status", false) == false) {
             return false;
         }
 
         Date date = new Date();
         Calendar instance = Calendar.getInstance();
-        instance.set(1979,01,01);
+        instance.set(1979, 01, 01);
         Date min = instance.getTime();
 
-        instance.set(2099,12,31);
-        Date maxDate =instance.getTime();
+        instance.set(2099, 12, 31);
+        Date maxDate = instance.getTime();
 
-        Date sdate = (Date) m.get("start_time")==null?min:(Date) m.get("start_time");
-        Date edate =(Date) m.get("end_time")==null? maxDate :(Date) m.get("end_time");
-        return  sdate.before(date) && edate.after(date);
+        Date sdate = (Date) m.get("start_time") == null ? min : (Date) m.get("start_time");
+        Date edate = (Date) m.get("end_time") == null ? maxDate : (Date) m.get("end_time");
+        return sdate.before(date) && edate.after(date);
     }
 
     /**
