@@ -888,11 +888,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getSysNoticeDetail(VSystemAnnouncementListVo vListVo) {
         if (vListVo.getSearch().getId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(), null);
         }
 
         return AppModelVo.getAppModeVoJson(true,
@@ -926,11 +922,7 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String getGameNoticeDetail(VSystemAnnouncementListVo listVo) {
         if (listVo.getSearch().getId() == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.SYSTEM_INFO_NOT_EXIST.getCode(), null);
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
@@ -1060,19 +1052,11 @@ public class MineAppController extends BaseMineController {
     @ResponseBody
     public String recovery(HttpServletRequest request, PlayerApiVo playerApiVo) {
         if (!SessionManagerCommon.isAutoPay()) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.NOT_RECOVER.getCode(),
-                    AppErrorCodeEnum.NOT_RECOVER.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.NOT_RECOVER.getCode(), null);
         }
         Map map = appRecovery(playerApiVo, request);
         if (map == null) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
-                    AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECOVER_FIAL.getCode(), null);
         }
         if (map.get("msg") != null) {
             return AppModelVo.getAppModeVoJson(true,
@@ -1088,11 +1072,7 @@ public class MineAppController extends BaseMineController {
                         null,
                         APP_VERSION);
             } else if (StringTool.equals(map.get("resultCode").toString(), "1")) {
-                return AppModelVo.getAppModeVoJson(true,
-                        AppErrorCodeEnum.RECOVER_FIAL.getCode(),
-                        AppErrorCodeEnum.RECOVER_FIAL.getMsg(),
-                        null,
-                        APP_VERSION);
+                return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECOVER_FIAL.getCode(), null);
             } else {
                 return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),

@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
-import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.form.SignUpForm;
+import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.RegisterConst;
@@ -52,9 +52,7 @@ import so.wwb.gamebox.model.common.notice.enums.NoticeParamEnum;
 import so.wwb.gamebox.model.company.site.po.SiteCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteLanguage;
 import so.wwb.gamebox.model.company.sys.po.SysSite;
-import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
-import so.wwb.gamebox.model.master.enums.CreateChannelEnum;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserAgentVo;
 import so.wwb.gamebox.model.master.player.vo.UserRegisterVo;
@@ -143,27 +141,15 @@ public class RegisterAppController {
         }
         //验证码
         if (!checkedCaptcha(userRegisterVo.getCaptchaCode())) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.VALIDATE_ERROR.getCode(),
-                    AppErrorCodeEnum.VALIDATE_ERROR.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.VALIDATE_ERROR.getCode(), null);
         }
         //用户名是否存在
         if (checkUserNameExist(userRegisterVo.getSysUser().getUsername())) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_USER_EXIST.getCode(),
-                    AppErrorCodeEnum.REGISTER_USER_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.REGISTER_USER_EXIST.getCode(), null);
         }
         //站长中心是否允许注册
         if (!isAllowRegister()) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.NOT_ALLOW_REGISTER.getCode(),
-                    AppErrorCodeEnum.NOT_ALLOW_REGISTER.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.NOT_ALLOW_REGISTER.getCode(), null);
         }
         //注册防御
         Map<String, Object> resultMap = isAllowDefense(request);
@@ -185,11 +171,7 @@ public class RegisterAppController {
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
         if (!userRegisterVo.isSuccess()) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REGISTER_FAIL.getCode(),
-                    AppErrorCodeEnum.REGISTER_FAIL.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.REGISTER_FAIL.getCode(), null);
         }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),

@@ -396,9 +396,7 @@ public class BaseDepositController {
             }
             appRechargePay.setArrayList(electronicAppPayAccounts);
         } else if (!CollectionTool.isNotEmpty(scanAppPayAccounts)) {
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
-                    AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(), null);
         }
 
         appRechargePay.setCurrency(SessionManager.getUser().getDefaultCurrency());
@@ -779,24 +777,22 @@ public class BaseDepositController {
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
-                    AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),null);
         }
-        if(PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())){
-            String type ;
-            if(PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())){
+        if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
+            String type;
+            if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())) {
                 type = AppDepositPayEnum.BITCOIN_PAY.getCode();
-            }else if(PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())){
+            } else if (PayAccountAccountType.BANKACCOUNT.getCode().equals(payAccount.getAccountType())) {
                 type = AppDepositPayEnum.COMPANY_PAY.getCode();
-            }else{
+            } else {
                 type = AppDepositPayEnum.ELECTRONIC_PAY.getCode();
             }
-            companyCommonDeposit(playerRechargeVo, result, type,request);
+            companyCommonDeposit(playerRechargeVo, result, type, request);
         }
         PlayerRank rank = getRank();
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
-                playerRechargeVo.getResult().getRechargeType(),request);
+                playerRechargeVo.getResult().getRechargeType(), request);
         if (playerRechargeVo.isSuccess()) {
             //声音提醒站长中心
             onlineToneWarn();
@@ -813,9 +809,7 @@ public class BaseDepositController {
     public String ThirdPartyPay(PlayerRecharge playerRecharge, HttpServletRequest request, PayAccount payAccount) {
         LOG.info("调用第三方pay：交易号：{0}", playerRecharge.getTransactionNo());
         if (StringTool.isBlank(playerRecharge.getTransactionNo())) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),
-                    AppErrorCodeEnum.ORDER_ERROR.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),null);
         }
         try {
             List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
@@ -850,9 +844,7 @@ public class BaseDepositController {
         } catch (Exception e) {
             LOG.error(e, "调用第三方pay出错交易号：{0}", playerRecharge.getTransactionNo());
         }
-        return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),
-                AppErrorCodeEnum.DEPOSIT_FAIL.getMsg(),
-                null, APP_VERSION);
+        return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),null);
     }
 
     /**
@@ -905,7 +897,7 @@ public class BaseDepositController {
      * 保存存款数据
      */
     private PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, PlayerRank rank,
-                                          String rechargeTypeParent, String rechargeType,HttpServletRequest request) {
+                                          String rechargeTypeParent, String rechargeType, HttpServletRequest request) {
         //设置存款其他数据
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRechargeVo.setSysUser(SessionManager.getUser());
@@ -948,19 +940,17 @@ public class BaseDepositController {
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),
-                    AppErrorCodeEnum.CHANNEL_CLOSURE.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(), null);
         }
-        if(PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType())){
+        if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType())) {
             onlineCommonDeposit(playerRechargeVo, result, request);
         }
         if (AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)) {
-            playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount,request);
+            playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount, request);
         } else if (AppDepositPayEnum.ELECTRONIC_PAY.getCode().equals(type)) {
-            playerRechargeVo = electronicSaveRecharge(playerRechargeVo, payAccount,request);
+            playerRechargeVo = electronicSaveRecharge(playerRechargeVo, payAccount, request);
         } else if (AppDepositPayEnum.BITCOIN_PAY.getCode().equals(type)) {
-            playerRechargeVo = bitcoinSaveRecharge(playerRechargeVo, payAccount,request);
+            playerRechargeVo = bitcoinSaveRecharge(playerRechargeVo, payAccount, request);
         }
         //保存订单
         playerRechargeVo = ServiceSiteTool.playerRechargeService().savePlayerRecharge(playerRechargeVo);
@@ -1055,7 +1045,7 @@ public class BaseDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo companySaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
+    public PlayerRechargeVo companySaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         if (playerRecharge.getCounterFee() == null) {
@@ -1103,7 +1093,7 @@ public class BaseDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo electronicSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
+    public PlayerRechargeVo electronicSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
@@ -1144,7 +1134,7 @@ public class BaseDepositController {
      * @param payAccount
      * @return
      */
-    public PlayerRechargeVo bitcoinSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
+    public PlayerRechargeVo bitcoinSaveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount, HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
         playerRecharge.setRechargeAmount(0d);

@@ -95,10 +95,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         Map<String, Object> tokenMap = new HashMap<>(1, 1f);
         tokenMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
-                    tokenMap,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), tokenMap);
         }
         //判断用户是否存在安全码
         if (!isSafePassword()) {
@@ -177,20 +174,12 @@ public class WithdrawAppController extends BaseWithDrawController {
     @ResponseBody
     public String withdrawFee(String withdrawAmount) {
         if (StringTool.isBlank(withdrawAmount) || !NumberTool.isNumber(withdrawAmount)) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getCode(),
-                    AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.WITHDRAW_AMOUNT_ERROR.getCode(), null);
         }
 
         PlayerRank playerRank = getRank();
         if (playerRank == null) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_INFO_NOT_EXIST.getMsg(),
-                    null,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.USER_INFO_NOT_EXIST.getCode(), null);
         }
 
         Map<String, Object> map = new HashMap<>();
@@ -331,11 +320,7 @@ public class WithdrawAppController extends BaseWithDrawController {
 
         // 安全密码已锁定
         if (isLock(user)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_HAS_FREEZE.getCode(),
-                    AppErrorCodeEnum.USER_HAS_FREEZE.getMsg(),
-                    tokenMap,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_HAS_FREEZE.getCode(), tokenMap);
         }
 
         Integer errorTimes = user.getSecpwdErrorTimes() == null ? 0 : user.getSecpwdErrorTimes();
@@ -365,11 +350,7 @@ public class WithdrawAppController extends BaseWithDrawController {
             setSecPwdFreezeTime(user);
             freezeAccountBalance();
 
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_HAS_FREEZE.getCode(),
-                    AppErrorCodeEnum.USER_HAS_FREEZE.getMsg(),
-                    tokenMap,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_HAS_FREEZE.getCode(), tokenMap);
         }
 
         SessionManager.setPrivilegeStatus(map);
