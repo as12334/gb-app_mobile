@@ -111,12 +111,7 @@ public interface AppConstant {
     String QQ_MICROPAY = "pay_name.qq_micropay";
 
     String MCENTER_ONLINE_RECHARGE_URL = "fund/deposit/online/list.html"; //站长中心-线上支付链接
-    String ONLINE_PAY_URL = "/wallet/deposit/online/pay.html?pay=online&search.transactionNo=";
-    String SCAN_PAY_URL = "/wallet/deposit/online/scan/pay.html?pay=online&search.transactionNo=";
     String MCENTER_COMPANY_RECHARGE_URL = "fund/deposit/company/confirmCheck.html";//公司入款地址
-
-    Integer QR_HEIGHT = 135;
-    Integer QR_WIDTH = 135;
     //公司入款支持的存款类型
     String[] RECHARGE_TYPE = {
             RechargeTypeEnum.ONLINE_BANK.getCode(),
