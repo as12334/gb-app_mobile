@@ -126,6 +126,7 @@
     </div>
 </div>
 </body>
+<input type="hidden" value="true" id="depositPage"/>
 <%@ include file="../../include/include.js.jsp" %>
 <script src="${resRoot}/js/common/Menu.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/mui/mui.picker.js?v=${rcVersion}"></script>
