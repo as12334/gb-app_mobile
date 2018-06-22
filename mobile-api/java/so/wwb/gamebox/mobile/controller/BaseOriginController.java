@@ -675,10 +675,7 @@ public abstract class BaseOriginController {
      * @return
      */
     private PlayerApiAccountVo getPlayerApiAccount(HttpServletRequest request, PlayerApiAccountVo playerApiVo) {
-        String domain = request.getServerName();
-        if (SystemTool.isDebug()) {
-            domain = domain + "/mobile";
-        }
+        String domain = ServletTool.getDomainFullAddress(request);
         playerApiVo.setLobbyUrl(domain);
         playerApiVo.setTransfersUrl(domain + TRANSFERS_URL);
         playerApiVo.setSysUser(SessionManager.getUser());

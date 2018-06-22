@@ -1,19 +1,16 @@
 <%--@elvariable id="field" type="java.util.List<so.wwb.gamebox.model.master.setting.po.FieldSort>"--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../include/include.inc.jsp" %>
-<%
-    String m = request.getParameter("m");
-    if(SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)){
-        pageContext.setAttribute("registCodeField",false);
-        pageContext.setAttribute("fromMovie",m);
-    }
-%>
 <!DOCTYPE html>
 <%
     String m = request.getParameter("m");
-    if(SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)){
-        pageContext.setAttribute("registCodeField",false);
-        pageContext.setAttribute("fromMovie",m);
+    String c = request.getParameter("c");
+    if (c != null && !"".equals(c)) {
+        pageContext.setAttribute("registCode", c);
+    }
+    if (SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)) {
+        pageContext.setAttribute("registCodeField", false);
+        pageContext.setAttribute("fromMovie", m);
     }
 %>
 <html>
