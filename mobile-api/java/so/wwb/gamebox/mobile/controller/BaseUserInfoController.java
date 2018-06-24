@@ -59,6 +59,7 @@ import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
+import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
 import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
@@ -75,7 +76,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 /**
  * Created by legend on 18-1-22.
  */
-public class BaseUserInfoController {
+public class BaseUserInfoController extends BaseApiServiceController {
 
     private Log LOG = LogFactory.getLog(BaseUserInfoController.class);
 
@@ -799,20 +800,6 @@ public class BaseUserInfoController {
         return null;
     }
 
-    /**
-     * 获取失败提示信息
-     *
-     * @param messageCode
-     * @param apiId
-     * @return
-     */
-    protected Map<String, Object> getErrorMessage(String messageCode, Integer apiId) {
-        Map<String, Object> resultMap = new HashMap<>(5, 1f);
-        resultMap.put("state", false);
-        resultMap.put("msg", LocaleTool.tranMessage(Module.FUND.getCode(), messageCode));
-        resultMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        return resultMap;
-    }
 
     /**
      * api是否维护中，包含禁用
@@ -823,82 +810,6 @@ public class BaseUserInfoController {
      */
     private boolean isMaintain(Api api, SiteApi siteApi) {
         return GameStatusEnum.DISABLE.getCode().equals(api.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(api.getSystemStatus()) || GameStatusEnum.DISABLE.getCode().equals(siteApi.getSystemStatus()) || GameStatusEnum.MAINTAIN.getCode().equals(siteApi.getSystemStatus());
-    }
-
-    /**
-     * 封装playerTransferVo
-     *
-     * @param playerTransferVo
-     * @return
-     */
-    protected PlayerApiAccountVo createVoByTransfer(PlayerTransferVo playerTransferVo) {
-        PlayerApiAccountVo playerApiAccountVo = new PlayerApiAccountVo();
-        playerApiAccountVo.setSysUser(playerTransferVo.getSysUser());
-        playerApiAccountVo.setApiId(playerTransferVo.getResult().getApiId());
-        playerApiAccountVo.getSearch().setApiId(playerTransferVo.getResult().getApiId());
-        playerApiAccountVo.getSearch().setUserId(SessionManager.getUserId());
-        return playerApiAccountVo;
-    }
-
-    /**
-     * 开始进行转账
-     *
-     * @param playerTransferVo
-     * @return
-     */
-    protected Map<String, Object> doTransfer(PlayerTransferVo playerTransferVo) {
-        LOG.info("【玩家[{0}]转账】:开始处理,当前时间【{1}】", playerTransferVo.getResult().getUserName(), SessionManager.getTransferTime());
-        try {
-            playerTransferVo = playerTransferService().saveTransferAndTransaction(playerTransferVo);
-        } catch (Exception e) {
-            LOG.error("【玩家[{0}]转账】:生成额度转换记录失败。", playerTransferVo.getResult().getUserName());
-            return getErrorMessage(TransferResultStatusEnum.TRANSFER_INTERFACE_BUSY.getCode(), playerTransferVo.getResult().getApiId());
-        }
-        if (!playerTransferVo.isSuccess()) {
-            return getErrorMessage(TransferResultStatusEnum.TRANSFER_INTERFACE_BUSY.getCode(), playerTransferVo.getResult().getApiId());
-        }
-
-        try {
-            playerTransferVo = playerTransferService().handleTransferResult(playerTransferVo);
-        } catch (Exception e) {
-            LOG.error("【玩家[{0}]转账】:额度转换处理超时。", playerTransferVo.getResult().getUserName());
-            return getErrorMessage(TransferResultStatusEnum.TRANSFER_TIME_OUT.getCode(), playerTransferVo.getResult().getApiId());
-        }
-        Map<String, Object> resultMap;
-        if (playerTransferVo.isSuccess()) {
-            //转账后更新player_api_account表的登录时间，以判断余额是否更新
-            updatePlayerApiAccountLoginTime(playerTransferVo);
-            resultMap = getSuccessMessage(playerTransferVo.getResult().getApiId());
-        } else {
-            resultMap = getErrorMessage(TransferResultStatusEnum.TRANSFER_INTERFACE_BUSY.getCode(), playerTransferVo.getResult().getApiId());
-        }
-        resultMap.put("orderId", playerTransferVo.getResult().getTransactionNo());
-        resultMap.put("result", playerTransferVo.getResultCode());
-        resultMap.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-        return resultMap;
-    }
-
-    private void updatePlayerApiAccountLoginTime(PlayerTransferVo playerTransferVo) {
-        PlayerApiAccountVo playerApiAccountVo = new PlayerApiAccountVo();
-        PlayerApiAccount playerApiAccount = playerTransferVo.getPlayerApiAccount();
-        playerApiAccount.setLastLoginIp(SessionManager.getIpDb().getIp());
-        playerApiAccount.setLastLoginTime(SessionManager.getDate().getNow());
-        playerApiAccountVo.setProperties(PlayerApiAccount.PROP_LAST_LOGIN_TIME, PlayerApiAccount.PROP_LAST_LOGIN_IP);
-        playerApiAccountVo.setResult(playerApiAccount);
-        ServiceSiteTool.playerApiAccountService().updateOnly(playerApiAccountVo);
-    }
-
-    /**
-     * 获取成功提示信息
-     *
-     * @param apiId
-     * @return
-     */
-    private Map<String, Object> getSuccessMessage(Integer apiId) {
-        Map<String, Object> resultMap = new HashMap<>(5, 1f);
-        resultMap.put("state", true);
-        resultMap.put("apiId", apiId);
-        return resultMap;
     }
 
     public boolean checkTransferAmount(Double amount, String transferOut) {

@@ -27,10 +27,7 @@ import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.DictEnum;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.SiteI18nEnum;
-import so.wwb.gamebox.model.TerminalEnum;
+import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
@@ -46,6 +43,7 @@ import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
 import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
 import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.support.CdnConf;
 
@@ -58,7 +56,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 /**
  * Created by LeTu on 2017/3/31.
  */
-public abstract class BaseOriginController {
+public abstract class BaseOriginController extends BaseApiServiceController{
     private Log LOG = LogFactory.getLog(BaseOriginController.class);
     private String TRANSFERS_URL = "/transfer/index.html";
     private String API_DETAIL_LINK = "/api/detail.html?apiId=%d&apiTypeId=%d";
@@ -532,7 +530,7 @@ public abstract class BaseOriginController {
             }
         }
 
-        playerApiAccountVo = ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
+        playerApiAccountVo = (ParamTool.apiSeparat())?autoTransferLogin(playerApiAccountVo):ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
         if (playerApiAccountVo == null || playerApiAccountVo.getGameApiResult() == null || ResultStatus.SUCCESS != playerApiAccountVo.getGameApiResult().getStatus()) {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
             return appI18n;

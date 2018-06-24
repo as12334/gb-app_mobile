@@ -10,6 +10,7 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
+import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
 import so.wwb.gamebox.web.cache.Cache;
 
 /**
@@ -17,7 +18,7 @@ import so.wwb.gamebox.web.cache.Cache;
  * Created by fei on 16-7-29.
  */
 @Controller
-public abstract class WalletBaseController {
+public abstract class WalletBaseController extends BaseApiServiceController{
 
     @RequestMapping("/index")
     protected abstract String index(Model model);

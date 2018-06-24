@@ -1,7 +1,5 @@
 package so.wwb.gamebox.mobile.transfer.controller;
 
-import org.soul.commons.enums.SupportTerminal;
-import org.soul.commons.lang.SystemTool;
 import org.soul.commons.net.ServletTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +16,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/transfer/auto")
-public class AutoTransferController extends so.wwb.gamebox.web.fund.controller.AutoTransferController {
+public class AutoTransferController extends so.wwb.gamebox.web.fund.controller.WebCommonAutoTransferController {
     private String TRANSFERS_URL = "/transfer/index.html";
 
     @Override
