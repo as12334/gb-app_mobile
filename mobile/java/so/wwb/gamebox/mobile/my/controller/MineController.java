@@ -58,8 +58,9 @@ import java.util.Map;
 @RequestMapping("/mine")
 public class MineController{
     private static Log LOG = LogFactory.getLog(MineController.class);
-    private static final String MY_INDEX = "/mine/Mine";
+    private static final String MY_INDEX = "/mine/Mine-2";
     private static final String GAME_PAGE = "/my/GamePage";
+    private static final String PERSON_INFO_ACCOUNT_SECURITY = "/password/AccountSecurity";
     private static final int PROMO_RECORD_DAYS = -7;
     private static final int RECOMMEND_DAYS = -1;
 
@@ -73,6 +74,19 @@ public class MineController{
         model.addAttribute("isCash", ParamTool.isCash());
         return MY_INDEX;
     }
+
+    /**
+     * 跳转到账号安全
+     * @return
+     */
+    @RequestMapping("/accountSecurity")
+    @Upgrade(upgrade = true)
+    public String accountSecurity(Model model) {
+        model.addAttribute("isBit", ParamTool.isBit());
+        model.addAttribute("isCash", ParamTool.isCash());
+        return PERSON_INFO_ACCOUNT_SECURITY;
+    }
+
 
     @RequestMapping("/gamePage")
     public String gamePage(Model model, HttpServletRequest request) {
