@@ -17,7 +17,7 @@
         <span class="mui-icon icon-service"></span>
         <span class="mui-tab-label">${views.themes_auto['客服']}</span>
     </a>
-    <a data-rel='{"target":"${root}/mine/index.html?channel=mine&skip=4","opType":"href"}' class="mui-tab-item ${channel == 'mine'?'mui-active':''}">
+    <a data-rel='{"target":"${root}/mine/index4v3.html?channel=mine&skip=4","opType":"href"}' class="mui-tab-item ${channel == 'mine'?'mui-active':''}">
         <span class="mui-icon icon-mine"></span>
         <span class="mui-tab-label">${views.themes_auto['我的']}</span>
     </a>
