@@ -16,6 +16,7 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.Base36;
@@ -962,6 +963,7 @@ public class BaseMineController {
         Map<String, Object> map = new HashMap<>(7, 1f);
         if (userPlayerVo.getResult() != null) {
             StringBuilder sb = new StringBuilder();
+            sb.append(ServletTool.getDomainFullAddress(request));
             sb.append("/register.html?c=");
             String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
             sb.append(Base36.encryptIgnoreCase(invitationCode));
