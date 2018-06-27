@@ -18,12 +18,12 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.enums.AppMineLinkEnum;
+import so.wwb.gamebox.mobile.app.form.AppPlayerTransferForm;
+import so.wwb.gamebox.mobile.app.form.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.app.model.AppMineLinkVo;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
-import so.wwb.gamebox.mobile.app.form.AppPlayerTransferForm;
-import so.wwb.gamebox.mobile.app.form.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
@@ -112,10 +112,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @ResponseBody
     public String submitBtc(@FormModel @Valid BtcBankcardForm form, BindingResult result) {
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), null);
         }
         String bankcardNumber = form.getResult_bankcardNumber();
         /*比特币*/
@@ -128,10 +125,7 @@ public class UserInfoAppController extends BaseUserInfoController {
         AppModelVo appModelVo = new AppModelVo();
         appModelVo.setVersion(AppConstant.APP_VERSION);
         if (checkCardIsExistsByUserId(bankcardVo)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.HAS_BTC.getCode(),
-                    AppErrorCodeEnum.HAS_BTC.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.HAS_BTC.getCode(), null);
         }
 
         UserBankcard bankcard = bankcardVo.getResult();
@@ -140,10 +134,7 @@ public class UserInfoAppController extends BaseUserInfoController {
         bankcard.setBankName(BITCOIN);
         bankcardVo = ServiceSiteTool.userBankcardService().saveAndUpdateUserBankcard(bankcardVo);
         if (!bankcardVo.isSuccess()) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode(),
-                    AppErrorCodeEnum.SUBMIT_BTC_FAIL.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUBMIT_BTC_FAIL.getCode(), null);
         }
         Map<String, String> map = new HashMap<>(1, 1f);
         map.put("btcNumber", bankcardVo.getResult().getBankcardNumber());
@@ -165,8 +156,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @ResponseBody
     public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(), null, APP_VERSION);//当出现验证信息没有过的时候一律提示参数有误
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), null);//当出现验证信息没有过的时候一律提示参数有误
         }
         UserBankcardVo vo = new UserBankcardVo();
         vo.setUserType(SessionManagerCommon.getUserType().getCode());
@@ -179,14 +169,10 @@ public class UserInfoAppController extends BaseUserInfoController {
         vo.getResult().setBankDeposit(form.getResult_bankDeposit());
         vo.getResult().setUserId(SessionManager.getUserId());
         if (StringTool.isBlank(SessionManager.getUser().getRealName()) && StringTool.isBlank(vo.getResult().getBankcardMasterName())) {
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode(),
-                    AppErrorCodeEnum.REAL_NAME_NOT_NULL.getMsg(), null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.REAL_NAME_NOT_NULL.getCode(), null);
         }
         if (checkCardIsExistsByUserId(vo)) {           //当银行卡号重复时，提示信息为银行卡号已存在
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(),
-                    AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getMsg(), null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.USER_BINDING_BANK_CARD_EXIST.getCode(), null);
         }
         if (StringTool.isNotBlank(SessionManager.getUser().getRealName())) {
             vo.getResult().setBankcardMasterName(SessionManager.getUser().getRealName());
@@ -252,13 +238,8 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping(value = "verifyRealNameForApp", method = RequestMethod.POST)
     @ResponseBody
     public String verifyRealNameForApp(UserPlayerTransferVo vo, @FormModel("result") @Valid CheckRealNameForm form, BindingResult result, HttpServletRequest request) {
-
         if (result.hasErrors()) {
-
-            return AppModelVo.getAppModeVoJson(false,
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),
-                    AppErrorCodeEnum.PARAM_HAS_ERROR.getMsg(),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), null);
         }
 
         Map<String, Object> map = new HashMap<>(3, 1f);
@@ -312,7 +293,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @RequestMapping(value = "/transfersMoney", method = RequestMethod.POST)
     @ResponseBody
     @Token(valid = true)
-    public String transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid AppPlayerTransferForm form, BindingResult result,HttpServletRequest request) {
+    public String transfersMoney(PlayerTransferVo playerTransferVo, @FormModel @Valid AppPlayerTransferForm form, BindingResult result, HttpServletRequest request) {
         LOG.info("【玩家[{0}]转账】:从[{1}]转到[{2}]", SessionManager.getUserName(), playerTransferVo.getTransferOut(), playerTransferVo.getTransferInto());
         if (!isTimeToTransfer()) {//是否已经过了允许转账的间隔
             Map map = getErrorMessage(TransferResultStatusEnum.TRANSFER_TIME_INTERVAL.getCode(), playerTransferVo.getResult().getApiId());
@@ -333,13 +314,9 @@ public class UserInfoAppController extends BaseUserInfoController {
         if (!checkTransferAmount(playerTransferVo.getResult().getTransferAmount(), playerTransferVo.getTransferOut())) {
             Map map = new HashMap();
             map.put(TokenHandler.TOKEN_VALUE, TokenHandler.generateGUID());
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(),
-                    AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getMsg(),
-                    map,
-                    APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.TRANSFER_ACCOUNT_NOT_ENOUGH.getCode(), map);
         }
-        loadTransferInfo(playerTransferVo,request);
+        loadTransferInfo(playerTransferVo, request);
         Map<String, Object> resultMap = isAbleToTransfer(playerTransferVo);
         if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
             return AppModelVo.getAppModeVoJson(true,

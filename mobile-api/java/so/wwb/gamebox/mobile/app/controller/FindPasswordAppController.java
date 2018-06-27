@@ -13,6 +13,7 @@ import org.soul.model.msg.notice.vo.NoticeContactWayVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.so.SysUserSo;
 import org.soul.model.security.privilege.vo.SysUserVo;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
+import so.wwb.gamebox.common.security.Main;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.SubSysCodeEnum;
 import so.wwb.gamebox.model.common.PrivilegeStatusEnum;
 import so.wwb.gamebox.model.listop.FreezeType;
@@ -44,6 +48,14 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 @RequestMapping("/findPasswordOrigin")
 public class FindPasswordAppController {
     private Log LOG = LogFactory.getLog(FindPasswordAppController.class);
+
+    public static void main(String[] args) {
+        System.out.println(AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                true,
+                APP_VERSION));
+    }
 
     /**
      * 根据用户名判断用户是否绑定手机号
@@ -327,5 +339,21 @@ public class FindPasswordAppController {
             LOG.error(e, "验证手机验证码错误！");
         }
         return false;
+    }
+
+    @RequestMapping(value = "/openFindByPhone")
+    @ResponseBody
+    public String canFindByPhone() {
+        //根据站长中心设置,是否开启手机找回密码
+        String isOpen = "0";
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.SETTING_REG_SETTING_RECOVER_PASSWORD);
+        if (sysParam != null && sysParam.getActive()) {
+            isOpen = "1";
+        }
+        return AppModelVo.getAppModeVoJson(true,
+                AppErrorCodeEnum.SUCCESS.getCode(),
+                AppErrorCodeEnum.SUCCESS.getMsg(),
+                isOpen,
+                APP_VERSION);
     }
 }
