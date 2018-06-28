@@ -42,6 +42,7 @@ public enum AppErrorCodeEnum {
     PARAM_HAS_ERROR("1310", "参数有误"),
     SAFE_PASSWORD_TOO_SIMPLE("1311", "密码过于简单"),
     ORIGIN_SAFE_PASSWORD_ERROR_TIME("1312","安全密码有误,还有%d次机会"),
+    OLD_PHONE_INCORRECT("1313","原手机号码不正确"),
     GAME_NOT_EXIST("1400", "游戏不存在"),
     UPDATE_STATUS_FAIL("1401", "更新失败"),
     NOT_RECOVER("1402", "非免转不能一键回收"),
