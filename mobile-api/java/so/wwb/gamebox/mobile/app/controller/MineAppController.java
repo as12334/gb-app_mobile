@@ -1220,7 +1220,7 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/updateUserPhone")
     @ResponseBody
-    public String updateUserPhone(NoticeContactWayVo contactVo, String code) {
+    public String updateUserPhone(NoticeContactWayVo contactVo, @RequestParam("oldPhone") String oldPhone,@RequestParam("code")String code) {
         if (StringTool.isBlank(contactVo.getSearch().getContactValue())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
@@ -1245,6 +1245,13 @@ public class MineAppController extends BaseMineController {
         }
         NoticeContactWay contactWay = getUserPhoneNumber(contactVo);
         if (contactWay != null) {
+            if (!oldPhoneNumber(oldPhone, contactWay.getContactValue())) {
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.OLD_PHONE_INCORRECT.getCode(),
+                        AppErrorCodeEnum.OLD_PHONE_INCORRECT.getMsg(),
+                        null,
+                        APP_VERSION);
+            }
             contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
             contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
@@ -1270,6 +1277,21 @@ public class MineAppController extends BaseMineController {
                 APP_VERSION);
     }
 
+    /**
+     * 判断原手机是否正确
+     *
+     * @param oldPhone
+     * @return
+     */
+    private boolean oldPhoneNumber(String oldPhone, String contactValue) {
+        if (StringTool.isBlank(oldPhone)) {
+            return false;
+        }
+        if (!oldPhone.equals(contactValue)) {
+            return false;
+        }
+        return true;
+    }
     /**
      * 验证手机短信验证码
      *

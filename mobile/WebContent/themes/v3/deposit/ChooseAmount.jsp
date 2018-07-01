@@ -5,7 +5,7 @@
         <i class="icon_mone mone_100" data-rel='{"mone":101,"opType":"function","target":"baseDeposit.quickCheckMoney"}'></i>
     </div>
     <div class="conv_mone_i">
-        <i class="icon_mone mone_200" data-rel='{"mone":202,"opType":"function","target":"baseDeposit.quickCheckMoney"}'></i>
+        <i class="icon_mone mone_200" data-rel='{"mone":302,"opType":"function","target":"baseDeposit.quickCheckMoney"}'></i>
     </div>
     <div class="conv_mone_i">
         <i class="icon_mone mone_500" data-rel='{"mone":504,"opType":"function","target":"baseDeposit.quickCheckMoney"}'></i>
