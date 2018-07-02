@@ -148,7 +148,7 @@ public class PromoController {
             sysUserVo.getSearch().setId(SessionManager.getUserId());
             vActivityMessageListVo.getSearch().setRankId(ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo).getId());
         }
-        vActivityMessageListVo.getSearch().setActivityTerminalType(SessionManagerCommon.getTerminal(request));
+        vActivityMessageListVo.getSearch().setActivityTerminalType(TerminalEnum.MOBILE.getCode());
         vActivityMessageListVo = ServiceActivityTool.vActivityMessageService().getActivityList(vActivityMessageListVo);
 
         model.addAttribute("command", vActivityMessageListVo);

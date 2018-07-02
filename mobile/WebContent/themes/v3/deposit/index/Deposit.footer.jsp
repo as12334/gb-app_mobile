@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="../../common/Footer.jsp" %>
+<input type="hidden" value="true" id="depositPage"/>
 </body>
 <%@ include file="../../include/include.js.jsp" %>
 <script src="${resRoot}/js/common/Head.js?v=${rcVersion}"></script>

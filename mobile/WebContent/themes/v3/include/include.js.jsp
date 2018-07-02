@@ -26,10 +26,10 @@
     var dateFormat={daySecond:'<%= CommonContext.getDateFormat().getDAY_SECOND() %>',day:'<%= CommonContext.getDateFormat().getDAY() %>',dayminute:'<%=CommonContext.getDateFormat().getDAY_MINUTE()%>'};
     var siteCurrency = '${siteCurrency}';
     var siteCurrencySign = '${siteCurrencySign}';
-   /* $(function(){
+    $(function(){
         var Comet = new MSiteComet();
         Comet.init();
-    });*/
+    });
 </script>
 
 

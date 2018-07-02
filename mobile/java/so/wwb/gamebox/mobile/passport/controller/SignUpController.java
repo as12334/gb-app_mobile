@@ -326,7 +326,7 @@ public class SignUpController extends BaseDemoController {
         }
     }
 
-    public Map moviePlayerRegister(Map resultMap,HttpServletRequest request, UserRegisterVo userRegisterVo){
+    public Map moviePlayerRegister(Map resultMap,HttpServletRequest request, String m){
         //获取站点参数-影城路径
         SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.TO_MOVIE_REQUEST_PATH);
         if(sysParam != null){
@@ -335,7 +335,7 @@ public class SignUpController extends BaseDemoController {
                 Map<String, String> paramMap = new HashMap<>();
                 paramMap.put("act", "add");
                 paramMap.put("ip", ServletTool.getIpAddr(request));
-                paramMap.put("m", userRegisterVo.getFromMovie());
+                paramMap.put("m", m);
                 HttpClientParam param = new HttpClientParam(url , paramMap);
                 param.setMethod(HttpRequestMethod.GET);
                 String result = HttpClientTool.sync(param);
@@ -370,14 +370,15 @@ public class SignUpController extends BaseDemoController {
         if (MapTool.isNotEmpty(resultMap) && !MapTool.getBoolean(resultMap, "state")) {
             return resultMap;
         }
+        String m = userRegisterVo.getFromMovie();
         userRegisterVo = doRegister(userRegisterVo, request);
         sendRegSuccessMsg(request, userRegisterVo);
          /*设置注册防御结果*/
         request.setAttribute(IDefenseRs.R_ACTION_RS, true);
         boolean success = userRegisterVo.isSuccess();
         String messageCode = success ? MessageI18nConst.REGISTER_SUCCESS : MessageI18nConst.REGISTER_FAIL;
-        if(success && StringTool.isNotBlank(userRegisterVo.getFromMovie())){
-           return moviePlayerRegister(getMessage(success, messageCode),request,userRegisterVo);
+        if(success && StringTool.isNotBlank(m)){
+            return moviePlayerRegister(getMessage(success, messageCode),request,m);
         }
         return getMessage(success, messageCode);
     }

@@ -4,9 +4,13 @@
 <!DOCTYPE html>
 <%
     String m = request.getParameter("m");
-    if(SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)){
-        pageContext.setAttribute("registCodeField",false);
-        pageContext.setAttribute("fromMovie",m);
+    String c = request.getParameter("c");
+    if (c != null && !"".equals(c)) {
+        pageContext.setAttribute("registCode", c);
+    }
+    if (SessionManagerCommon.getSiteId() == 211 && m != null && !"".equals(m)) {
+        pageContext.setAttribute("registCodeField", false);
+        pageContext.setAttribute("fromMovie", m);
     }
 %>
 <html>
