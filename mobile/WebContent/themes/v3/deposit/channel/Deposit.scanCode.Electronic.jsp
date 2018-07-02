@@ -138,14 +138,27 @@
                     </c:if>
                     <%--存款金额--%>
                     <input type="hidden" name="result.rechargeAmount" id="result.rechargeAmount" value="${rechargeAmount}"/>
-                    <div class="mui-input-row">
-                        <label for="result.bankOrder">${views.deposit_auto['订单号后5位']}
-                            <span class="small">${views.deposit_auto['非必填']}</span>
-                        </label>
-                        <div class="ct">
-                            <input type="text" id="result.bankOrder" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
-                        </div>
-                    </div>
+                    <c:choose>
+                        <c:when test="${siteId == '119' || siteId == '270'}">
+                            <div class="mui-input-row" id="merchantNumberPrompt">
+                                <label for="result.bankOrder">${views.deposit_auto['订单号后5位']}
+                                </label>
+                                <div class="ct">
+                                    <input type="text" id="requiredBankOrder" name="result.bankOrder" maxlength="5" placeholder="${views.deposit_auto['商户号必填']}">
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="mui-input-row">
+                                <label for="result.bankOrder">${views.deposit_auto['订单号后5位']}
+                                    <span class="small">${views.deposit_auto['非必填']}</span>
+                                </label>
+                                <div class="ct">
+                                    <input type="text" id="result.bankOrder" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                     <div class="btn_wrap">
                         <a data-rel='{"opType":"function","target":"baseDeposit.activity"}' class="mui-btn btn_submit mui-btn-block">${views.deposit_auto['提交']}</a>
                     </div>
