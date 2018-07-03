@@ -59,7 +59,6 @@ import java.util.Map;
 public class MineController{
     private static Log LOG = LogFactory.getLog(MineController.class);
     private static final String MY_INDEX = "/mine/Mine";
-    private static final String MY_INDEX_v3 = "/mine/Mine-v3";
     private static final String GAME_PAGE = "/my/GamePage";
     private static final String PERSON_INFO_ACCOUNT_SECURITY = "/password/AccountSecurity";
     private static final int PROMO_RECORD_DAYS = -7;
@@ -74,23 +73,6 @@ public class MineController{
         model.addAttribute("isBit", ParamTool.isBit());
         model.addAttribute("isCash", ParamTool.isCash());
         return MY_INDEX;
-    }
-
-    /**
-     * V3我的页面
-     * @param model
-     * @param skip
-     * @return
-     */
-    @RequestMapping("/index4v3")
-    @Upgrade(upgrade = true)
-    public String index4v3(Model model, Integer skip) {
-        model.addAttribute("skip", skip);
-        model.addAttribute("channel", "mine");
-        //现金取款方式
-        model.addAttribute("isBit", ParamTool.isBit());
-        model.addAttribute("isCash", ParamTool.isCash());
-        return MY_INDEX_v3;
     }
 
     /**
