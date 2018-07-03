@@ -848,7 +848,7 @@ public class BaseMineController extends BaseApiServiceController{
         Map<String, Object> map = new HashMap<>(7, 1f);
         if (userPlayerVo.getResult() != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(ServletTool.getDomainFullAddress(request));
+            sb.append(request.getServerName());
             sb.append("/register.html?c=");
             String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
             sb.append(Base36.encryptIgnoreCase(invitationCode));

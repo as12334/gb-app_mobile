@@ -63,6 +63,9 @@
                                         <c:when test="${r.apiTypeId eq '4'}">
                                             ${views.fund_auto['彩票']}
                                         </c:when>
+                                        <c:when test="${r.apiTypeId eq '5'}">
+                                            ${views.fund_auto['棋牌']}
+                                        </c:when>
                                         <c:otherwise>
                                             ${views.fund_auto['其他']}
                                         </c:otherwise>
@@ -158,6 +161,10 @@
                                 <%--彩票投注--%>
                                 <c:when test="${result.apiId==22}">
                                     <%@include file="betting.lotterydetail.jsp"%>
+                                </c:when>
+                                <%--棋牌投注--%>
+                                <c:when test="${!empty result.betDetail && result.apiTypeId==5}">
+                                    <%@include file="ChessPokerDetail.jsp"%>
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach items="${resultArray}" var="array">
