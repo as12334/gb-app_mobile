@@ -5,8 +5,8 @@
     <tr>
         <th>${views.fund_auto['时间']}</th>
         <th>${views.fund_auto['金额']}</th>
-        <th>${views.fund_auto['状态']}</th>
         <th>${views.fund_auto['类型']}</th>
+        <th>${views.fund_auto['状态']}</th>
     </tr>
     </thead>
     <c:choose>
