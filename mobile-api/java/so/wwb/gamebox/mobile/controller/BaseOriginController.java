@@ -284,7 +284,8 @@ public abstract class BaseOriginController {
         Map<String, ApiTypeCacheEntity> apiType = Cache.getMobileSiteApiTypes();
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = Cache.getMobileApiCacheEntity();
         String cdnUrl = new CdnConf().getCndUrl();
-        String gameCover = cdnUrl + String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
+        //String gameCover = cdnUrl + String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
+        String gameCover = String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
         String apiLogoUrl = setApiLogoUrl(model, request);
         List<AppSiteApiTypeRelastionVo> appApiTypes = changeToAppSiteApiRelation(apiCacheMap, apiLogoUrl, apiType, gameCover, cdnUrl);
 
@@ -341,7 +342,8 @@ public abstract class BaseOriginController {
         AppSiteApiTypeRelationI18n appSite;
         int sportType = ApiTypeEnum.SPORTS_BOOK.getCode();
         int bb = NumberTool.toInt(ApiProviderEnum.BBIN.getCode());
-        String apiTypeLogoUrl = cdnUrl + API_TYPE_LOGO_URL;
+        //String apiTypeLogoUrl = cdnUrl + API_TYPE_LOGO_URL;
+        String apiTypeLogoUrl = API_TYPE_LOGO_URL;
         for (ApiTypeCacheEntity apiTypeCacheEntity : apiType.values()) {
             apiTypeId = apiTypeCacheEntity.getApiTypeId();
             apiMap = apiCacheMap.get(String.valueOf(apiTypeCacheEntity.getApiTypeId()));
