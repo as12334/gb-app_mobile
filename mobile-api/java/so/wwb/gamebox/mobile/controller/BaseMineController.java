@@ -46,6 +46,7 @@ import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
+import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
@@ -577,9 +578,9 @@ public class BaseMineController {
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
             //单次奖励推荐
-            if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map,"rewardType") == 2) {
+            if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map, "rewardType") == 2) {
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendRecommend", map.get("username")));
-            } else if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map,"rewardType") == 3) { //单次奖励被推荐
+            } else if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map, "rewardType") == 3) { //单次奖励被推荐
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendBeUsedToRecommend", map.get("username"))); //描述
             } else {//红利推荐
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "FundRecord.record.singleReward"));
@@ -997,9 +998,10 @@ public class BaseMineController {
         playerVo.getSearch().setUserId(SessionManager.getUserId());
         map.put("sign", getCurrencySign());
         map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
-        if(Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE)!=null){
-            map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
-        }else{
+        Map siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE);
+        if (MapTool.isNotEmpty(siteI18nMap)) {
+            map.put("activityRules", siteI18nMap.get(SessionManager.getLocale().toString()));
+        } else {
             map.put("activityRules", "站长未开启分享活动."); //活动规则
         }
         return map;
