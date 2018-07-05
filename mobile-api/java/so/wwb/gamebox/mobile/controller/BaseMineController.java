@@ -16,7 +16,6 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.Base36;
@@ -49,9 +48,13 @@ import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
-import so.wwb.gamebox.model.master.enums.*;
+import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
+import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
+import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
@@ -573,11 +576,13 @@ public class BaseMineController {
         }
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
-            if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer) map.get("rewardType") == 2) {//描述
+            //单次奖励推荐
+            if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map,"rewardType") == 2) {
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendRecommend", map.get("username")));
-
-            } else if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer) map.get("rewardType") == 3) {
+            } else if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map,"rewardType") == 3) { //单次奖励被推荐
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendBeUsedToRecommend", map.get("username"))); //描述
+            } else {//红利推荐
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "FundRecord.record.singleReward"));
             }
             detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
