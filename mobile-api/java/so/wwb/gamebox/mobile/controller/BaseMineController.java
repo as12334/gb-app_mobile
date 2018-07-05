@@ -997,7 +997,11 @@ public class BaseMineController {
         playerVo.getSearch().setUserId(SessionManager.getUserId());
         map.put("sign", getCurrencySign());
         map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
-        map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
+        if(Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE)!=null){
+            map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
+        }else{
+            map.put("activityRules", "站长未开启分享活动."); //活动规则
+        }
         return map;
     }
 
