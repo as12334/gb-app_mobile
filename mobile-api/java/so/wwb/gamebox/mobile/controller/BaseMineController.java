@@ -31,12 +31,15 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.company.sys.ISysDomainService;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
+import so.wwb.gamebox.model.company.enums.ResolveStatusEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -47,6 +50,7 @@ import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.sys.vo.SysDomainVo;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
@@ -969,7 +973,19 @@ public class BaseMineController {
         Map<String, Object> map = new HashMap<>(7, 1f);
         if (userPlayerVo.getResult() != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(request.getServerName());
+
+            ISysDomainService domainService = ServiceTool.sysDomainService();
+            SysDomainVo vo = new SysDomainVo();
+            vo.getSearch().setSiteId(SessionManager.getSiteId());
+            vo.getSearch().setPageUrl(DomainPageUrlEnum.INDEX.getCode());
+            vo.getSearch().setSubsysCode(SubSysCodeEnum.MSITES.getCode());
+            vo.getSearch().setResolveStatus(ResolveStatusEnum.SUCCESS.getCode());
+            List<String> domainLst = domainService.querySiteDomain(vo);
+            domainLst.remove(request.getServerName());
+            //随机返回个domain
+            int index = (int) (Math.random() * domainLst.size());
+            String domain = domainLst.get(index);
+            sb.append(domain);
             sb.append("/register.html?c=");
             String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
             sb.append(Base36.encryptIgnoreCase(invitationCode));
