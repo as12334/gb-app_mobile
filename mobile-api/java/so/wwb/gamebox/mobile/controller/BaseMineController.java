@@ -1000,7 +1000,7 @@ public class BaseMineController {
         map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
         Map siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE);
         if (MapTool.isNotEmpty(siteI18nMap)) {
-            map.put("activityRules", siteI18nMap.get(SessionManager.getLocale().toString()));
+            map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
         } else {
             map.put("activityRules", "站长未开启分享活动."); //活动规则
         }
