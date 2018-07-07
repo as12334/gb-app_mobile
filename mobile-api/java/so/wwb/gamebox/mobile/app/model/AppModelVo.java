@@ -1,11 +1,11 @@
 package so.wwb.gamebox.mobile.app.model;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.model.error.ErrorMessage;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
-import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.model.Module;
 
 public class AppModelVo extends ErrorMessage {
@@ -50,6 +50,10 @@ public class AppModelVo extends ErrorMessage {
     @JsonIgnore
     public static String getAppModeVoJson(boolean success, String code, String message, Object data, String version) {
         return JsonTool.toJson(new AppModelVo(success, code, message, data, version));
+    }
+
+    public static String getAppModeVoJsonUseFastjson(boolean success, String code, String message, Object data, String version) {
+        return JSONObject.toJSONString(new AppModelVo(success, code, message, data, version));
     }
 
     @JsonIgnore
