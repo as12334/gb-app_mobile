@@ -169,7 +169,6 @@ public class BaseDepositController {
                 } else {
                     appPayAccount.setSingleDepositMax(rank.getOnlinePayMax());
                 }
-
                 appPayAccount.setAliasName(payAccount.getAliasName());
                 appPayAccount.setFullName(payAccount.getFullName());
                 appPayAccount.setAccountInformation(payAccount.getAccountInformation());
