@@ -11,21 +11,21 @@ public class WithdrawAuditApp implements Serializable {
     /*创建时间*/
     private Date createTime;
     /*存款费用*/
-    private Double rechargeAmount;
+    private Double rechargeAmount = 0.00;
     /*存款稽核点*/
-    private Double rechargeAudit;
+    private Double rechargeAudit = 0.00;
     /*存款剩余稽核点*/
-    private Double rechargeRemindAudit;
+    private Double rechargeRemindAudit = 0.00;
     /*存款行政费用*/
-    private Double rechargeFee;
+    private Double rechargeFee = 0.00;
     /*优惠金额*/
-    private Double favorableAmount;
+    private Double favorableAmount = 0.00;
     /*优惠稽核点*/
-    private Double favorableAudit;
+    private Double favorableAudit = 0.00;
     /*优惠剩余稽核点*/
-    private Double favorableRemindAudit;
+    private Double favorableRemindAudit = 0.00;
     /*优惠扣除金额*/
-    private Double favorableFee;
+    private Double favorableFee = 0.00;
 
     public Date getCreateTime() {
         return createTime;

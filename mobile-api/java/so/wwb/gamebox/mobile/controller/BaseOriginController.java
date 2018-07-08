@@ -4,7 +4,7 @@ import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.init.context.CommonContext;
-import org.soul.commons.lang.SystemTool;
+import org.soul.commons.lang.ArrayTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
@@ -56,7 +56,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 /**
  * Created by LeTu on 2017/3/31.
  */
-public abstract class BaseOriginController extends BaseApiServiceController{
+public abstract class BaseOriginController extends BaseApiServiceController {
     private Log LOG = LogFactory.getLog(BaseOriginController.class);
     private String TRANSFERS_URL = "/transfer/index.html";
     private String API_DETAIL_LINK = "/api/detail.html?apiId=%d&apiTypeId=%d";
@@ -64,6 +64,205 @@ public abstract class BaseOriginController extends BaseApiServiceController{
     private String AUTO_GAME_LINK = "/mobile-api/origin/getGameLink.html?apiId=%d&apiTypeId=%d";
     private String CASINO_GAME_LINK = "/mobile-api/origin/getCasinoGame.html?search.apiId=%d&search.apiTypeId=%d";
     private String TRANSFER_LINK = "/transfer/index.html?apiId=%d&apiTypeId=%s";
+    private String TYPE_GAME = "game";
+    private Integer FISH_API_TYPE = -1;
+
+    /**
+     * @param
+     * @return
+     */
+    public Map getNotEmptyMap(Map map1, Map map2) {
+        return map1 != null ? map1 : map2;
+    }
+
+    /**
+     * 获取非空List
+     * @param coll
+     * @return
+     */
+    public static  List getNotEmptyList(Collection coll){
+        List list = new ArrayList();
+        if(coll == null){
+            return list;
+        }
+
+        if(coll instanceof  LinkedList)
+            list = new LinkedList(coll);
+        else
+            list = new ArrayList(coll);
+
+        return list;
+    }
+
+    /**
+     * 获取 apiTypeList normal
+     * @param apiTyoes 需要过滤的apiTypeId
+     * @return
+     */
+    public List<ApiTypeCacheEntity> getApiType(Integer[] apiTyoes,boolean hasFish){
+        Map<String, ApiTypeCacheEntity> apiTypes = getNotEmptyMap(Cache.getMobileSiteApiTypes(), new HashMap());
+        List<ApiTypeCacheEntity> result = getNotEmptyList(apiTypes.values());
+        //添加捕鱼ApiType
+        if(hasFish) {
+            ApiTypeCacheEntity apiTypeCacheEntity = new ApiTypeCacheEntity();
+            apiTypeCacheEntity.setApiTypeId(FISH_API_TYPE);
+            apiTypeCacheEntity.setStatus(GameStatusEnum.NORMAL.getCode());
+            apiTypeCacheEntity.setStatus(GameTypeEnum.FISH.getTrans());
+            result.add(apiTypeCacheEntity);
+        }
+        if(ArrayTool.isEmpty(apiTyoes)){
+            return result;
+        }
+        List<Integer> integers = Arrays.asList(apiTyoes);
+        Iterator<ApiTypeCacheEntity> iterator = result.iterator();
+        while(iterator.hasNext()){
+            ApiTypeCacheEntity next = iterator.next();
+            if(integers.contains(next.getApiTypeId())){
+                iterator.remove();
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取apiType下的所有游戏
+     *
+     * @param
+     * @param appApiType
+     * @return
+     */
+    public List<SiteApiRelationApp> findGamesByApiType(List<ApiProviderEnum> ridApiProviderEnums, ApiTypeCacheEntity appApiType) {
+        List<SiteApiRelationApp> result = new ArrayList<>();
+        Integer apiTypeId = appApiType.getApiTypeId();
+        Map<String, LinkedHashMap<String, GameCacheEntity>> siteGameMap =
+                getNotEmptyMap(Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId)), new HashMap());
+        Collection<LinkedHashMap<String, GameCacheEntity>> values = siteGameMap.values();
+        if (CollectionTool.isNotEmpty(values)) {
+            Collection<GameCacheEntity> gameCacheEntityList = new ArrayList<>();
+            for (LinkedHashMap<String, GameCacheEntity> map : values) {
+                gameCacheEntityList = map.values();
+            }
+            result = rechangeGameEntity(gameCacheEntityList, ridApiProviderEnums);
+        }
+
+        return result;
+    }
+
+    /**
+     * 提取所有game
+     *
+     * @param siteApi
+     * @param apiRelationApps
+     */
+    protected void recursionGetGames(SiteApiRelationApp siteApi, List<SiteApiRelationApp> apiRelationApps, Integer apiType) {
+        apiRelationApps = CollectionTool.isEmpty(apiRelationApps) ? new ArrayList<>() : apiRelationApps;
+        if (siteApi == null || apiType == null) {
+            return;
+        }
+        if (CollectionTool.isNotEmpty(siteApi.getRelation())) {
+            for (SiteApiRelationApp relationApp : siteApi.getRelation()) {
+                if (String.valueOf(apiType).equals(relationApp.getType()) && TYPE_GAME.equals(relationApp.getType())) {
+                    apiRelationApps.add(relationApp);
+                } else {
+                    recursionGetGames(relationApp, apiRelationApps, apiType);
+                    return;
+                }
+
+            }
+        }
+    }
+
+    /**
+     * 根据apiType和api获取游戏
+     *
+     * @param request
+     * @param model
+     * @param appApiTypes
+     * @param ridApiProviderEnums 需要排除的api
+     * @return
+     */
+    protected List<SiteApiRelationApp> getGamesByApiTypes(HttpServletRequest request, AppRequestModelVo model, Collection<ApiTypeCacheEntity> appApiTypes, List<ApiProviderEnum> ridApiProviderEnums) {
+        List<SiteApiRelationApp> siteApiRelation = new ArrayList<>();
+        if (CollectionTool.isEmpty(appApiTypes)) {
+            return siteApiRelation;
+        }
+        //API-GAME Relation for Cache
+        Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = getNotEmptyMap(Cache.getMobileApiCacheEntity(), new HashMap());
+        Map<String, GameCacheEntity> fishGameMap; //捕鱼游戏
+        Map<String, LinkedHashMap<String, GameCacheEntity>> siteGameMap; //非捕鱼游戏
+        Map<String, ApiCacheEntity> apiMap ;  //api Map对象
+        Map<String, GameCacheEntity> games4Api; //api-game 关系
+        for (ApiTypeCacheEntity apiType : appApiTypes) {
+            Integer apiTypeId = apiType.getApiTypeId();
+            if (null == apiTypeId) {
+                continue;
+            }
+
+            //API Relation
+            apiMap = getNotEmptyMap(apiCacheMap.get(String.valueOf(apiTypeId)), new LinkedHashMap());
+            SiteApiRelationApp siteApiType = new SiteApiRelationApp("apiType", apiType.getName(), "apiType-iocn-" + apiTypeId + ".png", "", "", null, false, (int) (Math.random() * 99));
+
+            //-1 为虚拟捕鱼apiType
+            if (FISH_API_TYPE == apiTypeId) {
+                fishGameMap = getNotEmptyMap(Cache.getMobileFishGameCache(), new HashMap());
+                siteApiType.setRelation(rechangeGameEntity(fishGameMap.values(), ridApiProviderEnums));
+            } else {
+                List<SiteApiRelationApp> siteApiList = new ArrayList<>();
+                //根据apiType获取游戏缓存
+                siteGameMap = getNotEmptyMap(Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId)), new HashMap());
+                for(ApiCacheEntity apiObj : apiMap.values()){
+                    SiteApiRelationApp siteApi = new SiteApiRelationApp("api", apiObj.getApiName(), apiObj.getApiName() + apiObj.getApiId(), "", "", null, false, (int) (Math.random() * 99));
+                    siteApiList.add(siteApi);
+                    games4Api = getNotEmptyMap(siteGameMap.get(String.valueOf(apiObj.getApiId())), new LinkedHashMap());
+                    siteApi.setRelation(rechangeGameEntity(games4Api.values(), ridApiProviderEnums));
+                }
+                siteApiType.setRelation(siteApiList);
+            }
+
+            siteApiRelation.add(siteApiType);
+        }
+
+        return siteApiRelation;
+    }
+
+
+    /**
+     * 更换游戏实体
+     *
+     * @param gameCacheEntities
+     * @param ridApiProviderEnums 需要排除的api
+     * @return
+     */
+    protected ArrayList<SiteApiRelationApp> rechangeGameEntity(Collection<GameCacheEntity> gameCacheEntities, List<ApiProviderEnum> ridApiProviderEnums) {
+        ArrayList<SiteApiRelationApp> appSiteGames = new ArrayList<>();
+
+        if (CollectionTool.isEmpty(gameCacheEntities)) {
+            return appSiteGames;
+        }
+
+        boolean isNotApis = false;
+        if (CollectionTool.isNotEmpty(ridApiProviderEnums)) {
+            isNotApis = true;
+        }
+
+        for (GameCacheEntity gameCacheEntity : gameCacheEntities) {
+            //需要排除的api
+            boolean containsApi = isNotApis && ridApiProviderEnums.contains(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(gameCacheEntity.getApiId())));
+            if (containsApi) {
+                continue;
+            }
+
+            if (gameCacheEntity.getOwnIcon() != null && gameCacheEntity.getOwnIcon()) {
+                gameCacheEntity.setCover("");
+            }
+            SiteApiRelationApp siteGame = new SiteApiRelationApp("game", gameCacheEntity.getName(), gameCacheEntity.getCover(), "wwww.play-game" + gameCacheEntity.getGameId(), "", null, false, (int) (Math.random() * 99));
+            appSiteGames.add(siteGame);
+        }
+        return appSiteGames;
+    }
+
+    //========================================================================================
 
     /**
      * 根据条件筛选游戏
@@ -111,7 +310,7 @@ public abstract class BaseOriginController extends BaseApiServiceController{
                 continue;
             }
             //不符标签
-            if(CollectionTool.isNotEmpty(gameIds) && !gameIds.contains(game.getGameId())) {
+            if (CollectionTool.isNotEmpty(gameIds) && !gameIds.contains(game.getGameId())) {
                 continue;
             }
             if (i < fromIndex) {
@@ -532,7 +731,7 @@ public abstract class BaseOriginController extends BaseApiServiceController{
             }
         }
 
-        playerApiAccountVo = (ParamTool.apiSeparat())?autoTransferLogin(playerApiAccountVo):ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
+        playerApiAccountVo = (ParamTool.apiSeparat()) ? autoTransferLogin(playerApiAccountVo) : ServiceSiteTool.freeTranferServcice().autoTransferLogin(playerApiAccountVo);
         if (playerApiAccountVo == null || playerApiAccountVo.getGameApiResult() == null || ResultStatus.SUCCESS != playerApiAccountVo.getGameApiResult().getStatus()) {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_LOGIN_ERROR, Module.Passport.getCode()));
             return appI18n;
