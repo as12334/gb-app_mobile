@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.app.chess.controller;
 
+import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.support.CdnConf;
@@ -52,13 +53,14 @@ public class IndexController extends BaseOriginController {
         String gameCover = cdnUrl + String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
 
         String chessApiTypeStr = String.valueOf(ApiTypeEnum.CHESS.getCode());
-        List<ApiProviderEnum> ridApiProviderEnums = new ArrayList<>();
+        List<String> excludeApis = new ArrayList<>();
+        excludeApis.add(StringTool.join(String.valueOf(ApiTypeEnum.SPORTS_BOOK.getCode()), ApiProviderEnum.BBIN.getCode()));
         //获取apiType不包含CHESS，包含FISH
         Collection<ApiTypeCacheEntity> apiTypes = getApiType(new Integer[]{ApiTypeEnum.CHESS.getCode()}, true);
-        List<SiteApiRelationApp> gamesByApiTypes = getGamesByApiTypes(request, model, apiTypes, ridApiProviderEnums);
+        List<SiteApiRelationApp> gamesByApiTypes = getGamesByApiTypes(request, model, apiTypes, excludeApis);
 
         Map<String, GameCacheEntity> mobileGameByApiType = getNotEmptyMap(Cache.getMobileGameByApiType(chessApiTypeStr), new LinkedHashMap());
-        gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), ridApiProviderEnums));
+        gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis));
         Collections.sort(gamesByApiTypes);
         map.put("siteApiRelation", gamesByApiTypes);
 
@@ -67,6 +69,7 @@ public class IndexController extends BaseOriginController {
                 map,
                 APP_VERSION);
     }
+
 
     /**
      * 获取分享二维码图片

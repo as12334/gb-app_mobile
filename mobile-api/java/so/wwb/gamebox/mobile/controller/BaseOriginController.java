@@ -136,7 +136,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
      * @param appApiType
      * @return
      */
-    public List<SiteApiRelationApp> findGamesByApiType(List<ApiProviderEnum> ridApiProviderEnums, ApiTypeCacheEntity appApiType) {
+    public List<SiteApiRelationApp> findGamesByApiType(List<String> excludeApis, ApiTypeCacheEntity appApiType) {
         List<SiteApiRelationApp> result = new ArrayList<>();
         Integer apiTypeId = appApiType.getApiTypeId();
         Map<String, LinkedHashMap<String, GameCacheEntity>> siteGameMap =
@@ -147,7 +147,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             for (LinkedHashMap<String, GameCacheEntity> map : values) {
                 gameCacheEntityList = map.values();
             }
-            result = rechangeGameEntity(gameCacheEntityList, ridApiProviderEnums);
+            result = rechangeGameEntity(gameCacheEntityList, excludeApis);
         }
 
         return result;
@@ -183,13 +183,17 @@ public abstract class BaseOriginController extends BaseApiServiceController {
      * @param request
      * @param model
      * @param appApiTypes
-     * @param ridApiProviderEnums 需要排除的api
+     * @param excludeApis 需要排除的api
      * @return
      */
-    protected List<SiteApiRelationApp> getGamesByApiTypes(HttpServletRequest request, AppRequestModelVo model, Collection<ApiTypeCacheEntity> appApiTypes, List<ApiProviderEnum> ridApiProviderEnums) {
+    protected List<SiteApiRelationApp> getGamesByApiTypes(HttpServletRequest request, AppRequestModelVo model, Collection<ApiTypeCacheEntity> appApiTypes, List<String> excludeApis) {
         List<SiteApiRelationApp> siteApiRelation = new ArrayList<>();
         if (CollectionTool.isEmpty(appApiTypes)) {
             return siteApiRelation;
+        }
+        boolean isNotApis = false;
+        if (CollectionTool.isNotEmpty(excludeApis)) {
+            isNotApis = true;
         }
         //API-GAME Relation for Cache
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = getNotEmptyMap(Cache.getMobileApiCacheEntity(), new HashMap());
@@ -197,6 +201,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         Map<String, LinkedHashMap<String, GameCacheEntity>> siteGameMap; //非捕鱼游戏
         Map<String, ApiCacheEntity> apiMap;  //api Map对象
         Map<String, GameCacheEntity> games4Api; //api-game 关系
+        String apiLogoUrl = setApiLogoUrl(model, request);
         for (ApiTypeCacheEntity apiType : appApiTypes) {
             Integer apiTypeId = apiType.getApiTypeId();
             if (null == apiTypeId) {
@@ -205,25 +210,36 @@ public abstract class BaseOriginController extends BaseApiServiceController {
 
             //API Relation
             apiMap = getNotEmptyMap(apiCacheMap.get(String.valueOf(apiTypeId)), new LinkedHashMap());
-            SiteApiRelationApp siteApiType = new SiteApiRelationApp(RELATION_TYPE_APITYPE, apiType.getName(), "apiType-iocn-" + apiTypeId + ".png", "", "", null, false, (int) (Math.random() * 99));
+
+            SiteApiRelationApp siteApiType = new SiteApiRelationApp(RELATION_TYPE_APITYPE,
+                    apiType.getName(), String.format(API_TYPE_LOGO_URL, apiLogoUrl, apiTypeId), "", "", null, false, (int) (Math.random() * 99));
 
             //-1 为虚拟捕鱼apiType
             if (FISH_API_TYPE_ID == apiTypeId) {
                 fishGameMap = getNotEmptyMap(Cache.getMobileFishGameCache(), new HashMap());
-                siteApiType.setRelation(rechangeGameEntity(fishGameMap.values(), ridApiProviderEnums));
+                siteApiType.setRelation(rechangeGameEntity(fishGameMap.values(), excludeApis));
+                siteApiType.setCover(setApiLogoUrl(model, request) + "/fish.png");
+                siteApiType.setName(LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode()));
             } else {
                 List<SiteApiRelationApp> siteApiList = new ArrayList<>();
                 //根据apiType获取游戏缓存
                 siteGameMap = getNotEmptyMap(Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId)), new HashMap());
                 for (ApiCacheEntity apiObj : apiMap.values()) {
-                    SiteApiRelationApp siteApi = new SiteApiRelationApp(RELATION_TYPE_API, apiObj.getApiName(), apiObj.getApiName() + apiObj.getApiId(), "", "", null, false, (int) (Math.random() * 99));
-                    siteApiList.add(siteApi);
+                    //需要排除的api
+                    boolean containsExcludeApi = isNotApis && excludeApis.contains(StringTool.join(String.valueOf(apiObj.getApiTypeId()), String.valueOf(apiObj.getApiId())));
+                    if (containsExcludeApi) {
+                        continue;
+                    }
                     games4Api = getNotEmptyMap(siteGameMap.get(String.valueOf(apiObj.getApiId())), new LinkedHashMap());
-                    siteApi.setRelation(rechangeGameEntity(games4Api.values(), ridApiProviderEnums));
+
+                    SiteApiRelationApp siteApi = new SiteApiRelationApp(RELATION_TYPE_API, apiObj.getRelationName(),
+                            String.format(API_LOGO_URL, apiLogoUrl, apiObj.getApiId()), "", "", rechangeGameEntity(games4Api.values(), excludeApis), false, (int) (Math.random() * 99));
+                    setExclusiveIcon(siteApi);
+                    siteApiList.add(siteApi);
                 }
                 siteApiType.setRelation(siteApiList);
             }
-
+            setExclusiveIcon(siteApiType);
             siteApiRelation.add(siteApiType);
         }
 
@@ -235,10 +251,10 @@ public abstract class BaseOriginController extends BaseApiServiceController {
      * 更换游戏实体
      *
      * @param gameCacheEntities
-     * @param ridApiProviderEnums 需要排除的api
+     * @param excludeApis       需要排除的api
      * @return
      */
-    protected ArrayList<SiteApiRelationApp> rechangeGameEntity(Collection<GameCacheEntity> gameCacheEntities, List<ApiProviderEnum> ridApiProviderEnums) {
+    protected ArrayList<SiteApiRelationApp> rechangeGameEntity(Collection<GameCacheEntity> gameCacheEntities, List<String> excludeApis) {
         ArrayList<SiteApiRelationApp> appSiteGames = new ArrayList<>();
 
         if (CollectionTool.isEmpty(gameCacheEntities)) {
@@ -246,29 +262,36 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         }
 
         boolean isNotApis = false;
-        if (CollectionTool.isNotEmpty(ridApiProviderEnums)) {
+        if (CollectionTool.isNotEmpty(excludeApis)) {
             isNotApis = true;
         }
         StringBuffer fishName;
         for (GameCacheEntity game : gameCacheEntities) {
             //需要排除的api
-            boolean containsApi = isNotApis && ridApiProviderEnums.contains(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId())));
-            if (containsApi) {
+            boolean containsExcludeApi = isNotApis && excludeApis.contains(StringTool.join(String.valueOf(game.getApiTypeId()), String.valueOf(game.getApiId())));
+            if (containsExcludeApi) {
                 continue;
             }
 
-            if (game.getOwnIcon() != null && game.getOwnIcon()) {
-                game.setCover("");
-            }
             if (GameTypeEnum.FISH.getCode().equals(game.getGameType())) {
                 fishName = new StringBuffer(ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId())).getTrans());
                 fishName.append(" ").append(game.getName());
                 game.setName(fishName.toString());
             }
             SiteApiRelationApp siteGame = new SiteApiRelationApp(RELATION_TYPE_GAME, game.getName(), game.getCover(), getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()), "", null, SessionManager.isAutoPay(), (int) (Math.random() * 99));
+            setExclusiveIcon(siteGame);
             appSiteGames.add(siteGame);
         }
         return appSiteGames;
+    }
+
+    /**
+     * 设置个性图片
+     *
+     * @param relationApp
+     */
+    public void setExclusiveIcon(SiteApiRelationApp relationApp) {
+
     }
 
     //========================================================================================
