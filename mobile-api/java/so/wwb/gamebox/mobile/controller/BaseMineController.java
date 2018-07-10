@@ -16,7 +16,6 @@ import org.soul.commons.locale.LocaleDateTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.security.Base36;
@@ -32,12 +31,15 @@ import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.company.sys.ISysDomainService;
 import so.wwb.gamebox.iservice.master.fund.IPlayerTransferService;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.*;
 import so.wwb.gamebox.model.common.MessageI18nConst;
+import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
+import so.wwb.gamebox.model.company.enums.ResolveStatusEnum;
 import so.wwb.gamebox.model.company.operator.po.VSystemAnnouncement;
 import so.wwb.gamebox.model.company.operator.vo.VSystemAnnouncementListVo;
 import so.wwb.gamebox.model.company.setting.po.Api;
@@ -47,11 +49,17 @@ import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApi;
 import so.wwb.gamebox.model.company.site.po.SiteApiI18n;
 import so.wwb.gamebox.model.company.site.po.SiteGameI18n;
+import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.sys.vo.SysDomainVo;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
-import so.wwb.gamebox.model.master.enums.*;
+import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
+import so.wwb.gamebox.model.master.enums.AnnouncementTypeEnum;
+import so.wwb.gamebox.model.master.enums.CommonStatusEnum;
+import so.wwb.gamebox.model.master.enums.DepositWayEnum;
 import so.wwb.gamebox.model.master.fund.enums.FundTypeEnum;
 import so.wwb.gamebox.model.master.fund.enums.TransactionTypeEnum;
+import so.wwb.gamebox.model.master.fund.enums.TransactionWayEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.fund.vo.PlayerWithdrawVo;
 import so.wwb.gamebox.model.master.fund.vo.VPlayerWithdrawVo;
@@ -573,11 +581,13 @@ public class BaseMineController {
         }
 
         if (StringTool.equalsIgnoreCase(po.getTransactionType(), TransactionTypeEnum.RECOMMEND.getCode())) { //推荐
-            if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer) map.get("rewardType") == 2) {//描述
+            //单次奖励推荐
+            if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map, "rewardType") == 2) {
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendRecommend", map.get("username")));
-
-            } else if (StringTool.equalsIgnoreCase(po.getTransactionWay(), "recommend") && (Integer) map.get("rewardType") == 3) {
+            } else if (TransactionWayEnum.SINGLE_REWARD.getCode().equals(po.getTransactionWay()) && MapTool.getInteger(map, "rewardType") == 3) { //单次奖励被推荐
                 detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "friendBeUsedToRecommend", map.get("username"))); //描述
+            } else {//红利推荐
+                detailApp.setTransactionWayName(LocaleTool.tranView(Module.FUND, "FundRecord.record.singleReward"));
             }
             detailApp.setTransactionMoney(moneyType + CurrencyTool.formatCurrency(po.getTransactionMoney()));  //金额
             detailApp.setStatusName(statusName); //状态
@@ -963,7 +973,19 @@ public class BaseMineController {
         Map<String, Object> map = new HashMap<>(7, 1f);
         if (userPlayerVo.getResult() != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(request.getServerName());
+
+            ISysDomainService domainService = ServiceTool.sysDomainService();
+            SysDomainVo vo = new SysDomainVo();
+            vo.getSearch().setSiteId(SessionManager.getSiteId());
+            vo.getSearch().setPageUrl(DomainPageUrlEnum.INDEX.getCode());
+            vo.getSearch().setSubsysCode(SubSysCodeEnum.MSITES.getCode());
+            vo.getSearch().setResolveStatus(ResolveStatusEnum.SUCCESS.getCode());
+            List<String> domainLst = domainService.querySiteDomain(vo);
+            domainLst.remove(request.getServerName());
+            //随机返回个domain
+            int index = (int) (Math.random() * domainLst.size());
+            String domain = domainLst.get(index);
+            sb.append(domain);
             sb.append("/register.html?c=");
             String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
             sb.append(Base36.encryptIgnoreCase(invitationCode));
@@ -992,7 +1014,12 @@ public class BaseMineController {
         playerVo.getSearch().setUserId(SessionManager.getUserId());
         map.put("sign", getCurrencySign());
         map.put("recommend", ServiceSiteTool.playerRecommendAwardService().searchRewardUserAndBonus(playerVo));
-        map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
+        Map siteI18nMap = Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE);
+        if (MapTool.isNotEmpty(siteI18nMap)) {
+            map.put("activityRules", Cache.getSiteI18n(SiteI18nEnum.MASTER_RECOMMEND_RULE).get(SessionManager.getLocale().toString()).getValue()); //活动规则
+        } else {
+            map.put("activityRules", "站长未开启分享活动."); //活动规则
+        }
         return map;
     }
 
