@@ -480,7 +480,7 @@ public class BaseDepositController {
 
     //公司入款快选金额
     public int[] quickSelection() {
-        int[] quickMoneys = new int[]{101, 302, 504, 1006, 4998};
+        int[] quickMoneys = new int[]{100, 200, 500, 1000, 5000};
         return quickMoneys;
     }
 
