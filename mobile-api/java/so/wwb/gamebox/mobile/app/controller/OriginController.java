@@ -1,7 +1,6 @@
 package so.wwb.gamebox.mobile.app.controller;
 
 import org.soul.commons.collections.CollectionQueryTool;
-import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.RandomStringTool;
 import org.soul.commons.lang.string.StringEscapeTool;
@@ -17,14 +16,12 @@ import org.soul.model.sms.SmsMessageVo;
 import org.soul.model.sms_interface.po.SmsInterface;
 import org.soul.model.sms_interface.vo.SmsInterfaceVo;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
-import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
@@ -42,10 +39,12 @@ import so.wwb.gamebox.model.company.site.vo.SiteGameListVo;
 import so.wwb.gamebox.model.master.content.enums.CttAnnouncementTypeEnum;
 import so.wwb.gamebox.model.master.content.enums.CttDocumentEnum;
 import so.wwb.gamebox.model.master.content.enums.CttPicTypeEnum;
-import so.wwb.gamebox.model.master.content.po.*;
+import so.wwb.gamebox.model.master.content.po.CttAnnouncement;
+import so.wwb.gamebox.model.master.content.po.CttDocumentI18n;
+import so.wwb.gamebox.model.master.content.po.CttFloatPic;
+import so.wwb.gamebox.model.master.content.po.CttFloatPicItem;
 import so.wwb.gamebox.model.master.content.vo.CttDocumentI18nListVo;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
-import so.wwb.gamebox.model.master.enums.CarouselTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
@@ -55,7 +54,6 @@ import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
 import java.util.*;
 
 import static org.soul.web.tag.ImageTag.getImagePath;
@@ -646,83 +644,6 @@ public class OriginController extends BaseOriginController {
         listVo.getSearch().setCode(code);
         listVo.getSearch().setLocal(SessionManager.getLocale().toString());
         return listVo;
-    }
-
-    /**
-     * 获取启动页广告图、轮播图和手机弹窗广告
-     *
-     * @param map
-     * @param request
-     */
-    private void getBannerAndPhoneDialog(Map map, HttpServletRequest request, CttCarouselTypeEnum typeEnum) {
-        Map<String, Map> carouselMap = (Map) Cache.getSiteCarousel();
-        if (MapTool.isEmpty(carouselMap)) {
-            return;
-        }
-        String webSite = ServletTool.getDomainFullAddress(request);
-        List<Map> phoneDialog = new ArrayList<>();
-        List<Map> carousels = new ArrayList<>();
-        String phoneDialogType = typeEnum.getCode();
-        String bannerType = CarouselTypeEnum.CAROUSEL_TYPE_PHONE.getCode();
-        String local = SessionManager.getLocale().toString();
-        String appStartAd = null;
-        for (Map m : carouselMap.values()) {
-            if (StringTool.equals(m.get(CttCarouselI18n.PROP_LANGUAGE).toString(), local) && checkActive(m)) {
-                String link = MapTool.getString(m, "link");
-                if (StringTool.isNotBlank(link)) {
-                    if (link.contains("${website}")) {
-                        link = link.replace("${website}", webSite);
-                    }
-                }
-                m.put("link", link);
-                String cover = m.get("cover") == null ? "" : m.get("cover").toString();
-                cover = getImagePath(ServletTool.getDomainFullAddress(request), cover);
-                m.put("cover", cover);
-                if (phoneDialogType.equals(m.get("type"))) {
-                    appStartAd = cover;
-                    phoneDialog.add(m);
-                } else if (bannerType.equals(m.get("type"))) {
-                    carousels.add(m);
-                }
-            }
-        }
-        if (CttCarouselTypeEnum.CAROUSEL_TYPE_APP_START_PAGE.getCode().equals(phoneDialogType)) {
-            map.put("initAppAd", appStartAd);
-            return;
-        }
-        //手机弹窗广告
-        map.put("phoneDialog", phoneDialog);
-        //没数据默认banner图
-        if (carousels.size() <= 0) {
-            Map defaultMap = new HashMap();
-            String coverUrl = String.format(AppConstant.DEFAULT_BANNER_URL, MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
-            defaultMap.put("cover", coverUrl);
-            carousels.add(defaultMap);
-        }
-        map.put("banner", carousels);
-    }
-
-    /**
-     * 检查缓存配置是否有效
-     *
-     * @return
-     */
-    private boolean checkActive(Map m) {
-        if (MapTool.getBoolean(m, "status", false) == false) {
-            return false;
-        }
-
-        Date date = new Date();
-        Calendar instance = Calendar.getInstance();
-        instance.set(1979, 01, 01);
-        Date min = instance.getTime();
-
-        instance.set(2099, 12, 31);
-        Date maxDate = instance.getTime();
-
-        Date sdate = (Date) m.get("start_time") == null ? min : (Date) m.get("start_time");
-        Date edate = (Date) m.get("end_time") == null ? maxDate : (Date) m.get("end_time");
-        return sdate.before(date) && edate.after(date);
     }
 
     /**

@@ -157,21 +157,25 @@ public class BaseDepositController {
             appPayAccount.setBankCode(payAccount.getBankCode());
             appPayAccount.setAccountType(payAccount.getAccountType());
             appPayAccount.setRandomAmount(payAccount.getRandomAmount());
-            appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin() == null ? Const.MIN_MONEY : payAccount.getSingleDepositMin());
-            appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax() == null ? Const.MAX_MONEY : payAccount.getSingleDepositMax());
+            appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin() == null ? 10 : payAccount.getSingleDepositMin());
+            appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax() == null ? 9999999 : payAccount.getSingleDepositMax());
             boolean isOnlinePay = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType());
             appPayAccount.setDepositWay(isOnlinePay ? companyWay : onlineWay);
             appPayAccount.setPayType(payAccount.getPayType());
             if (StringTool.isNotBlank(payAccount.getType()) && PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
                 appPayAccount.setSingleDepositMin(rank.getOnlinePayMin());
-                appPayAccount.setSingleDepositMax(rank.getOnlinePayMax());
+                if (rank.getOnlinePayMax() >= 9999999) {
+                    appPayAccount.setSingleDepositMax(9999999L);
+                } else {
+                    appPayAccount.setSingleDepositMax(rank.getOnlinePayMax());
+                }
                 appPayAccount.setAliasName(payAccount.getAliasName());
                 appPayAccount.setFullName(payAccount.getFullName());
                 appPayAccount.setAccountInformation(payAccount.getAccountInformation());
                 appPayAccount.setAccountPrompt(payAccount.getAccountPrompt());
                 appPayAccount.setCustomBankName(payAccount.getCustomBankName());
                 appPayAccount.setOpenAcountName(payAccount.getOpenAcountName());
-                appPayAccount.setQrCodeUrl(payAccount.getQrCodeUrl() == null ? null :
+                appPayAccount.setQrCodeUrl(StringTool.isBlank(payAccount.getQrCodeUrl()) ? null :
                         ImageTag.getImagePath(imgUrl.get("serverName"), payAccount.getQrCodeUrl()));
                 appPayAccount.setRemark(payAccount.getRemark());
                 appPayAccount.setDepositWay(companyWay);
@@ -777,7 +781,7 @@ public class BaseDepositController {
         }
         PayAccount payAccount = getPayAccountBySearchId(playerRechargeVo.getAccount());
         if (payAccount == null) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(),null);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(), null);
         }
         if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             String type;
@@ -809,7 +813,7 @@ public class BaseDepositController {
     public String ThirdPartyPay(PlayerRecharge playerRecharge, HttpServletRequest request, PayAccount payAccount) {
         LOG.info("调用第三方pay：交易号：{0}", playerRecharge.getTransactionNo());
         if (StringTool.isBlank(playerRecharge.getTransactionNo())) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(),null);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ORDER_ERROR.getCode(), null);
         }
         try {
             List<Map<String, String>> accountJson = JsonTool.fromJson(payAccount.getChannelJson(), new TypeReference<ArrayList<Map<String, String>>>() {
@@ -844,7 +848,7 @@ public class BaseDepositController {
         } catch (Exception e) {
             LOG.error(e, "调用第三方pay出错交易号：{0}", playerRecharge.getTransactionNo());
         }
-        return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(),null);
+        return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.DEPOSIT_FAIL.getCode(), null);
     }
 
     /**

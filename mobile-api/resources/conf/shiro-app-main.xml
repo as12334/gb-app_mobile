@@ -73,6 +73,7 @@
 				/depositOrigin/saveFastRecharge.html = anon
 				/origin/getIntoAppAd.html = anon
 				/** = subsys,kickout,authc,access,autho
+				/chess/mainIndex.html = anon
 			</value>
 		</property>
 	</bean>

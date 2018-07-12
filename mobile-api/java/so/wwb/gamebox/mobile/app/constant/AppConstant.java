@@ -128,4 +128,8 @@ public interface AppConstant {
 
     String USER_REGISTER = "玩家注册验证";
     String FORGET_PASSWORD = "忘记密码验证";
+
+    String RELATION_TYPE_GAME = "game";
+    String RELATION_TYPE_API = "api";
+    String RELATION_TYPE_APITYPE = "apiType";
 }
