@@ -14,7 +14,7 @@
 <!-- 主界面具体展示内容 -->
 <div class="mui-content home-content">
     <!--易记域名-->
-    <section class="yjym">${views.themes_auto['易记域名']}：${domain}</section>
+    <section class="yjym">${views.themes_auto['易记域名']}：${empty sysDomain ? domain : sysDomain}</section>
     <!--轮播和公告-->
     <%@include file="index.include/include.banner.jsp"%>
     <%--游戏类型--%>

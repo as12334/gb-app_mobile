@@ -1,6 +1,5 @@
 package so.wwb.gamebox.mobile.my.controller;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.init.context.CommonContext;
@@ -37,8 +36,7 @@ import so.wwb.gamebox.model.master.operation.vo.VPreferentialRecodeListVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
 import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
-import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
-import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
+import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.web.bank.BankHelper;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -56,7 +54,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/mine")
-public class MineController{
+public class MineController {
     private static Log LOG = LogFactory.getLog(MineController.class);
     private static final String MY_INDEX = "/mine/Mine";
     private static final String GAME_PAGE = "/my/GamePage";
@@ -77,6 +75,7 @@ public class MineController{
 
     /**
      * 跳转到账号安全
+     *
      * @return
      */
     @RequestMapping("/accountSecurity")
@@ -157,11 +156,11 @@ public class MineController{
         }
 
         //推荐好友,昨日收益
-        PlayerRecommendAwardListVo playerRecommendAwardListVo = new PlayerRecommendAwardListVo();
-        playerRecommendAwardListVo.getSearch().setUserId(userId);
-        playerRecommendAwardListVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), RECOMMEND_DAYS));
-        playerRecommendAwardListVo.getSearch().setEndTime(SessionManager.getDate().getToday());
-        userInfo.put("recomdAmount", ServiceSiteTool.playerRecommendAwardService().searchRecomdAmount(playerRecommendAwardListVo, PlayerRecommendAward.PROP_REWARD_AMOUNT));
+        PlayerRecommendAwardVo playerRecommendAwardVo = new PlayerRecommendAwardVo();
+        playerRecommendAwardVo.getSearch().setUserId(userId);
+        playerRecommendAwardVo.getSearch().setStartTime(DateTool.addDays(SessionManager.getDate().getToday(), RECOMMEND_DAYS));
+        playerRecommendAwardVo.getSearch().setEndTime(SessionManager.getDate().getToday());
+        userInfo.put("recomdAmount", ServiceSiteTool.playerRecommendAwardService().searchRewardYesterdayProfit(playerRecommendAwardVo));
 
         //系统消息-未读数量
         VNoticeReceivedTextVo vNoticeReceivedTextVo = new VNoticeReceivedTextVo();
@@ -220,7 +219,7 @@ public class MineController{
         }
         userInfo.put("currency", getCurrencySign());
         //关联短信开关，是否展示手机绑定
-        userInfo.put("phone",ParamTool.isSmsSwitch());
+        userInfo.put("phone", ParamTool.isSmsSwitch());
         return JsonTool.toJson(userInfo);
     }
 
