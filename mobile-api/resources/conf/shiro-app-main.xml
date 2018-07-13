@@ -49,6 +49,7 @@
 			<value>
 				/mineOrigin/loginIsOpenVerify.html = anon
 				/app/update.html = anon
+				/chess/mainIndex.html = anon
 				/userInfoOrigin/verifyRealNameForApp.html = anon
 				/origin/getTimeZone.html = anon
 				/origin/getCustomerService.html = anon
@@ -73,7 +74,6 @@
 				/depositOrigin/saveFastRecharge.html = anon
 				/origin/getIntoAppAd.html = anon
 				/** = subsys,kickout,authc,access,autho
-				/chess/mainIndex.html = anon
 			</value>
 		</property>
 	</bean>
