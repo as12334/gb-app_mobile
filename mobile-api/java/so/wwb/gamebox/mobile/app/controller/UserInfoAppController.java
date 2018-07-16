@@ -92,14 +92,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @ResponseBody
     public String getUserAssert(HttpServletRequest request) {
         //获取用户资产相关信息（总资产、钱包余额）
-        MyUserInfo userInfo = new MyUserInfo();
-        getUserAssertInfo(userInfo, SessionManager.getUserId());
-        UserInfoApp userInfoApp = new UserInfoApp();
-        userInfoApp.setApis(userInfo.getApis());
-        userInfoApp.setAssets(String.valueOf(userInfo.getTotalAssets()));
-        userInfoApp.setBalance(String.valueOf(userInfo.getWalletBalance()));
-        userInfoApp.setUsername(SessionManager.getUserName());
-        userInfoApp.setCurrSign(getCurrencySign(SessionManager.getUser().getDefaultCurrency()));
+        UserInfoApp userInfoApp = loadUserInfoApp();
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), userInfoApp, APP_VERSION);
     }
 
@@ -207,7 +200,7 @@ public class UserInfoAppController extends BaseUserInfoController {
                 APP_VERSION);
     }
 
-  /*  *//**
+    /*  *//**
      * 验证真实姓名
      * @param form
      * @param vo

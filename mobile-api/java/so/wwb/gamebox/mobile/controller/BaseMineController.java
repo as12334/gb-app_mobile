@@ -93,7 +93,7 @@ import static so.wwb.gamebox.model.CacheBase.getSiteApiI18n;
 /**
  * Created by ed on 17-12-31.
  */
-public class BaseMineController {
+public class BaseMineController extends BaseMobileApiController {
     private static final String SYSTEM_NOTICE_LINK = "/mobile-api/mineOrigin/getSysNoticeDetail.html";
     private static final String GAME_NOTICE_LINK = "/mobile-api/mineOrigin/getGameNoticeDetail.html";
     private static final String SITE_SYSTEM_NOTICE = "/mobile-api/mineOrigin/getSiteSysNoticeDetail.html";
@@ -260,27 +260,6 @@ public class BaseMineController {
         return true;
     }
 
-    /**
-     * 回收是否允许时间间隔
-     *
-     * @return
-     */
-    private boolean isAllowRecoveryTimeInterval(Integer apiId) {
-        Date date = SessionManagerBase.getDate().getNow();
-        if (apiId == null) {
-            Date lastRecoveryTime = SessionManagerCommon.getUserRecoveryAllApiTime();
-            if (lastRecoveryTime == null) {
-                return true;
-            }
-            return DateTool.secondsBetween(date, lastRecoveryTime) > RECOVERY_TIME_INTERVAL;
-        } else {
-            Date lastRecoveryTime = SessionManagerCommon.getUserRecoveryApiTime();
-            if (lastRecoveryTime == null) {
-                return true;
-            }
-            return DateTool.secondsBetween(date, lastRecoveryTime) > API_RECOVERY_TIME_INTERVAL;
-        }
-    }
 
     private String getCurrencySign() {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());

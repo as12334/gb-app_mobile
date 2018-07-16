@@ -1051,33 +1051,38 @@ public class MineAppController extends BaseMineController {
     @RequestMapping(value = "/recovery")
     @ResponseBody
     public String recovery(HttpServletRequest request, PlayerApiVo playerApiVo) {
+        //获取用户当前资产
+        UserInfoApp userInfoApp = loadUserInfoApp();
+        Map<String, Object> data = new HashMap();
+        data.put("assets", userInfoApp.getAssets());
         if (!SessionManagerCommon.isAutoPay()) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.NOT_RECOVER.getCode(), null);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.NOT_RECOVER.getCode(), data);
         }
         Map map = appRecovery(playerApiVo, request);
+
         if (map == null) {
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECOVER_FIAL.getCode(), null);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECOVER_FIAL.getCode(), data);
         }
         if (map.get("msg") != null) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode(),
                     map.get("msg").toString(),
-                    null,
+                    data,
                     APP_VERSION);
         } else if (map.get("resultStatus") != null) {
             if (StringTool.equals(map.get("resultStatus").toString(), "SUCCESS")) {
                 return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.RECOVER_SUCCESS.getMsg(),
-                        null,
+                        data,
                         APP_VERSION);
             } else if (StringTool.equals(map.get("resultCode").toString(), "1")) {
-                return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECOVER_FIAL.getCode(), null);
+                return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.RECOVER_FIAL.getCode(), data);
             } else {
                 return AppModelVo.getAppModeVoJson(true,
                         AppErrorCodeEnum.SUCCESS.getCode(),
                         AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
-                        null,
+                        data,
                         APP_VERSION);
             }
         }
@@ -1086,14 +1091,14 @@ public class MineAppController extends BaseMineController {
             return AppModelVo.getAppModeVoJson(true,
                     map.get("msg") != null ? AppErrorCodeEnum.UPDATE_STATUS_FAIL.getCode() : AppErrorCodeEnum.SUCCESS.getCode(),
                     map.get("msg") != null ? map.get("msg").toString() : AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
-                    null,
+                    data,
                     APP_VERSION);
         }
 
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.RECOVER_PROCESS.getMsg(),
-                null,
+                data,
                 APP_VERSION);
     }
 
@@ -1220,7 +1225,7 @@ public class MineAppController extends BaseMineController {
      */
     @RequestMapping(value = "/updateUserPhone")
     @ResponseBody
-    public String updateUserPhone(NoticeContactWayVo contactVo, @RequestParam("oldPhone") String oldPhone,@RequestParam("code")String code) {
+    public String updateUserPhone(NoticeContactWayVo contactVo, @RequestParam("oldPhone") String oldPhone, @RequestParam("code") String code) {
         if (StringTool.isBlank(contactVo.getSearch().getContactValue())) {
             return AppModelVo.getAppModeVoJson(true,
                     AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
@@ -1292,6 +1297,7 @@ public class MineAppController extends BaseMineController {
         }
         return true;
     }
+
     /**
      * 验证手机短信验证码
      *

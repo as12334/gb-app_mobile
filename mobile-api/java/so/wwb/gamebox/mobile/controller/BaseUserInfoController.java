@@ -76,7 +76,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
 /**
  * Created by legend on 18-1-22.
  */
-public class BaseUserInfoController extends BaseApiServiceController {
+public class BaseUserInfoController extends BaseMobileApiController {
 
     private Log LOG = LogFactory.getLog(BaseUserInfoController.class);
 
@@ -137,60 +137,6 @@ public class BaseUserInfoController extends BaseApiServiceController {
         userInfo.setCurrency(getCurrencySign());
         userInfo.setRealName(sysUser.getRealName());
         return userInfo;
-    }
-
-    /**
-     * 获取用户资产信息（总资产、钱包余额）
-     *
-     * @param userInfo
-     */
-    public void getUserAssertInfo(MyUserInfo userInfo, Integer userId) {
-        PlayerApiListVo playerApiListVo = new PlayerApiListVo();
-        playerApiListVo.getSearch().setPlayerId(userId);
-        try {
-            playerApiListVo = ServiceSiteTool.playerApiService().fundRecord(playerApiListVo);
-            userInfo.setTotalAssets(playerApiListVo.getTotalAssets());
-            userInfo.setWalletBalance(playerApiListVo.getUserPlayer().getWalletBalance());
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-        }
-        List<PlayerApi> playerApis = playerApiListVo.getResult();
-        if (CollectionTool.isEmpty(playerApis)) {
-            return;
-        }
-        Map<String, Api> apiMap = Cache.getApi();
-        Map<String, SiteApi> siteApiMap = Cache.getSiteApi();
-        Map<String, ApiI18n> apiI18nMap = Cache.getApiI18n();
-        Map<String, SiteApiI18n> siteApiI18nMap = Cache.getSiteApiI18n();
-        Map<String, Object> map;
-        for (PlayerApi api : playerApis) {
-            map = new HashMap<>(4, 1f);
-            String apiId = api.getApiId().toString();
-            map.put("apiId", apiId);
-            map.put("apiName", ApiGameTool.getSiteApiName(siteApiI18nMap,apiI18nMap,apiId));
-            map.put("balance", api.getMoney() == null ? 0.00 : api.getMoney());
-            map.put("status", getApiStatus(apiMap, siteApiMap, apiId));
-            userInfo.addApi(map);
-        }
-    }
-
-    protected String getApiStatus(Map<String, Api> apiMap, Map<String, SiteApi> siteApiMap, String apiId) {
-        Api api = apiMap.get(apiId);
-        SiteApi siteApi = siteApiMap.get(apiId);
-        String disable = GameStatusEnum.DISABLE.getCode();
-        if (api == null || siteApi == null) {
-            return LocaleTool.tranMessage(Module.FUND, "transfer.api.disable");
-        }
-        String apiStatus = api.getSystemStatus();
-        String siteApiStatus = siteApi.getSystemStatus();
-        if (disable.equals(apiStatus) || disable.equals(siteApiStatus)) {
-            return LocaleTool.tranMessage(Module.FUND, "transfer.api.disable");
-        }
-        String maintain = GameStatusEnum.MAINTAIN.getCode();
-        if (maintain.equals(apiStatus) || maintain.equals(siteApiStatus)) {
-            return LocaleTool.tranMessage(Module.FUND, "transfer.api.maintain.transferable");
-        }
-        return "";//app判断空是正常
     }
 
     /**
@@ -356,20 +302,6 @@ public class BaseUserInfoController extends BaseApiServiceController {
     private String getCurrencySign() {
         SysCurrency sysCurrency = Cache.getSysCurrency().get(Cache.getSysSite().get(SessionManager.getSiteIdString()).getMainCurrency());
         if (sysCurrency != null) {
-            return sysCurrency.getCurrencySign();
-        }
-        return "";
-    }
-
-    /**
-     * 获取货币标志
-     *
-     * @param currency
-     * @return
-     */
-    protected String getCurrencySign(String currency) {
-        SysCurrency sysCurrency = Cache.getSysCurrency().get(SessionManagerCommon.getUser().getDefaultCurrency());
-        if (sysCurrency != null && StringTool.isNotBlank(sysCurrency.getCurrencySign())) {
             return sysCurrency.getCurrencySign();
         }
         return "";
