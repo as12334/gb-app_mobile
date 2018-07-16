@@ -1,6 +1,7 @@
 package so.wwb.gamebox.mobile.app.model;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.locale.LocaleTool;
@@ -53,7 +54,7 @@ public class AppModelVo extends ErrorMessage {
     }
 
     public static String getAppModeVoJsonUseFastjson(boolean success, String code, String message, Object data, String version) {
-        return JSONObject.toJSONString(new AppModelVo(success, code, message, data, version));
+        return JSONObject.toJSONString(new AppModelVo(success, code, message, data, version), SerializerFeature.WriteMapNullValue);
     }
 
     @JsonIgnore
