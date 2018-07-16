@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Serializable {
 
+    /*gameId,apiId,apiTypeId 根据type来确定**/
+    private Integer id;
     /*实体类型 apiType:api类型实体,api:api实体,game:游戏实体,*/
     private String type;
     private String name;
@@ -23,6 +25,8 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
     private Boolean autoPay;
     @JSONField(serialize = false)
     private Integer orderNum;
+    @JSONField(serialize = false)
+    private Boolean ownIcon;
     /*下级列表*/
     private List<SiteApiRelationApp> relation = new ArrayList<>();
 
@@ -30,7 +34,8 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
     public SiteApiRelationApp() {
     }
 
-    public SiteApiRelationApp(String type, String name, String cover, String gameLink, String gameMsg, List<SiteApiRelationApp> relation, Boolean autoPay, Integer orderNum) {
+    public SiteApiRelationApp(Integer id,String type, String name, String cover, String gameLink, String gameMsg, List<SiteApiRelationApp> relation, Boolean autoPay, Integer orderNum,Boolean ownIcon) {
+        this.id = id;
         this.type = type;
         this.name = name;
         this.cover = cover;
@@ -39,6 +44,15 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
         this.relation = relation;
         this.autoPay = autoPay;
         this.orderNum = orderNum;
+        this.ownIcon = ownIcon;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getType() {
@@ -105,9 +119,19 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
         this.orderNum = orderNum;
     }
 
+    public Boolean getOwnIcon() {
+        return ownIcon;
+    }
+
+    public void setOwnIcon(Boolean ownIcon) {
+        this.ownIcon = ownIcon;
+    }
+
     @Override
     public int compareTo(SiteApiRelationApp that) {
-        return this.getOrderNum().compareTo(that.getOrderNum());
+        Integer thatOrderNum = that.getOrderNum() == null ? Integer.MAX_VALUE : that.getOrderNum();
+        Integer thisOrderNum = this.getOrderNum() == null ? Integer.MAX_VALUE : this.getOrderNum();
+        return thisOrderNum.compareTo(thatOrderNum);
     }
 }
 

@@ -3,11 +3,9 @@ package so.wwb.gamebox.mobile.app.chess.controller;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.support.CdnConf;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.AppRequestModelVo;
@@ -24,7 +22,8 @@ import so.wwb.gamebox.web.cache.Cache;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+
 
 /**
  * 棋牌包网首页控制器
@@ -46,21 +45,20 @@ public class IndexController extends BaseOriginController {
     public String mainIndex(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = new HashMap<>(5, 1f);
         getBannerAndPhoneDialog(map, request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);//获取轮播图和手机弹窗广告
+        map.remove("phoneDialog");
         map.put("language", SessionManager.getLocale().toString());
-
-        //获取CDN url
-        String cdnUrl = new CdnConf().getCndUrl();
-        String gameCover = cdnUrl + String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
 
         String chessApiTypeStr = String.valueOf(ApiTypeEnum.CHESS.getCode());
         List<String> excludeApis = new ArrayList<>();
-        excludeApis.add(StringTool.join(String.valueOf(ApiTypeEnum.SPORTS_BOOK.getCode()), ApiProviderEnum.BBIN.getCode()));
+        excludeApis.add(StringTool.join(JOIN_CHAR, String.valueOf(ApiTypeEnum.SPORTS_BOOK.getCode()), ApiProviderEnum.BBIN.getCode()));
         //获取apiType不包含CHESS，包含FISH
         Collection<ApiTypeCacheEntity> apiTypes = getApiType(new Integer[]{ApiTypeEnum.CHESS.getCode()}, true);
         List<SiteApiRelationApp> gamesByApiTypes = getGamesByApiTypes(request, model, apiTypes, excludeApis);
 
         Map<String, GameCacheEntity> mobileGameByApiType = getNotEmptyMap(Cache.getMobileGameByApiType(chessApiTypeStr), new LinkedHashMap());
-        gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis));
+        gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis,
+                String.format(CHESS_GAME_IMG_PATH, STR_PLACEHOLDER, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER)));
+
         Collections.sort(gamesByApiTypes);
         map.put("siteApiRelation", gamesByApiTypes);
 
