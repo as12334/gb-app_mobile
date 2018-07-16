@@ -1335,7 +1335,8 @@ public class MineAppController extends BaseMineController {
         contactVo.getQuery().setCriterions(
                 new Criterion[]{
                         new Criterion(NoticeContactWay.PROP_USER_ID, Operator.EQ, SessionManager.getUser().getId())
-                        , new Criterion(NoticeContactWay.PROP_CONTACT_TYPE, Operator.EQ, ContactWayTypeEnum.MOBILE.getCode())}
+                        , new Criterion(NoticeContactWay.PROP_CONTACT_TYPE, Operator.EQ, ContactWayTypeEnum.MOBILE.getCode())
+                          ,new Criterion(NoticeContactWay.PROP_STATUS, Operator.EQ, ContactWayStatusEnum.CONTENT_STATUS_USING.getCode())}
         );
         contactVo = ServiceTool.noticeContactWayService().search(contactVo);
         return contactVo.getResult();
