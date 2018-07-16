@@ -14,8 +14,10 @@ import java.util.List;
  */
 public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Serializable {
 
-    /*gameId,apiId,apiTypeId 根据type来确定**/
-    private Integer id;
+
+    private Integer gameId;
+    private Integer apiId;
+    private Integer apiTypeId;
     /*实体类型 apiType:api类型实体,api:api实体,game:游戏实体,*/
     private String type;
     private String name;
@@ -34,25 +36,43 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
     public SiteApiRelationApp() {
     }
 
-    public SiteApiRelationApp(Integer id,String type, String name, String cover, String gameLink, String gameMsg, List<SiteApiRelationApp> relation, Boolean autoPay, Integer orderNum,Boolean ownIcon) {
-        this.id = id;
+    public SiteApiRelationApp(Integer gameId, Integer apiId, Integer apiTypeId, String type, String name, String cover, String gameLink, String gameMsg, Boolean autoPay, Integer orderNum, Boolean ownIcon, List<SiteApiRelationApp> relation) {
+        this.gameId = gameId;
+        this.apiId = apiId;
+        this.apiTypeId = apiTypeId;
         this.type = type;
         this.name = name;
         this.cover = cover;
         this.gameLink = gameLink;
         this.gameMsg = gameMsg;
-        this.relation = relation;
         this.autoPay = autoPay;
         this.orderNum = orderNum;
         this.ownIcon = ownIcon;
+        this.relation = relation;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getGameId() {
+        return gameId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
+    }
+
+    public Integer getApiId() {
+        return apiId;
+    }
+
+    public void setApiId(Integer apiId) {
+        this.apiId = apiId;
+    }
+
+    public Integer getApiTypeId() {
+        return apiTypeId;
+    }
+
+    public void setApiTypeId(Integer apiTypeId) {
+        this.apiTypeId = apiTypeId;
     }
 
     public String getType() {

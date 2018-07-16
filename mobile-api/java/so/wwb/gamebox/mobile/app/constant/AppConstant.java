@@ -135,7 +135,7 @@ public interface AppConstant {
     String JOIN_CHAR = "_";
 
     /*游戏图片公共目录 ftl/resource/{chess}/public/game/game01/{分辨率}/{语言}/{图片名称} */
-    String CHESS_GAME_IMG_PATH = "/ftl/resource/%s/public/game/game01/%s/%s/%s";
+    String CHESS_GAME_IMG_PATH = "/ftl/resource/chess/public/game/game01/%s/%s/%s";
 
     /*游戏个性图片目录 ftl/resource/{chess}/sites/{7000}/game/{分辨率}/{语言}/{图片名称} */
     String CHESS_GAME_OWN_IMG_PATH = "/ftl/resource/%s/sites/%s/game/%s/%s/%s";
