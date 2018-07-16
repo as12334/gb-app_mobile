@@ -90,9 +90,9 @@
                 <div class="mui-input-group mine-form m-t-sm">
                     <c:if test="${payAccount.bankCode eq 'alipay'}">
                         <div class="mui-input-row">
-                            <label for="result.payerName">您的支付户名</label>
+                            <label for="result.payerName">${views.deposit_auto['您的支付宝昵称']}</label>
                             <div class="ct">
-                                <input type="text" id="result.payerName" name="result.payerName" placeholder="请填写存款时使用的真实姓名">
+                                <input type="text" id="result.payerName" name="result.payerName" placeholder="${views.deposit_auto['请输入您的支付宝昵称']}">
                             </div>
                         </div>
                     </c:if>
@@ -105,8 +105,8 @@
                                 <c:set value="${views.deposit_auto['请输入微信昵称']}" var="m"></c:set>
                             </c:if>
                             <c:if test="${payAccount.bankCode eq 'alipay'}">
-                                <c:set value="${views.deposit_auto['您的支付宝账号']}" var="n"></c:set>
-                                <c:set value="${views.deposit_auto['请输入支付宝账号']}" var="m"></c:set>
+                                <c:set value="${views.deposit_auto['您的支付宝昵称']}" var="n"></c:set>
+                                <c:set value="${views.deposit_auto['请输入您的支付宝昵称']}" var="m"></c:set>
                             </c:if>
                             <c:if test="${payAccount.bankCode eq 'qqwallet'}">
                                 <c:set value="${views.deposit_auto['您的QQ钱包账号']}" var="n"></c:set>
