@@ -132,4 +132,24 @@ public interface AppConstant {
     String RELATION_TYPE_GAME = "game";
     String RELATION_TYPE_API = "api";
     String RELATION_TYPE_APITYPE = "apiType";
+    String JOIN_CHAR = "_";
+
+    /*游戏图片公共目录 ftl/resource/{chess}/public/game/game01/{分辨率}/{语言}/{图片名称} */
+    String CHESS_GAME_IMG_PATH = "/ftl/resource/%s/public/game/game01/%s/%s/%s";
+
+    /*游戏个性图片目录 ftl/resource/{chess}/sites/{7000}/game/{分辨率}/{语言}/{图片名称} */
+    String CHESS_GAME_OWN_IMG_PATH = "/ftl/resource/%s/sites/%s/game/%s/%s/%s";
+    /**
+     * Chess 游戏图片路径  game_{chess}_{apiId}_{gameCode}.png
+     */
+    String CHESS_GAME_COVER_URL = "game_%s_%s_%s.png";
+
+    /*Chess api图片地址  game_{chess}_{apiId}.png*/
+    String CHESS_API_LOGO_URL = "game_%s_%s.png";
+
+    /*Chess apiType图片地址  game_{chess}.png*/
+    String CHESS_API_TYPE_LOGO_URL = "game_%s.png";
+
+    /*字符串占位符*/
+    String STR_PLACEHOLDER = "%s";
 }
