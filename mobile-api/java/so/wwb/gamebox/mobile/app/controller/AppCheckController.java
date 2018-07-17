@@ -1,7 +1,7 @@
 package so.wwb.gamebox.mobile.app.controller;
 
-import org.apache.http.HttpRequest;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.security.AesTool;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceBossTool;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
+import so.wwb.gamebox.model.common.BoxTypeEnum;
 import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
 import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.GeneralSecurityException;
 
 @Controller
 @RequestMapping("/app")
@@ -27,9 +27,15 @@ public class AppCheckController {
         String encryptCode = request.getParameter("code");
         String type = request.getParameter("type");
         String siteId = request.getParameter("siteId");
+        String ischress = request.getParameter("ischress");
         SiteAppUpdateVo vo = new SiteAppUpdateVo();
         vo.getSearch().setAppType(type);
         vo.getSearch().setSiteId(Integer.parseInt(siteId));
+        if (StringTool.isNotBlank(ischress) && "1".equals(ischress)) {
+            vo.getSearch().setBoxType(BoxTypeEnum.CB.getCode());
+        } else {
+            vo.getSearch().setBoxType(BoxTypeEnum.GB.getCode());
+        }
         SiteAppUpdate app = ServiceBossTool.siteAppUpdateService().queryNewApp(vo);
         LOG.info("app获取版本号参数:{0},{1},{2},结果:{3}", encryptCode, type, siteId, JsonTool.toJson(app));
         int code = 0;
