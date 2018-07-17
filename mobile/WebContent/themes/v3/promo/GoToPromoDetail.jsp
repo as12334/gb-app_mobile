@@ -9,8 +9,6 @@
 <body>
 <%--此处把js相关引用挪到前面是因为优惠详细里图片地址带onload方法里涉及window.top.imgRoot--%>
 <%@ include file="../include/include.js.jsp" %>
-<!-- 侧滑导航根容器 -->
-<div class="mui-off-canvas-wrap">
     <!-- 主页面容器 -->
     <div class="mui-inner-wrap">
         <c:set var="activity" value="${command}"/>
@@ -105,7 +103,6 @@
         </div>  <!--mui-content 闭合标签-->
         <!--浮窗广告轮播-->
         <%@ include file="../index.include/Envelope.jsp" %>
-    </div>
 </div>
 </body>
 <%--即使没有头部菜单，也要调用该js 往sessionStorage设置一些相关登录信息--%>
