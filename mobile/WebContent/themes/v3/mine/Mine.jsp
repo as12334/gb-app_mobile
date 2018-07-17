@@ -84,7 +84,7 @@
                     <img src="${resRoot}/images/my_ico_3.png" class="dis-in" alt="">
                     <div class="dis-in " style="">
                         <div>${views.themes_auto['投注记录']}</div>
-                        <small id="transferAmount" style="display:block; ">${views.themes_auto['查看所参与的游戏记录']}</small>
+                        <small style="display:block; ">${views.themes_auto['查看所参与的游戏记录']}</small>
                     </div>
                 </soul:button>
             </li>
@@ -93,7 +93,7 @@
                     <img src="${resRoot}/images/my_ico_4.png" class="dis-in" alt="">
                     <div class="dis-in " style="">
                         <div>${views.themes_auto['额度转换']}</div>
-                        <small style="display:block; ">${views.themes_auto['进行资金回收和转入']}</small>
+                        <small id="transferAmount" style="display:block; ">${views.themes_auto['进行资金回收和转入']}</small>
                     </div>
                 </soul:button>
             </li>
