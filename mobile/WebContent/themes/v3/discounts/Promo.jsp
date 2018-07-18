@@ -28,16 +28,6 @@
                         <div class="swiper-slide">
                             <div class="mui-scroll-wrapper">
                                 <div class="mui-scroll">
-                                    <c:if test="${siteId=='270'||siteId=='71'}">
-                                        <div class="promo-item" data-rel='{"target":"https://lovebet2018.com","opType":"href"}'>
-                                            <div class="img-wrap">
-                                                <img src="${resRoot}/images/promo/270_top_sjb.jpg"/>
-                                            </div>
-                                            <div class="pro-txt">
-                                                <div class="mui-pull-left">2018 荣耀之战  俄罗斯世界杯 精彩无处不在</div>
-                                            </div>
-                                        </div>
-                                    </c:if>
                                     <c:forEach var="message" items="${activityMessages}">
                                         <div class="promo-item" data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'>
                                             <c:choose>
@@ -61,7 +51,6 @@
                                                 <%--</a>--%>
                                         </div>
                                     </c:forEach>
-
                                 </div>
                             </div>
                         </div>
@@ -69,16 +58,6 @@
                             <div class="swiper-slide" name="${type.key}">
                                 <div class="mui-scroll-wrapper">
                                     <div class="mui-scroll">
-                                        <c:if test="${type.key=='6d371839-5bc5-4b33-90a7-7395782dc710'&&siteId=='270'}">
-                                            <div class="promo-item" data-rel='{"target":"https://lovebet2018.com","opType":"href"}'>
-                                                <div class="img-wrap">
-                                                    <img src="${resRoot}/images/promo/270_top_sjb.jpg"/>
-                                                </div>
-                                                <div class="pro-txt">
-                                                    <div class="mui-pull-left">2018 荣耀之战  俄罗斯世界杯 精彩无处不在</div>
-                                                </div>
-                                            </div>
-                                        </c:if>
                                         <c:forEach items="${type.value}" var="message">
                                             <div class="promo-item"  data-rel='{"target":"${root}/promo/promoDetail.html?searchId=${command.getSearchId(message.id)}","opType":"href"}'>
                                                 <c:choose>
