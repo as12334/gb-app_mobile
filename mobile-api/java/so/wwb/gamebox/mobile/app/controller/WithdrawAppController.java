@@ -72,13 +72,12 @@ public class WithdrawAppController extends BaseWithDrawController {
         //判断是否达到取款要求
         AppModelVo vo = new AppModelVo();
         vo = withDraw(vo);
-        if (StringTool.isNotBlank(vo.getMessage())) {
-            return vo;
-        }
-
         Map<String, Object> map = new HashMap<>();
         withdraw(map, request);
         vo.setData(map);
+        if (StringTool.isNotBlank(vo.getMessage())) {
+            return vo;
+        }
         vo.setCode(AppErrorCodeEnum.SUCCESS.getCode());
         vo.setMessage(AppErrorCodeEnum.SUCCESS.getMsg());
         vo.setVersion(APP_VERSION);
