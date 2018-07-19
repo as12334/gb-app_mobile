@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.chess.controller;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +13,8 @@ import so.wwb.gamebox.mobile.app.model.AppRequestModelVo;
 import so.wwb.gamebox.mobile.app.model.SiteApiRelationApp;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
+import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.company.site.vo.ApiTypeCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.GameCacheEntity;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
@@ -80,7 +83,12 @@ public class IndexController extends BaseOriginController {
     @ResponseBody
     public String getShareQRCode(HttpServletRequest request, AppRequestModelVo model) {
         Map<String, Object> map = new HashMap<>();
-        map.put("qrCodeUrl", "/fserver/mobile-api/Share/321235652.png");
+        SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CHESS_SHARE_PICTURE);
+        String qrCodeUrl = "";
+        if(sysParam != null) {
+            qrCodeUrl = StringTool.isNotBlank(sysParam.getParamValue()) ? sysParam.getParamValue() : sysParam.getDefaultValue();
+        }
+        map.put("qrCodeUrl", qrCodeUrl);
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
