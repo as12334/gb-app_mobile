@@ -80,6 +80,8 @@ public class IndexController extends BaseApiController {
     private Log LOG = LogFactory.getLog(IndexController.class);
 
     private static final int DEFAULT_MIN_TIME = -6;
+    private static final int CHESS_TEST_SITE = 18;
+    private static final int CHESS_PRODUCE_SITE_MIN = 7000;
 
     @RequestMapping("/game")
     public String game(Integer typeId, Model model, HttpServletRequest request) {
@@ -117,6 +119,11 @@ public class IndexController extends BaseApiController {
         if (ParamTool.isLotterySite()) {
             getAppPath(model, request);
         }
+        //棋牌官网站点
+        Integer siteId = SessionManager.getSiteId();
+        if(siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)){
+            return  "/ToChessIndex";
+        }
         return "/ToIndex";
     }
 
@@ -146,6 +153,11 @@ public class IndexController extends BaseApiController {
         //手机弹窗广告、查询Banner和公告
         getBannerAndAd(model, request);
         model.addAttribute("isShowQrCode", ParamTool.isLoginShowQrCode()); //这是二维码开启开关
+        //棋牌官网站点
+        Integer siteId = SessionManager.getSiteId();
+        if(siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)){
+            return  "/ChessIndex";
+        }
         return "/Index";
     }
 
