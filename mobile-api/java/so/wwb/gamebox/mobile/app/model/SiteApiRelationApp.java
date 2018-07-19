@@ -25,7 +25,7 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
     private String gameLink;
     private String gameMsg;
     private Boolean autoPay;
-    @JSONField(serialize = false)
+//    @JSONField(serialize = false)
     private Integer orderNum;
     @JSONField(serialize = false)
     private Boolean ownIcon;
@@ -149,9 +149,10 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
 
     @Override
     public int compareTo(SiteApiRelationApp that) {
-        Integer thatOrderNum = that.getOrderNum() == null ? Integer.MAX_VALUE : that.getOrderNum();
-        Integer thisOrderNum = this.getOrderNum() == null ? Integer.MAX_VALUE : this.getOrderNum();
-        return thisOrderNum.compareTo(thatOrderNum);
+        int thatOrderNum = that.getOrderNum() == null ? Integer.MAX_VALUE : that.getOrderNum();
+        int thisOrderNum = this.getOrderNum() == null ? Integer.MAX_VALUE : this.getOrderNum();
+        return (thisOrderNum < thatOrderNum) ? -1 : ((thisOrderNum == thatOrderNum) ? 0 : 1);
+
     }
 }
 
