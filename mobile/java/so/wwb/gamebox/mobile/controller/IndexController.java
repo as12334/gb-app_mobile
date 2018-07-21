@@ -62,7 +62,7 @@ import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardRecord;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;

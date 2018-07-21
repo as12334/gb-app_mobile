@@ -3,9 +3,9 @@ package so.wwb.gamebox.mobile.session;
 import org.soul.commons.lang.DateTool;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.session.SessionKey;
-import so.wwb.gamebox.mobile.init.ConfigManager;
 import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -42,7 +42,7 @@ public class SessionManager extends SessionManagerCommon {
      * @return
      */
     public static String getSubSysCode() {
-        return ConfigManager.getConfigration().getSubsysCode();
+        return ConfigBase.get().getSubsysCode();
     }
 
     /**

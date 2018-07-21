@@ -18,7 +18,6 @@ import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,7 +35,7 @@ import so.wwb.gamebox.model.company.help.vo.VHelpTypeAndDocumentListVo;
 import so.wwb.gamebox.model.master.enums.ContactWayStatusEnum;
 import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.validation.Valid;

@@ -37,7 +37,7 @@ import so.wwb.gamebox.model.master.player.vo.PlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.po.VPlayerTransaction;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionListVo;
 import so.wwb.gamebox.model.master.report.vo.VPlayerTransactionVo;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;

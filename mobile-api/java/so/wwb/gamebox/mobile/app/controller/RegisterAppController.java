@@ -60,7 +60,7 @@ import so.wwb.gamebox.model.master.setting.enums.FieldSortEnum;
 import so.wwb.gamebox.model.master.setting.enums.SiteCurrencyEnum;
 import so.wwb.gamebox.model.master.setting.po.FieldSort;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 import so.wwb.gamebox.web.defense.biz.annotataion.Defense;
 import so.wwb.gamebox.web.defense.biz.enums.DefenseAction;

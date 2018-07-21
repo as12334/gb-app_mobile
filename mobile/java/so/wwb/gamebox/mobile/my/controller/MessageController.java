@@ -46,7 +46,7 @@ import so.wwb.gamebox.model.master.player.po.VPlayerAdvisory;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.passport.captcha.CaptchaUrlEnum;
