@@ -22,6 +22,7 @@ import org.soul.web.session.SessionManagerBase;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
@@ -29,7 +30,6 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.RegexTools;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -52,7 +52,6 @@ import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.SiteCustomerServiceHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -361,7 +360,7 @@ public class OriginController extends BaseOriginController {
      */
     @RequestMapping("/helpDetail")
     @ResponseBody
-    public String getHelpDetail(HttpServletRequest request,VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
+    public String getHelpDetail(HttpServletRequest request, VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
         if (searchId == null) {
             return AppModelVo.getAppModeVoJson(true,
@@ -385,7 +384,7 @@ public class OriginController extends BaseOriginController {
                 HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
                 if (helpDocumentI18n != null) {
                     String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
-                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(RegexTools.replaceImgSrc(content,request.getServerName())));
+                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(content));
                 }
                 documentI18nList.add(helpDocumentI18n);
             }
