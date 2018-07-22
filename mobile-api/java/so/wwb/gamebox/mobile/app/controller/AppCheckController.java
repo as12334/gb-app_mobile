@@ -8,6 +8,7 @@ import org.soul.commons.security.AesTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceBossTool;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
 import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
@@ -27,10 +28,7 @@ public class AppCheckController {
         String encryptCode = request.getParameter("code");
         String type = request.getParameter("type");
         String siteId = request.getParameter("siteId");
-        SiteAppUpdateVo vo = new SiteAppUpdateVo();
-        vo.getSearch().setAppType(type);
-        vo.getSearch().setSiteId(Integer.parseInt(siteId));
-        SiteAppUpdate app = ServiceBossTool.siteAppUpdateService().queryNewApp(vo);
+        SiteAppUpdate app = Cache.getSiteAppUpdate(siteId, type);
         LOG.info("app获取版本号参数:{0},{1},{2},结果:{3}", encryptCode, type, siteId, JsonTool.toJson(app));
         int code = 0;
         try {
