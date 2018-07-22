@@ -960,10 +960,15 @@ public class BaseMineController extends BaseMobileApiController {
             vo.getSearch().setSubsysCode(SubSysCodeEnum.MSITES.getCode());
             vo.getSearch().setResolveStatus(ResolveStatusEnum.SUCCESS.getCode());
             List<String> domainLst = domainService.querySiteDomain(vo);
-            domainLst.remove(request.getServerName());
-            //随机返回个domain
-            int index = (int) (Math.random() * domainLst.size());
-            String domain = domainLst.get(index);
+            String domain;
+            if(CollectionTool.isNotEmpty(domainLst) && domainLst.size() < 2){
+                domain = request.getServerName();
+            }else {
+                domainLst.remove(request.getServerName());
+                //随机返回个domain
+                int index = (int) (Math.random() * domainLst.size());
+                domain = domainLst.get(index);
+            }
             sb.append(domain);
             sb.append("/register.html?c=");
             String invitationCode = userPlayerVo.getResult().getRegistCode() + SessionManager.getUserId().toString();
