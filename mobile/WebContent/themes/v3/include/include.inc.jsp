@@ -9,7 +9,7 @@
 <%@page import="so.wwb.gamebox.model.ParamTool" %>
 <%@page import="so.wwb.gamebox.web.SessionManagerCommon" %>
 <%@page import="so.wwb.gamebox.web.SupportLocale" %>
-<%@page import="so.wwb.gamebox.web.cache.Cache" %>
+<%@page import="so.wwb.gamebox.common.cache.Cache" %>
 <%@page import="java.text.MessageFormat" %>
 <%@ page import="org.soul.web.tag.ImageTag" %>
 <%@page trimDirectiveWhitespaces="true" %>
