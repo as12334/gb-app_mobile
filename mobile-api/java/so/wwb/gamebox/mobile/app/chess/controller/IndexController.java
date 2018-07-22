@@ -63,9 +63,9 @@ public class IndexController extends BaseOriginController {
         Map<String, GameCacheEntity> mobileGameByApiType = getNotEmptyMap(Cache.getMobileGameByApiType(chessApiTypeStr), new LinkedHashMap());
         gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis,
                 String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER)));
-        List<SiteApiRelationApp> siteApiRelationApps = convertLiveImg(gamesByApiTypes);
-        Collections.sort(siteApiRelationApps);
-        map.put("siteApiRelation", siteApiRelationApps);
+        convertLiveImg(gamesByApiTypes);
+        Collections.sort(gamesByApiTypes);
+        map.put("siteApiRelation", gamesByApiTypes);
 
         return AppModelVo.getAppModeVoJsonUseFastjson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -78,20 +78,17 @@ public class IndexController extends BaseOriginController {
      *
      * @param siteApiRelationApps
      */
-    private List<SiteApiRelationApp> convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps) {
-        List<SiteApiRelationApp> result = new ArrayList<>();
+    private void convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps) {
         for (SiteApiRelationApp game : siteApiRelationApps) {
             if (ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
                 String cover = game.getCover();
                 cover = cover.replaceAll("livedealer", "live");//棋牌包网真人图片名称更改
                 game.setCover(cover);
             }
-            result.add(game);
             if (CollectionTool.isNotEmpty(game.getRelation())) {
-                result.addAll(convertLiveImg(game.getRelation()));
+                convertLiveImg(game.getRelation());
             }
         }
-        return result;
     }
 
     /**
