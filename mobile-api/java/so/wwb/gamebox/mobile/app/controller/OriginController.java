@@ -26,6 +26,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.mobile.tools.RegexTools;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.SiteParamEnum;
@@ -266,7 +267,6 @@ public class OriginController extends BaseOriginController {
         AppSiteApiTypeRelationI18n gameUrl = SessionManager.isAutoPay() ? goGameUrl(request, siteGame.getApiId(), siteGame.getApiTypeId(), siteGame.getGameCode(), modelVo) : getCasinoGameUrl(player, request, modelVo);
         map.put("gameLink", gameUrl.getGameLink());
         map.put("gameMsg", gameUrl.getGameMsg());
-
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -358,7 +358,7 @@ public class OriginController extends BaseOriginController {
      */
     @RequestMapping("/helpDetail")
     @ResponseBody
-    public String getHelpDetail(VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
+    public String getHelpDetail(HttpServletRequest request, VHelpTypeAndDocumentListVo vHelpTypeAndDocumentListVo) {
         Integer searchId = vHelpTypeAndDocumentListVo.getSearch().getId();
         if (searchId == null) {
             return AppModelVo.getAppModeVoJson(true,
@@ -382,7 +382,7 @@ public class OriginController extends BaseOriginController {
                 HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
                 if (helpDocumentI18n != null) {
                     String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
-                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(content));
+                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(RegexTools.replaceImgSrc(content, request.getServerName())));
                 }
                 documentI18nList.add(helpDocumentI18n);
             }
