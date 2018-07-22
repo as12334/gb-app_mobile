@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.app.chess.controller;
 
+import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -19,6 +20,7 @@ import so.wwb.gamebox.model.company.site.vo.ApiTypeCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.GameCacheEntity;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
+import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.web.cache.Cache;
 
@@ -61,9 +63,9 @@ public class IndexController extends BaseOriginController {
         Map<String, GameCacheEntity> mobileGameByApiType = getNotEmptyMap(Cache.getMobileGameByApiType(chessApiTypeStr), new LinkedHashMap());
         gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis,
                 String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER)));
-
-        Collections.sort(gamesByApiTypes);
-        map.put("siteApiRelation", gamesByApiTypes);
+        List<SiteApiRelationApp> siteApiRelationApps = convertLiveImg(gamesByApiTypes);
+        Collections.sort(siteApiRelationApps);
+        map.put("siteApiRelation", siteApiRelationApps);
 
         return AppModelVo.getAppModeVoJsonUseFastjson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
@@ -71,6 +73,26 @@ public class IndexController extends BaseOriginController {
                 APP_VERSION);
     }
 
+    /**
+     * 棋牌包网,真人图片特殊处理
+     *
+     * @param siteApiRelationApps
+     */
+    private List<SiteApiRelationApp> convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps) {
+        List<SiteApiRelationApp> result = new ArrayList<>();
+        for (SiteApiRelationApp game : siteApiRelationApps) {
+            if (ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
+                String cover = game.getCover();
+                cover = cover.replaceAll("livedealer", "live");//棋牌包网真人图片名称更改
+                game.setCover(cover);
+            }
+            result.add(game);
+            if (CollectionTool.isNotEmpty(game.getRelation())) {
+                result.addAll(convertLiveImg(game.getRelation()));
+            }
+        }
+        return result;
+    }
 
     /**
      * 获取分享二维码图片
@@ -85,7 +107,7 @@ public class IndexController extends BaseOriginController {
         Map<String, Object> map = new HashMap<>();
         SysParam sysParam = ParamTool.getSysParam(SiteParamEnum.CHESS_SHARE_PICTURE);
         String qrCodeUrl = "";
-        if(sysParam != null) {
+        if (sysParam != null) {
             qrCodeUrl = StringTool.isNotBlank(sysParam.getParamValue()) ? sysParam.getParamValue() : sysParam.getDefaultValue();
         }
         map.put("qrCodeUrl", qrCodeUrl);
