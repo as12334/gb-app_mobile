@@ -127,6 +127,7 @@ public class IndexController extends BaseOriginController {
                         }
                     } else {
                         game.setType("game");
+                        game.setGameLink(getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()));
                     }
                 }
             }
