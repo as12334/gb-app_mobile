@@ -4,7 +4,9 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
+import org.soul.commons.net.ServletTool;
 import org.soul.model.sys.po.SysParam;
+import org.soul.web.tag.ImageTag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -53,7 +55,7 @@ public class IndexController extends BaseOriginController {
         getBannerAndPhoneDialog(map, request, CttCarouselTypeEnum.CAROUSEL_TYPE_PHONE_DIALOG);//获取轮播图和手机弹窗广告
         map.remove("phoneDialog");
         map.put("language", SessionManager.getLocale().toString());
-
+        //以下获取游戏.先获取棋牌游戏,再获取其他入口.入口里面包含API
         String chessApiTypeStr = String.valueOf(ApiTypeEnum.CHESS.getCode());
         List<String> excludeApis = new ArrayList<>();
         excludeApis.add(StringTool.join(JOIN_CHAR, String.valueOf(ApiTypeEnum.SPORTS_BOOK.getCode()), ApiProviderEnum.BBIN.getCode()));
@@ -62,9 +64,11 @@ public class IndexController extends BaseOriginController {
         List<SiteApiRelationApp> gamesByApiTypes = getGamesByApiTypes(request, model, apiTypes, excludeApis);
 
         Map<String, GameCacheEntity> mobileGameByApiType = getNotEmptyMap(Cache.getMobileGameByApiType(chessApiTypeStr), new LinkedHashMap());
+
         gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis,
                 String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER)));
-        convertLiveImg(gamesByApiTypes, model);
+
+        convertLiveImg(gamesByApiTypes, request);
         Collections.sort(gamesByApiTypes);
         map.put("siteApiRelation", gamesByApiTypes);
 
@@ -72,38 +76,6 @@ public class IndexController extends BaseOriginController {
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
-    }
-
-    /**
-     * 棋牌包网,真人图片特殊处理
-     *
-     * @param siteApiRelationApps
-     */
-    private void convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps, AppRequestModelVo model) {
-        {
-            for (SiteApiRelationApp game : siteApiRelationApps) {
-                if (ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
-                    String cover = game.getCover();
-                    cover = cover.replaceAll("livedealer", "live");//棋牌包网真人图片名称更改
-                    game.setCover(cover);
-                }
-                //电子和真人,第三层游戏图标更换
-                if (ApiTypeEnum.CASINO.getCode() == game.getApiTypeId() || ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
-                    if ("game".equals(game.getType())) {
-                        String gcover = String.format(AppConstant.GAME_COVER_URL, model.getTerminal(), model.getResolution(), SessionManager.getLocale().toString());
-                        String cover = MessageFormat.format(gcover, game.getApiId(), game.getCode());
-                        game.setCover(cover);
-                    }
-                }
-                //递归执行替换
-                if (CollectionTool.isNotEmpty(game.getRelation())) {
-                    convertLiveImg(game.getRelation(), model);
-                } else {
-                    //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
-                    game.setType("game");
-                }
-            }
-        }
     }
 
     /**
@@ -128,5 +100,38 @@ public class IndexController extends BaseOriginController {
                 map,
                 APP_VERSION);
     }
+
+    /**
+     * 棋牌包网,真人图片特殊处理
+     *
+     * @param siteApiRelationApps
+     */
+    private void convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps, HttpServletRequest request) {
+        {
+            for (SiteApiRelationApp game : siteApiRelationApps) {
+                if (ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
+                    String cover = game.getCover();
+                    cover = cover.replaceAll("livedealer", "live");//棋牌包网真人图片名称更改
+                    game.setCover(cover);
+                }
+                //递归执行替换
+                if (CollectionTool.isNotEmpty(game.getRelation())) {
+                    convertLiveImg(game.getRelation(), request);
+                } else {
+                    //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
+                    //电子和真人,第三层游戏图标更换
+                    if ("game".equals(game.getType())) {
+                        if (ApiTypeEnum.CASINO.getCode() == game.getApiTypeId() || ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
+                            game.setCover(ImageTag.getImagePath(ServletTool.getDomainFullAddress(request), game.getGameConver()));
+                            System.out.println(game.getCover());
+                        }
+                    } else {
+                        game.setType("game");
+                    }
+                }
+            }
+        }
+    }
+
 
 }

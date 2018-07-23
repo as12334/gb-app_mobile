@@ -280,6 +280,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             if (containsExcludeApi) {
                 continue;
             }
+            String cacheCover = game.getCover();
             game.setCover(String.format(gameImgPath,String.format(CHESS_GAME_COVER_URL, ApiTypeEnum.getApiTypeEnum(game.getApiTypeId()).getType().toLowerCase(), game.getApiId(), game.getCode())));
             if (GameTypeEnum.FISH.getCode().equals(game.getGameType())) {
                 game.setName(StringTool.join(" ", ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId())).getTrans(), game.getName()));
@@ -289,6 +290,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
                     game.getName(), game.getCover(), getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()),
                     "", SessionManager.isAutoPay(), game.getOrderNum(), game.getOwnIcon(), null);
             siteGame.setCode(game.getCode());
+            siteGame.setGameConver(cacheCover);
             setExclusiveIcon(siteGame);
             appSiteGames.add(siteGame);
         }
