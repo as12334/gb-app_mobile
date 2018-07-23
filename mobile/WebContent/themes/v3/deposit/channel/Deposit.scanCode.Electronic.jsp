@@ -67,7 +67,7 @@
                             <div class="b_c_t_i_row">
                                 ${views.deposit_auto['姓名']}:
                                 ${payAccount.fullName}
-                                <a href="#" class=" btn_copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
+                                <a href="#" class="copy btn_copy" data-clipboard-text="${payAccount.fullName}">${views.themes_auto['复制']}</a>
                             </div>
                         </div>
                     </div>
