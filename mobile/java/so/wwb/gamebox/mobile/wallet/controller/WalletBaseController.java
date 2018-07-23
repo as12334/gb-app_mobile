@@ -11,7 +11,7 @@ import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.master.player.po.VUserPlayer;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
 import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 
 /**
  * 钱包基类

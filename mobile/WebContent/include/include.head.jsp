@@ -1,5 +1,5 @@
 <%@ page import="so.wwb.gamebox.mobile.init.ConfigManager" %>
-<c:set var="ftlRoot" value='<%= MessageFormat.format(ConfigManager.getConfigration().getFreemakerTemplateRootPath(),request.getServerName()) %>' />
+<c:set var="ftlRoot" value='<%= MessageFormat.format(ConfigManager.get().getFreemakerTemplateRootPath(),request.getServerName()) %>' />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1,user-scalable=no">
 <meta name="apple-touch-fullscreen" content="yes">

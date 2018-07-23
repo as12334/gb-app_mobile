@@ -38,7 +38,7 @@ import so.wwb.gamebox.model.master.player.po.*;
 import so.wwb.gamebox.model.master.player.vo.*;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardVo;
 import so.wwb.gamebox.web.bank.BankHelper;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
