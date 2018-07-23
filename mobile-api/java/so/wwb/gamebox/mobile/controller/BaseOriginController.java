@@ -492,7 +492,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
      * @param code
      * @return
      */
-    private String getCasinoGameRequestUrl(Integer apiTypeId, Integer apiId, Integer gameId, String code) {
+    protected String getCasinoGameRequestUrl(Integer apiTypeId, Integer apiId, Integer gameId, String code) {
         //kg需进入大厅，不支持直接进入游戏
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == apiTypeId) {

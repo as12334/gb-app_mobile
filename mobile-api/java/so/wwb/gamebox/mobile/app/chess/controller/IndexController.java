@@ -113,6 +113,12 @@ public class IndexController extends BaseOriginController {
                     String cover = game.getCover();
                     cover = cover.replaceAll("livedealer", "live");//棋牌包网真人图片名称更改
                     game.setCover(cover);
+                    //如果是真人api,则强制设置为游戏类型
+                    if ("api".equals(game.getType())) {
+                        game.setType("game");
+                        game.setRelation(new ArrayList<>());
+                        game.setGameLink(getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()));
+                    }
                 }
                 //递归执行替换
                 if (CollectionTool.isNotEmpty(game.getRelation())) {
@@ -121,13 +127,9 @@ public class IndexController extends BaseOriginController {
                     //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
                     //电子和真人,第三层游戏图标更换
                     if ("game".equals(game.getType())) {
-                        if (ApiTypeEnum.CASINO.getCode() == game.getApiTypeId() || ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
+                        if (ApiTypeEnum.CASINO.getCode() == game.getApiTypeId()) {
                             game.setCover(ImageTag.getImagePath(ServletTool.getDomainFullAddress(request), game.getGameConver()));
-                            System.out.println(game.getCover());
                         }
-                    } else {
-                        game.setType("game");
-                        game.setGameLink(getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()));
                     }
                 }
             }
