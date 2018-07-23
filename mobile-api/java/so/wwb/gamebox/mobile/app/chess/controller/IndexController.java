@@ -94,7 +94,7 @@ public class IndexController extends BaseOriginController {
         if (sysParam != null) {
             qrCodeUrl = StringTool.isNotBlank(sysParam.getParamValue()) ? sysParam.getParamValue() : sysParam.getDefaultValue();
         }
-        map.put("qrCodeUrl", qrCodeUrl);
+        map.put("qrCodeUrl", ImageTag.getImagePath(ServletTool.getDomainFullAddress(request), qrCodeUrl));
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
