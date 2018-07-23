@@ -288,7 +288,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             SiteApiRelationApp siteGame = new SiteApiRelationApp(game.getGameId(),game.getApiId(),game.getApiTypeId(),RELATION_TYPE_GAME,
                     game.getName(), game.getCover(), getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()),
                     "", SessionManager.isAutoPay(), game.getOrderNum(), game.getOwnIcon(), null);
-
+            siteGame.setCode(game.getCode());
             setExclusiveIcon(siteGame);
             appSiteGames.add(siteGame);
         }

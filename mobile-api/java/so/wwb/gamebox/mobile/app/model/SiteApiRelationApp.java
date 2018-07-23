@@ -10,7 +10,7 @@ import java.util.List;
  * app游戏实体
  *
  * @author gavin
- *         2018.07.06
+ * 2018.07.06
  */
 public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Serializable {
 
@@ -25,10 +25,12 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
     private String gameLink;
     private String gameMsg;
     private Boolean autoPay;
-//    @JSONField(serialize = false)
+    @JSONField(serialize = false)
     private Integer orderNum;
     @JSONField(serialize = false)
     private Boolean ownIcon;
+    @JSONField(serialize = false)
+    private String code;
     /*下级列表*/
     private List<SiteApiRelationApp> relation = new ArrayList<>();
 
@@ -145,6 +147,14 @@ public class SiteApiRelationApp implements Comparable<SiteApiRelationApp>, Seria
 
     public void setOwnIcon(Boolean ownIcon) {
         this.ownIcon = ownIcon;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override
