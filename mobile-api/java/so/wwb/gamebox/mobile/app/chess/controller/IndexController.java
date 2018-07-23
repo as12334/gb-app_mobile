@@ -8,6 +8,7 @@ import org.soul.model.sys.po.SysParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.app.model.AppRequestModelVo;
@@ -20,9 +21,7 @@ import so.wwb.gamebox.model.company.site.vo.ApiTypeCacheEntity;
 import so.wwb.gamebox.model.company.site.vo.GameCacheEntity;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
-import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
 import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
-import so.wwb.gamebox.web.cache.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
