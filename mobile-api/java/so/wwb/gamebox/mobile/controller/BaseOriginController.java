@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.controller;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
@@ -14,6 +15,7 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
+import org.soul.model.gameapi.base.PlatformTypeEnum;
 import org.soul.model.gameapi.result.GameApiResult;
 import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
@@ -34,6 +36,7 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -634,14 +637,14 @@ public abstract class BaseOriginController {
 
         playerApiAccountVo.setSysUser(SessionManager.getUser());
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
-            GameVo gameVo = new GameVo();
-            gameVo.getSearch().setApiId(apiId);
-            gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(SessionManagerCommon.getTerminal(request));
-            gameVo = ServiceTool.gameService().search(gameVo);
-            if (gameVo.getResult() != null) {
-                playerApiAccountVo.setGameId(gameVo.getResult().getId());
-                playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
+            String terminal = SessionManagerCommon.getTerminal(request);
+
+            PlatformTypeEnum platformType = (SupportTerminal.PC.getCode().equals(terminal))?
+                    PlatformTypeEnum.pc:PlatformTypeEnum.mobile;
+            Game game = Cache.getGameByApiIdCode(playerApiAccountVo.getApiId(), playerApiAccountVo.getGameCode(), platformType);
+            if (game != null) {
+                playerApiAccountVo.setGameId(game.getId());
+                playerApiAccountVo.setPlatformType(game.getSupportTerminal());
             }
         }
         playerApiAccountVo.setPlatformType(TerminalEnum.MOBILE.getCode());
@@ -740,9 +743,9 @@ public abstract class BaseOriginController {
                 return true;
             }
         }
-        GameVo gameVo = fetchLoginGame(playerApiAccountVo);
-        if (gameVo.getResult() != null) {
-            Boolean canTry = gameVo.getResult().getCanTry();
+        Game game = fetchLoginGame(playerApiAccountVo);
+        if (game != null) {
+            Boolean canTry = game.getCanTry();
             LOG.info("判断是否可以登录游戏：{1}_{2},canTry:{0}", canTry, SessionManagerBase.getSiteId(), playerApiAccountVo.getGameCode());
             if (canTry == null || !canTry) {
                 return false;
@@ -762,28 +765,24 @@ public abstract class BaseOriginController {
         if (StringTool.isBlank(playerApiAccountVo.getGameCode())) {
             return true;
         }
-        GameVo gameVo = fetchLoginGame(playerApiAccountVo);
-        if (gameVo.getResult() == null || GameStatusEnum.DISABLE.getCode().equals(gameVo.getResult().getSystemStatus())) { //尚未接入该游戏或已停用
+        Game game = fetchLoginGame(playerApiAccountVo);
+        if (game == null || GameStatusEnum.DISABLE.getCode().equals(game.getSystemStatus())) { //尚未接入该游戏或已停用
             return false;
         }
-        playerApiAccountVo.setGameId(gameVo.getResult().getId());
+        playerApiAccountVo.setGameId(game.getId());
         Map<String, SiteGame> siteGameMap = Cache.getSiteGame();
-        SiteGame siteGame = siteGameMap.get(String.valueOf(gameVo.getResult().getId()));
+        SiteGame siteGame = siteGameMap.get(String.valueOf(game.getId()));
         if (siteGame == null || GameStatusEnum.DISABLE.getCode().equals(siteGame.getStatus())) {//站点未接入该游戏或者已停用
             return false;
         }
-        playerApiAccountVo.setGameId(gameVo.getResult().getId());
+        playerApiAccountVo.setGameId(game.getId());
         return true;
     }
 
-    private GameVo fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
-        GameVo gameVo = new GameVo();
-        gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
-        gameVo.getSearch().setSupportTerminal(TerminalEnum.MOBILE.getCode());
-        gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-        gameVo.getSearch().setStatusArray(new String[]{GameStatusEnum.NORMAL.getCode(), GameStatusEnum.MAINTAIN.getCode()});
-        gameVo = ServiceTool.gameService().search(gameVo);
-        return gameVo;
+    private Game fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
+        PlatformTypeEnum platformType = PlatformTypeEnum.mobile;
+        Game game = Cache.getGameByApiIdCode(playerApiAccountVo.getApiId(), playerApiAccountVo.getGameCode(), platformType);
+        return game;
     }
 
     /**
