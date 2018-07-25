@@ -4,6 +4,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.soul.commons.collections.CollectionQueryTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.enums.SupportTerminal;
 import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.ArrayTool;
 import org.soul.commons.lang.string.StringTool;
@@ -16,6 +17,7 @@ import org.soul.commons.query.Criteria;
 import org.soul.commons.query.Paging;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
+import org.soul.model.gameapi.base.PlatformTypeEnum;
 import org.soul.model.gameapi.result.GameApiResult;
 import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
@@ -23,6 +25,7 @@ import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
@@ -33,6 +36,7 @@ import so.wwb.gamebox.model.common.Const;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
+import so.wwb.gamebox.model.company.setting.po.Game;
 import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
@@ -48,7 +52,6 @@ import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
-import so.wwb.gamebox.web.cache.Cache;
 import so.wwb.gamebox.web.support.CdnConf;
 
 import javax.servlet.http.HttpServletRequest;
@@ -280,6 +283,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             if (containsExcludeApi) {
                 continue;
             }
+            String cacheCover = game.getCover();
             game.setCover(String.format(gameImgPath,String.format(CHESS_GAME_COVER_URL, ApiTypeEnum.getApiTypeEnum(game.getApiTypeId()).getType().toLowerCase(), game.getApiId(), game.getCode())));
             if (GameTypeEnum.FISH.getCode().equals(game.getGameType())) {
                 game.setName(StringTool.join(" ", ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId())).getTrans(), game.getName()));
@@ -288,7 +292,8 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             SiteApiRelationApp siteGame = new SiteApiRelationApp(game.getGameId(),game.getApiId(),game.getApiTypeId(),RELATION_TYPE_GAME,
                     game.getName(), game.getCover(), getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()),
                     "", SessionManager.isAutoPay(), game.getOrderNum(), game.getOwnIcon(), null);
-
+            siteGame.setCode(game.getCode());
+            siteGame.setGameConver(cacheCover);
             setExclusiveIcon(siteGame);
             appSiteGames.add(siteGame);
         }
@@ -490,7 +495,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
      * @param code
      * @return
      */
-    private String getCasinoGameRequestUrl(Integer apiTypeId, Integer apiId, Integer gameId, String code) {
+    protected String getCasinoGameRequestUrl(Integer apiTypeId, Integer apiId, Integer gameId, String code) {
         //kg需进入大厅，不支持直接进入游戏
         StringBuilder sb = new StringBuilder();
         if (ApiTypeEnum.CASINO.getCode() == apiTypeId) {
@@ -963,14 +968,14 @@ public abstract class BaseOriginController extends BaseApiServiceController {
 
         playerApiAccountVo.setSysUser(SessionManager.getUser());
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
-            GameVo gameVo = new GameVo();
-            gameVo.getSearch().setApiId(apiId);
-            gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(SessionManagerCommon.getTerminal(request));
-            gameVo = ServiceTool.gameService().search(gameVo);
-            if (gameVo.getResult() != null) {
-                playerApiAccountVo.setGameId(gameVo.getResult().getId());
-                playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
+            String terminal = SessionManagerCommon.getTerminal(request);
+
+            PlatformTypeEnum platformType = (SupportTerminal.PC.getCode().equals(terminal))?
+                    PlatformTypeEnum.pc:PlatformTypeEnum.mobile;
+            Game game = Cache.getGameByApiIdCode(playerApiAccountVo.getApiId(), playerApiAccountVo.getGameCode(), platformType);
+            if (game != null) {
+                playerApiAccountVo.setGameId(game.getId());
+                playerApiAccountVo.setPlatformType(game.getSupportTerminal());
             }
         }
         playerApiAccountVo.setPlatformType(TerminalEnum.MOBILE.getCode());
@@ -1069,9 +1074,9 @@ public abstract class BaseOriginController extends BaseApiServiceController {
                 return true;
             }
         }
-        GameVo gameVo = fetchLoginGame(playerApiAccountVo);
-        if (gameVo.getResult() != null) {
-            Boolean canTry = gameVo.getResult().getCanTry();
+        Game game = fetchLoginGame(playerApiAccountVo);
+        if (game != null) {
+            Boolean canTry = game.getCanTry();
             LOG.info("判断是否可以登录游戏：{1}_{2},canTry:{0}", canTry, SessionManagerBase.getSiteId(), playerApiAccountVo.getGameCode());
             if (canTry == null || !canTry) {
                 return false;
@@ -1091,28 +1096,24 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         if (StringTool.isBlank(playerApiAccountVo.getGameCode())) {
             return true;
         }
-        GameVo gameVo = fetchLoginGame(playerApiAccountVo);
-        if (gameVo.getResult() == null || GameStatusEnum.DISABLE.getCode().equals(gameVo.getResult().getSystemStatus())) { //尚未接入该游戏或已停用
+        Game game = fetchLoginGame(playerApiAccountVo);
+        if (game == null || GameStatusEnum.DISABLE.getCode().equals(game.getSystemStatus())) { //尚未接入该游戏或已停用
             return false;
         }
-        playerApiAccountVo.setGameId(gameVo.getResult().getId());
+        playerApiAccountVo.setGameId(game.getId());
         Map<String, SiteGame> siteGameMap = Cache.getSiteGame();
-        SiteGame siteGame = siteGameMap.get(String.valueOf(gameVo.getResult().getId()));
+        SiteGame siteGame = siteGameMap.get(String.valueOf(game.getId()));
         if (siteGame == null || GameStatusEnum.DISABLE.getCode().equals(siteGame.getStatus())) {//站点未接入该游戏或者已停用
             return false;
         }
-        playerApiAccountVo.setGameId(gameVo.getResult().getId());
+        playerApiAccountVo.setGameId(game.getId());
         return true;
     }
 
-    private GameVo fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
-        GameVo gameVo = new GameVo();
-        gameVo.getSearch().setApiId(playerApiAccountVo.getApiId());
-        gameVo.getSearch().setSupportTerminal(TerminalEnum.MOBILE.getCode());
-        gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-        gameVo.getSearch().setStatusArray(new String[]{GameStatusEnum.NORMAL.getCode(), GameStatusEnum.MAINTAIN.getCode()});
-        gameVo = ServiceTool.gameService().search(gameVo);
-        return gameVo;
+    private Game fetchLoginGame(PlayerApiAccountVo playerApiAccountVo) {
+        PlatformTypeEnum platformType = PlatformTypeEnum.mobile;
+        Game game = Cache.getGameByApiIdCode(playerApiAccountVo.getApiId(), playerApiAccountVo.getGameCode(), platformType);
+        return game;
     }
 
     /**

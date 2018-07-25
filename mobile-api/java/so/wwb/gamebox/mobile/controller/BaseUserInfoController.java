@@ -62,7 +62,7 @@ import so.wwb.gamebox.web.api.IApiBalanceService;
 import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
 import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 
 import javax.servlet.http.HttpServletRequest;

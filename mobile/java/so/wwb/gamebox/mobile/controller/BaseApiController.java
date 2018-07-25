@@ -11,6 +11,7 @@ import org.soul.commons.net.ServletTool;
 import org.soul.commons.query.Criteria;
 import org.soul.commons.query.enums.Operator;
 import org.soul.commons.query.sort.Order;
+import org.soul.model.gameapi.base.PlatformTypeEnum;
 import org.springframework.ui.Model;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.common.consts.MobileConst;
@@ -30,10 +31,9 @@ import so.wwb.gamebox.model.company.site.vo.*;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.GameTypeEnum;
-import so.wwb.gamebox.model.master.enums.AppTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.web.cache.Cache;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.lottery.controller.BaseDemoController;
 import so.wwb.gamebox.web.support.CdnConf;
 
@@ -445,18 +445,17 @@ public abstract class BaseApiController extends BaseDemoController {
         }*/
 
         playerApiAccountVo.setSysUser(SessionManager.getUser());
+        String terminal = SessionManagerCommon.getTerminal(request);
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
-            GameVo gameVo = new GameVo();
-            gameVo.getSearch().setApiId(apiId);
-            gameVo.getSearch().setCode(playerApiAccountVo.getGameCode());
-            gameVo.getSearch().setSupportTerminal(SessionManagerCommon.getTerminal(request));
-            gameVo = ServiceTool.gameService().search(gameVo);
-            if (gameVo.getResult() != null) {
-                playerApiAccountVo.setGameId(gameVo.getResult().getId());
-                playerApiAccountVo.setPlatformType(gameVo.getResult().getSupportTerminal());
+            PlatformTypeEnum platformType = (SupportTerminal.PC.getCode().equals(terminal))?
+                    PlatformTypeEnum.pc:PlatformTypeEnum.mobile;
+            Game game = Cache.getGameByApiIdCode(playerApiAccountVo.getApiId(), playerApiAccountVo.getGameCode(), platformType);
+            if (game != null) {
+                playerApiAccountVo.setGameId(game.getId());
+                playerApiAccountVo.setPlatformType(game.getSupportTerminal());
             }
         }
-        playerApiAccountVo.setPlatformType(SessionManagerCommon.getTerminal(request));
+        playerApiAccountVo.setPlatformType(terminal);
     }
 
     protected boolean checkApiStatus(PlayerApiAccountVo playerApiAccountVo) {

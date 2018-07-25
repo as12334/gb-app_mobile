@@ -4,6 +4,7 @@ import org.soul.commons.bean.Pair;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.data.json.JsonTool;
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
@@ -15,15 +16,14 @@ import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.passport.form.SignUpForm;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.common.RegisterConst;
-import so.wwb.gamebox.model.company.sys.so.SysSiteSo;
-import so.wwb.gamebox.model.company.sys.vo.SysSiteVo;
+import so.wwb.gamebox.model.company.sys.po.SysSite;
 import so.wwb.gamebox.model.master.setting.enums.FieldSortEnum;
 import so.wwb.gamebox.model.master.setting.po.FieldSort;
 
@@ -99,12 +99,9 @@ public class RegisterController {
         );
         params.put("ipLocale", ipLocaleMap);
         /*站点主货币*/
-        SysSiteVo sysSiteVo = new SysSiteVo();
-        sysSiteVo.setSearch(new SysSiteSo());
-        sysSiteVo.getSearch().setId(SessionManager.getSiteId());
-        sysSiteVo = ServiceTool.sysSiteService().get(sysSiteVo);
-        params.put("currency", sysSiteVo.getResult().getMainCurrency());
-        params.put("timezone", sysSiteVo.getResult().getTimezone());
+        SysSite sysSite = Cache.getSysSite().get(CommonContext.get().getSiteId().toString());
+        params.put("currency", sysSite.getMainCurrency());
+        params.put("timezone", sysSite.getTimezone());
 
         //生日选择最大为18年前，最小100年前（满18周岁才可）
         Date today = SessionManager.getDate().getToday();
