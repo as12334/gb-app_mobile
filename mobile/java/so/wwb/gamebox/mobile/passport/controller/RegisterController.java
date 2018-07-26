@@ -99,7 +99,7 @@ public class RegisterController {
         );
         params.put("ipLocale", ipLocaleMap);
         /*站点主货币*/
-        SysSite sysSite = Cache.getSysSite().get(CommonContext.get().getSiteId());
+        SysSite sysSite = Cache.getSysSite().get(CommonContext.get().getSiteId().toString());
         params.put("currency", sysSite.getMainCurrency());
         params.put("timezone", sysSite.getTimezone());
 
