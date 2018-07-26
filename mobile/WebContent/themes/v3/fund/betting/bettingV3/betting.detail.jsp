@@ -54,27 +54,7 @@
                             <div class="ct">
                                 <p class="mui-text-right text-gray">
                                     ${gbFn:getApiName(r.apiId.toString())}>>
-                                    <c:choose>
-                                        <c:when test="${r.apiTypeId eq '1'}">
-                                            ${views.fund_auto['真人']}
-                                        </c:when>
-                                        <c:when test="${r.apiTypeId eq '2'}">
-                                            ${views.fund_auto['电子']}
-                                        </c:when>
-                                        <c:when test="${r.apiTypeId eq '3'}">
-                                            ${views.fund_auto['体育']}
-                                        </c:when>
-                                        <c:when test="${r.apiTypeId eq '4'}">
-                                            ${views.fund_auto['彩票']}
-                                        </c:when>
-                                        <c:when test="${r.apiTypeId eq '5'}">
-                                            ${views.fund_auto['棋牌']}
-                                        </c:when>
-                                        <c:otherwise>
-                                            ${views.fund_auto['其他']}
-                                        </c:otherwise>
-                                    </c:choose>
-
+                                        ${dicts.game.game_type[result.gameType]}
                                 </p>
                             </div>
                         </div>
