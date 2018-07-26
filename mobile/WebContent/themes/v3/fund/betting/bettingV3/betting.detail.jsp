@@ -5,6 +5,7 @@
 <%@ include file="../../../include/include.inc.jsp" %>
 <link rel="stylesheet" href="${resRoot}/themes/mui.picker.css?v=${rcVersion}" />
 <link rel="stylesheet" href="${resRoot}/themes/mui.dtpicker.css?v=${rcVersion}" />
+<link rel="stylesheet" href="${resRoot}/themes/commonV3.css?v=${rcVersion}"/>
 
 <body class="mine-bet-detail">
 <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
