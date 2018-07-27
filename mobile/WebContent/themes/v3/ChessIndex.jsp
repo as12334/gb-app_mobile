@@ -55,15 +55,42 @@
 </html>
 <%@ include file="/include/include.footer.jsp" %>
 <script>
+    var root = '${root}';
+    var resComRoot = '${resComRoot}';
+    var resRoot = '${resRoot}';
+    var imgRoot = '${imgRoot}';
+    var rcVersion ='${rcVersion}';
+    var random ='${random}';
+
     $(function () {
         var options = {
         };
         muiInit(options);
     });
 
-    //下载APP
-    function downLoadApp(){
-        alert("点击downLoadApp");
+    /**
+     * 下载客户端
+     * @param obj
+     * @param options
+     */
+    function downLoadApp(obj, options) {
+        //是否要先登录再跳转登录页面
+        var ajaxOption = {
+            url: root + '/downLoad/downLoadShowQrcode.html',
+            success: function (data) {
+                var userAgent = whatOs();
+                var targetUrl = root + "/downLoad/downLoad.html?userAgent=" + userAgent;
+                if (data.showQrCode == true && data.isLogin != true) {
+                    toast("请登入下载");
+                    window.setTimeout(function () {
+                        login(targetUrl);
+                    }, 1500);
+                } else {
+                    goToUrl(targetUrl, null, targetUrl);
+                }
+            }
+        };
+        muiAjax(ajaxOption);
     }
 
     /**
