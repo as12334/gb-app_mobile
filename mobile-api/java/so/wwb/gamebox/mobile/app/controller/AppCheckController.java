@@ -16,6 +16,8 @@ import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
 import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 @Controller
 @RequestMapping("/app")
@@ -28,19 +30,14 @@ public class AppCheckController {
         String encryptCode = request.getParameter("code");
         String type = request.getParameter("type");
         String siteId = request.getParameter("siteId");
-        String ischress = request.getParameter("ischress");
         SiteAppUpdate app = Cache.getSiteAppUpdate(siteId, type);
         LOG.info("app获取版本号参数:{0},{1},{2},结果:{3}", encryptCode, type, siteId, JsonTool.toJson(app));
-        int code = 0;
-        try {
-            code = Integer.valueOf(AesTool.decrypt(encryptCode, AppUpdate.KEY_UPDATE));
-        } catch (Exception gse) {
-            LOG.error(gse.getLocalizedMessage(), gse);
-        }
-        if (app != null && app.getAppType().equals(type) && app.getVersionCode() > code) {
+        if (app != null && app.getAppType().equals(type)) {
             return JsonTool.toJson(app);
         } else {
             return JsonTool.toJson("");
         }
     }
+
+
 }
