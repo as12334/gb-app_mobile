@@ -15,15 +15,17 @@
 <div class="mui-inner-wrap">
     <c:set var="activity" value="${command}"/>
     <!-- 主页面标题 -->
-    <header class="mui-bar mui-bar-nav">
-        <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
-           data-rel='{"target":"goToLastPage","opType":"function"}'></a>
-        <%--<%@include file="../common/Assert.jsp"%>--%>
-        <a class="mui-icon mui-icon mui-pull-right icon-gift"
-           data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}'
-           data-href="/promo/myPromo.html"><i></i></a>
-        <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
-    </header>
+    <c:if test="${siteId!=18&&siteId<7000}">
+        <header class="mui-bar mui-bar-nav">
+            <a style="color: #fff;" class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
+               data-rel='{"target":"goToLastPage","opType":"function"}'></a>
+            <%--<%@include file="../common/Assert.jsp"%>--%>
+            <a class="mui-icon mui-icon mui-pull-right icon-gift"
+               data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}'
+               data-href="/promo/myPromo.html"><i></i></a>
+            <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
+        </header>
+    </c:if>
     <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
         <div class="mui-scroll">
             <!-- 主界面具体展示内容 -->
