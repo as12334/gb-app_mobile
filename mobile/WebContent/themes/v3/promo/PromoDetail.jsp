@@ -26,7 +26,7 @@
             <h1 class="mui-title"><%--${activity.activityName}--%> 优惠详情</h1>
         </header>
     </c:if>
-    <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
+    <div class="mui-content mui-scroll-wrapper promo-detail-content">
         <div class="mui-scroll">
             <!-- 主界面具体展示内容 -->
             <div class="mui-row">
