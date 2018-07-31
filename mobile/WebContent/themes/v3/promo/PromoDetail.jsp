@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>${siteName}</title>
+    <meta name="format-detection" content="telephone=no" />
     <%@ include file="../include/include.head.jsp" %>
 </head>
 
