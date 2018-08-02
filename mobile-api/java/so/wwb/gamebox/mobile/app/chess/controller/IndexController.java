@@ -132,7 +132,7 @@ public class IndexController extends BaseOriginController {
                     //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
                     //电子和真人,第三层游戏图标更换
                     if ("game".equals(game.getType())) {
-                        if (ApiTypeEnum.CASINO.getCode() == apiTypeid) {
+                        if (apiTypeid!=null && ApiTypeEnum.CASINO.getCode() == apiTypeid) {
                             game.setCover(ImageTag.getImagePath(ServletTool.getDomainFullAddress(request), game.getGameConver()));
                         }
                     }
