@@ -122,7 +122,12 @@ public class IndexController extends BaseOriginController {
                 }
                 //递归执行替换
                 if (CollectionTool.isNotEmpty(game.getRelation())) {
-                    convertLiveImg(game.getRelation(), request, game.getApiTypeId());
+                    if (apiTypeid != null) {
+                        convertLiveImg(game.getRelation(), request, apiTypeid);
+                    } else {
+                        convertLiveImg(game.getRelation(), request, game.getApiTypeId());
+                    }
+
                 } else {
                     //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
                     //电子和真人,第三层游戏图标更换
