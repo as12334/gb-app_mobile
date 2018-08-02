@@ -68,7 +68,7 @@ public class IndexController extends BaseOriginController {
         gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis,
                 String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER)));
 
-        convertLiveImg(gamesByApiTypes, request);
+        convertLiveImg(gamesByApiTypes, request, null);
         Collections.sort(gamesByApiTypes);
         map.put("siteApiRelation", gamesByApiTypes);
 
@@ -106,7 +106,7 @@ public class IndexController extends BaseOriginController {
      *
      * @param siteApiRelationApps
      */
-    private void convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps, HttpServletRequest request) {
+    private void convertLiveImg(List<SiteApiRelationApp> siteApiRelationApps, HttpServletRequest request, Integer apiTypeid) {
         {
             for (SiteApiRelationApp game : siteApiRelationApps) {
                 if (ApiTypeEnum.LIVE_DEALER.getCode() == game.getApiTypeId()) {
@@ -122,12 +122,12 @@ public class IndexController extends BaseOriginController {
                 }
                 //递归执行替换
                 if (CollectionTool.isNotEmpty(game.getRelation())) {
-                    convertLiveImg(game.getRelation(), request);
+                    convertLiveImg(game.getRelation(), request, game.getApiTypeId());
                 } else {
                     //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
                     //电子和真人,第三层游戏图标更换
                     if ("game".equals(game.getType())) {
-                        if (ApiTypeEnum.CASINO.getCode() == game.getApiTypeId()) {
+                        if (ApiTypeEnum.CASINO.getCode() == apiTypeid) {
                             game.setCover(ImageTag.getImagePath(ServletTool.getDomainFullAddress(request), game.getGameConver()));
                         }
                     }
