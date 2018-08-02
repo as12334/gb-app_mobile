@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>${siteName}</title>
+    <meta name="format-detection" content="telephone=no" />
     <%@ include file="../include/include.head.jsp" %>
 </head>
 
@@ -13,13 +14,15 @@
     <div class="mui-inner-wrap">
         <c:set var="activity" value="${command}"/>
         <!-- 主页面标题 -->
+        <c:if test="${siteId!=18&&siteId<7000}">
         <header class="mui-bar mui-bar-nav mui-bar-blue">
             <a class="mui-icon mui-icon mui-icon-left-nav mui-pull-left"
                data-rel='{"target":"goToLastPage","opType":"function"}'></a>
             <h1 class="mui-title">优惠详情</h1>
             <a class="mui-icon mui-pull-right icon-gift" data-rel='{"target":"goPromoDetail","opType":"function","src":"${root}/promo/myPromo.html"}'><i></i></a>
         </header>
-        <div class="mui-content mui-scroll-wrapper promo-detail-content content-without-notice">
+        </c:if>
+        <div class="mui-content mui-scroll-wrapper promo-detail-content">
             <div class="mui-scroll">
                 <!-- 主界面具体展示内容 -->
                 <div class="mui-row">

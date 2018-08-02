@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="${resRoot}/themes/common.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/index.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css?v=${rcVersion}"/>
+<link rel="stylesheet" href="${resRoot}/themes/public-mod.css?v=${rcVersion}"/>
 <c:set var="backgroundParam" value="<%=ParamTool.getSysParam(SiteParamEnum.SETTING_SYSTEM_SETTINGS_BACKGROUND_COLOR)%>"/>
 <c:set var="background_type" value="${backgroundParam.paramValue}"/>
 <c:choose>
