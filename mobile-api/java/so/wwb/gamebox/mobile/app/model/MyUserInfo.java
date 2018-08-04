@@ -1,5 +1,7 @@
 package so.wwb.gamebox.mobile.app.model;
 
+import org.soul.commons.support.Nonpersistent;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,8 @@ public class MyUserInfo implements Serializable {
     private String currency;
     /*真实姓名*/
     private String realName;
+    /**用户性别*/
+    private String userSex;
     /*用户api资金*/
     private List<Map<String, Object>> apis = new ArrayList<>(0);
 
@@ -195,5 +199,14 @@ public class MyUserInfo implements Serializable {
 
     public void addApi(Map<String, Object> api) {
         this.apis.add(api);
+    }
+
+    @Nonpersistent
+    public String getUserSex() {
+        return userSex;
+    }
+
+    public void setUserSex(String userSex) {
+        this.userSex = userSex;
     }
 }

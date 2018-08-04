@@ -198,15 +198,23 @@ public class WithdrawAppController extends BaseWithDrawController {
         Double deductFavorable = MapTool.getDouble(auditMap, "deductFavorable");
         double result = amount - poundage - administrativeFee - deductFavorable;
 
-        map.put("deductFavorable", deductFavorable);//扣除优惠
-        map.put("actualWithdraw", result);// 实际取款金额
-        map.put("administrativeFee", administrativeFee);//行政费
-        map.put("counterFee", poundage);//手续费
+        map.put("deductFavorable", moneyFormatFloat(deductFavorable));//扣除优惠
+        map.put("actualWithdraw", moneyFormatFloat(result));// 实际取款金额
+        map.put("administrativeFee", moneyFormatFloat(administrativeFee));//行政费
+        map.put("counterFee",moneyFormatFloat(poundage));//手续费
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
                 map,
                 APP_VERSION);
+    }
+
+    /**金额保留两位小数*/
+    public String moneyFormatFloat(Double money){
+        if(money == null){
+            return null;
+        }
+        return String.format("%.2f", money);
     }
 
     /**

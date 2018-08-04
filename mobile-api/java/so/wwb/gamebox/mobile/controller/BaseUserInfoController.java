@@ -136,6 +136,7 @@ public class BaseUserInfoController extends BaseMobileApiController {
         }
         userInfo.setCurrency(getCurrencySign());
         userInfo.setRealName(sysUser.getRealName());
+        userInfo.setUserSex(sysUser.getSex());
         return userInfo;
     }
 
