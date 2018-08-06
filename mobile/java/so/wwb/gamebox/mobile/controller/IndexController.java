@@ -111,12 +111,17 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
-    public String toIndex(Model model, HttpServletRequest request) {
+    public String toIndex(Model model, HttpServletRequest request,HttpServletResponse response) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             SessionManager.setRecommendUserCode(c);
+            try {
+                response.sendRedirect("/signUp/index.html?c="+c);
+            }catch (IOException e) {
+                LOG.info("推广链接跳转注册失败，推广码:["+c+"],错误信息:"+e.getMessage());
+            }
         }
-        if (ParamTool.isLotterySite()) {
+        if (ParamTool.isLotterySite()){
             getAppPath(model, request);
         }
         //棋牌官网站点
