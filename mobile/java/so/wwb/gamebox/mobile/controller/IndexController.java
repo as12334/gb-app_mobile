@@ -27,7 +27,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.dubbo.ServiceBossTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
+import so.wwb.gamebox.iservice.boss.IAppUpdateService;
+import so.wwb.gamebox.iservice.company.site.ISiteAppUpdateService;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.OsTool;
@@ -36,12 +39,14 @@ import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.SiteI18nEnum;
 import so.wwb.gamebox.model.SiteParamEnum;
 import so.wwb.gamebox.model.boss.po.AppUpdate;
+import so.wwb.gamebox.model.boss.vo.AppUpdateVo;
 import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.lottery.po.SiteLottery;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.site.po.SiteApiType;
 import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
+import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.enums.OSTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
@@ -134,13 +139,14 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/mainIndex")
     @Upgrade(upgrade = true)
-    public String index(Model model, HttpServletRequest request, Integer skip, String path) {
+    public String index(Model model, HttpServletRequest request, HttpServletResponse response, Integer skip, String path) {
         model.addAttribute("skip", skip);
         model.addAttribute("channel", "index");
         model.addAttribute("apiTypes", getApiTypes());
         model.addAttribute("announcement", getAnnouncement());
         model.addAttribute("sysDomain", getSiteDomain(request));
-        model.addAttribute("code", CommonContext.get().getSiteCode());
+        String code = CommonContext.get().getSiteCode();
+        model.addAttribute("code", code);
         if (ParamTool.isLotterySite()) {
             model.addAttribute("lotteries", getLottery(request, 19));
         }
@@ -161,10 +167,95 @@ public class IndexController extends BaseApiController {
         //棋牌官网站点
         Integer siteId = SessionManager.getSiteId();
         if(siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)){
+            String userAgent = OsTool.getOsInfo(request);
+            String url = null;
+            //android自定义下载地址 androidUrl
+            if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
+                url = getAndroidDownloadUrl();
+            } else if (AppTypeEnum.IOS.getCode().contains(userAgent)) { //ios下载页面
+                url = getIosDownloadUrl();
+            }
+            if (StringTool.isBlank(url)) {
+                //ios
+                IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();
+                ISiteAppUpdateService siteAppUpdateService = ServiceBossTool.siteAppUpdateService();
+                getIosInfo(model, code, appUpdateService, siteAppUpdateService);
+                //android
+                getAndroidInfo(model, request, code, appUpdateService, siteAppUpdateService);
+            } else {
+                try {
+                    response.sendRedirect(url);
+                } catch (IOException e) {
+                    LOG.error(e, "app请求外接地址错误,地址:{0}", url);
+                }
+            }
+
             return  "/ChessIndex";
         }
         return "/Index";
     }
+
+    /**
+     * 获取IOS信息
+     */
+    private void getIosInfo(Model model, String code, IAppUpdateService appUpdateService, ISiteAppUpdateService siteAppUpdateService) {
+        boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
+        if (isMobileUpgrade) {
+            Integer siteId = CommonContext.get().getSiteId();
+            SiteAppUpdateVo iosVo = new SiteAppUpdateVo();
+            iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
+            iosVo.getSearch().setSiteId(siteId);
+            SiteAppUpdate iosApp = siteAppUpdateService.queryNewApp(iosVo);
+            if (iosApp != null) {
+                String versionName = iosApp.getVersionName();
+                String appUrl = iosApp.getAppUrl();
+                fillIosInfo(model, code, versionName, appUrl);
+            }
+        } else {
+            AppUpdateVo iosVo = new AppUpdateVo();
+            iosVo.getSearch().setAppType(AppTypeEnum.IOS.getCode());
+            AppUpdate iosApp = appUpdateService.queryNewApp(iosVo);
+            if (iosApp != null) {
+                String versionName = iosApp.getVersionName();
+                String appUrl = iosApp.getAppUrl();
+                fillIosInfo(model, code, versionName, appUrl);
+            }
+        }
+
+    }
+
+    /**
+     * 获取android APP信息
+     */
+    private void getAndroidInfo(Model model, HttpServletRequest request, String code, IAppUpdateService appUpdateService, ISiteAppUpdateService siteAppUpdateService) {
+        boolean isMobileUpgrade = ParamTool.isMobileUpgrade();
+        String appDomain = fetchAppDownloadDomain(request);
+        if (StringTool.isBlank(appDomain)) {
+            appDomain = ParamTool.appDmain(request.getServerName());
+        }
+        if (isMobileUpgrade) {
+            Integer siteId = CommonContext.get().getSiteId();
+            SiteAppUpdateVo androidVo = new SiteAppUpdateVo();
+            androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
+            androidVo.getSearch().setSiteId(siteId);
+            SiteAppUpdate androidApp = siteAppUpdateService.queryNewApp(androidVo);
+            if (androidApp != null) {
+                String versionName = androidApp.getVersionName();
+                String appUrl = androidApp.getAppUrl();
+                fillAndroidInfo(model, code, appDomain, versionName, appUrl);
+            }
+        } else {
+            AppUpdateVo androidVo = new AppUpdateVo();
+            androidVo.getSearch().setAppType(AppTypeEnum.ANDROID.getCode());
+            AppUpdate androidApp = appUpdateService.queryNewApp(androidVo);
+            if (androidApp != null) {
+                String versionName = androidApp.getVersionName();
+                fillAndroidInfo(model, code, appDomain, versionName, androidApp.getAppUrl());
+            }
+        }
+
+    }
+
 
     @RequestMapping("/index/floatPic")
     @Upgrade(upgrade = true)
