@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.app.chess.controller;
 
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.controller.BaseOriginController;
@@ -33,7 +33,6 @@ import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
 import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
@@ -138,7 +137,7 @@ public class IndexController extends BaseOriginController {
                 //如果没有下个层级,则直接为game:比如申博API是直接进入游戏大厅的.
                 //电子和真人,第三层游戏图标更换
                 if ("game".equals(game.getType())) {
-                    if (apiTypeid!=null && ApiTypeEnum.CASINO.getCode() == apiTypeid) {
+                    if (apiTypeid != null && ApiTypeEnum.CASINO.getCode() == apiTypeid) {
                         game.setCover(ImageTag.getImagePath(ServletTool.getDomainFullAddress(request), game.getGameConver()));
                     }
                 }
@@ -147,13 +146,40 @@ public class IndexController extends BaseOriginController {
     }
 
     /**
-     * 获取优惠活动和类型
+     * 获取优惠活动类型和标题
      */
-    @RequestMapping(value = "/getActivitysAndTypes")
+    @RequestMapping(value = "/getActivityTypes")
     @ResponseBody
     public String getActivityTypes(VActivityMessageListVo listVo, HttpServletRequest request) {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
     }
+
+    /**
+     * 获取优惠活动信息
+     */
+    @RequestMapping(value = "/getActivityById")
+    @ResponseBody
+    public String getActivityById(VActivityMessageListVo listVo, HttpServletRequest request) {
+        if(listVo.getSearch() == null || listVo.getSearch().getId() == null){
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_ID_EMPTY.getCode(), AppErrorCodeEnum.ACTIVITY_ID_EMPTY.getMsg(),null , APP_VERSION);
+        }
+        Map<String, PlayerActivityMessage> activityMessageMap = Cache.getMobileActivityMessages();
+        List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
+        String domain = ServletTool.getDomainFullAddress(request);
+        ActivityTypeListApp activityTypeListApp = new ActivityTypeListApp();
+        if (CollectionTool.isNotEmpty(activityList)) {
+            PlayerActivityMessage playerActivityMessage = activityList.get(0);
+            activityTypeListApp.setId(playerActivityMessage.getId());
+            activityTypeListApp.setPhoto(ImageTag.getImagePath(domain, playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated()));
+            activityTypeListApp.setName(playerActivityMessage.getActivityName());
+            activityTypeListApp.setStatus(playerActivityMessage.getStates());
+            activityTypeListApp.setExplain(playerActivityMessage.getActivityDescription());
+            activityTypeListApp.setTime(DateTool.formatDate(playerActivityMessage.getStartTime(),DateTool.yyyy_MM_dd_HH_mm_ss) +" —— "+ DateTool.formatDate(playerActivityMessage.getEndTime(),DateTool.yyyy_MM_dd_HH_mm_ss));
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(),activityTypeListApp , APP_VERSION);
+        }
+       return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_IS_INVALID.getCode(), AppErrorCodeEnum.ACTIVITY_IS_INVALID.getMsg(),null , APP_VERSION);
+    }
+
 
     /**
      * 获取活动和类型
@@ -169,18 +195,22 @@ public class IndexController extends BaseOriginController {
             types = getActivityTypes();
         }
         List<ActivityTypeApp> result = new ArrayList<>();
-
-        Map<String, Object> activityTypes = new HashMap<>(types.size(), 1f);
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getMobileActivityMessages();
-        String domain = ServletTool.getDomainFullAddress(request);
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
-            List<ActivityTypeListApp> messages = getActivityMessages(listVo, activityMessageMap, domain);
-            ActivityTypeApp activityTypeApp = new ActivityTypeApp();
-            activityTypeApp.setActivityKey(type.getActivityKey());
-            activityTypeApp.setActivityTypeName(type.getActivityTypeName());
-            activityTypeApp.setActivityList(messages);
-            result.add(activityTypeApp);
+            List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
+
+            if (CollectionTool.isNotEmpty(activityList)) {
+                List<AppSimpleModel> activitys = new ArrayList<>();
+                for (PlayerActivityMessage playerActivityMessage : activityList) {
+                    AppSimpleModel appSimpleModel = new AppSimpleModel();
+                    appSimpleModel.setCode(String.valueOf(playerActivityMessage.getId()));
+                    appSimpleModel.setName(playerActivityMessage.getActivityName());
+                    activitys.add(appSimpleModel);
+                }
+                type.setActivityList(activitys);
+                result.add(type);
+            }
         }
         return result;
     }
@@ -205,12 +235,12 @@ public class IndexController extends BaseOriginController {
     }
 
     /**
-     * 获取正在进行中的活动 转换接口数据
+     * 筛选出正在进行中的活动
      */
-    private List<ActivityTypeListApp> getActivityMessages(VActivityMessageListVo listVo, Map<String, PlayerActivityMessage> activityMessageMap, String domain) {
-        Map<String, Object> map = new HashMap<>(2, 1f);
+    private List<PlayerActivityMessage> getActivityMessages(VActivityMessageListVo listVo, Map<String, PlayerActivityMessage> activityMessageMap) {
+        List<PlayerActivityMessage> result = new ArrayList<>();
         if (MapTool.isEmpty(activityMessageMap)) {
-            return new ArrayList<>(0);
+            return result;
         }
         String locale = SessionManager.getLocale().toString();
         Integer rankId = null;
@@ -229,7 +259,8 @@ public class IndexController extends BaseOriginController {
         boolean hasRank;
         String release = ActivityStateEnum.RELEASE.getCode();
         String activityClassifyKey = listVo.getSearch().getActivityClassifyKey();
-        List<ActivityTypeListApp> activityTypeListApps = new ArrayList<>();
+        String activityId = listVo.getSearch().getId() == null ? null : String.valueOf(listVo.getSearch().getId());
+
         for (PlayerActivityMessage playerActivityMessage : activityMessageMap.values()) {
             isDisplay = playerActivityMessage.getIsDisplay() != null && playerActivityMessage.getIsDisplay();
             isDelete = playerActivityMessage.getIsDeleted() != null && playerActivityMessage.getIsDeleted();
@@ -240,19 +271,13 @@ public class IndexController extends BaseOriginController {
                         && playerActivityMessage.getRankid() != null && !playerActivityMessage.getRankid().contains("," + rankId)) {
                     hasRank = false;
                 }
-                if (hasRank) {
-                    ActivityTypeListApp activityApp = new ActivityTypeListApp();
-                    activityApp.setId(playerActivityMessage.getId());
-                    activityApp.setPhoto(ImageTag.getImagePath(domain, playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated()));
-                    activityApp.setUrl(ACTIVITY_DETAIL_URL + "?searchId=" + listVo.getSearchId(playerActivityMessage.getId()));
-                    activityApp.setName(playerActivityMessage.getActivityName());
-                    activityApp.setStatus(playerActivityMessage.getStates());
-                    activityTypeListApps.add(activityApp);
+                if (hasRank && (StringTool.isEmpty(activityId) || activityId.equals(String.valueOf(playerActivityMessage.getId())))) {
+                    result.add(playerActivityMessage);
                 }
             }
         }
 
-        return activityTypeListApps;
+        return result;
     }
 }
 

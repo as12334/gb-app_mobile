@@ -11,9 +11,27 @@ public class ActivityTypeListApp {
     private String name;
     private String status;
     private Integer orderNum;
+    private String explain; //活动说明
+    private String time; //活动时间
 
     public String getName() {
         return name;
+    }
+
+    public String getExplain() {
+        return this.explain;
+    }
+
+    public void setExplain(String explain) {
+        this.explain = explain;
+    }
+
+    public String getTime() {
+        return this.time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public void setName(String name) {
