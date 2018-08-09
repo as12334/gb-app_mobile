@@ -288,6 +288,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             if (GameTypeEnum.FISH.getCode().equals(game.getGameType())) {
                 game.setName(StringTool.join(" ", ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId())).getTrans(), game.getName()));
                 game.setCover(String.format(gameImgPath,String.format(CHESS_GAME_COVER_URL, GameTypeEnum.FISH.getCode().toLowerCase(), game.getApiId(), game.getCode())));
+                game.setApiTypeId(FISH_API_TYPE_ID);
             }
             SiteApiRelationApp siteGame = new SiteApiRelationApp(game.getGameId(),game.getApiId(),game.getApiTypeId(),RELATION_TYPE_GAME,
                     game.getName(), game.getCover(), getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()),

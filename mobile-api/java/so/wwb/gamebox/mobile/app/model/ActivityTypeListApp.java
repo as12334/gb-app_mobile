@@ -6,13 +6,32 @@ package so.wwb.gamebox.mobile.app.model;
 public class ActivityTypeListApp {
 
     private String photo; //活动对应的图片
-
     private String url; // 对应的具体的详情 h5链接
     private int id;
     private String name;
+    private String status;
+    private Integer orderNum;
+    private String explain; //活动说明
+    private String time; //活动时间
 
     public String getName() {
         return name;
+    }
+
+    public String getExplain() {
+        return this.explain;
+    }
+
+    public void setExplain(String explain) {
+        this.explain = explain;
+    }
+
+    public String getTime() {
+        return this.time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public void setName(String name) {
@@ -41,6 +60,22 @@ public class ActivityTypeListApp {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getOrderNum() {
+        return this.orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
     }
 
 
