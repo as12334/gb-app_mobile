@@ -9,7 +9,7 @@
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <soul.version>1.0.8.7-SNAPSHOT</soul.version>
-        <api.version>2.0.2.9-SNAPSHOT</api.version>
+        <api.version>2.0.2.7-SNAPSHOT</api.version>
         <monitor.version>2.0.2.7-SNAPSHOT</monitor.version>
         <gamebox.version>2.0.2.7-SNAPSHOT</gamebox.version>
 
