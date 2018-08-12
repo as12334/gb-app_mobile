@@ -50,6 +50,8 @@
 				/mineOrigin/loginIsOpenVerify.html = anon
 				/app/update.html = anon
 				/chess/mainIndex.html = anon
+				/chess/getActivityTypes.html = anon
+				/chess/getActivityById.html = anon
 				/userInfoOrigin/verifyRealNameForApp.html = anon
 				/origin/getTimeZone.html = anon
 				/origin/getCustomerService.html = anon

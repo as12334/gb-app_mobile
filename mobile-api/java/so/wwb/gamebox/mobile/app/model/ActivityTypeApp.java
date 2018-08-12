@@ -19,6 +19,7 @@ import java.util.Map;
 
         private String activityKey; // 活动类别的　key
         private String activityTypeName; //活动类别　具体的名称
+        private List activityList; //活动列表
 
         public String getActivityTypeName() {
             return activityTypeName;
@@ -34,6 +35,15 @@ import java.util.Map;
 
         public void setActivityKey(String activityKey) {
             this.activityKey = activityKey;
+
+        }
+
+        public List getActivityList() {
+            return activityList;
+        }
+
+        public void setActivityList(List activityList) {
+            this.activityList = activityList;
         }
     }
 
