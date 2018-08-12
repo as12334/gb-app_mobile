@@ -22,12 +22,12 @@ import org.soul.model.gameapi.result.GameApiResult;
 import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -37,7 +37,6 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.Game;
-import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.*;
@@ -310,15 +309,23 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         if (relationApp == null || relationApp.getCover() == null) {
             return;
         }
-
+        SysParam param = null;
         //设置个性图片路径
         if (BooleanUtils.isTrue(relationApp.getOwnIcon())) {
             String siteIdStr = SessionManager.getSiteIdString();
             siteIdStr = StringTool.join("", "/", siteIdStr);
             siteIdStr = StringTool.join("", siteIdStr, "/");
             relationApp.setCover(relationApp.getCover().replace("/public/", "/sites/").replace("/game/", siteIdStr).replace("/game01/", "/game/"));
+            //个性化图标,获取站点图片版本
+            param = ParamTool.getSysParam(SiteParamEnum.CHESS_ICON_VERSION);
+        } else {
+            //公共图标,获取company的公共图片版本
+            param = ParamTool.getSysParam(BossParamEnum.CHESS_ICON_PUBLIC_VERSION);
         }
-
+        //设置图片版本号
+        if (param != null && StringTool.isNotBlank(param.getParamValue())) {
+            relationApp.setCover(relationApp.getCover() + "?v=" + param.getParamValue());
+        }
     }
 
     //========================================================================================
