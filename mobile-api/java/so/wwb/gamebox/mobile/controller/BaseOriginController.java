@@ -600,10 +600,10 @@ public abstract class BaseOriginController extends BaseApiServiceController {
                     if (link.contains("${website}")) {
                         link = link.replace("${website}", webSite);
                     }
-                }
-                //判断是否有http开头,没有则增加http开头
-                if (!link.startsWith("http")) {
-                    link = "http://" + link;
+                    //判断是否有http开头,没有则增加http开头
+                    if (!link.startsWith("http")) {
+                        link = "http://" + link;
+                    }
                 }
                 m.put("link", link);
                 String cover = m.get("cover") == null ? "" : m.get("cover").toString();
