@@ -518,7 +518,9 @@ public class IndexController extends BaseApiController {
                     && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
                 String link = MapTool.getString(m, "link");
                 if (StringTool.isNotBlank(link)) {
-                    if (link.contains("${website}")) {
+                    if("${website}".equals(link) || "${website}/mainIndex.html".equals(link)){ //若广告链接为当前域名则置为空串，防止循环弹窗
+                        link = "";
+                    }else if(link.contains("${website}")) {
                         link = link.replace("${website}", webSite);
                     }
                 }

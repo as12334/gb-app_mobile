@@ -22,12 +22,12 @@ import org.soul.model.gameapi.result.GameApiResult;
 import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
+import org.soul.model.sys.po.SysParam;
 import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
-import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -37,7 +37,6 @@ import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.Game;
-import so.wwb.gamebox.model.company.setting.vo.GameVo;
 import so.wwb.gamebox.model.company.site.po.*;
 import so.wwb.gamebox.model.company.site.so.SiteGameSo;
 import so.wwb.gamebox.model.company.site.vo.*;
@@ -201,7 +200,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             isNotApis = true;
         }
         //API-GAME Relation for Cache
-        String gameImgPath = String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(),STR_PLACEHOLDER);
+        String gameImgPath = String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER);
         Map<String, LinkedHashMap<String, ApiCacheEntity>> apiCacheMap = getNotEmptyMap(Cache.getMobileApiCacheEntity(), new HashMap());
         Map<String, GameCacheEntity> fishGameMap; //捕鱼游戏
         Map<String, LinkedHashMap<String, GameCacheEntity>> siteGameMap; //非捕鱼游戏
@@ -216,17 +215,17 @@ public abstract class BaseOriginController extends BaseApiServiceController {
             //API Relation
             apiMap = getNotEmptyMap(apiCacheMap.get(String.valueOf(apiTypeId)), new LinkedHashMap());
 
-            SiteApiRelationApp siteApiType = new SiteApiRelationApp(null, null, apiType.getApiTypeId(), RELATION_TYPE_APITYPE,apiType.getName(),
-                    "", "", "", false, apiType.getOrderNum(),apiType.getOwnIcon() ,null);
+            SiteApiRelationApp siteApiType = new SiteApiRelationApp(null, null, apiType.getApiTypeId(), RELATION_TYPE_APITYPE, apiType.getName(),
+                    "", "", "", false, apiType.getOrderNum(), apiType.getOwnIcon(), null);
 
             //-1 为虚拟捕鱼apiType
             if (FISH_API_TYPE_ID == apiTypeId) {
                 fishGameMap = getNotEmptyMap(Cache.getMobileFishGameCache(), new HashMap());
                 siteApiType.setRelation(rechangeGameEntity(fishGameMap.values(), excludeApis, gameImgPath));
-                siteApiType.setCover(String.format(gameImgPath,String.format(CHESS_API_TYPE_LOGO_URL, GameTypeEnum.FISH.getCode().toLowerCase())));
+                siteApiType.setCover(String.format(gameImgPath, String.format(CHESS_API_TYPE_LOGO_URL, GameTypeEnum.FISH.getCode().toLowerCase())));
                 siteApiType.setName(LocaleTool.tranDict(DictEnum.GAME_TYPE, GameTypeEnum.FISH.getCode()));
             } else {
-                siteApiType.setCover(String.format(gameImgPath,String.format(CHESS_API_TYPE_LOGO_URL, ApiTypeEnum.getApiTypeEnum(apiTypeId).getType().toLowerCase())));
+                siteApiType.setCover(String.format(gameImgPath, String.format(CHESS_API_TYPE_LOGO_URL, ApiTypeEnum.getApiTypeEnum(apiTypeId).getType().toLowerCase())));
                 List<SiteApiRelationApp> siteApiList = new ArrayList<>();
                 //根据apiType获取游戏缓存
                 siteGameMap = getNotEmptyMap(Cache.getMobileGameCacheEntity(String.valueOf(apiTypeId)), new HashMap());
@@ -242,7 +241,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
 
                     SiteApiRelationApp siteApi = new SiteApiRelationApp(null, apiObj.getApiId(), apiObj.getApiTypeId(), RELATION_TYPE_API, apiObj.getRelationName(),
                             String.format(gameImgPath, String.format(CHESS_API_LOGO_URL, ApiTypeEnum.getApiTypeEnum(apiTypeId).getType().toLowerCase(), apiObj.getApiId())),
-                            "", "", false, apiObj.getOrderNum(), apiObj.getOwnIcon(),rechangeGameEntity(games4Api.values(), excludeApis, gameImgPath));
+                            "", "", false, apiObj.getOrderNum(), apiObj.getOwnIcon(), rechangeGameEntity(games4Api.values(), excludeApis, gameImgPath));
 
                     setExclusiveIcon(siteApi);
                     siteApiList.add(siteApi);
@@ -284,13 +283,13 @@ public abstract class BaseOriginController extends BaseApiServiceController {
                 continue;
             }
             String cacheCover = game.getCover();
-            game.setCover(String.format(gameImgPath,String.format(CHESS_GAME_COVER_URL, ApiTypeEnum.getApiTypeEnum(game.getApiTypeId()).getType().toLowerCase(), game.getApiId(), game.getCode())));
+            game.setCover(String.format(gameImgPath, String.format(CHESS_GAME_COVER_URL, ApiTypeEnum.getApiTypeEnum(game.getApiTypeId()).getType().toLowerCase(), game.getApiId(), game.getCode())));
             if (GameTypeEnum.FISH.getCode().equals(game.getGameType())) {
                 game.setName(StringTool.join(" ", ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(game.getApiId())).getTrans(), game.getName()));
-                game.setCover(String.format(gameImgPath,String.format(CHESS_GAME_COVER_URL, GameTypeEnum.FISH.getCode().toLowerCase(), game.getApiId(), game.getCode())));
+                game.setCover(String.format(gameImgPath, String.format(CHESS_GAME_COVER_URL, GameTypeEnum.FISH.getCode().toLowerCase(), game.getApiId(), game.getCode())));
                 game.setApiTypeId(FISH_API_TYPE_ID);
             }
-            SiteApiRelationApp siteGame = new SiteApiRelationApp(game.getGameId(),game.getApiId(),game.getApiTypeId(),RELATION_TYPE_GAME,
+            SiteApiRelationApp siteGame = new SiteApiRelationApp(game.getGameId(), game.getApiId(), game.getApiTypeId(), RELATION_TYPE_GAME,
                     game.getName(), game.getCover(), getCasinoGameRequestUrl(game.getApiTypeId(), game.getApiId(), game.getGameId(), game.getCode()),
                     "", SessionManager.isAutoPay(), game.getOrderNum(), game.getOwnIcon(), null);
             siteGame.setCode(game.getCode());
@@ -310,15 +309,23 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         if (relationApp == null || relationApp.getCover() == null) {
             return;
         }
-
+        SysParam param = null;
         //设置个性图片路径
         if (BooleanUtils.isTrue(relationApp.getOwnIcon())) {
             String siteIdStr = SessionManager.getSiteIdString();
-            siteIdStr = StringTool.join("","/",siteIdStr);
-            siteIdStr = StringTool.join("",siteIdStr,"/");
-            relationApp.setCover(relationApp.getCover().replace("/public/","/sites/").replace("/game/",siteIdStr).replace("/game01/","/game/"));
+            siteIdStr = StringTool.join("", "/", siteIdStr);
+            siteIdStr = StringTool.join("", siteIdStr, "/");
+            relationApp.setCover(relationApp.getCover().replace("/public/", "/sites/").replace("/game/", siteIdStr).replace("/game01/", "/game/"));
+            //个性化图标,获取站点图片版本
+            param = ParamTool.getSysParam(SiteParamEnum.CHESS_ICON_VERSION);
+        } else {
+            //公共图标,获取company的公共图片版本
+            param = ParamTool.getSysParam(BossParamEnum.CHESS_ICON_PUBLIC_VERSION);
         }
-
+        //设置图片版本号
+        if (param != null && StringTool.isNotBlank(param.getParamValue())) {
+            relationApp.setCover(relationApp.getCover() + "?v=" + param.getParamValue());
+        }
     }
 
     //========================================================================================
@@ -971,8 +978,8 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         if (StringTool.isNotBlank(playerApiAccountVo.getGameCode())) {
             String terminal = SessionManagerCommon.getTerminal(request);
 
-            PlatformTypeEnum platformType = (SupportTerminal.PC.getCode().equals(terminal))?
-                    PlatformTypeEnum.pc:PlatformTypeEnum.mobile;
+            PlatformTypeEnum platformType = (SupportTerminal.PC.getCode().equals(terminal)) ?
+                    PlatformTypeEnum.pc : PlatformTypeEnum.mobile;
             Game game = Cache.getGameByApiIdCode(playerApiAccountVo.getApiId(), playerApiAccountVo.getGameCode(), platformType);
             if (game != null) {
                 playerApiAccountVo.setGameId(game.getId());
