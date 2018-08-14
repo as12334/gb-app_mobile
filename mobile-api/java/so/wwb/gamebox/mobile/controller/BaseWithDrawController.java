@@ -295,10 +295,12 @@ public class BaseWithDrawController {
         Double withdrawAmount = vo.getWithdrawAmount();
         UserPlayer player = getPlayer();
         PlayerRank rank = getRank();
-        if (withdrawAmount < rank.getWithdrawMinNum() || withdrawAmount > rank.getWithdrawMaxNum()) {
+        Integer drawMin = rank.getWithdrawMinNum() == null ? 0 : rank.getWithdrawMinNum();
+        Integer drawMax = rank.getWithdrawMaxNum() == null ? 9999999 : rank.getWithdrawMaxNum();
+        if (withdrawAmount < drawMin || withdrawAmount > drawMax) {
             String msg = LocaleTool.tranMessage(Module.FUND, WITHDRAW_INVALID_AMOUNT)
-                    .replace("{min}", rank.getWithdrawMinNum() + "")
-                    .replace("{max}", rank.getWithdrawMaxNum() + "")
+                    .replace("{min}", drawMin + "")
+                    .replace("{max}", drawMax + "")
                     .replace("{walletBalance}", player.getWalletBalance() + "");
             map.put("msg", msg);
             return true;
@@ -686,8 +688,12 @@ public class BaseWithDrawController {
             double apiBalance = queryLotteryApiBalance();
             totalBalance = apiBalance + totalBalance;
         }
-        if (rank.getWithdrawMinNum() > player.getWalletBalance() + totalBalance) {
-            map.put("withdrawMinNum", formatCurrency(rank.getWithdrawMinNum()));
+        Integer drawMinNum = 0;
+        if (rank.getWithdrawMinNum() != null) {
+            drawMinNum = rank.getWithdrawMinNum();
+        }
+        if (drawMinNum > player.getWalletBalance() + totalBalance) {
+            map.put("withdrawMinNum", formatCurrency(drawMinNum));
             return true;
         }
         return false;
