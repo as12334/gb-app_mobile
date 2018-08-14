@@ -11,19 +11,11 @@ public class ActivityTypeListApp {
     private String name;
     private String status;
     private Integer orderNum;
-    private String explain; //活动说明
     private String time; //活动时间
+    private String searchId;//加密活动ID
 
     public String getName() {
         return name;
-    }
-
-    public String getExplain() {
-        return this.explain;
-    }
-
-    public void setExplain(String explain) {
-        this.explain = explain;
     }
 
     public String getTime() {
@@ -78,5 +70,13 @@ public class ActivityTypeListApp {
         this.orderNum = orderNum;
     }
 
+
+    public String getSearchId() {
+        return searchId;
+    }
+
+    public void setSearchId(String searchId) {
+        this.searchId = searchId;
+    }
 
 }
