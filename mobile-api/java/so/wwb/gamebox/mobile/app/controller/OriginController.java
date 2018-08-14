@@ -382,7 +382,7 @@ public class OriginController extends BaseOriginController {
                 HelpDocumentI18n helpDocumentI18n = Cache.getHelpDocumentI18n().get(String.valueOf(map.get("id")));
                 if (helpDocumentI18n != null) {
                     String content = helpDocumentI18n.getHelpContent().replaceAll("\\$\\{customerservice}", "在线客服");
-                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(RegexTools.replaceImgSrc(content, request.getServerName())));
+                    helpDocumentI18n.setHelpContent(StringEscapeTool.unescapeHtml4(content));
                 }
                 documentI18nList.add(helpDocumentI18n);
             }
