@@ -116,28 +116,28 @@ public class IndexController extends BaseApiController {
 
     @RequestMapping("/index")
     @Upgrade(upgrade = true)
-    public String toIndex(Model model, HttpServletRequest request,HttpServletResponse response) {
+    public String toIndex(Model model, HttpServletRequest request, HttpServletResponse response) {
         String c = request.getParameter("c");
         if (StringTool.isNotBlank(c)) {
             try {
-                response.sendRedirect("/signUp/index.html?c="+c);
-            }catch (IOException e) {
-                LOG.info("推广链接跳转注册失败，推广码:["+c+"],错误信息:"+e.getMessage());
+                response.sendRedirect("/signUp/index.html?c=" + c);
+            } catch (IOException e) {
+                LOG.info("推广链接跳转注册失败，推广码:[" + c + "],错误信息:" + e.getMessage());
             }
             SessionManager.setRecommendUserCode(c);
             try {
-                response.sendRedirect("/signUp/index.html?c="+c);
-            }catch (IOException e) {
-                LOG.info("推广链接跳转注册失败，推广码:["+c+"],错误信息:"+e.getMessage());
+                response.sendRedirect("/signUp/index.html?c=" + c);
+            } catch (IOException e) {
+                LOG.info("推广链接跳转注册失败，推广码:[" + c + "],错误信息:" + e.getMessage());
             }
         }
-        if (ParamTool.isLotterySite()){
+        if (ParamTool.isLotterySite()) {
             getAppPath(model, request);
         }
         //棋牌官网站点
         Integer siteId = SessionManager.getSiteId();
-        if(siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)){
-            return  "/ToChessIndex";
+        if (siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)) {
+            return "/ToChessIndex";
         }
         return "/ToIndex";
     }
@@ -171,7 +171,7 @@ public class IndexController extends BaseApiController {
         model.addAttribute("isShowQrCode", ParamTool.isLoginShowQrCode()); //这是二维码开启开关
         //棋牌官网站点
         Integer siteId = SessionManager.getSiteId();
-        if(siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)){
+        if (siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)) {
             String userAgent = OsTool.getOsInfo(request);
             String url = null;
             //android自定义下载地址 androidUrl
@@ -195,7 +195,7 @@ public class IndexController extends BaseApiController {
                 }
             }
 
-            return  "/ChessIndex";
+            return "/ChessIndex";
         }
         return "/Index";
     }
@@ -518,9 +518,9 @@ public class IndexController extends BaseApiController {
                     && (MapTool.getBoolean(m, "status") == null || MapTool.getBoolean(m, "status") == true)) {
                 String link = MapTool.getString(m, "link");
                 if (StringTool.isNotBlank(link)) {
-                    if("${website}".equals(link) || "${website}/mainIndex.html".equals(link)){ //若广告链接为当前域名则置为空串，防止循环弹窗
+                    if ("${website}".equals(link) || "${website}/mainIndex.html".equals(link)) { //若广告链接为当前域名则置为空串，防止循环弹窗
                         link = "";
-                    }else if(link.contains("${website}")) {
+                    } else if (link.contains("${website}")) {
                         link = link.replace("${website}", webSite);
                     }
                 }
@@ -771,6 +771,8 @@ public class IndexController extends BaseApiController {
             return "/passport/login";
         }
         String userAgent = OsTool.getOsInfo(request);
+        String isWeixin = request.getHeader("User-Agent").toLowerCase().indexOf("micromessenger") != -1 ? "1" : "0";
+        model.addAttribute("isWeixin", isWeixin);
         String url = null;
         //android自定义下载地址
         if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {
