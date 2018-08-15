@@ -159,19 +159,24 @@ public class DiscountController extends ActivityHallController {
         List<AppActivityApply> list = new ArrayList<>();
         if (ActivityTypeEnum.BACK_WATER.getCode().equals(playerActivityMessage.getCode())) {
             status = 1;//申请成功
-            applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "back_water_participation");
+            //TODO base 国际化文件 无权增量更新 暂时写死
+            //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "back_water_participation");
+            applyResult = "申请成功，您正在参与中！";
         } else {
             VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
             vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
             vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
             Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
             if (MapTool.isEmpty(stringObjectMap)) {
-                applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_result_empty");
+                //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_result_empty");
+                applyResult = "很抱歉！当前网络不稳定，请稍后重试！";
             } else {
                 boolean state = MapTool.getBooleanValue(stringObjectMap, "state");
                 status = state ? 1 : 2;
-                String defaultMsg = state ? LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_success") :
-                        LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_fail");
+                //String defaultMsg = state ? LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_success") :
+                //        LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_fail");
+                String defaultMsg = state ? "您所提交的申请已经进入审批阶段，请及时跟进申请状况。如有问题，请与客服人员联系。":
+                        "您所提交的申请还未达到活动要求，请多多努力！如有问题，请与客服人员联系。";
                 String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("msg").toString();
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
             }
