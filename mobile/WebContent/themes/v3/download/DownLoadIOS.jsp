@@ -7,7 +7,7 @@
     <%@ include file="../include/include.head.jsp"%>
 </head>
 
-<body>
+<body onload="initPage()">
 <header class="mui-bar mui-bar-nav mui-bar-blue">
     <a class="mui-icon mui-icon-arrowleft mui-pull-left mui-action-back"></a>
     <h1 class="mui-title">APP下载</h1>
