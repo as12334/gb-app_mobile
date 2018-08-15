@@ -4,6 +4,7 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
@@ -17,7 +18,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.mobile.tools.RegexTools;
+import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -29,9 +30,12 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.msites.controller.ActivityHallController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import static so.wwb.gamebox.mobile.app.constant.AppConstant.*;
+import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 
 
 /**
@@ -45,6 +49,7 @@ public class DiscountController extends ActivityHallController {
             ActivityTypeEnum.DEPOSIT_SEND.getCode(),  //存就送
             ActivityTypeEnum.EFFECTIVE_TRANSACTION.getCode(), //有效交易量
             ActivityTypeEnum.PROFIT.getCode()};  //盈亏返利
+
     /**
      * 获取优惠活动类型和标题
      */
@@ -60,8 +65,8 @@ public class DiscountController extends ActivityHallController {
     @RequestMapping(value = "/getActivityById")
     @ResponseBody
     public String getActivityById(VActivityMessageListVo listVo, HttpServletRequest request) {
-        if(listVo.getSearch() == null || listVo.getSearch().getId() == null){
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_ID_EMPTY.getCode(), AppErrorCodeEnum.ACTIVITY_ID_EMPTY.getMsg(),null , APP_VERSION);
+        if (listVo.getSearch() == null || listVo.getSearch().getId() == null) {
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_ID_EMPTY.getCode(), AppErrorCodeEnum.ACTIVITY_ID_EMPTY.getMsg(), null, APP_VERSION);
         }
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getMobileActivityMessages();
         List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
@@ -72,9 +77,9 @@ public class DiscountController extends ActivityHallController {
             appSimpleModel.setCode(playerActivityMessage.getActivityDescription());
             appSimpleModel.setName(listVo.getSearchId(playerActivityMessage.getId()));
             //TODO 替换H5中路径，开始时间
-            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(),appSimpleModel , APP_VERSION);
+            return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appSimpleModel, APP_VERSION);
         }
-       return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_IS_INVALID.getCode(), AppErrorCodeEnum.ACTIVITY_IS_INVALID.getMsg(),null , APP_VERSION);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.ACTIVITY_IS_INVALID.getCode(), AppErrorCodeEnum.ACTIVITY_IS_INVALID.getMsg(), null, APP_VERSION);
     }
 
     /**
@@ -83,10 +88,10 @@ public class DiscountController extends ActivityHallController {
     @RequestMapping(value = "/toApplyActivity")
     @ResponseBody
     public String toApplyActivity(VActivityMessageVo vActivityMessageVo, HttpServletRequest request) {
-        AppErrorCodeEnum resutl ;
-        if(vActivityMessageVo.getSearch() == null || vActivityMessageVo.getSearch().getId() == null){
+        AppErrorCodeEnum resutl;
+        if (vActivityMessageVo.getSearch() == null || vActivityMessageVo.getSearch().getId() == null) {
             resutl = AppErrorCodeEnum.ACTIVITY_ID_EMPTY;
-        }else {
+        } else {
             PlayerActivityMessage playerActivityMessage = Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString());
             long time = SessionManager.getDate().getNow().getTime();
             String code = playerActivityMessage.getCode();
@@ -94,16 +99,14 @@ public class DiscountController extends ActivityHallController {
                 resutl = AppErrorCodeEnum.ACTIVITY_NOTSTARTED;
             } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
                 resutl = AppErrorCodeEnum.ACTIVITY_FINISHED;
-            }else if(BooleanTool.isTrue(playerActivityMessage.getIsDeleted()) || StringTool.isEmpty(code)) { //活动是否已删除
+            } else if (BooleanTool.isTrue(playerActivityMessage.getIsDeleted()) || StringTool.isEmpty(code)) { //活动是否已删除
                 resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
-            }else if(ActivityTypeEnum.BACK_WATER.getCode().equals(code)){
-                resutl = AppErrorCodeEnum.ACTIVITY_IS_PARTICIPATION;
-            }else if(ActivityTypeEnum.MONEY.getCode().equals(code)){ //红包
-                return doApplyRedPacketeActivity(playerActivityMessage,request);
-            } else if(Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code)){  //需先报名活动
-                return doFetchActivity(playerActivityMessage,request);
-            } else{
-                return doApplyActivity(playerActivityMessage,request); //申请活动
+            } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
+                return doApplyRedPacketeActivity(playerActivityMessage, request);
+            } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code)) {  //需先报名活动
+                return doFetchActivity(playerActivityMessage, request);
+            } else {
+                return doApplyActivity(playerActivityMessage, request); //申请活动
             }
         }
         return AppModelVo.getAppModeVoJson(true, resutl.getCode(), resutl.getMsg(), null, APP_VERSION);
@@ -119,41 +122,69 @@ public class DiscountController extends ActivityHallController {
     }
 
     /**
-     *抢红包
+     * 抢红包
+     *
      * @return
      */
-    private String doApplyRedPacketeActivity(PlayerActivityMessage playerActivityMessage,HttpServletRequest request){
+    private String doApplyRedPacketeActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
         return null;
     }
 
     /**
-     *报名活动
+     * 报名活动
+     *
      * @return
      */
-    private String doFetchActivity(PlayerActivityMessage playerActivityMessage,HttpServletRequest request){
+    private String doFetchActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
         VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
         vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
         vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
-        Map<String, Object> stringObjectMap = fetchActivityProcess(vPlayerActivityMessageVo, request);
-        if(MapTool.isEmpty(stringObjectMap) || !MapTool.getBooleanValue(stringObjectMap,"state")){
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_FETCH_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_FETCH_FAIL.getMsg(), stringObjectMap, APP_VERSION);
+        Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
+        if (MapTool.isEmpty(stringObjectMap) || !MapTool.getBooleanValue(stringObjectMap, "state")) {
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), stringObjectMap, APP_VERSION);
         }
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), stringObjectMap, APP_VERSION);
     }
 
     /**
-     *申请活动
+     * 申请活动
+     *
      * @return
      */
-    private String doApplyActivity(PlayerActivityMessage playerActivityMessage,HttpServletRequest request){
-        VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
-        vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
-        vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
-        Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
-        if(MapTool.isEmpty(stringObjectMap) || !MapTool.getBooleanValue(stringObjectMap,"state")){
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), stringObjectMap, APP_VERSION);
+    private String doApplyActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
+        AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
+        appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName()); //活动标题
+        Integer status = 2;    // 申请失败
+        String applyResult;
+        List<AppActivityApply> list = new ArrayList<>();
+        if (ActivityTypeEnum.BACK_WATER.getCode().equals(playerActivityMessage.getCode())) {
+            status = 1;//申请成功
+            //TODO base 国际化文件 无权增量更新 暂时写死
+            //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "back_water_participation");
+            applyResult = "申请成功，您正在参与中！";
+        } else {
+            VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
+            vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
+            vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
+            Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
+            if (MapTool.isEmpty(stringObjectMap)) {
+                //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_result_empty");
+                applyResult = "很抱歉！当前网络不稳定，请稍后重试！";
+            } else {
+                boolean state = MapTool.getBooleanValue(stringObjectMap, "state");
+                status = state ? 1 : 2;
+                //String defaultMsg = state ? LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_success") :
+                //        LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_fail");
+                String defaultMsg = state ? "您所提交的申请已经进入审批阶段，请及时跟进申请状况。如有问题，请与客服人员联系。":
+                        "您所提交的申请还未达到活动要求，请多多努力！如有问题，请与客服人员联系。";
+                String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("msg").toString();
+                applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
+            }
         }
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), stringObjectMap, APP_VERSION);
+        appDiscountApplyResult.setStatus(status);//申请失败
+        appDiscountApplyResult.setApplyResult(applyResult);
+        appDiscountApplyResult.setApplyDetails(list);
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appDiscountApplyResult, APP_VERSION);
     }
 
 
