@@ -4,7 +4,6 @@ import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
@@ -18,7 +17,6 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -73,7 +71,7 @@ public class DiscountController extends ActivityHallController {
         if (CollectionTool.isNotEmpty(activityList)) {
             PlayerActivityMessage playerActivityMessage = activityList.get(0);
             AppSimpleModel appSimpleModel = new AppSimpleModel();
-//            appSimpleModel.setCode(RegexTools.replaceImgSrc(playerActivityMessage.getActivityDescription(),request.getServerName()));
+            //appSimpleModel.setCode(RegexTools.replaceImgSrc(playerActivityMessage.getActivityDescription(),request.getServerName()));
             appSimpleModel.setCode(playerActivityMessage.getActivityDescription());
             appSimpleModel.setName(listVo.getSearchId(playerActivityMessage.getId()));
             //TODO 替换H5中路径，开始时间
@@ -175,7 +173,7 @@ public class DiscountController extends ActivityHallController {
                 status = state ? 1 : 2;
                 //String defaultMsg = state ? LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_success") :
                 //        LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_fail");
-                String defaultMsg = state ? "您所提交的申请已经进入审批阶段，请及时跟进申请状况。如有问题，请与客服人员联系。":
+                String defaultMsg = state ? "您所提交的申请已经进入审批阶段，请及时跟进申请状况。如有问题，请与客服人员联系。" :
                         "您所提交的申请还未达到活动要求，请多多努力！如有问题，请与客服人员联系。";
                 String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("msg").toString();
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
