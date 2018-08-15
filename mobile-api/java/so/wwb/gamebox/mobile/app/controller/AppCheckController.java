@@ -57,7 +57,7 @@ public class AppCheckController {
         }
         List<String> domains = new ArrayList<>();
         for (int i = begin; i < begin + 10; i++) {
-            if (i <= siteDomain.size()) {
+            if (i < siteDomain.size()) {
                 domains.add(siteDomain.get(i).getDomain());
             }
         }
