@@ -26,6 +26,7 @@ import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -322,7 +323,12 @@ public class UserInfoAppController extends BaseUserInfoController {
 
         try {
             PlayerApiAccountVo playerApiAccountVo = createVoByTransfer(playerTransferVo);
-            PlayerApiAccount playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
+            PlayerApiAccount playerApiAccount = null;
+            if(ParamTool.apiSeparat()){
+                playerApiAccount = queryApiAccountForTransfer(playerApiAccountVo);
+            }else {
+                playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
+            }
             if (playerApiAccount == null) {
                 Map map = getErrorMessage(TransferResultStatusEnum.API_ACCOUNT_NOT_FOUND.getCode(), playerTransferVo.getResult().getApiId());
                 return AppModelVo.getAppModeVoJson(true,

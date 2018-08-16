@@ -943,7 +943,12 @@ public abstract class BaseOriginController extends BaseApiServiceController {
                     playerApiAccountVo.setTrial(false);
                 }
             }
-            playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            if(ParamTool.apiSeparat()){
+                playerApiAccountVo = loginApi(playerApiAccountVo);
+            }else {
+                playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            }
+
         } else {
             appI18n.setGameMsg(setMsg(MessageI18nConst.API_MAINTAIN, Module.Passport.getCode()));
             return appI18n;
