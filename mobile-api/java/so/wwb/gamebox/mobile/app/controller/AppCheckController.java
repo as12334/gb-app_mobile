@@ -4,20 +4,20 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
-import org.soul.commons.security.AesTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.cache.Cache;
-import so.wwb.gamebox.common.dubbo.ServiceBossTool;
-import so.wwb.gamebox.model.boss.po.AppUpdate;
-import so.wwb.gamebox.model.common.BoxTypeEnum;
+import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.model.company.enums.DomainPageUrlEnum;
 import so.wwb.gamebox.model.company.site.po.SiteAppUpdate;
-import so.wwb.gamebox.model.company.site.vo.SiteAppUpdateVo;
+import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/app")
@@ -39,5 +39,35 @@ public class AppCheckController {
         }
     }
 
+    /**
+     * 域名check  /app/getHost
+     */
+    @RequestMapping(value = "/getHost")
+    @ResponseBody
+    public String appHost(HttpServletRequest request) {
+        Map<String,Object> map = new HashMap<>();
+        Integer siteId = SessionManager.getSiteId();
+        String times = request.getParameter("times");
+        int num = StringTool.isBlank(times) ? 0 : Integer.parseInt(times);
+        List<VSysSiteDomain> siteDomain = Cache.getSiteDomain(siteId, DomainPageUrlEnum.INDEX.getCode());
+        if (siteDomain == null) {
+            LOG.info("app获取域名错误:站点ID={0},获取次数={1}, 缓存DOMAIN_SITE is null", siteId, num);
+            map.put("data",null);
+            return JsonTool.toJson(map);
+        }
+        Integer begin = num * 10;
+        if (begin > siteDomain.size()) {
+            map.put("data",null);
+            return JsonTool.toJson(map);
+        }
+        List<String> domains = new ArrayList<>();
+        for (int i = begin; i < begin + 10; i++) {
+            if (i < siteDomain.size()) {
+                domains.add(siteDomain.get(i).getDomain());
+            }
+        }
+        map.put("data",domains);
+        return JsonTool.toJson(map);
 
+    }
 }
