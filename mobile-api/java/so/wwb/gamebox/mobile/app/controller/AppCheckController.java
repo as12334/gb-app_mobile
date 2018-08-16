@@ -15,7 +15,9 @@ import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/app")
@@ -43,17 +45,20 @@ public class AppCheckController {
     @RequestMapping(value = "/getHost")
     @ResponseBody
     public String appHost(HttpServletRequest request) {
+        Map<String,Object> map = new HashMap<>();
         Integer siteId = SessionManager.getSiteId();
         String times = request.getParameter("times");
         int num = StringTool.isBlank(times) ? 0 : Integer.parseInt(times);
         List<VSysSiteDomain> siteDomain = Cache.getSiteDomain(siteId, DomainPageUrlEnum.INDEX.getCode());
         if (siteDomain == null) {
             LOG.info("app获取域名错误:站点ID={0},获取次数={1}, 缓存DOMAIN_SITE is null", siteId, num);
-            return null;
+            map.put("data",null);
+            return JsonTool.toJson(map);
         }
         Integer begin = num * 10;
         if (begin > siteDomain.size()) {
-            return null;
+            map.put("data",null);
+            return JsonTool.toJson(map);
         }
         List<String> domains = new ArrayList<>();
         for (int i = begin; i < begin + 10; i++) {
@@ -61,9 +66,8 @@ public class AppCheckController {
                 domains.add(siteDomain.get(i).getDomain());
             }
         }
-        return StringTool.join(domains, ",");
+        map.put("data",domains);
+        return JsonTool.toJson(map);
 
     }
-
-
 }
