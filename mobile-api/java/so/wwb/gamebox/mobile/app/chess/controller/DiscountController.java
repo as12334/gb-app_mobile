@@ -37,7 +37,7 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 
 
 /**
- * 棋牌包网首页控制器
+ * 棋牌包网活动大厅控制器
  */
 @Controller
 @RequestMapping("/chessActivity")
@@ -126,7 +126,7 @@ public class DiscountController extends ActivityHallController {
         AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
         appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName());
         appDiscountApplyResult.setStatus(3); //参与中
-        int applyNum = stringObjectMap.get("ApplyNum") == null || stringObjectMap.get("ApplyNum") == "" ? 0 : (int)stringObjectMap.get("ApplyNum");//当前活动参与人数
+        long applyNum = stringObjectMap.get("ApplyNum") == null  ? 0l : (long)stringObjectMap.get("ApplyNum");//当前活动参与人数
 
         List resultList = new ArrayList<>();
         if (MapTool.isEmpty(stringObjectMap)) {
@@ -135,13 +135,14 @@ public class DiscountController extends ActivityHallController {
             appDiscountApplyResult.setApplyResult("您可以选择申请已满足要求的订单，建议您查看活动细则后，再决定是否立即申请。");
             resultList = (List<PlayerRecharge>)stringObjectMap.get("transactions");
         }else if(stringObjectMap.get("preferentialRelations") != null) {  //有效投注额，盈亏送
-            appDiscountApplyResult.setApplyResult("以下是您当前投注额,统计周期请查看活动细则,加油吧。");
             resultList = (List<ActivityPreferentialRelation>) stringObjectMap.get("preferentialRelations");
-            String awardTime = stringObjectMap.get("deadLineTime") == null ? null : stringObjectMap.get("deadLineTime").toString();
+            String awardTime = stringObjectMap.get("deadLineTime") == null ? " - - " : stringObjectMap.get("deadLineTime").toString();
             if (ActivityTypeEnum.PROFIT.getCode().equals(code)) { //盈亏
+                appDiscountApplyResult.setApplyResult("以下是您当前盈亏,统计周期请查看活动细则,申请报名活动后显示派奖时间。");
                 appDiscountApplyResult.setTips("当前报名人数：" + applyNum + "人");
             } else {
                 appDiscountApplyResult.setTips("活动派奖时间：" + awardTime);
+                appDiscountApplyResult.setApplyResult("以下是您当前投注额,统计周期请查看活动细则,加油吧。");
             }
         }
         appDiscountApplyResult.setApplyDetails(returnApplyActivityResult(resultList,code,stringObjectMap));
@@ -162,7 +163,7 @@ public class DiscountController extends ActivityHallController {
         Object effectivetransaction = map.get("effectivetransaction");//当前投注额
         double effectivetransactionMoney = effectivetransaction == null || effectivetransaction == "" ? 0d : (double)effectivetransaction;
         Object profitloss = map.get("profitloss");//当前盈利额
-        double profitlossMoney = profitloss == null || profitloss == "" ? 0d : (double)profitloss;
+        double profitlossMoney = profitloss == null || profitloss == "" ? 0d : Double.valueOf(String.valueOf(profitloss));
         TimeZone timeZone = SessionManager.getTimeZone();
         for(Object obj : list){
             AppActivityApply appActivityApply = new AppActivityApply();
