@@ -7,6 +7,7 @@ import java.util.List;
  * 活动申请结果
  */
 public class AppDiscountApplyResult {
+    private String searchId; //活动加密ID
     private String  actibityTitle;//活动标题
     private String applyResult;//申请结果
     private Integer  status;//申请状态 1:成功，2：失败，3：部分成功
@@ -51,5 +52,13 @@ public class AppDiscountApplyResult {
 
     public void setTips(String tips) {
         Tips = tips;
+    }
+
+    public String getSearchId() {
+        return searchId;
+    }
+
+    public void setSearchId(String searchId) {
+        this.searchId = searchId;
     }
 }

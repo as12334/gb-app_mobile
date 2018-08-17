@@ -5,7 +5,6 @@ package so.wwb.gamebox.mobile.app.model;
  * 活动申请返回实体
  */
 public class AppActivityApply {
-    private String  searchId;//活动加密ID
     private Boolean isSatisfy;//是否成功
     private String  condition;//参与条件信息
     private Boolean  showSchedule;//是否展示进度条
@@ -29,14 +28,6 @@ public class AppActivityApply {
 
     public void setReached(Double reached) {
         this.reached = reached;
-    }
-
-    public String getSearchId() {
-        return this.searchId;
-    }
-
-    public void setSearchId(String searchId) {
-        this.searchId = searchId;
     }
 
     public Boolean getSatisfy() {
