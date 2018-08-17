@@ -78,7 +78,7 @@ public class IndexController extends BaseOriginController {
         Map<String, GameCacheEntity> mobileGameByApiType = getNotEmptyMap(Cache.getMobileGameByApiType(chessApiTypeStr), new LinkedHashMap());
 
         gamesByApiTypes.addAll(rechangeGameEntity(mobileGameByApiType.values(), excludeApis,
-                String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER)));
+                String.format(CHESS_GAME_IMG_PATH, model.getResolution(), SessionManager.getLocale().toString(), STR_PLACEHOLDER),false));
 
         convertLiveImg(gamesByApiTypes, request, null);
         Collections.sort(gamesByApiTypes);

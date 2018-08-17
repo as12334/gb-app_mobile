@@ -18,6 +18,7 @@ import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
+import so.wwb.gamebox.mobile.tools.RegexTools;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -71,8 +72,7 @@ public class DiscountController extends ActivityHallController {
         if (CollectionTool.isNotEmpty(activityList)) {
             PlayerActivityMessage playerActivityMessage = activityList.get(0);
             AppSimpleModel appSimpleModel = new AppSimpleModel();
-            //appSimpleModel.setCode(RegexTools.replaceImgSrc(playerActivityMessage.getActivityDescription(),request.getServerName()));
-            appSimpleModel.setCode(playerActivityMessage.getActivityDescription());
+            appSimpleModel.setCode(RegexTools.replaceImgSrc(playerActivityMessage.getActivityDescription(),request.getServerName()));
             appSimpleModel.setName(listVo.getSearchId(playerActivityMessage.getId()));
             //TODO 替换H5中路径，开始时间
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appSimpleModel, APP_VERSION);
