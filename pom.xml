@@ -13,10 +13,6 @@
         <module>../base/iservice-activity</module>
         <module>../base/webcommon</module>
         <module>../base/common</module>
-        <module>../base/monitor/monitor-aopclient</module>
-        <module>../base/monitor/monitor-client</module>
-        <module>../base/monitor/monitor-iservice</module>
-        <module>../base/monitor/monitor-model</module>
         <module>mobile</module>
         <module>mobile-api</module>
     </modules>

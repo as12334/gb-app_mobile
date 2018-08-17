@@ -11,6 +11,7 @@ public class AppDiscountApplyResult {
     private String applyResult;//申请结果
     private Integer  status;//申请状态 1:成功，2：失败，3：部分成功
     private List applyDetails;//参与条件列表
+    private String Tips; //活动当前参与人数 / 派奖时间
 
     public String getActibityTitle() {
         return this.actibityTitle;
@@ -42,5 +43,13 @@ public class AppDiscountApplyResult {
 
     public void setApplyDetails(List applyDetails) {
         this.applyDetails = applyDetails;
+    }
+
+    public String getTips() {
+        return Tips;
+    }
+
+    public void setTips(String tips) {
+        Tips = tips;
     }
 }

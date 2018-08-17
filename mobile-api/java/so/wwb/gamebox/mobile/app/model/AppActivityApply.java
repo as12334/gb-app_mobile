@@ -9,8 +9,26 @@ public class AppActivityApply {
     private Boolean isSatisfy;//是否成功
     private String  condition;//参与条件信息
     private Boolean  showSchedule;//是否展示进度条
-    private Integer  standard;//满足条件标准值
-    private Integer  reached;//当前值
+    private Double  standard;//满足条件标准值
+    private Double  reached;//当前值
+    private String checkTime;// 订单成功时间
+
+    public Double getStandard() {
+        return this.standard;
+    }
+
+    public void setStandard(Double standard) {
+        this.standard = standard;
+    }
+
+    public Double getReached() {
+        return this.reached;
+    }
+
+    public void setReached(Double reached) {
+        this.reached = reached;
+    }
+
     private Boolean  mayApply;//是否展示申请按钮
     private String transactionNo;//交易订单号
 
@@ -46,22 +64,6 @@ public class AppActivityApply {
         this.showSchedule = showSchedule;
     }
 
-    public Integer getStandard() {
-        return this.standard;
-    }
-
-    public void setStandard(Integer standard) {
-        this.standard = standard;
-    }
-
-    public Integer getReached() {
-        return this.reached;
-    }
-
-    public void setReached(Integer reached) {
-        this.reached = reached;
-    }
-
     public Boolean getMayApply() {
         return this.mayApply;
     }
@@ -76,5 +78,13 @@ public class AppActivityApply {
 
     public void setTransactionNo(String transactionNo) {
         this.transactionNo = transactionNo;
+    }
+
+    public String getCheckTime() {
+        return checkTime;
+    }
+
+    public void setCheckTime(String checkTime) {
+        this.checkTime = checkTime;
     }
 }
