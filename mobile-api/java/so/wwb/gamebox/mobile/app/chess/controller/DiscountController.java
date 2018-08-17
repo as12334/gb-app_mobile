@@ -91,6 +91,9 @@ public class DiscountController extends ActivityHallController {
             resutl = AppErrorCodeEnum.ACTIVITY_ID_EMPTY;
         } else {
             PlayerActivityMessage playerActivityMessage = Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString());
+            //申请多笔存款奖励时传入订单号，以“，”分隔
+            String transactionNo = vActivityMessageVo.getResult() == null ? "" :  vActivityMessageVo.getResult().getCode();
+            String[] transactionNos = StringTool.isEmpty(transactionNo) ? null : transactionNo.split(",");
             long time = SessionManager.getDate().getNow().getTime();
             String code = playerActivityMessage.getCode();
             if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
@@ -101,10 +104,10 @@ public class DiscountController extends ActivityHallController {
                 resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
             } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
                 return doApplyRedPacketeActivity(playerActivityMessage, request);
-            } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code)) {  //需先报名活动
+            } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0)) {  //需先报名活动
                 return doFetchActivity(playerActivityMessage, request,code);
             } else {
-                return doApplyActivity(playerActivityMessage, request); //申请活动
+                return doApplyActivity(playerActivityMessage, transactionNos,request); //申请活动
             }
         }
         return AppModelVo.getAppModeVoJson(true, resutl.getCode(), resutl.getMsg(), null, APP_VERSION);
@@ -195,7 +198,7 @@ public class DiscountController extends ActivityHallController {
      *
      * @return
      */
-    private String doApplyActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
+    private String doApplyActivity(PlayerActivityMessage playerActivityMessage,String[] transactionNos, HttpServletRequest request) {
         AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
         appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName()); //活动标题
         Integer status = 2;    // 申请失败
@@ -210,6 +213,7 @@ public class DiscountController extends ActivityHallController {
             VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
             vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
             vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
+            vPlayerActivityMessageVo.setTransactionNos(transactionNos);
             Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
             if (MapTool.isEmpty(stringObjectMap)) {
                 //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_result_empty");

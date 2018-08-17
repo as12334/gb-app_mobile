@@ -12,6 +12,8 @@ public class AppActivityApply {
     private Double  standard;//满足条件标准值
     private Double  reached;//当前值
     private String checkTime;// 订单成功时间
+    private Boolean  mayApply;//是否展示申请按钮
+    private String transactionNo;//交易订单号
 
     public Double getStandard() {
         return this.standard;
@@ -28,9 +30,6 @@ public class AppActivityApply {
     public void setReached(Double reached) {
         this.reached = reached;
     }
-
-    private Boolean  mayApply;//是否展示申请按钮
-    private String transactionNo;//交易订单号
 
     public String getSearchId() {
         return this.searchId;
