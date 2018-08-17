@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.chess.controller;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.BooleanTool;
+import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
@@ -20,6 +21,8 @@ import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
+import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
+import so.wwb.gamebox.model.master.operation.po.ActivityPreferentialRelation;
 import so.wwb.gamebox.model.master.operation.vo.PlayerActivityMessage;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageListVo;
 import so.wwb.gamebox.model.master.operation.vo.VActivityMessageVo;
@@ -28,10 +31,7 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.web.msites.controller.ActivityHallController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 
@@ -102,7 +102,7 @@ public class DiscountController extends ActivityHallController {
             } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
                 return doApplyRedPacketeActivity(playerActivityMessage, request);
             } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code)) {  //需先报名活动
-                return doFetchActivity(playerActivityMessage, request);
+                return doFetchActivity(playerActivityMessage, request,code);
             } else {
                 return doApplyActivity(playerActivityMessage, request); //申请活动
             }
@@ -111,39 +111,85 @@ public class DiscountController extends ActivityHallController {
     }
 
     /**
-     * 打开红包
-     */
-    @RequestMapping(value = "/openRedPackete")
-    @ResponseBody
-    public String openRedPackete(VActivityMessageListVo listVo, HttpServletRequest request) {
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
-    }
-
-    /**
-     * 抢红包
-     *
-     * @return
-     */
-    private String doApplyRedPacketeActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
-        return null;
-    }
-
-    /**
      * 报名活动
      *
      * @return
      */
-    private String doFetchActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
+    private String doFetchActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request,String code) {
         VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
         vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
         vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
-        Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
-        if (MapTool.isEmpty(stringObjectMap) || !MapTool.getBooleanValue(stringObjectMap, "state")) {
+        Map<String, Object> stringObjectMap = fetchActivityProcess(vPlayerActivityMessageVo, request);
+        AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
+        appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName());
+        appDiscountApplyResult.setStatus(3); //参与中
+        int applyNum = stringObjectMap.get("ApplyNum") == null || stringObjectMap.get("ApplyNum") == "" ? 0 : (int)stringObjectMap.get("ApplyNum");//当前活动参与人数
+
+        List resultList = new ArrayList<>();
+        if (MapTool.isEmpty(stringObjectMap)) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), stringObjectMap, APP_VERSION);
+        }else if(stringObjectMap.get("transactions") != null){  //存就送
+            appDiscountApplyResult.setApplyResult("您可以选择申请已满足要求的订单，建议您查看活动细则后，再决定是否立即申请。");
+            resultList = (List<PlayerRecharge>)stringObjectMap.get("transactions");
+        }else if(stringObjectMap.get("preferentialRelations") != null) {  //有效投注额，盈亏送
+            appDiscountApplyResult.setApplyResult("以下是您当前投注额,统计周期请查看活动细则,加油吧。");
+            resultList = (List<ActivityPreferentialRelation>) stringObjectMap.get("preferentialRelations");
+            String awardTime = stringObjectMap.get("deadLineTime") == null ? null : stringObjectMap.get("deadLineTime").toString();
+            if (ActivityTypeEnum.PROFIT.getCode().equals(code)) { //盈亏
+                appDiscountApplyResult.setTips("当前报名人数：" + applyNum + "人");
+            } else {
+                appDiscountApplyResult.setTips("活动派奖时间：" + awardTime);
+            }
         }
-        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), stringObjectMap, APP_VERSION);
+        appDiscountApplyResult.setApplyDetails(returnApplyActivityResult(resultList,code,stringObjectMap));
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appDiscountApplyResult, APP_VERSION);
     }
 
+    /**
+     *设置活动参与添加集
+     * @return
+     */
+    private  List<AppActivityApply> returnApplyActivityResult(List<?> list,String code,Map<String, Object> map){
+        List<AppActivityApply> result = new ArrayList<>();
+        if(CollectionTool.isEmpty(list)) {
+            return result;
+        }
+        PlayerRecharge playerRecharge ;
+        ActivityPreferentialRelation relation;
+        Object effectivetransaction = map.get("effectivetransaction");//当前投注额
+        double effectivetransactionMoney = effectivetransaction == null || effectivetransaction == "" ? 0d : (double)effectivetransaction;
+        Object profitloss = map.get("profitloss");//当前盈利额
+        double profitlossMoney = profitloss == null || profitloss == "" ? 0d : (double)profitloss;
+        TimeZone timeZone = SessionManager.getTimeZone();
+        for(Object obj : list){
+            AppActivityApply appActivityApply = new AppActivityApply();
+            if(obj instanceof PlayerRecharge){ //存就送
+                playerRecharge = (PlayerRecharge)obj;
+                appActivityApply.setTransactionNo(playerRecharge.getTransactionNo());
+                appActivityApply.setShowSchedule(false);
+                appActivityApply.setMayApply(true);
+                appActivityApply.setCheckTime(DateTool.formatDate(playerRecharge.getCheckTime(),timeZone,DateTool.yyyy_MM_dd_HH_mm_ss));
+                appActivityApply.setReached(playerRecharge.getRechargeAmount()); //存款金额
+            }else if(obj instanceof PlayerRecharge){ //有效投注额，盈亏送
+                relation = (ActivityPreferentialRelation)obj;
+                appActivityApply.setShowSchedule(true);
+                appActivityApply.setMayApply(false);
+                Double preferentialValue = relation.getPreferentialValue() == null ? 0d : relation.getPreferentialValue();
+                appActivityApply.setStandard(preferentialValue);
+                if(ActivityTypeEnum.PROFIT.getCode().equals(code)){ //盈亏
+                    appActivityApply.setReached(profitlossMoney);
+                    appActivityApply.setCondition("盈亏"+relation.getOrderColumn());
+                    appActivityApply.setSatisfy(profitlossMoney >= preferentialValue);
+                }else{ //有效投注额
+                    appActivityApply.setReached(effectivetransactionMoney);
+                    appActivityApply.setCondition("条件"+relation.getOrderColumn()+"(有效投注额)");
+                    appActivityApply.setSatisfy(effectivetransactionMoney >= preferentialValue);
+                }
+            }
+            result.add(appActivityApply);
+        }
+        return result;
+    }
     /**
      * 申请活动
      *
@@ -185,6 +231,23 @@ public class DiscountController extends ActivityHallController {
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appDiscountApplyResult, APP_VERSION);
     }
 
+    /**
+     * 打开红包
+     */
+    @RequestMapping(value = "/openRedPackete")
+    @ResponseBody
+    public String openRedPackete(VActivityMessageListVo listVo, HttpServletRequest request) {
+        return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), getActivityTypeMessages(listVo, request), APP_VERSION);
+    }
+
+    /**
+     * 抢红包
+     *
+     * @return
+     */
+    private String doApplyRedPacketeActivity(PlayerActivityMessage playerActivityMessage, HttpServletRequest request) {
+        return null;
+    }
 
     /**
      * 获取活动和类型
@@ -202,6 +265,7 @@ public class DiscountController extends ActivityHallController {
         List<ActivityTypeApp> result = new ArrayList<>();
         Map<String, PlayerActivityMessage> activityMessageMap = Cache.getMobileActivityMessages();
         String domain = ServletTool.getDomainFullAddress(request);
+        TimeZone timeZone = SessionManager.getTimeZone();
         for (ActivityTypeApp type : types) {
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
@@ -214,6 +278,9 @@ public class DiscountController extends ActivityHallController {
                     activityTypeListApp.setPhoto(ImageTag.getImagePath(domain, playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated()));
                     activityTypeListApp.setName(playerActivityMessage.getActivityName());
                     activityTypeListApp.setStatus(playerActivityMessage.getStates());
+                    Date beginTime = playerActivityMessage.getStartTime();
+                    Date endTime = playerActivityMessage.getEndTime();
+                    activityTypeListApp.setTime(DateTool.formatDate(beginTime,timeZone,DateTool.yyyy_MM_dd_HH_mm_ss) +" - "+ DateTool.formatDate(endTime,timeZone,DateTool.yyyy_MM_dd_HH_mm_ss));
                     activitys.add(activityTypeListApp);
                 }
                 type.setActivityList(activitys);
