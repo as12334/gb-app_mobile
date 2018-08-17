@@ -161,7 +161,7 @@ public class DiscountController extends ActivityHallController {
         PlayerRecharge playerRecharge ;
         ActivityPreferentialRelation relation;
         Object effectivetransaction = map.get("effectivetransaction");//当前投注额
-        double effectivetransactionMoney = effectivetransaction == null || effectivetransaction == "" ? 0d : (double)effectivetransaction;
+        double effectivetransactionMoney = effectivetransaction == null || effectivetransaction == "" ? 0d : Double.valueOf(String.valueOf(effectivetransaction));
         Object profitloss = map.get("profitloss");//当前盈利额
         double profitlossMoney = profitloss == null || profitloss == "" ? 0d : Double.valueOf(String.valueOf(profitloss));
         TimeZone timeZone = SessionManager.getTimeZone();
@@ -174,7 +174,7 @@ public class DiscountController extends ActivityHallController {
                 appActivityApply.setMayApply(true);
                 appActivityApply.setCheckTime(DateTool.formatDate(playerRecharge.getCheckTime(),timeZone,DateTool.yyyy_MM_dd_HH_mm_ss));
                 appActivityApply.setReached(playerRecharge.getRechargeAmount()); //存款金额
-            }else if(obj instanceof PlayerRecharge){ //有效投注额，盈亏送
+            }else if(obj instanceof ActivityPreferentialRelation){ //有效投注额，盈亏送
                 relation = (ActivityPreferentialRelation)obj;
                 appActivityApply.setShowSchedule(true);
                 appActivityApply.setMayApply(false);
