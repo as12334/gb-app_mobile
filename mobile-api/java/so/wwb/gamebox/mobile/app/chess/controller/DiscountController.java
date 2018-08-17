@@ -1,5 +1,6 @@
 package so.wwb.gamebox.mobile.app.chess.controller;
 
+import org.soul.commons.cache.locale.LocaleTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.BooleanTool;
@@ -19,6 +20,7 @@ import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.RegexTools;
+import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -44,10 +46,16 @@ import static so.wwb.gamebox.mobile.app.constant.AppConstant.APP_VERSION;
 @RequestMapping("/chessActivity")
 public class DiscountController extends ActivityHallController {
     private Log LOG = LogFactory.getLog(IndexController.class);
+    /**报名参与活动*/
     private static final String[] NEED_FORECAST_ACTIVITYS = new String[]{
             ActivityTypeEnum.DEPOSIT_SEND.getCode(),  //存就送
             ActivityTypeEnum.EFFECTIVE_TRANSACTION.getCode(), //有效交易量
             ActivityTypeEnum.PROFIT.getCode()};  //盈亏返利
+
+    /**无需申请活动*/
+    private static final String[] UNNEED_APPLY_ACTIVITYS = new String[]{
+            ActivityTypeEnum.CONTENT.getCode(),  //活动内容
+            ActivityTypeEnum.BACK_WATER.getCode()};  //反水活动
 
     /**
      * 获取优惠活动类型和标题
@@ -74,6 +82,8 @@ public class DiscountController extends ActivityHallController {
             AppSimpleModel appSimpleModel = new AppSimpleModel();
             appSimpleModel.setCode(RegexTools.replaceImgSrc(playerActivityMessage.getActivityDescription(),request.getServerName()));
             appSimpleModel.setName(listVo.getSearchId(playerActivityMessage.getId()));
+            boolean unneedApply = Arrays.asList(UNNEED_APPLY_ACTIVITYS).contains(playerActivityMessage.getCode()) ? true : false;
+            appSimpleModel.setStatus(unneedApply); //是否无需申请
             //TODO 替换H5中路径，开始时间
             return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appSimpleModel, APP_VERSION);
         }
@@ -210,6 +220,9 @@ public class DiscountController extends ActivityHallController {
             //TODO base 国际化文件 无权增量更新 暂时写死
             //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "back_water_participation");
             applyResult = "申请成功，您正在参与中！";
+        }else if(ActivityTypeEnum.CONTENT.getCode().equals(playerActivityMessage.getCode())){
+            status = 1;
+            applyResult = "该活动无需申请！";
         } else {
             VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
             vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
@@ -230,8 +243,29 @@ public class DiscountController extends ActivityHallController {
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
                 String tips = state && ActivityTypeEnum.DEPOSIT_SEND.getCode().equals(code) ? "操作成功,审核通过后彩金将直接发放到您的账户,请注意查收!" : null;
                 appDiscountApplyResult.setTips(tips);
+                Object transactionErrorList = stringObjectMap.get("transactionErrorList");
+                List<Map<String,Object>> reaultMaps = transactionErrorList == null ? null : (List<Map<String,Object>>)transactionErrorList;
+                if(CollectionTool.isNotEmpty(reaultMaps)){
+                    String msg,transactionNo,money; //消息提示，订单号，存款金额
+                    boolean state4condition;
+                    for(Map<String,Object> map : reaultMaps){
+                        msg = String.valueOf(map.get("msg"));
+                        transactionNo = String.valueOf(map.get("transactionNo"));
+                        state4condition = MapTool.getBooleanValue(map, "state");
+                        money = map.get("money") == null ? "" : String.valueOf(map.get("money"));
+                        AppActivityApply apply = new AppActivityApply();
+                        apply.setSatisfy(true);
+                        apply.setCondition("存款订单"+transactionNo);
+                        list.add(apply); //添加订单
+                        apply = new AppActivityApply();
+                        apply.setSatisfy(state4condition);
+                        apply.setCondition(LocaleTool.tranMessage("apply_activity", msg) + money);
+                        list.add(apply); //添加订单申请说明
+                    }
+                }
             }
         }
+
         appDiscountApplyResult.setStatus(status);//申请失败
         appDiscountApplyResult.setApplyResult(applyResult);
         appDiscountApplyResult.setApplyDetails(list);

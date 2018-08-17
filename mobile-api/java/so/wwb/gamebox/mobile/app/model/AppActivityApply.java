@@ -7,11 +7,11 @@ package so.wwb.gamebox.mobile.app.model;
 public class AppActivityApply {
     private Boolean isSatisfy;//是否成功
     private String  condition;//参与条件信息
-    private Boolean  showSchedule;//是否展示进度条
+    private Boolean  showSchedule = false;//是否展示进度条
     private Double  standard;//满足条件标准值
     private Double  reached;//当前值
     private String checkTime;// 订单成功时间
-    private Boolean  mayApply;//是否展示申请按钮
+    private Boolean  mayApply = false;//是否展示申请按钮
     private String transactionNo;//交易订单号
 
     public Double getStandard() {
