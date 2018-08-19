@@ -1257,6 +1257,13 @@ public class MineAppController extends BaseMineController {
                         null,
                         APP_VERSION);
             }
+            if(contactVo.getSearch().getContactValue().equals(oldPhone)){//判断新旧手机号是否一致
+                return AppModelVo.getAppModeVoJson(true,
+                        AppErrorCodeEnum.NPHONE_AND_OPHONE_AGREEMENT.getCode(),
+                        AppErrorCodeEnum.NPHONE_AND_OPHONE_AGREEMENT.getMsg(),
+                        null,
+                        APP_VERSION);
+            }
             contactVo.getResult().setId(contactWay.getId());
             contactVo.setProperties(NoticeContactWay.PROP_CONTACT_VALUE);
             contactVo.getResult().setContactValue(contactVo.getSearch().getContactValue());
