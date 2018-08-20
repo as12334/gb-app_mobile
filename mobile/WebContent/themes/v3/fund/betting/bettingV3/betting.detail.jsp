@@ -153,7 +153,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach items="${resultArray}" var="array">
-                                        <div class="panel">
+                                        <div class="panel dis-no">
                                             <c:forEach items="${array}" var="json">
                                                 <c:if test="${!empty views.gameOrder[json.key]||(result.apiId==3&&json.key=='type')||(result.apiId==1&&json.key=='ip')}">
                                                     <p>
