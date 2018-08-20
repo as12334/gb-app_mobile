@@ -224,18 +224,18 @@ public class DiscountController extends ActivityHallController {
         Integer status = 2;    // 申请失败
         String applyResult;
         List<AppActivityApply> list = new ArrayList<>();
-        if (ActivityTypeEnum.BACK_WATER.getCode().equals(playerActivityMessage.getCode())) {
+        if (ActivityTypeEnum.BACK_WATER.getCode().equals(code)) {
             status = 1;//申请成功
             //TODO base 国际化文件 无权增量更新 暂时写死
             //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "back_water_participation");
             applyResult = "申请成功，您正在参与中！";
-        }else if(ActivityTypeEnum.CONTENT.getCode().equals(playerActivityMessage.getCode())){
+        }else if(ActivityTypeEnum.CONTENT.getCode().equals(code)){
             status = 1;
             applyResult = "该活动无需申请！";
         } else {
             VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
             vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
-            vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
+            vPlayerActivityMessageVo.setCode(code);
             vPlayerActivityMessageVo.setTransactionNos(transactionNos);
             Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
             if (MapTool.isEmpty(stringObjectMap)) {
@@ -250,6 +250,9 @@ public class DiscountController extends ActivityHallController {
                         "您所提交的申请还未达到活动要求，请多多努力！如有问题，请与客服人员联系。";
                 String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("msg").toString();
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
+                if(ActivityTypeEnum.BACK_WATER.getCode().equals(code) || applyResult.lastIndexOf("您的注册时间为：{1}") >= 0){
+                    applyResult = applyResult.replace("您的注册时间为：{1}","并且在活动期间注册。");
+                }
                 String tips = state && ActivityTypeEnum.DEPOSIT_SEND.getCode().equals(code) ? "操作成功,审核通过后彩金将直接发放到您的账户,请注意查收!" : null;
                 appDiscountApplyResult.setTips(tips);
                 Object transactionErrorList = stringObjectMap.get("transactionErrorList");
