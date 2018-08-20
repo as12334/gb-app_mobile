@@ -30,6 +30,9 @@ public class AppCheckController {
         String encryptCode = request.getParameter("code");
         String type = request.getParameter("type");
         String siteId = request.getParameter("siteId");
+
+
+
         SiteAppUpdate app = Cache.getSiteAppUpdate(siteId, type);
         LOG.info("app获取版本号参数:{0},{1},{2},结果:{3}", encryptCode, type, siteId, JsonTool.toJson(app));
         if (app != null && app.getAppType().equals(type)) {
