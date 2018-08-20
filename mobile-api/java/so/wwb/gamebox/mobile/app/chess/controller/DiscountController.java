@@ -119,7 +119,13 @@ public class DiscountController extends ActivityHallController {
                 return doApplyActivity(playerActivityMessage, transactionNos,request,code); //申请活动
             }
         }
-        return AppModelVo.getAppModeVoJson(true, resutl.getCode(), resutl.getMsg(), null, APP_VERSION);
+        AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
+        appDiscountApplyResult.setSearchId(playerActivityMessage.getSearchId());
+        appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName());
+        appDiscountApplyResult.setStatus(2); //失败
+        appDiscountApplyResult.setApplyResult("您所提交的申请失败！如有问题，请与客服人员联系。");
+        appDiscountApplyResult.setTips(resutl.getMsg());
+        return AppModelVo.getAppModeVoJson(true, resutl.getCode(), resutl.getMsg(), appDiscountApplyResult, APP_VERSION);
     }
 
     /**
@@ -140,7 +146,10 @@ public class DiscountController extends ActivityHallController {
 
         List resultList = new ArrayList<>();
         if (MapTool.isEmpty(stringObjectMap)) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), stringObjectMap, APP_VERSION);
+            appDiscountApplyResult.setStatus(2);
+            appDiscountApplyResult.setApplyResult("您所提交的申请失败！如有问题，请与客服人员联系。");
+            appDiscountApplyResult.setTips("您还没有符合活动要求的订单，请继续努力哦！");
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), appDiscountApplyResult, APP_VERSION);
         }else if(stringObjectMap.get("transactions") != null){  //存就送
             appDiscountApplyResult.setApplyResult("您可以选择申请已满足要求的订单，建议您查看活动细则后，再决定是否立即申请。");
             resultList = (List<PlayerRecharge>)stringObjectMap.get("transactions");
