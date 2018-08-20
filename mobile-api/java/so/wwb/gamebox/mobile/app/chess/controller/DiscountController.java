@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.chess.controller;
 import org.soul.commons.cache.locale.LocaleTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -101,22 +102,26 @@ public class DiscountController extends ActivityHallController {
             resutl = AppErrorCodeEnum.ACTIVITY_ID_EMPTY;
         } else {
             PlayerActivityMessage playerActivityMessage = Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString());
-            //申请多笔存款奖励时传入订单号，以“，”分隔
-            String[] transactionNos = StringTool.isEmpty(vActivityMessageVo.getSearch().getCode()) ? null : vActivityMessageVo.getSearch().getCode().split(",");
-            long time = SessionManager.getDate().getNow().getTime();
-            String code = playerActivityMessage.getCode();
-            if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
-                resutl = AppErrorCodeEnum.ACTIVITY_NOTSTARTED;
-            } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
-                resutl = AppErrorCodeEnum.ACTIVITY_FINISHED;
-            } else if (BooleanTool.isTrue(playerActivityMessage.getIsDeleted()) || StringTool.isEmpty(code)) { //活动是否已删除
-                resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
-            } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
-                return doApplyRedPacketeActivity(playerActivityMessage, request);
-            } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0)) {  //需先报名活动
-                return doFetchActivity(playerActivityMessage, request,code);
-            } else {
-                return doApplyActivity(playerActivityMessage, transactionNos,request,code); //申请活动
+            if(playerActivityMessage == null){
+                resutl = AppErrorCodeEnum.ACTIVITY_APPLY_FAIL;
+            }else {
+                //申请多笔存款奖励时传入订单号，以“，”分隔
+                String[] transactionNos = StringTool.isEmpty(vActivityMessageVo.getSearch().getCode()) ? null : vActivityMessageVo.getSearch().getCode().split(",");
+                long time = SessionManager.getDate().getNow().getTime();
+                String code = playerActivityMessage.getCode();
+                if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
+                    resutl = AppErrorCodeEnum.ACTIVITY_NOTSTARTED;
+                } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
+                    resutl = AppErrorCodeEnum.ACTIVITY_FINISHED;
+                } else if (BooleanTool.isTrue(playerActivityMessage.getIsDeleted()) || StringTool.isEmpty(code)) { //活动是否已删除
+                    resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
+                } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
+                    return doApplyRedPacketeActivity(playerActivityMessage, request);
+                } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0)) {  //需先报名活动
+                    return doFetchActivity(playerActivityMessage, request, code);
+                } else {
+                    return doApplyActivity(playerActivityMessage, transactionNos, request, code); //申请活动
+                }
             }
         }
         AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
