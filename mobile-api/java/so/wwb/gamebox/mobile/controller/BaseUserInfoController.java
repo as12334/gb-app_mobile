@@ -643,7 +643,7 @@ public class BaseUserInfoController extends BaseMobileApiController {
             api = apis.get(apiId);
             siteApi = siteApis.get(apiId);
             //额度转换的ｂｓｇ不支持 || 棋牌包网不展示彩票api
-            ApiProviderEnum apiProviderEnumByCode = ApiProviderEnum.getApiProviderEnumByCode(String.valueOf(api));
+            ApiProviderEnum apiProviderEnumByCode = ApiProviderEnum.getApiProviderEnumByCode(apiId);
             if (ApiProviderEnum.BSG.getCode().equals(apiId) || (isChess &&  apiProviderEnumByCode.getApiType() == ApiTypeEnum.LOTTERY.getCode())) {
                 continue;
             }
