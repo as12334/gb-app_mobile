@@ -325,6 +325,9 @@ public class DiscountController extends ActivityHallController {
         String domain = ServletTool.getDomainFullAddress(request);
         TimeZone timeZone = SessionManager.getTimeZone();
         for (ActivityTypeApp type : types) {
+            if("03940531-e54d-4a99-9486-859752174390".equals(type.getActivityKey())){ //排除红包活动
+                continue;
+            }
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
 
