@@ -9,11 +9,13 @@ import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.spring.utils.SpringTool;
 import org.soul.model.security.privilege.po.SysUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -38,8 +40,8 @@ import so.wwb.gamebox.model.master.player.vo.PlayerApiVo;
 import so.wwb.gamebox.model.master.player.vo.VUserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
-import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
+import so.wwb.gamebox.web.fund.controller.WebCommonAutoTransferController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -51,6 +53,9 @@ import java.util.*;
 @RequestMapping("/api")
 public class ApiController extends BaseApiController {
     private static final Log LOG = LogFactory.getLog(ApiController.class);
+
+    @Autowired
+    private WebCommonAutoTransferController webCommonAutoTransferController;
 
     @Value("${site.res}")
     private String freemakerTemplateRootPath;
@@ -78,7 +83,7 @@ public class ApiController extends BaseApiController {
             }
             if(ParamTool.apiSeparat()){
                 //todo by mical
-                playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
+                playerApiAccountVo = webCommonAutoTransferController.loginApi(playerApiAccountVo);
             }else{
                 playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
             }
