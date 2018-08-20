@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.app.chess.controller;
 import org.soul.commons.cache.locale.LocaleTool;
 import org.soul.commons.collections.CollectionTool;
 import org.soul.commons.collections.MapTool;
+import org.soul.commons.init.context.CommonContext;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.DateTool;
 import org.soul.commons.lang.string.StringTool;
@@ -101,25 +102,35 @@ public class DiscountController extends ActivityHallController {
             resutl = AppErrorCodeEnum.ACTIVITY_ID_EMPTY;
         } else {
             PlayerActivityMessage playerActivityMessage = Cache.getMobileActivityMessageInfo(vActivityMessageVo.getSearch().getId().toString());
-            //申请多笔存款奖励时传入订单号，以“，”分隔
-            String[] transactionNos = StringTool.isEmpty(vActivityMessageVo.getSearch().getCode()) ? null : vActivityMessageVo.getSearch().getCode().split(",");
-            long time = SessionManager.getDate().getNow().getTime();
-            String code = playerActivityMessage.getCode();
-            if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
-                resutl = AppErrorCodeEnum.ACTIVITY_NOTSTARTED;
-            } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
-                resutl = AppErrorCodeEnum.ACTIVITY_FINISHED;
-            } else if (BooleanTool.isTrue(playerActivityMessage.getIsDeleted()) || StringTool.isEmpty(code)) { //活动是否已删除
-                resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
-            } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
-                return doApplyRedPacketeActivity(playerActivityMessage, request);
-            } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0)) {  //需先报名活动
-                return doFetchActivity(playerActivityMessage, request,code);
-            } else {
-                return doApplyActivity(playerActivityMessage, transactionNos,request,code); //申请活动
+            if(playerActivityMessage == null){
+                resutl = AppErrorCodeEnum.ACTIVITY_APPLY_FAIL;
+            }else {
+                //申请多笔存款奖励时传入订单号，以“，”分隔
+                String[] transactionNos = StringTool.isEmpty(vActivityMessageVo.getSearch().getCode()) ? null : vActivityMessageVo.getSearch().getCode().split(",");
+                long time = SessionManager.getDate().getNow().getTime();
+                String code = playerActivityMessage.getCode();
+                if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
+                    resutl = AppErrorCodeEnum.ACTIVITY_NOTSTARTED;
+                } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
+                    resutl = AppErrorCodeEnum.ACTIVITY_FINISHED;
+                } else if (BooleanTool.isTrue(playerActivityMessage.getIsDeleted()) || StringTool.isEmpty(code)) { //活动是否已删除
+                    resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
+                } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
+                    return doApplyRedPacketeActivity(playerActivityMessage, request);
+                } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0)) {  //需先报名活动
+                    return doFetchActivity(playerActivityMessage, request, code);
+                } else {
+                    return doApplyActivity(playerActivityMessage, transactionNos, request, code); //申请活动
+                }
             }
         }
-        return AppModelVo.getAppModeVoJson(true, resutl.getCode(), resutl.getMsg(), null, APP_VERSION);
+        AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
+        appDiscountApplyResult.setSearchId(String.valueOf(vActivityMessageVo.getSearch().getId()));
+        appDiscountApplyResult.setActibityTitle(vActivityMessageVo.getSearch().getActivityName());
+        appDiscountApplyResult.setStatus(2); //失败
+        appDiscountApplyResult.setApplyResult("您所提交的申请失败！如有问题，请与客服人员联系。");
+        appDiscountApplyResult.setTips(resutl.getMsg());
+        return AppModelVo.getAppModeVoJson(true, resutl.getCode(), resutl.getMsg(), appDiscountApplyResult, APP_VERSION);
     }
 
     /**
@@ -140,7 +151,10 @@ public class DiscountController extends ActivityHallController {
 
         List resultList = new ArrayList<>();
         if (MapTool.isEmpty(stringObjectMap)) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), stringObjectMap, APP_VERSION);
+            appDiscountApplyResult.setStatus(2);
+            appDiscountApplyResult.setApplyResult("您所提交的申请失败！如有问题，请与客服人员联系。");
+            appDiscountApplyResult.setTips("您还没有符合活动要求的订单，请继续努力哦！");
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getCode(), AppErrorCodeEnum.ACTIVITY_APPLY_FAIL.getMsg(), appDiscountApplyResult, APP_VERSION);
         }else if(stringObjectMap.get("transactions") != null){  //存就送
             appDiscountApplyResult.setApplyResult("您可以选择申请已满足要求的订单，建议您查看活动细则后，再决定是否立即申请。");
             resultList = (List<PlayerRecharge>)stringObjectMap.get("transactions");
@@ -215,18 +229,18 @@ public class DiscountController extends ActivityHallController {
         Integer status = 2;    // 申请失败
         String applyResult;
         List<AppActivityApply> list = new ArrayList<>();
-        if (ActivityTypeEnum.BACK_WATER.getCode().equals(playerActivityMessage.getCode())) {
+        if (ActivityTypeEnum.BACK_WATER.getCode().equals(code)) {
             status = 1;//申请成功
             //TODO base 国际化文件 无权增量更新 暂时写死
             //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "back_water_participation");
             applyResult = "申请成功，您正在参与中！";
-        }else if(ActivityTypeEnum.CONTENT.getCode().equals(playerActivityMessage.getCode())){
+        }else if(ActivityTypeEnum.CONTENT.getCode().equals(code)){
             status = 1;
             applyResult = "该活动无需申请！";
         } else {
             VPlayerActivityMessageVo vPlayerActivityMessageVo = new VPlayerActivityMessageVo();
             vPlayerActivityMessageVo.setResultId(playerActivityMessage.getSearchId());
-            vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
+            vPlayerActivityMessageVo.setCode(code);
             vPlayerActivityMessageVo.setTransactionNos(transactionNos);
             Map<String, Object> stringObjectMap = applyActivities(vPlayerActivityMessageVo, request);
             if (MapTool.isEmpty(stringObjectMap)) {
@@ -241,6 +255,9 @@ public class DiscountController extends ActivityHallController {
                         "您所提交的申请还未达到活动要求，请多多努力！如有问题，请与客服人员联系。";
                 String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("msg").toString();
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
+                if(ActivityTypeEnum.BACK_WATER.getCode().equals(code) || applyResult.lastIndexOf("您的注册时间为：{1}") >= 0){
+                    applyResult = applyResult.replace("您的注册时间为：{1}","并且在活动期间注册。");
+                }
                 String tips = state && ActivityTypeEnum.DEPOSIT_SEND.getCode().equals(code) ? "操作成功,审核通过后彩金将直接发放到您的账户,请注意查收!" : null;
                 appDiscountApplyResult.setTips(tips);
                 Object transactionErrorList = stringObjectMap.get("transactionErrorList");
@@ -308,6 +325,9 @@ public class DiscountController extends ActivityHallController {
         String domain = ServletTool.getDomainFullAddress(request);
         TimeZone timeZone = SessionManager.getTimeZone();
         for (ActivityTypeApp type : types) {
+            if("03940531-e54d-4a99-9486-859752174390".equals(type.getActivityKey())){ //排除红包活动
+                continue;
+            }
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
 
