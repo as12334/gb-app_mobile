@@ -120,8 +120,8 @@ public class DiscountController extends ActivityHallController {
             }
         }
         AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
-        appDiscountApplyResult.setSearchId(playerActivityMessage.getSearchId());
-        appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName());
+        appDiscountApplyResult.setSearchId(String.valueOf(vActivityMessageVo.getSearch().getId()));
+        appDiscountApplyResult.setActibityTitle(vActivityMessageVo.getSearch().getActivityName());
         appDiscountApplyResult.setStatus(2); //失败
         appDiscountApplyResult.setApplyResult("您所提交的申请失败！如有问题，请与客服人员联系。");
         appDiscountApplyResult.setTips(resutl.getMsg());
