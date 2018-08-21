@@ -325,15 +325,14 @@ public class DiscountController extends ActivityHallController {
         String domain = ServletTool.getDomainFullAddress(request);
         TimeZone timeZone = SessionManager.getTimeZone();
         for (ActivityTypeApp type : types) {
-            if("03940531-e54d-4a99-9486-859752174390".equals(type.getActivityKey())){ //排除红包活动
-                continue;
-            }
             listVo.getSearch().setActivityClassifyKey(type.getActivityKey());
             List<PlayerActivityMessage> activityList = getActivityMessages(listVo, activityMessageMap);
-
             if (CollectionTool.isNotEmpty(activityList)) {
                 List<ActivityTypeListApp> activitys = new ArrayList<>();
                 for (PlayerActivityMessage playerActivityMessage : activityList) {
+                    if(ActivityTypeEnum.MONEY.getCode().equals(playerActivityMessage.getCode())){ //排除红包活动
+                        continue;
+                    }
                     ActivityTypeListApp activityTypeListApp = new ActivityTypeListApp();
                     activityTypeListApp.setSearchId(listVo.getSearchId(playerActivityMessage.getId()));
                     activityTypeListApp.setPhoto(ImageTag.getImagePath(domain, playerActivityMessage.getActivityAffiliated() == null ? playerActivityMessage.getActivityCover() : playerActivityMessage.getActivityAffiliated()));
@@ -344,8 +343,10 @@ public class DiscountController extends ActivityHallController {
                     activityTypeListApp.setTime(DateTool.formatDate(beginTime,timeZone,DateTool.yyyy_MM_dd_HH_mm_ss) +" - "+ DateTool.formatDate(endTime,timeZone,DateTool.yyyy_MM_dd_HH_mm_ss));
                     activitys.add(activityTypeListApp);
                 }
-                type.setActivityList(activitys);
-                result.add(type);
+                if(CollectionTool.isNotEmpty(activitys)) {
+                    type.setActivityList(activitys);
+                    result.add(type);
+                }
             }
         }
         return result;
