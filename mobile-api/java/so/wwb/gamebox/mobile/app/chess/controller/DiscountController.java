@@ -189,6 +189,9 @@ public class DiscountController extends ActivityHallController {
         Object profitloss = map.get("profitloss");//当前盈利额
         double profitlossMoney = profitloss == null || profitloss == "" ? 0d : Double.valueOf(String.valueOf(profitloss));
         TimeZone timeZone = SessionManager.getTimeZone();
+        boolean profit_ge = false; //盈利送
+        boolean loss_ge = false;  //亏损送
+        boolean profit_loss = false; //同时开启
         for(Object obj : list){
             AppActivityApply appActivityApply = new AppActivityApply();
             if(obj instanceof PlayerRecharge){ //存就送
@@ -205,9 +208,24 @@ public class DiscountController extends ActivityHallController {
                 Double preferentialValue = relation.getPreferentialValue() == null ? 0d : relation.getPreferentialValue();
                 appActivityApply.setStandard(preferentialValue);
                 if(ActivityTypeEnum.PROFIT.getCode().equals(code)){ //盈亏
-                    appActivityApply.setReached(profitlossMoney);
-                    appActivityApply.setCondition("盈亏"+relation.getOrderColumn());
-                    appActivityApply.setSatisfy(profitlossMoney >= preferentialValue);
+                    if("profit_ge".equals(relation.getPreferentialCode())){
+                        profit_ge = true;
+                    }else if("loss_ge".equals(relation.getPreferentialCode())){
+                        loss_ge = true;
+                    }
+                    profit_loss = profit_ge && loss_ge;
+                    if(profit_ge || (profit_loss && profitlossMoney >= 0)){ //盈
+                        appActivityApply.setCondition("盈利"+relation.getOrderColumn());
+                        appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
+                    }else if((loss_ge || (profit_loss && profitlossMoney < 0)) && relation.getOrderColumn() == 1){  //亏  亏损时只对比第一梯度
+                        appActivityApply.setCondition("亏损金额:"+ Math.abs(profitlossMoney));
+                        appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
+                        appActivityApply.setReached(Math.abs(profitlossMoney));
+                        result = new ArrayList<>();
+                        result.add(appActivityApply);
+                        return result;
+                    }
+                    appActivityApply.setReached(Math.abs(profitlossMoney));  //当前值
                 }else{ //有效投注额
                     appActivityApply.setReached(effectivetransactionMoney);
                     appActivityApply.setCondition("条件"+relation.getOrderColumn()+"(有效投注额)");
@@ -257,6 +275,8 @@ public class DiscountController extends ActivityHallController {
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
                 if(ActivityTypeEnum.BACK_WATER.getCode().equals(code) || applyResult.lastIndexOf("您的注册时间为：{1}") >= 0){
                     applyResult = applyResult.replace("您的注册时间为：{1}","并且在活动期间注册。");
+                }else if("apply_activitty_transaction_times_error".equals(applyResult)){
+                    applyResult = "存款次数不足或者存款未完成，请检查存款状态";
                 }
                 String tips = state && ActivityTypeEnum.DEPOSIT_SEND.getCode().equals(code) ? "操作成功,审核通过后彩金将直接发放到您的账户,请注意查收!" : null;
                 appDiscountApplyResult.setTips(tips);
