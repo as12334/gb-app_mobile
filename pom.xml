@@ -6,13 +6,17 @@
     <groupId>so.wwb.gamebox</groupId>
     <artifactId>app_mobile</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.2.9-SNAPSHOT</version>
+    <version>2.0.2.7-SNAPSHOT</version>
     <modules>
         <module>../base/model</module>
         <module>../base/iservice</module>
         <module>../base/iservice-activity</module>
         <module>../base/webcommon</module>
         <module>../base/common</module>
+        <module>../base/monitor/monitor-aopclient</module>
+        <module>../base/monitor/monitor-client</module>
+        <module>../base/monitor/monitor-iservice</module>
+        <module>../base/monitor/monitor-model</module>
         <module>mobile</module>
         <module>mobile-api</module>
     </modules>

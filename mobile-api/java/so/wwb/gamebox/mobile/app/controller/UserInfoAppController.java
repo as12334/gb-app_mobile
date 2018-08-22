@@ -5,7 +5,6 @@ import org.soul.commons.collections.ListTool;
 import org.soul.commons.collections.MapTool;
 import org.soul.commons.lang.BooleanTool;
 import org.soul.commons.lang.string.StringTool;
-import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.spring.utils.SpringTool;
@@ -15,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.app.constant.AppConstant;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
@@ -24,11 +22,10 @@ import so.wwb.gamebox.mobile.app.form.AppPlayerTransferForm;
 import so.wwb.gamebox.mobile.app.form.UserBankcardAppForm;
 import so.wwb.gamebox.mobile.app.model.AppMineLinkVo;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
+import so.wwb.gamebox.mobile.app.model.MyUserInfo;
 import so.wwb.gamebox.mobile.app.model.UserInfoApp;
 import so.wwb.gamebox.mobile.controller.BaseUserInfoController;
 import so.wwb.gamebox.mobile.session.SessionManager;
-import so.wwb.gamebox.model.Module;
-import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.master.fund.enums.TransferResultStatusEnum;
 import so.wwb.gamebox.model.master.fund.vo.PlayerTransferVo;
 import so.wwb.gamebox.model.master.player.enums.UserBankcardTypeEnum;
@@ -42,6 +39,7 @@ import so.wwb.gamebox.model.master.player.vo.UserBankcardVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerTransferVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.Token;
 import so.wwb.gamebox.web.common.token.TokenHandler;
 import so.wwb.gamebox.web.fund.form.BtcBankcardForm;
@@ -151,9 +149,7 @@ public class UserInfoAppController extends BaseUserInfoController {
     @ResponseBody
     public String submitBankCard(@FormModel @Valid UserBankcardAppForm form, BindingResult result) {
         if (result.hasErrors()) {
-            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(),//当出现验证信息没有过的时候一律提示参数有误
-                    LocaleTool.tranMessage(Module.VALID, result.getAllErrors().get(0).getDefaultMessage()),
-                    null, APP_VERSION);
+            return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.PARAM_HAS_ERROR.getCode(), null);//当出现验证信息没有过的时候一律提示参数有误
         }
         UserBankcardVo vo = new UserBankcardVo();
         vo.setUserType(SessionManagerCommon.getUserType().getCode());
@@ -326,12 +322,7 @@ public class UserInfoAppController extends BaseUserInfoController {
 
         try {
             PlayerApiAccountVo playerApiAccountVo = createVoByTransfer(playerTransferVo);
-            PlayerApiAccount playerApiAccount = null;
-            if (ParamTool.apiSeparat()) {
-                playerApiAccount = queryApiAccountForTransfer(playerApiAccountVo);
-            } else {
-                playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
-            }
+            PlayerApiAccount playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
             if (playerApiAccount == null) {
                 Map map = getErrorMessage(TransferResultStatusEnum.API_ACCOUNT_NOT_FOUND.getCode(), playerTransferVo.getResult().getApiId());
                 return AppModelVo.getAppModeVoJson(true,

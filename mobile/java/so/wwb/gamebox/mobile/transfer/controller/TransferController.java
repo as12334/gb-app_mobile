@@ -206,12 +206,7 @@ public class TransferController extends WalletBaseController {
 
         try {
             PlayerApiAccountVo playerApiAccountVo = createVoByTransfer(playerTransferVo);
-            PlayerApiAccount playerApiAccount = null;
-            if (ParamTool.apiSeparat()) {
-                playerApiAccount = queryApiAccountForTransfer(playerApiAccountVo);
-            } else {
-                playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
-            }
+            PlayerApiAccount playerApiAccount = ServiceSiteTool.playerApiAccountService().queryApiAccountForTransfer(playerApiAccountVo);
             if (playerApiAccount == null) {
                 return getErrorMessage(TransferResultStatusEnum.API_ACCOUNT_NOT_FOUND.getCode(), playerTransferVo.getResult().getApiId());
             }
