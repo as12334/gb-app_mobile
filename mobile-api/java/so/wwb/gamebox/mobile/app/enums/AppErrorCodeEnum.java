@@ -80,7 +80,14 @@ public enum AppErrorCodeEnum {
     RECHARGE_NOT_EXIT_USER("1610","存款失败，用户不存在"),
     RECHARGE_TIME_INTERVAL("1611","存款太过频繁,休息片刻"),
     ACTIVITY_ID_EMPTY("1612","活动Id不能为空"),
-    ACTIVITY_IS_INVALID("1613","活动已失效")
+    ACTIVITY_IS_INVALID("1613","活动已失效"),
+    ACTIVITY_NOTSTARTED("1614","活动未开始"),
+    ACTIVITY_FINISHED("1615","活动已过期"),
+    ACTIVITY_APPLY_SUCCESS("1616","活动申请成功"),
+    ACTIVITY_APPLY_FAIL("1617","活动申请失败"),
+    ACTIVITY_IS_PARTICIPATION("1618","无需申请，正在参与中"),
+    ACTIVITY_FETCH_FAIL("1619","活动报名失败"),
+    NPHONE_AND_OPHONE_AGREEMENT("1620", "新旧手机号不能一致")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

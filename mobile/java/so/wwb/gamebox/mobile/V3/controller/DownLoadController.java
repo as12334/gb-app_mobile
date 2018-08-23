@@ -65,6 +65,8 @@ public class DownLoadController extends BaseDemoController {
             return "/passport/login";
         }
         String userAgent = OsTool.getOsInfo(request);
+        String isWeixin = request.getHeader("User-Agent").toLowerCase().indexOf("micromessenger") != -1 ? "1" : "0";
+        model.addAttribute("isWeixin", isWeixin);
         String url = null;
         //android自定义下载地址
         if (AppTypeEnum.ANDROID.getCode().contains(userAgent)) {

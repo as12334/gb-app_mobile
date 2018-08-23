@@ -49,9 +49,10 @@
 			<value>
 				/mineOrigin/loginIsOpenVerify.html = anon
 				/app/update.html = anon
+				/app/getHost.html = anon
 				/chess/mainIndex.html = anon
-				/chess/getActivityTypes.html = anon
-				/chess/getActivityById.html = anon
+				/chessActivity/getActivityTypes.html = anon
+				/chessActivity/getActivityById.html = anon
 				/userInfoOrigin/verifyRealNameForApp.html = anon
 				/origin/getTimeZone.html = anon
 				/origin/getCustomerService.html = anon

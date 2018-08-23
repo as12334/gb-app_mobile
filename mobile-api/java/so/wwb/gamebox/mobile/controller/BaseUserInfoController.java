@@ -41,6 +41,7 @@ import so.wwb.gamebox.model.enums.ApiQueryTypeEnum;
 import so.wwb.gamebox.model.enums.DemoModelEnum;
 import so.wwb.gamebox.model.enums.UserTypeEnum;
 import so.wwb.gamebox.model.gameapi.enums.ApiProviderEnum;
+import so.wwb.gamebox.model.gameapi.enums.ApiTypeEnum;
 import so.wwb.gamebox.model.master.enums.ActivityApplyCheckStatusEnum;
 import so.wwb.gamebox.model.master.enums.ContactWayTypeEnum;
 import so.wwb.gamebox.model.master.enums.UserPlayerTransferStateEnum;
@@ -636,13 +637,17 @@ public class BaseUserInfoController extends BaseMobileApiController {
         map.put("text", "我的钱包");
         map.put("value", "wallet");
         transableApis.add(map);
+        Integer siteId = SessionManager.getSiteId();
+        boolean isChess =  siteId != null && (siteId == 18 || siteId >= 7000); //棋牌包网
         for (String apiId : siteApis.keySet()) {
             api = apis.get(apiId);
-            //额度转换的ｂｓｇ不支持
-            if (ApiProviderEnum.BSG.getCode().equals(apiId)) {
+            siteApi = siteApis.get(apiId);
+            //额度转换的ｂｓｇ不支持 || 棋牌包网不展示彩票api
+            ApiProviderEnum apiProviderEnumByCode = ApiProviderEnum.getApiProviderEnumByCode(apiId);
+            if (ApiProviderEnum.BSG.getCode().equals(apiId) || (isChess &&  apiProviderEnumByCode.getApiType() == ApiTypeEnum.LOTTERY.getCode())) {
                 continue;
             }
-            siteApi = siteApis.get(apiId);
+
             if (api != null
                     && !StringTool.equals(api.getSystemStatus(), disable)
                     && !StringTool.equals(siteApi.getSystemStatus(), disable)

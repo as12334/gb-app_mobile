@@ -22,6 +22,18 @@ public class RegexTools {
             }
             result = result.replaceAll(src, replaceSrc);
         }
+        return removeOther(result);
+    }
+
+    public static String removeOther(String htmlStr) {
+        String result = htmlStr;
+        result = result.replaceAll("onload=['\"]?(.*?)['\"].*?", "");
+        result = result.replaceAll("_src=['\"]?(.*?)['\"].*?", "");
         return result;
+    }
+
+    public static void main(String[] args) {
+        String html = "<p><img src=\"https://qp6a6.com/fserver/files/gb/7002/activityPic/1/1534498488299.png\" title=\"首存内容.png\" _src=\"gb/7002/activityPic/1/1534498488299.png\" alt=\"首存内容.png\" onload=\"this.src=window.top.imgRoot+&#39;/files/gb/7002/activityPic/1/1534498488299.png&#39;\"/></p>";
+        System.out.println(removeOther(html));
     }
 }

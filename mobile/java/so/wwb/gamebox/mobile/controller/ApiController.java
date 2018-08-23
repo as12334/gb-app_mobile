@@ -19,6 +19,7 @@ import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.ApiGameTool;
 import so.wwb.gamebox.model.CacheBase;
+import so.wwb.gamebox.model.ParamTool;
 import so.wwb.gamebox.model.company.enums.GameStatusEnum;
 import so.wwb.gamebox.model.company.setting.po.Api;
 import so.wwb.gamebox.model.company.setting.po.ApiI18n;
@@ -75,7 +76,12 @@ public class ApiController extends BaseApiController {
                     playerApiAccountVo.setTrial(false);
                 }
             }
-            playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            if(ParamTool.apiSeparat()){
+                //todo by mical
+                playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            }else{
+                playerApiAccountVo = ServiceSiteTool.playerApiAccountService().loginApi(playerApiAccountVo);
+            }
         } else {
             playerApiAccountVo.setLoginSuccess(false);
             resultMap.put("maintain", true);

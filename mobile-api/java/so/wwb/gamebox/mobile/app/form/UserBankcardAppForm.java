@@ -39,6 +39,7 @@ public class UserBankcardAppForm implements IForm {
     }
 
     @NotBlank(message = "player_auto.请选择银行")
+    @Comment("银行")
     public String getResult_bankName() {
         return result_bankName;
     }
@@ -49,6 +50,7 @@ public class UserBankcardAppForm implements IForm {
 
     @Depends(property ={"result_bankName"}, operator = {Operator.EQ}, value = {"other_bank"})
     @Length(max = 200)
+    @Comment("开户银行")
     public String getResult_bankDeposit() {
         return result_bankDeposit;
     }
