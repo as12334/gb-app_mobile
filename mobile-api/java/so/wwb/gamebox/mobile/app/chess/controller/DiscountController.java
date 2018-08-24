@@ -125,7 +125,7 @@ public class DiscountController extends ActivityHallController {
             }
         }
         AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
-        appDiscountApplyResult.setSearchId(String.valueOf(vActivityMessageVo.getSearch().getId()));
+        appDiscountApplyResult.setSearchId(vActivityMessageVo.getSearchId(vActivityMessageVo.getSearch().getId()));
         appDiscountApplyResult.setActibityTitle(vActivityMessageVo.getSearch().getActivityName());
         appDiscountApplyResult.setStatus(2); //失败
         appDiscountApplyResult.setApplyResult("您所提交的申请失败！如有问题，请与客服人员联系。");
@@ -144,7 +144,7 @@ public class DiscountController extends ActivityHallController {
         vPlayerActivityMessageVo.setCode(playerActivityMessage.getCode());
         Map<String, Object> stringObjectMap = fetchActivityProcess(vPlayerActivityMessageVo, request);
         AppDiscountApplyResult appDiscountApplyResult = new AppDiscountApplyResult();
-        appDiscountApplyResult.setSearchId(playerActivityMessage.getSearchId());
+        appDiscountApplyResult.setSearchId(vPlayerActivityMessageVo.getSearchId(playerActivityMessage.getId()));
         appDiscountApplyResult.setActibityTitle(playerActivityMessage.getActivityName());
         appDiscountApplyResult.setStatus(3); //参与中
         long applyNum = stringObjectMap.get("ApplyNum") == null  ? 0l : (long)stringObjectMap.get("ApplyNum");//当前活动参与人数
@@ -214,10 +214,13 @@ public class DiscountController extends ActivityHallController {
                         loss_ge = true;
                     }
                     profit_loss = profit_ge && loss_ge;
-                    if(profit_ge || (profit_loss && profitlossMoney >= 0)){ //盈
+                    if("profit_ge".equals(relation.getPreferentialCode()) || (profit_loss && profitlossMoney >= 1)){ //盈
+                        if("loss_ge".equals(relation.getPreferentialCode())){
+                            continue;
+                        }
                         appActivityApply.setCondition("盈利"+relation.getOrderColumn());
                         appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
-                    }else if((loss_ge || (profit_loss && profitlossMoney < 0)) && relation.getOrderColumn() == 1){  //亏  亏损时只对比第一梯度
+                    }else if(("loss_ge".equals(relation.getPreferentialCode()) || (profit_loss && profitlossMoney < 0 && !"profit_ge".equals(relation.getPreferentialCode()))) && relation.getOrderColumn() == 1){  //亏  亏损时只对比第一梯度
                         appActivityApply.setCondition("亏损金额:"+ Math.abs(profitlossMoney));
                         appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
                         appActivityApply.setReached(Math.abs(profitlossMoney));
@@ -265,6 +268,7 @@ public class DiscountController extends ActivityHallController {
                 //applyResult = LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_result_empty");
                 applyResult = "很抱歉！当前网络不稳定，请稍后重试！";
             } else {
+                appDiscountApplyResult.setSearchId(vPlayerActivityMessageVo.getSearchId(playerActivityMessage.getId())); //活动标题
                 boolean state = MapTool.getBooleanValue(stringObjectMap, "state");
                 status = state ? 1 : 2;
                 //String defaultMsg = state ? LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_success") :
