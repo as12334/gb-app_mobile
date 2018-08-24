@@ -32,7 +32,6 @@ public class AppCheckController {
         String siteId = request.getParameter("siteId");
 
 
-
         SiteAppUpdate app = Cache.getSiteAppUpdate(siteId, type);
         LOG.info("app获取版本号参数:{0},{1},{2},结果:{3}", encryptCode, type, siteId, JsonTool.toJson(app));
         if (app != null && app.getAppType().equals(type)) {
@@ -48,19 +47,26 @@ public class AppCheckController {
     @RequestMapping(value = "/getHost")
     @ResponseBody
     public String appHost(HttpServletRequest request) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         Integer siteId = SessionManager.getSiteId();
         String times = request.getParameter("times");
         int num = StringTool.isBlank(times) ? 0 : Integer.parseInt(times);
-        List<VSysSiteDomain> siteDomain = Cache.getSiteDomain(siteId, DomainPageUrlEnum.INDEX.getCode());
+        List<VSysSiteDomain> siteDomainIndex = Cache.getSiteDomain(siteId, DomainPageUrlEnum.INDEX.getCode());
+        List<VSysSiteDomain> siteDomain = new ArrayList<>();
+        //只返回主页域名,去掉代理域名
+        for (VSysSiteDomain domain : siteDomainIndex) {
+            if (domain.getAgentId() == null) {
+                siteDomain.add(domain);
+            }
+        }
         if (siteDomain == null) {
             LOG.info("app获取域名错误:站点ID={0},获取次数={1}, 缓存DOMAIN_SITE is null", siteId, num);
-            map.put("data",null);
+            map.put("data", null);
             return JsonTool.toJson(map);
         }
         Integer begin = num * 10;
         if (begin > siteDomain.size()) {
-            map.put("data",null);
+            map.put("data", null);
             return JsonTool.toJson(map);
         }
         List<String> domains = new ArrayList<>();
@@ -69,7 +75,7 @@ public class AppCheckController {
                 domains.add(siteDomain.get(i).getDomain());
             }
         }
-        map.put("data",domains);
+        map.put("data", domains);
         return JsonTool.toJson(map);
 
     }
