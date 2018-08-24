@@ -169,6 +169,8 @@ public class DiscountController extends ActivityHallController {
                 appDiscountApplyResult.setApplyResult("以下是您当前投注额,统计周期请查看活动细则,加油吧。");
             }
         }
+        boolean hasApply = BooleanTool.isFalse((Boolean) stringObjectMap.get("hasApply"));//是否已经申请
+        appDiscountApplyResult.setHasApply(hasApply);
         appDiscountApplyResult.setApplyDetails(returnApplyActivityResult(resultList,code,stringObjectMap));
         return AppModelVo.getAppModeVoJson(true, AppErrorCodeEnum.SUCCESS.getCode(), AppErrorCodeEnum.SUCCESS.getMsg(), appDiscountApplyResult, APP_VERSION);
     }
@@ -214,7 +216,7 @@ public class DiscountController extends ActivityHallController {
                         loss_ge = true;
                     }
                     profit_loss = profit_ge && loss_ge;
-                    if("profit_ge".equals(relation.getPreferentialCode()) || (profit_loss && profitlossMoney >= 1)){ //盈
+                    if("profit_ge".equals(relation.getPreferentialCode()) || (profit_loss && profitlossMoney >= 0)){ //盈
                         if("loss_ge".equals(relation.getPreferentialCode())){
                             continue;
                         }

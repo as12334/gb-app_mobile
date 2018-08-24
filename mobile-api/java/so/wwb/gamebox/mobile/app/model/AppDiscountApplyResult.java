@@ -13,6 +13,7 @@ public class AppDiscountApplyResult {
     private Integer  status;//申请状态 1:成功，2：失败，3：部分成功
     private List applyDetails;//参与条件列表
     private String Tips; //活动当前参与人数 / 派奖时间
+    private Boolean hasApply = false; //是否展示申请按钮
 
     public String getActibityTitle() {
         return this.actibityTitle;
@@ -60,5 +61,13 @@ public class AppDiscountApplyResult {
 
     public void setSearchId(String searchId) {
         this.searchId = searchId;
+    }
+
+    public Boolean getHasApply() {
+        return hasApply;
+    }
+
+    public void setHasApply(Boolean hasApply) {
+        this.hasApply = hasApply;
     }
 }
