@@ -180,6 +180,8 @@ public class IndexController extends BaseApiController {
             } else if (AppTypeEnum.IOS.getCode().contains(userAgent)) { //ios下载页面
                 url = getIosDownloadUrl();
             }
+            String isWeixin = request.getHeader("User-Agent").toLowerCase().indexOf("micromessenger") != -1 ? "1" : "0";
+            model.addAttribute("isWeixin", isWeixin);
             if (StringTool.isBlank(url)) {
                 //ios
                 IAppUpdateService appUpdateService = ServiceBossTool.appUpdateService();

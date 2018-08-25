@@ -16,12 +16,26 @@
     <link rel="stylesheet" href="${resRoot}/themes/chessIndex.css?v=${rcVersion}"/>
     <c:set var="background_type" value="blue"/>
     <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css?v=${rcVersion}"/>
-
+    <style>
+        #weixin-tip{display:none; position: fixed; left:0; top:0; background: rgba(0,0,0,0.8); filter:alpha(opacity=80); width: 100%; height:100%; z-index: 100;}
+        #weixin-tip p{text-align: center; margin-top: 10%; padding:0 5%; position: relative;}
+        #weixin-tip .close {
+            color: #fff;
+            padding: 5px;
+            font: bold 20px/20px simsun;
+            text-shadow: 0 1px 0 #ddd;
+            position: absolute;
+            top: 0;
+            left: 5%;
+        }
+        #weixin-tip img{max-width: 100%; height: auto;}
+    </style>
 </head>
 
-<body>
+<body onload="initPage()">
+<input type="hidden" value="${isWeixin}" id="is_weixin"/>
 <div class="index">
-    <div class="home-header"><i class="iconfont icon-fanhui mui-action-back"></i> <span class="top-name">iOS APP下载</span></div>
+    <div class="home-header"><i class="iconfont icon-fanhui mui-action-back"></i> <span class="top-name">APP下载</span></div>
     <div class="home1">
          <img src="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png" class="log" />
         <div class="showindex">
@@ -29,7 +43,6 @@
             <div class="down-adr click-scare"  data-rel='{"target":"download","opType":"function","url":"${androidUrl}"}'><i class="log-adr"></i>&nbsp;&nbsp;&nbsp;点击下载安卓版</div>
         </div>
         <div class="showdown">
-
             <div onclick="downANZ()" class="down-anz click-scare">
                 <span class="spcname" data-rel='{"target":"download","opType":"function","url":"${iosUrl}"}'>点击安装</span>
                 <div class="loadEffect" id="loading">
@@ -63,7 +76,6 @@
                 <img src="${resRoot}/themes/images/step02_bg.jpg">
             </div>
             <ul>
-            <ul>
                 <li class="active"></li>
                 <li></li>
                 <li></li>
@@ -72,6 +84,7 @@
         </div>
     </div>
 </div>
+<div id="weixin-tip" style="display: none;"><p><img src="${resRoot}/images/live_weixin.png" alt="微信打开"/></p></div>
 </body>
 <script src="${resRoot}/js/mui/mui.min.js?v=${rcVersion}"></script>
 <script src="${resComRoot}/js/jquery/jquery-2.1.1.min.js?v=${rcVersion}"></script>
@@ -90,7 +103,20 @@
     $(function () {
         var options = {
         };
+
         muiInit(options);
+        if ($("#is_weixin").val()==='1') {
+            $("#weixin-tip").show();
+            $(".down-adr").attr("data-rel","");
+            $(".down-ios").on("click",function(){})
+            var tip = document.getElementById('weixin-tip');
+            // var close = document.getElementById('close');
+            // close.onclick = function () {
+            //     tip.style.display = 'none';
+            // }
+        } else {
+            $("#weixin-tip").hide();
+        }
     });
 
     function download(obj, options) {
