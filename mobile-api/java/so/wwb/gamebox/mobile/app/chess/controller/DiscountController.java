@@ -217,21 +217,33 @@ public class DiscountController extends ActivityHallController {
                         loss_ge = true;
                     }
                     profit_loss = profit_ge && loss_ge;
+                    appActivityApply.setReached(Math.abs(profitlossMoney));  //当前值
                     if("profit_ge".equals(relation.getPreferentialCode()) || (profit_loss && profitlossMoney >= 0)){ //盈
                         if("loss_ge".equals(relation.getPreferentialCode())){
                             continue;
                         }
+                        if(profitlossMoney < 0){
+                            appActivityApply.setReached(0d);
+                            appActivityApply.setSatisfy(false);
+                        }else{
+                            appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
+                        }
                         appActivityApply.setCondition("盈利"+relation.getOrderColumn());
-                        appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
                     }else if(("loss_ge".equals(relation.getPreferentialCode()) || (profit_loss && profitlossMoney < 0 && !"profit_ge".equals(relation.getPreferentialCode()))) && relation.getOrderColumn() == 1){  //亏  亏损时只对比第一梯度
-                        appActivityApply.setCondition("亏损金额:"+ Math.abs(profitlossMoney));
-                        appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
-                        appActivityApply.setReached(Math.abs(profitlossMoney));
+                        if(profitlossMoney >= 0){
+                            appActivityApply.setSatisfy(false);
+                            appActivityApply.setReached(0d);
+                            appActivityApply.setCondition("亏损金额:0.0");
+                        }else{
+                            appActivityApply.setSatisfy(Math.abs(profitlossMoney) >= preferentialValue);
+                            appActivityApply.setReached(Math.abs(profitlossMoney));
+                            appActivityApply.setCondition("亏损金额:"+ Math.abs(profitlossMoney));
+                        }
                         result = new ArrayList<>();
                         result.add(appActivityApply);
                         return result;
                     }
-                    appActivityApply.setReached(Math.abs(profitlossMoney));  //当前值
+
                 }else{ //有效投注额
                     appActivityApply.setReached(effectivetransactionMoney);
                     appActivityApply.setCondition("条件"+relation.getOrderColumn()+"(有效投注额)");
