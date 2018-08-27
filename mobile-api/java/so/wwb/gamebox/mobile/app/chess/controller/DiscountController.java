@@ -109,6 +109,7 @@ public class DiscountController extends ActivityHallController {
                 String[] transactionNos = StringTool.isEmpty(vActivityMessageVo.getSearch().getCode()) ? null : vActivityMessageVo.getSearch().getCode().split(",");
                 long time = SessionManager.getDate().getNow().getTime();
                 String code = playerActivityMessage.getCode();
+                String states = vActivityMessageVo.getSearch().getStates();
                 if (playerActivityMessage.getStartTime() != null && playerActivityMessage.getStartTime().getTime() >= time) {
                     resutl = AppErrorCodeEnum.ACTIVITY_NOTSTARTED;
                 } else if (playerActivityMessage.getEndTime() != null && playerActivityMessage.getEndTime().getTime() < time) {
@@ -117,7 +118,7 @@ public class DiscountController extends ActivityHallController {
                     resutl = AppErrorCodeEnum.ACTIVITY_IS_INVALID;
                 } else if (ActivityTypeEnum.MONEY.getCode().equals(code)) { //红包
                     return doApplyRedPacketeActivity(playerActivityMessage, request);
-                } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0)) {  //需先报名活动
+                } else if (Arrays.asList(NEED_FORECAST_ACTIVITYS).contains(code) && (transactionNos == null || transactionNos.length == 0) && StringTool.isEmpty(states)) {  //需先报名活动
                     return doFetchActivity(playerActivityMessage, request, code);
                 } else {
                     return doApplyActivity(playerActivityMessage, transactionNos, request, code); //申请活动
