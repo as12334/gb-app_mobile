@@ -32,8 +32,7 @@
     </style>
 </head>
 
-<body onload="initPage()">
-<input type="hidden" value="${isWeixin}" id="is_weixin"/>
+<body>
 <div class="index">
     <div class="home-header"><i class="iconfont icon-fanhui mui-action-back"></i> <span class="top-name">APP下载</span></div>
     <div class="home1">
@@ -43,8 +42,8 @@
             <div class="down-adr click-scare"  data-rel='{"target":"download","opType":"function","url":"${androidUrl}"}'><i class="log-adr"></i>&nbsp;&nbsp;&nbsp;点击下载安卓版</div>
         </div>
         <div class="showdown">
-            <div onclick="downANZ()" class="down-anz click-scare">
-                <span class="spcname" data-rel='{"target":"download","opType":"function","url":"${iosUrl}"}'>点击安装</span>
+            <div data-rel='{"target":"downANZ","opType":"function","url":"${iosUrl}"}' class="down-anz click-scare">
+                <span class="spcname" id="click_install">点击安装</span>
                 <div class="loadEffect" id="loading">
                     <span></span>
                     <span></span>
@@ -103,20 +102,7 @@
     $(function () {
         var options = {
         };
-
         muiInit(options);
-        if ($("#is_weixin").val()==='1') {
-            $("#weixin-tip").show();
-            $(".down-adr").attr("data-rel","");
-            $(".down-ios").on("click",function(){})
-            var tip = document.getElementById('weixin-tip');
-            // var close = document.getElementById('close');
-            // close.onclick = function () {
-            //     tip.style.display = 'none';
-            // }
-        } else {
-            $("#weixin-tip").hide();
-        }
     });
 
     function download(obj, options) {
@@ -253,15 +239,20 @@
         showJc=true;
         document.getElementsByClassName('icon-fanhui')[0].style.display ="block";
         document.getElementsByClassName('showindex')[0].style.display ="none";
-        document.getElementsByClassName('showdown')[0].style.display ="block"
-        document.getElementsByClassName('top-name')[0].innerHTML ="iOS APP安装"
+        document.getElementsByClassName('showdown')[0].style.display ="block";
+        document.getElementsByClassName('top-name')[0].innerHTML ="iOS APP安装";
         document.getElementsByClassName('home1')[0].style.backgroundImage = "url("+resRoot+"/themes/images/step01_bg.jpg)";
     }
 
-    function downANZ(){
-        document.getElementsByClassName('spcname')[0].innerHTML ="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在桌面上查看安装"
-        console.log(document.getElementById('loading'))
-        document.getElementById('loading').style.display ="block"
+    function downANZ(obj,options){
+        document.getElementsByClassName('spcname')[0].innerHTML ="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在桌面上查看安装";
+        console.log(document.getElementById('loading'));
+        document.getElementById('loading').style.display ="block";
+        var objIos = $("#click_install");
+        var optionsIos ={
+            url:options.url
+        };
+        download(objIos,optionsIos);
     }
 
     var lb = document.querySelector(".lb");
