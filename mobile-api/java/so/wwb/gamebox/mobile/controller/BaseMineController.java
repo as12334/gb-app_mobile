@@ -760,7 +760,7 @@ public class BaseMineController extends BaseMobileApiController {
         vSystemAnnouncementListVo = ServiceTool.vSystemAnnouncementService().search(vSystemAnnouncementListVo);
         AppGameNotice gameNotice = new AppGameNotice();
         for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()) {
-            gameNotice.setContext(sysAnnounce.getContent());
+            gameNotice.setContext(StringTool.replaceHtml(sysAnnounce.getContent()));
             gameNotice.setPublishTime(sysAnnounce.getPublishTime());
         }
         return gameNotice;
@@ -841,7 +841,7 @@ public class BaseMineController extends BaseMobileApiController {
 
         AppSystemNotice sysNotice = new AppSystemNotice();
         sysNotice.setTitle(vo.getResult().getTitle());
-        sysNotice.setContent(vo.getResult().getContent());
+        sysNotice.setContent(StringTool.replaceHtml(vo.getResult().getContent()));
         sysNotice.setPublishTime(vo.getResult().getReceiveTime());
         return sysNotice;
     }
