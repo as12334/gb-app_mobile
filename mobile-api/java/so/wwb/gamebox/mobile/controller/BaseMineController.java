@@ -675,7 +675,7 @@ public class BaseMineController extends BaseMobileApiController {
         for (VSystemAnnouncement sysAnnounce : vSystemAnnouncementListVo.getResult()) {
             sysNotice.setTitle(sysAnnounce.getTitle());
             sysNotice.setPublishTime(sysAnnounce.getPublishTime());
-            sysNotice.setContent(sysAnnounce.getContent());
+            sysNotice.setContent(StringTool.replaceHtml(sysAnnounce.getContent()));
         }
         return sysNotice;
     }
