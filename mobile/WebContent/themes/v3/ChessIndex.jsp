@@ -12,23 +12,32 @@
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <!-- 优先使用 IE 最新版本和 Chrome -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-
     <link rel="stylesheet" href="${resRoot}/themes/chessIndex.css?v=${rcVersion}"/>
     <c:set var="background_type" value="blue"/>
     <link rel="stylesheet" href="${resRoot}/themes/${background_type}/style.css?v=${rcVersion}"/>
     <style>
-        #weixin-tip{display:none; position: fixed; left:0; top:0; background: rgba(0,0,0,0.8); filter:alpha(opacity=80); width: 100%; height:100%; z-index: 100;}
-        #weixin-tip p{text-align: center; margin-top: 10%; padding:0 5%; position: relative;}
-        #weixin-tip .close {
-            color: #fff;
-            padding: 5px;
-            font: bold 20px/20px simsun;
-            text-shadow: 0 1px 0 #ddd;
-            position: absolute;
-            top: 0;
-            left: 5%;
+        .mui-toast-container {
+            position: fixed;
+            z-index: 9999;
+            bottom: 50px;
+            width: 100%;
+            -webkit-transition: opacity .8s;
+            transition: opacity .8s;
+            opacity: 0
         }
-        #weixin-tip img{max-width: 100%; height: auto;}
+        .mui-toast-container.mui-active {
+            opacity: 1
+        }
+        .mui-toast-message {
+            font-size: 14px;
+            width: 270px;
+            margin: 5px auto;
+            padding: 5px;
+            text-align: center;
+            color: #000;
+            border-radius: 7px;
+            background-color: #d8d8d8
+        }
     </style>
 </head>
 
@@ -42,7 +51,7 @@
             <div class="down-adr click-scare"  data-rel='{"target":"download","opType":"function","url":"${androidUrl}"}'><i class="log-adr"></i>&nbsp;&nbsp;&nbsp;点击下载安卓版</div>
         </div>
         <div class="showdown">
-            <div data-rel='{"target":"downANZ","opType":"function","url":"${iosUrl}"}' class="down-anz click-scare">
+            <div data-rel='{"target":"downANZ","opType":"function","url":""}' class="down-anz click-scare">
                 <span class="spcname" id="click_install">点击安装</span>
                 <div class="loadEffect" id="loading">
                     <span></span>
@@ -107,7 +116,7 @@
 
     function download(obj, options) {
         var url = options.url;
-        if (!url) {
+        if (!url||url =='') {
             toast("暂无设置下载地址，请联系客服！");
             return;
         }
