@@ -51,7 +51,7 @@
             <div class="down-adr click-scare"  data-rel='{"target":"download","opType":"function","url":"${androidUrl}"}'><i class="log-adr"></i>&nbsp;&nbsp;&nbsp;点击下载安卓版</div>
         </div>
         <div class="showdown">
-            <div data-rel='{"target":"downANZ","opType":"function","url":""}' class="down-anz click-scare">
+            <div data-rel='{"target":"downANZ","opType":"function","url":"${iosUrl}"}' class="down-anz click-scare">
                 <span class="spcname" id="click_install">点击安装</span>
                 <div class="loadEffect" id="loading">
                     <span></span>
