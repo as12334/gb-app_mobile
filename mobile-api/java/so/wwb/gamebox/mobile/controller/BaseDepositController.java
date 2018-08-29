@@ -157,7 +157,7 @@ public class BaseDepositController {
             appPayAccount.setBankCode(payAccount.getBankCode());
             appPayAccount.setAccountType(payAccount.getAccountType());
             appPayAccount.setRandomAmount(payAccount.getRandomAmount());
-            appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin() == null ? 10 : payAccount.getSingleDepositMin());
+            appPayAccount.setSingleDepositMin(payAccount.getSingleDepositMin() == null ? 0 : payAccount.getSingleDepositMin());
             appPayAccount.setSingleDepositMax(payAccount.getSingleDepositMax() == null ? 9999999 : payAccount.getSingleDepositMax());
             boolean isOnlinePay = StringTool.isNotBlank(payAccount.getType()) && StringTool.isNotBlank(payAccount.getAccountType()) && PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType());
             appPayAccount.setDepositWay(isOnlinePay ? companyWay : onlineWay);
