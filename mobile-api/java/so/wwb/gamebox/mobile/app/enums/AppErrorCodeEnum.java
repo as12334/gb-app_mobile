@@ -87,7 +87,8 @@ public enum AppErrorCodeEnum {
     ACTIVITY_APPLY_FAIL("1617","活动申请失败"),
     ACTIVITY_IS_PARTICIPATION("1618","无需申请，正在参与中"),
     ACTIVITY_FETCH_FAIL("1619","活动报名失败"),
-    NPHONE_AND_OPHONE_AGREEMENT("1620", "新旧手机号不能一致")
+    NPHONE_AND_OPHONE_AGREEMENT("1620", "新旧手机号不能一致"),
+    PHONENUMBER_FORMAT_WRONG("1621","手机号格式不正确")
     ;
     public static final int SUCCESS_CODE = 0;
     public static final int FAIL_COED = 1;

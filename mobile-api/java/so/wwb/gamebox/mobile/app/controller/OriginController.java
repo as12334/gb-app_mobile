@@ -405,34 +405,25 @@ public class OriginController extends BaseOriginController {
     @RequestMapping("/sendPhoneCode")
     @ResponseBody
     public String sendPhoneCode(String phone, HttpServletRequest request) {
-
+        AppErrorCodeEnum appErrorCodeEnum;
+        Integer siteId = SessionManager.getSiteId();
+        LOG.info("站点{0}-注册发送手机验证码:{1}",siteId,phone);
         if (StringTool.isBlank(phone)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_NOTNULL.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        //90秒后可以重新提交
-        if (!SessionManagerCommon.canSendRegisterPhone()) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-        //发送手机短信
-        if (!sendPhoneCode(phone, USER_REGISTER, request)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getMsg(),
-                    null,
-                    APP_VERSION);
+            appErrorCodeEnum = AppErrorCodeEnum.REGISTER_PHONE_NOTNULL;
+        }else if (!Pattern.matches(RegExpConstants.CELL_PHONE, phone)) {
+            appErrorCodeEnum = AppErrorCodeEnum.PHONENUMBER_FORMAT_WRONG;
+        }else if (VerificationCodeTool.validIp(request)) {//90秒后可以重新提交
+            appErrorCodeEnum = AppErrorCodeEnum.REGISTER_PHONE_OFTEN;
+        }else if (!MessageSendTool.sendMessage(phone, request)) {  //发送手机短信
+            LOG.info("站点{0}-调用WebCommon发送短信失败:{1}",siteId,phone);
+            appErrorCodeEnum = AppErrorCodeEnum.REGISTER_PHONE_FAIL;
+        }else{
+            appErrorCodeEnum = AppErrorCodeEnum.SUCCESS;
         }
 
         return AppModelVo.getAppModeVoJson(true,
-                AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
+                appErrorCodeEnum.getCode(),
+                appErrorCodeEnum.getMsg(),
                 null,
                 APP_VERSION);
     }
@@ -444,43 +435,33 @@ public class OriginController extends BaseOriginController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "sendFindPasswordPhone")
+    @RequestMapping(value = "/sendFindPasswordPhone")
     @ResponseBody
     public String sendFindPasswordPhone(UserPlayerVo userPlayerVo, HttpServletRequest request) {
-        if (!SessionManagerCommon.canSendRegisterPhone()) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_OFTEN.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-
-        Integer id = userPlayerVo.getDecryptId();
-        userPlayerVo.getSearch().setId(id);
-        Map<String, NoticeContactWay> noticeContactWayMap = ServiceSiteTool.userPlayerService().findNormalNoticeContactWay(userPlayerVo);
-        NoticeContactWay phone = noticeContactWayMap.get(ContactWayType.CELLPHONE.getCode());
-
-        if (phone == null || StringTool.isBlank(phone.getContactValue())) {
-            LOG.info("手机号码为空或者验证码为空！");
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.UNBOUND_PHONE.getCode(),
-                    AppErrorCodeEnum.UNBOUND_PHONE.getMsg(),
-                    null,
-                    APP_VERSION);
-        }
-
-        //发送手机短信
-        if (!sendPhoneCode(phone.getContactValue(), FORGET_PASSWORD, request)) {
-            return AppModelVo.getAppModeVoJson(true,
-                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getCode(),
-                    AppErrorCodeEnum.REGISTER_PHONE_FAIL.getMsg(),
-                    null,
-                    APP_VERSION);
+        AppErrorCodeEnum appErrorCodeEnum;
+        Integer siteId = SessionManager.getSiteId();
+        LOG.info("站点{0}-玩家{1}-找回密码发送手机短信验证码",siteId,userPlayerVo.getDecryptId());
+        if (VerificationCodeTool.validIp(request)) {
+            appErrorCodeEnum = AppErrorCodeEnum.REGISTER_PHONE_OFTEN;
+        }else {
+            Integer id = userPlayerVo.getDecryptId();
+            userPlayerVo.getSearch().setId(id);
+            Map<String, NoticeContactWay> noticeContactWayMap = ServiceSiteTool.userPlayerService().findNormalNoticeContactWay(userPlayerVo);
+            NoticeContactWay phone = noticeContactWayMap.get(ContactWayType.CELLPHONE.getCode());
+            if (phone == null || StringTool.isBlank(phone.getContactValue())) {
+                LOG.info("站点【{0}】- 玩家【{1}】- 绑定手机号为【{2}】！",siteId,id,phone == null ? null : phone.getContactValue());
+                appErrorCodeEnum = AppErrorCodeEnum.UNBOUND_PHONE;
+            }else if (!MessageSendTool.sendMessage(phone.getContactValue(), request)) { //发送手机短信
+                LOG.info("站点{0}-调用WebCommon发送短信失败:{1}",SessionManager.getSiteId(),phone.getContactValue());
+                appErrorCodeEnum = AppErrorCodeEnum.REGISTER_PHONE_FAIL;
+            }else{
+                appErrorCodeEnum = AppErrorCodeEnum.SUCCESS;
+            }
         }
 
         return AppModelVo.getAppModeVoJson(true,
-                AppErrorCodeEnum.SUCCESS.getCode(),
-                AppErrorCodeEnum.SUCCESS.getMsg(),
+                appErrorCodeEnum.getCode(),
+                appErrorCodeEnum.getMsg(),
                 null,
                 APP_VERSION);
     }
@@ -500,27 +481,6 @@ public class OriginController extends BaseOriginController {
                 APP_VERSION);
     }
     //endregion mainIndex
-
-    /**
-     * 发送短信验证码
-     *
-     * @param phone
-     * @param sendType
-     * @param request
-     * @return
-     */
-    private boolean sendPhoneCode(String phone, String sendType, HttpServletRequest request) {
-        if (StringTool.isBlank(phone) && Pattern.matches(RegExpConstants.CELL_PHONE, phone)) {
-            return false;
-        }
-        LOG.info("发送短信验证码:{0}",phone);
-        //IP防刷，同一个IP90s内有重复，就不发送短信
-        if (VerificationCodeTool.validIp(request)) {
-            return false;
-        }
-        LOG.info("调用WebCommon发送短信接口:{0}",phone);
-        return MessageSendTool.sendMessage(phone, request);
-    }
 
     /**
      * 发送站点消息
