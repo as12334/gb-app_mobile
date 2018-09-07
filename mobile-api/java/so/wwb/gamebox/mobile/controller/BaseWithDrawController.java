@@ -14,8 +14,8 @@ import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.mobile.app.model.AppPlayerRank;
@@ -50,8 +50,8 @@ import so.wwb.gamebox.model.master.tasknotify.vo.UserTaskReminderVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
-import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
@@ -127,7 +127,7 @@ public class BaseWithDrawController {
      */
     private String setBankPictureUrl(HttpServletRequest request, UserBankcard bankcard) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName()));
         sb.append(COMMON_PAYBANK_PHOTO);
         sb.append(bankcard.getBankName());
         sb.append(".png");

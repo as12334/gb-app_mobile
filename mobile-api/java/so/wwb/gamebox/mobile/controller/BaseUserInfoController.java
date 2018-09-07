@@ -17,9 +17,9 @@ import org.soul.commons.support._Module;
 import org.soul.model.msg.notice.po.NoticeContactWay;
 import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.vo.SysUserVo;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
@@ -60,11 +60,10 @@ import so.wwb.gamebox.model.master.report.po.PlayerRecommendAward;
 import so.wwb.gamebox.model.master.report.vo.PlayerRecommendAwardListVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.IApiBalanceService;
-import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
 import so.wwb.gamebox.web.bank.BankCardTool;
 import so.wwb.gamebox.web.bank.BankHelper;
-import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -228,7 +227,7 @@ public class BaseUserInfoController extends BaseMobileApiController {
 
     private String setBankPictureUrl(HttpServletRequest request, UserBankcard bankcard) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName()));
         sb.append(COMMON_PAYBANK_PHOTO);
         sb.append(bankcard.getBankName());
         sb.append(".png");

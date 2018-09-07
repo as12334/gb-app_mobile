@@ -8,7 +8,6 @@ import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.net.IpTool;
 import org.soul.model.security.privilege.po.SysUser;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -40,6 +39,7 @@ import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeVo;
 import so.wwb.gamebox.model.master.operation.po.VActivityMessage;
 import so.wwb.gamebox.model.master.player.po.PlayerRank;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -77,7 +77,7 @@ public class DepositAppController extends BaseDepositController {
 
         //拼接入口图片地址
         StringBuilder depositImgUrl = new StringBuilder();
-        depositImgUrl.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName())).append("/");
+        depositImgUrl.append(MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName())).append("/");
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             depositImgUrl.append(AppTypeEnum.ANDROID.getCode());
         }

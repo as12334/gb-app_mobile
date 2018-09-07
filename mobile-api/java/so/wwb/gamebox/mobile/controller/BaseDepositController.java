@@ -23,10 +23,10 @@ import org.soul.model.pay.vo.OnlinePayVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import org.springframework.validation.BindingResult;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceActivityTool;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
@@ -69,8 +69,8 @@ import so.wwb.gamebox.model.master.player.po.PlayerRank;
 import so.wwb.gamebox.model.master.player.po.UserPlayer;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
-import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.web.common.token.TokenHandler;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
@@ -200,7 +200,7 @@ public class BaseDepositController {
         Map<String, String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
         String serverName = request.getServerName();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName)).append("/");
+        sb.append(MessageFormat.format(ConfigBase.get().getResRoot(), serverName)).append("/");
         if (StringTool.equals(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append(AppTypeEnum.ANDROID.getCode());
         }
@@ -209,7 +209,7 @@ public class BaseDepositController {
         }
 
         StringBuilder accountSb = new StringBuilder();
-        accountSb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), serverName));
+        accountSb.append(MessageFormat.format(ConfigBase.get().getResRoot(), serverName));
         map.put("depositImgUrl", String.format(DEPOSIT_IMG_URL, sb, model.getResolution(), code));
         map.put("accountImgUrl", String.format(ACCOUNT_IMG_URL, accountSb, code));
         map.put("serverName", serverName);

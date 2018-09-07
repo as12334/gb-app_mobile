@@ -23,7 +23,6 @@ import org.soul.model.gameapi.result.LoginResult;
 import org.soul.model.gameapi.result.RegisterResult;
 import org.soul.model.gameapi.result.ResultStatus;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.tag.ImageTag;
 import so.wwb.gamebox.common.cache.Cache;
@@ -51,6 +50,7 @@ import so.wwb.gamebox.model.master.enums.CttCarouselTypeEnum;
 import so.wwb.gamebox.model.master.player.vo.PlayerApiAccountVo;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.api.controller.BaseApiServiceController;
+import so.wwb.gamebox.web.init.ConfigBase;
 import so.wwb.gamebox.web.support.CdnConf;
 
 import javax.servlet.http.HttpServletRequest;
@@ -637,7 +637,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
         //没数据默认banner图
         if (carousels.size() <= 0) {
             Map defaultMap = new HashMap();
-            String coverUrl = String.format(AppConstant.DEFAULT_BANNER_URL, MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+            String coverUrl = String.format(AppConstant.DEFAULT_BANNER_URL, MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName()));
             defaultMap.put("cover", coverUrl);
             carousels.add(defaultMap);
         }
@@ -833,7 +833,7 @@ public abstract class BaseOriginController extends BaseApiServiceController {
      */
     private String setApiLogoUrl(AppRequestModelVo model, HttpServletRequest request) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName()));
         if (StringTool.equalsIgnoreCase(model.getTerminal(), AppTypeEnum.APP_ANDROID.getCode())) {
             sb.append("/android/themes");
         }

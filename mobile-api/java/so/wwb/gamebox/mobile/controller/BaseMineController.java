@@ -27,8 +27,8 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.po.SysUserStatus;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.init.BaseConfigManager;
 import org.soul.web.session.SessionManagerBase;
+import so.wwb.gamebox.common.cache.Cache;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.iservice.company.sys.ISysDomainService;
@@ -78,7 +78,7 @@ import so.wwb.gamebox.model.master.report.vo.*;
 import so.wwb.gamebox.model.master.setting.po.GradientTemp;
 import so.wwb.gamebox.web.SessionManagerCommon;
 import so.wwb.gamebox.web.SupportLocale;
-import so.wwb.gamebox.common.cache.Cache;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -586,7 +586,7 @@ public class BaseMineController extends BaseMobileApiController {
      */
     private String setBankPictureUrl(HttpServletRequest request, String bankNameCode) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName()));
         sb.append(COMMON_PAYBANK_PHOTO);
         sb.append(bankNameCode);
         sb.append(".png");
@@ -596,7 +596,7 @@ public class BaseMineController extends BaseMobileApiController {
 
     private String setBankPictureUrl(HttpServletRequest request, VPlayerTransaction po) {
         StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format(BaseConfigManager.getConfigration().getResRoot(), request.getServerName()));
+        sb.append(MessageFormat.format(ConfigBase.get().getResRoot(), request.getServerName()));
         sb.append(COMMON_PAYBANK_PHOTO);
 
         Map map = po.get_describe();

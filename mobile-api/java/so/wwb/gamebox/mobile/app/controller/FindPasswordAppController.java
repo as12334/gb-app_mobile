@@ -14,7 +14,6 @@ import org.soul.model.security.privilege.po.SysUser;
 import org.soul.model.security.privilege.so.SysUserSo;
 import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
-import org.soul.web.init.BaseConfigManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
 import so.wwb.gamebox.common.security.AuthTool;
-import so.wwb.gamebox.common.security.Main;
 import so.wwb.gamebox.mobile.app.enums.AppErrorCodeEnum;
 import so.wwb.gamebox.mobile.app.model.AppModelVo;
 import so.wwb.gamebox.mobile.session.SessionManager;
@@ -37,6 +35,7 @@ import so.wwb.gamebox.model.master.player.vo.UpdatePasswordVo;
 import so.wwb.gamebox.model.master.player.vo.UserPlayerVo;
 import so.wwb.gamebox.model.passport.vo.SecurityPassword;
 import so.wwb.gamebox.web.SessionManagerCommon;
+import so.wwb.gamebox.web.init.ConfigBase;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -282,7 +281,7 @@ public class FindPasswordAppController {
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.setSearch(new SysUserSo());
         sysUserVo.getSearch().setUsername(user.getUsername());
-        String subSysCode = BaseConfigManager.getConfigration().getSubsysCode();
+        String subSysCode = ConfigBase.get().getSubsysCode();
         if (SubSysCodeEnum.MSITES.getCode().equals(subSysCode)) {
             subSysCode = SubSysCodeEnum.PCENTER.getCode();
         }
