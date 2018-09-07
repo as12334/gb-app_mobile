@@ -136,6 +136,9 @@ public class IndexController extends BaseApiController {
         }
         //棋牌官网站点
         Integer siteId = SessionManager.getSiteId();
+
+
+
         if (siteId != null && (siteId == CHESS_TEST_SITE || siteId >= CHESS_PRODUCE_SITE_MIN)) {
             return "/ToChessIndex";
         }
@@ -792,7 +795,7 @@ public class IndexController extends BaseApiController {
             }
         }
         if (ParamTool.isMobileUpgrade()) {
-            return "/download/DownLoad";
+            return "/ChessIndex";
         }
         return "/app/Index";
     }
