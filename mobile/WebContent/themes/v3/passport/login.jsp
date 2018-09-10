@@ -9,7 +9,7 @@
 <body class="login">
 <!-- 主页面标题 -->
 <header class="mui-bar mui-bar-nav mui-bar-blue">
-    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" data-rel='{"target":"goToLastPage","opType":"function"}'></a>
     <h1 class="mui-title">${views.passport_auto['登录']}</h1>
     <a class="mui-icon mui-icon-home mui-pull-right " data-rel='{"target":"goToHomePageOnly","opType":"function"}'></a>
 </header>
@@ -19,7 +19,6 @@
         <!-- 主界面具体展示内容 -->
         <div class="login-form">
             <form id="mui-input-group">
-
                 <div class="username">
                     <label for="">${views.passport_auto['请输入账号']}</label>
                     <input type="text" name="username" id="username" class="mui-input-clear"
