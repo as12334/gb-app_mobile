@@ -43,7 +43,8 @@ public class DepositAccountSearcher {
     public PayAccount searchById(Integer payAccountId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.getSearch().setId(payAccountId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
+        payAccountVo.getSearch().setPlayerId(SessionManager.getUserId());
+        payAccountVo = ServiceSiteTool.payAccountService().queryAccountByAccountIdAndPlayerId(payAccountVo);//查询可用的账户
         return payAccountVo.getResult();
     }
 }

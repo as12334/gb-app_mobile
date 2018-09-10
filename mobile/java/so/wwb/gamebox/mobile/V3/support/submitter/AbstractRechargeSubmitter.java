@@ -8,6 +8,7 @@ import org.soul.commons.support._Module;
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.V3.support.DepositTool;
+import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
 import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.master.content.enums.PayAccountStatusEnum;
@@ -159,7 +160,8 @@ public abstract class AbstractRechargeSubmitter {
     private PayAccount getPayAccountById(Integer payAccountId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.getSearch().setId(payAccountId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
+        payAccountVo.getSearch().setPlayerId(SessionManager.getUserId());
+        payAccountVo = ServiceSiteTool.payAccountService().queryAccountByAccountIdAndPlayerId(payAccountVo);//查询可用的账户
         return payAccountVo.getResult();
     }
 

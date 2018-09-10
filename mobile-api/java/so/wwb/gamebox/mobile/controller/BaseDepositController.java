@@ -737,7 +737,8 @@ public class BaseDepositController {
     public PayAccount getPayAccountBySearchId(String searchId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.setSearchId(searchId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
+        payAccountVo.getSearch().setPlayerId(SessionManager.getUserId());
+        payAccountVo = ServiceSiteTool.payAccountService().queryAccountByAccountIdAndPlayerId(payAccountVo);//查询可用的账户
         PayAccount payAccount = payAccountVo.getResult();
         if (payAccount != null && !PayAccountStatusEnum.USING.getCode().equals(payAccount.getStatus())) {
             LOG.info("账号{0}已停用,故返回收款账号null", payAccount.getPayName());
