@@ -474,6 +474,9 @@ public class OriginController extends BaseOriginController {
     @RequestMapping("/getHttpCookie")
     @ResponseBody
     public String getSid() {
+        if (SessionManager.getSession(false) == null) {
+            SessionManager.getSession(true);
+        }
         return AppModelVo.getAppModeVoJson(true,
                 AppErrorCodeEnum.SUCCESS.getCode(),
                 AppErrorCodeEnum.SUCCESS.getMsg(),
