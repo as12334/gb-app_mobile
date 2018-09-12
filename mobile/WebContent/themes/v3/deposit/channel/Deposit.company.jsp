@@ -15,6 +15,8 @@
             <input type="hidden" id="siteCurrencySign" value="${siteCurrencySign}"/>
             <c:set var="min" value="${empty rank.onlinePayMin || rank.onlinePayMin <= 0 ?0.01:rank.onlinePayMin}" />
             <c:set var="max" value="${empty rank.onlinePayMax || rank.onlinePayMax <= 0 ?99999999:rank.onlinePayMax}" />
+            <c:set var="minMoney" value="${empty rank.onlinePayMin || rank.onlinePayMin <= 0 ?0.01:rank.onlinePayMin}"/>
+            <c:set var="maxMoney" value="${empty rank.onlinePayMax || rank.onlinePayMax <= 0 ?99999999:rank.onlinePayMax}" />
             <input type="hidden" name="onlinePayMin" id="onlinePayMin" value="${min}"/>
             <input type="hidden" name="onlinePayMax" id="onlinePayMax" value="${max}"/>
             <input type="hidden" name="account" id="account" value=""/>
@@ -36,7 +38,7 @@
                         </div>
                     </c:forEach>
                 </div>
-                <%@include file="../ChooseAmount.jsp" %>
+                <%@include file="../ChooseAmount.jsp"%>
                 <div class="depo_row">
                     <div class="label">存款金额</div>
                     <div class="input">
@@ -53,7 +55,7 @@
             <div class="deposit_help">
                 <p>温馨提示</p>
                 <p>• 存款金额请加小数点或尾数,以便区分.如充值200元,请输入201或200.1之类小数.</p>
-                <p>• 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
+                <p>• 如有任何疑问，请联系在线客服获取帮助.</p>
                 </br>
             </div>
     </c:when>
