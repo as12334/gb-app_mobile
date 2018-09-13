@@ -208,7 +208,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
     private PayAccount getPayAccountBySearchId(String searchId) {
         PayAccountVo payAccountVo = new PayAccountVo();
         payAccountVo.setSearchId(searchId);
-        payAccountVo = ServiceSiteTool.payAccountService().get(payAccountVo);
+        payAccountVo.getSearch().setPlayerId(SessionManager.getUserId());
+        payAccountVo = ServiceSiteTool.payAccountService().queryAccountByAccountIdAndPlayerId(payAccountVo);//查询可用的账户
         PayAccount payAccount = payAccountVo.getResult();
         if (payAccount == null) {
             return null;
