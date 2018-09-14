@@ -12,7 +12,8 @@
             <input type="hidden" name="randomValue" id="randomValue" value="${rechargeDecimals}">
             <input type="hidden" name="isAuthCode" id="isAuthCode" value=""/>
             <input type="hidden" name="accountType" id="accountType" value=""/>
-
+            <c:set var="minMoney" value="${empty account.singleDepositMin || account.singleDepositMin <= 0 ? 0.01 : account.singleDepositMin}"/>
+            <c:set var="maxMoney" value="${empty account.singleDepositMax?99999999:account.singleDepositMax}"/>
             <input type="hidden" name="activityId" id="activityId"/>
             <input type="hidden" name="account" value="" id="account"/>
             <input type="hidden" name="result.payerBank" value="" id="result.payerBank"/>
@@ -79,13 +80,13 @@
                 <c:if test="${channel!='easypay'}">
                     <p class="scan_code_random" style="display: none">• 为了提高对账速度及成功率，当前支付方式已开随机额度，请输入整数存款金额，将随机增加0.11~0.99元！</p>
                     <p class="scan_code" style="display: none">• 支付成功后,请等待几秒钟,提示<span style="color:red">「支付成功」</span>按确认后再关闭支付窗口。</p>
-                    <p class="scan_code" style="display: none">• 如出现充值失败或充值后未到账等情况，请联系在线客服获取 帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                    <p class="scan_code" style="display: none">• 如出现充值失败或充值后未到账等情况，请联系在线客服获取 帮助。</p>
                     <p class="electronic">• 存款金额请加小数点或尾数,以便区分.如充值200元,请输入201或200.1之类小数.。</p>
-                    <p class="electronic">• 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
+                    <p class="electronic">• 如有任何疑问，请联系在线客服获取帮助.</p>
                 </c:if>
                 <c:if test="${channel=='easypay'}">
                     <p>• 当前支付额度必须精确到小数点，请严格核对您的转账金额精确到分，如：100.51，否则无法提高对账速度及成功率，谢谢您的配合。</p>
-                    <p>• 如有任何疑问，请联系在线客服获取帮助<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a>.</p>
+                    <p>• 如有任何疑问，请联系在线客服获取帮助.</p>
                 </c:if>
                 </br>
             </div>

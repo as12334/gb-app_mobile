@@ -43,40 +43,42 @@
 				<entry key="captcha" value-ref="captcha"></entry>
 				<entry key="subsys" value-ref="subsysCodeFilter"></entry>
 				<entry key="access" value-ref="accessFilter"></entry>
+				<entry key="ip" value-ref="ipFilterPlayer"></entry>
 			</map>
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/mineOrigin/loginIsOpenVerify.html = anon
-				/app/update.html = anon
-				/app/getHost.html = anon
-				/chess/mainIndex.html = anon
-				/chessActivity/getActivityTypes.html = anon
-				/chessActivity/getActivityById.html = anon
-				/userInfoOrigin/verifyRealNameForApp.html = anon
-				/origin/getTimeZone.html = anon
-				/origin/getCustomerService.html = anon
-				/origin/mainIndex.html = anon
-				/origin/getCarouse.html = anon
-				/origin/getAnnouncement.html = anon
-				/origin/getSiteApiRelation.html = anon
-				/origin/getFloat.html = anon
-				/origin/getCasinoGame.html = anon
-				/origin/getGameTag.html = anon
-				/origin/about.html = anon
-				/origin/terms.html = anon
-				/origin/helpFirstType.html = anon
-				/origin/secondType.html = anon
-				/origin/helpDetail.html = anon
-				/origin/sendPhoneCode.html = anon
-				/origin/sendFindPasswordPhone.html = anon
-				/origin/getHttpCookie.html = anon
-				/discountsOrigin/*.html = anon
-				/registerOrigin/*.html = anon
-				/findPasswordOrigin/*.html = anon
-				/depositOrigin/saveFastRecharge.html = anon
-				/origin/getIntoAppAd.html = anon
-				/** = subsys,kickout,authc,access,autho
+				/mineOrigin/loginIsOpenVerify.html = ip
+				/app/update.html = ip
+				/app/getHost.html = ip
+				/chess/mainIndex.html = ip
+				/chessActivity/getActivityTypes.html = ip
+				/chessActivity/getActivityById.html = ip
+				/userInfoOrigin/verifyRealNameForApp.html = ip
+				/origin/getTimeZone.html = ip
+				/origin/getCustomerService.html = ip
+				/origin/mainIndex.html = ip
+				/origin/getCarouse.html = ip
+				/origin/getAnnouncement.html = ip
+				/origin/getSiteApiRelation.html = ip
+				/origin/getFloat.html = ip
+				/origin/getCasinoGame.html = ip
+				/origin/getGameTag.html = ip
+				/origin/about.html = ip
+				/origin/terms.html = ip
+				/origin/helpFirstType.html = ip
+				/origin/secondType.html = ip
+				/origin/helpDetail.html = ip
+				/origin/sendPhoneCode.html = ip
+				/origin/sendFindPasswordPhone.html = ip
+				/origin/getHttpCookie.html = ip
+				/discountsOrigin/*.html = ip
+				/registerOrigin/*.html = ip
+				/findPasswordOrigin/*.html = ip
+				/depositOrigin/saveFastRecharge.html = ip
+				/origin/getIntoAppAd.html = ip
+
+				/** = ip,subsys,kickout,authc,access,autho
 			</value>
 		</property>
 	</bean>

@@ -117,7 +117,7 @@
                         </c:if>
                         <p>• 请尽可能选择同行办理转账,可快速到账。</p>
                         <p>• 存款完成后保留单据以利核对并确保您的权益。</p>
-                        <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。<a href="javascript:" data-rel='{"target":"loadCustomer","opType":"function" }'>点击联系在线客服</a></p>
+                        <p>• 如出现充值失败或充值后未到账等情况，请联系在线客服获取帮助。</p>
                     </div>
                 </c:when>
                 <c:otherwise>

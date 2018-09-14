@@ -40,61 +40,63 @@
 				<entry key="captcha" value-ref="captcha"></entry>
 				<entry key="subsys" value-ref="subsysCodeFilter"></entry>
 				<entry key="access" value-ref="accessFilter"></entry>
+				<entry key="ip" value-ref="ipFilterPlayer"></entry>
 			</map>
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/about.html = anon
-				/getRegisterRules.html = anon
-				/message_*.js = anon
-				/ =  anon
-				/message_*.js = anon
-				/index.* =  anon
-				/mainIndex.* = anon
-				/game.* =  anon
-				/game/* =  anon
-				/validate/* anon
-				/index/language.html = anon
-				/index/language/change.html = anon
-				/images/favicon.ico = anon <!--for chrome-->
-				/resource/** = anon
-				/logout/logoutByTimeOut.html = anon
-				/login/*.html = anon
-				/signUp/** = anon
-				/register.html = anon
-				/template/email/** = anon
-				/errors/** = anon
-				/help/** = anon
-				/index/*.html = anon
-				/index/static/*.html = anon
-				/promo/promo.html = anon
-				/promo/activityType.html = anon
-				/promo/finishedPromo.html = anon
-				/promo/promoDetail.html = anon
-				/promo/goToPromoDetail.html = anon
-				/captcha/*.html = captcha
-				/passport/verify/*.html = anon
-				/passport/login* = subsys,login
-				/verificationCode/*=anon
-				/commonPage/*.html = anon
-				/app/*.html = anon
-				/demo/*.html = anon
-				/sysUser.html = anon
-				/lotteryResult/getOpenResult.html = anon
-				/lotteryDemo/*.html = anon
-				/commonLottery/*.html = anon
-				/getHeadInfo.html = anon
 				/error/*.html = anon
-				/lottery/lhc/*/getZodiacMap.html = anon
-				/downLoad/downLoadShowQrcode.html = anon
-				/downLoad/downLoad.html = anon
-				/downLoad/downLoadIOS.html = anon
-				/userInfo.html = anon
-				/discounts/index.html = anon
-				/discounts/activityType.html = anon
-				/discounts/promo.html = anon
-				/forgetPassword/*.html = anon
-				/** = subsys,kickout,authc,access,autho
+				/errors/** = anon
+				/images/favicon.ico = anon <!--for chrome-->
+				/template/email/** = anon
+				/resource/** = anon
+
+				/ =  ip
+				/about.html = ip
+				/app/*.html = ip
+				/commonLottery/*.html = ip
+				/commonPage/*.html = ip
+				/demo/*.html = ip
+				/discounts/activityType.html = ip
+				/discounts/index.html = ip
+				/discounts/promo.html = ip
+				/downLoad/downLoad.html = ip
+				/downLoad/downLoadIOS.html = ip
+				/downLoad/downLoadShowQrcode.html = ip
+				/forgetPassword/*.html = ip
+				/game.* =  ip
+				/game/* =  ip
+				/getHeadInfo.html = ip
+				/getRegisterRules.html = ip
+				/help/** = ip
+				/index.* =  ip
+				/index/*.html = ip
+				/index/language.html = ip
+				/index/language/change.html = ip
+				/index/static/*.html = ip
+				/login/*.html = ip
+				/logout/logoutByTimeOut.html = ip
+				/lottery/lhc/*/getZodiacMap.html = ip
+				/lotteryDemo/*.html = ip
+				/lotteryResult/getOpenResult.html = ip
+				/mainIndex.* = ip
+				/message_*.js = ip
+				/passport/verify/*.html = ip
+				/promo/activityType.html = ip
+				/promo/finishedPromo.html = ip
+				/promo/goToPromoDetail.html = ip
+				/promo/promo.html = ip
+				/promo/promoDetail.html = ip
+				/register.html = ip
+				/signUp/** = ip
+				/sysUser.html = ip
+				/userInfo.html = ip
+				/validate/* =ip
+				/verificationCode/*=ip
+
+				/passport/login* = ip,subsys,login
+				/captcha/*.html = ip,captcha
+				/** = ip,subsys,kickout,authc,access,autho
 			</value>
 		</property>
 	</bean>
