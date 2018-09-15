@@ -210,11 +210,11 @@ public class WithdrawAppController extends BaseWithDrawController {
     }
 
     /**金额保留两位小数*/
-    public String moneyFormatFloat(Double money){
+    public Double moneyFormatFloat(Double money){
         if(money == null){
             return null;
         }
-        return String.format("%.2f", money);
+        return Double.valueOf(String.format("%.2f", money));
     }
 
     /**
@@ -256,7 +256,7 @@ public class WithdrawAppController extends BaseWithDrawController {
         for (PlayerTransaction playerTransaction : playerTransactions) {
             if (playerTransaction.getRechargeAuditPoints() == null && depositType.equals(playerTransaction.getTransactionType())
                     && !artificialDepositType.equals(playerTransaction.getFundType())) {
-                playerTransaction.setRechargeAuditPoints(playerTransaction.getTransactionMoney() * withdrawNormalAudit);
+                playerTransaction.setRechargeAuditPoints(moneyFormatFloat(playerTransaction.getTransactionMoney() * withdrawNormalAudit));
             }
             withdrawAuditApp = new WithdrawAuditApp();
             withdrawAuditApp.setCreateTime(playerTransaction.getCreateTime());
@@ -264,9 +264,9 @@ public class WithdrawAppController extends BaseWithDrawController {
                 withdrawAuditApp.setRechargeAmount(playerTransaction.getTransactionMoney());
                 auditPoints = playerTransaction.getRechargeAuditPoints();
                 if (auditPoints != null && playerTransaction.getEffectiveTransaction() == null) {
-                    withdrawAuditApp.setRechargeRemindAudit(playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRelaxingQuota());
+                    withdrawAuditApp.setRechargeRemindAudit(moneyFormatFloat(playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRelaxingQuota()));
                 } else if (auditPoints != null && playerTransaction.getEffectiveTransaction() != null) {
-                    withdrawAuditApp.setRechargeRemindAudit(playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRelaxingQuota());
+                    withdrawAuditApp.setRechargeRemindAudit(moneyFormatFloat(playerTransaction.getEffectiveTransaction() + playerTransaction.getRemainderEffectiveTransaction() + playerTransaction.getRelaxingQuota()));
                 }
                 if (auditPoints != null) {
                     withdrawAuditApp.setRechargeAudit(auditPoints < 0 ? 0 : auditPoints);
@@ -274,13 +274,15 @@ public class WithdrawAppController extends BaseWithDrawController {
                 if (playerTransaction.getAdministrativeFee() != null) {
                     withdrawAuditApp.setRechargeFee(-playerTransaction.getAdministrativeFee());
                 }
+                LOG.info("存款稽核：{0}，有效交易量:{1},存款剩余有效交易量:{2}，放宽额度:{3}，行政费用:{4},存款剩余稽核点:{5},层级对应存款稽核:{6}",
+                        auditPoints,playerTransaction.getEffectiveTransaction(),playerTransaction.getRemainderEffectiveTransaction(),playerTransaction.getRelaxingQuota(),playerTransaction.getAdministrativeFee(),withdrawAuditApp.getRechargeRemindAudit(),withdrawNormalAudit);
             } else {
                 withdrawAuditApp.setFavorableAmount(playerTransaction.getTransactionMoney());
                 auditPoints = playerTransaction.getFavorableAuditPoints();
                 if (auditPoints != null && playerTransaction.getEffectiveTransaction() == null) {
-                    withdrawAuditApp.setFavorableRemindAudit(playerTransaction.getFavorableRemainderEffectiveTransaction());
+                    withdrawAuditApp.setFavorableRemindAudit(moneyFormatFloat(playerTransaction.getFavorableRemainderEffectiveTransaction()));
                 } else {
-                    withdrawAuditApp.setFavorableRemindAudit(playerTransaction.getFavorableRemainderEffectiveTransaction() + playerTransaction.getEffectiveTransaction());
+                    withdrawAuditApp.setFavorableRemindAudit(moneyFormatFloat(playerTransaction.getFavorableRemainderEffectiveTransaction() + playerTransaction.getEffectiveTransaction()));
                 }
                 if (auditPoints != null && playerTransaction.getRelaxingQuota() != null) {
                     withdrawAuditApp.setFavorableAudit(auditPoints - playerTransaction.getRelaxingQuota() < 0 ? 0 : auditPoints);
@@ -290,9 +292,12 @@ public class WithdrawAppController extends BaseWithDrawController {
                 if (playerTransaction.getDeductFavorable() != null) {
                     withdrawAuditApp.setFavorableFee(-playerTransaction.getDeductFavorable());
                 }
+                LOG.info("存款优惠稽核：{0}，有效交易量:{1},优惠剩余有效交易量:{2}，放宽额度:{3}，扣除优惠金额:{4},优惠剩余稽核点:{5},层级对应存款稽核:{6}",
+                        auditPoints,playerTransaction.getEffectiveTransaction(),playerTransaction.getFavorableRemainderEffectiveTransaction(),playerTransaction.getRelaxingQuota(),playerTransaction.getDeductFavorable(),withdrawAuditApp.getFavorableRemindAudit(),withdrawNormalAudit);
             }
             withdrawAudits.add(withdrawAuditApp);
         }
+
         return withdrawAudits;
     }
 
