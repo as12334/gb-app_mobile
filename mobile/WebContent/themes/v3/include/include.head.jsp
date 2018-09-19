@@ -1,4 +1,5 @@
 <%@ page import="so.wwb.gamebox.model.SiteParamEnum" %>
+<%@ page import="so.wwb.gamebox.model.ParamTool" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <meta charset="utf-8"/>
 <!-- 宽度设置为设备实际宽度，初始化倍数为1，最小倍数为1，最大倍数为1，用户缩放为否 -->
