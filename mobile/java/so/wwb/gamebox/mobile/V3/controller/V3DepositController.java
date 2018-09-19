@@ -195,8 +195,8 @@ public class V3DepositController extends V3BaseDepositController {
             }
         }
         //计算优惠显示
-        String account = CryptoTool.aesEncrypt(String.valueOf(playerRechargeVo.getResult().getPayAccountId()), "BaseVo");
-        double fee = calculateFee(getRank(), amount,account);
+//        String account = CryptoTool.aesEncrypt(String.valueOf(playerRechargeVo.getAccount()), "BaseVo");
+        double fee = calculateFee(getRank(), amount,playerRechargeVo.getAccount());
         model.addAttribute("rechargeAmount", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
         model.addAttribute("counterFee", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
         model.addAttribute("fee", fee);
