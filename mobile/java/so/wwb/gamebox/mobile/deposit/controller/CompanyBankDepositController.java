@@ -4,6 +4,7 @@ import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.lang.string.I18nTool;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.soul.web.validation.form.js.JsRuleCreator;
@@ -123,8 +124,10 @@ public class CompanyBankDepositController extends BaseCompanyDepositController {
     public PlayerRechargeVo saveRecharge(PlayerRechargeVo playerRechargeVo, PayAccount payAccount,HttpServletRequest request) {
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
+        String account = CryptoTool.aesEncrypt(String.valueOf(playerRecharge.getPayAccountId()), "BaseVo");
         if (playerRecharge.getCounterFee() == null) {
-            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+//            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+            playerRecharge.setCounterFee(calculateFeeSchemaAndRank(rank, playerRecharge.getRechargeAmount(),account));
         }
 
         if (playerRecharge.getCounterFee() + playerRecharge.getRechargeAmount() <= 0) {

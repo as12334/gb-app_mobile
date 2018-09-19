@@ -8,6 +8,7 @@ import org.soul.commons.locale.LocaleTool;
 import org.soul.commons.log.Log;
 import org.soul.commons.log.LogFactory;
 import org.soul.commons.net.ServletTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.pay.enums.CommonFieldsConst;
 import org.soul.model.pay.enums.PayApiTypeConst;
@@ -269,8 +270,10 @@ public class BaseOnlineDepositController extends BaseDepositController {
         playerRechargeVo.setSysUser(SessionManager.getUser());
         playerRechargeVo.setOrigin(SessionManagerCommon.getTerminal(request));
         playerRechargeVo.setRankId(rank.getId());
+        String account = CryptoTool.aesEncrypt(String.valueOf(payAccount.getId()), "BaseVo");//calculateFeeSchemaAndRank方法中id是加密的,所以调用前加密
         if (playerRecharge.getCounterFee() == null) {
-            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+//            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+            playerRecharge.setCounterFee(calculateFeeSchemaAndRank(rank, playerRecharge.getRechargeAmount(),account));
         }
 
         //存款总额（存款金额+手续费）>0才能继续执行
@@ -343,7 +346,8 @@ public class BaseOnlineDepositController extends BaseDepositController {
         if (max < rechargeAmount || min > rechargeAmount) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max));
         }
-        Double fee = calculateFee(rank, rechargeAmount);
+//        Double fee = calculateFee(rank, rechargeAmount);
+        Double fee = calculateFeeSchemaAndRank(rank, rechargeAmount,playerRechargeVo.getAccount());
         fee = fee == null ? 0 : fee;
         if (rechargeAmount + fee <= 0) {
             return submitReturn(model, unCheckSuccess, pop, rechargeAmount, LocaleTool.tranMessage(Module.FUND, MessageI18nConst.RECHARGE_AMOUNT_LT_FEE));

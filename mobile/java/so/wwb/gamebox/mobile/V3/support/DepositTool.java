@@ -16,6 +16,7 @@ import org.soul.model.security.privilege.vo.SysUserVo;
 import org.soul.model.sys.po.SysParam;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.common.dubbo.ServiceTool;
+import so.wwb.gamebox.iservice.master.fund.IPlayerRechargeService;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.DictEnum;
 import so.wwb.gamebox.model.ParamTool;
@@ -25,7 +26,10 @@ import so.wwb.gamebox.model.company.enums.BankCodeEnum;
 import so.wwb.gamebox.model.company.setting.po.SysCurrency;
 import so.wwb.gamebox.model.company.sys.po.VSysSiteDomain;
 import so.wwb.gamebox.model.master.content.po.PayAccount;
+import so.wwb.gamebox.model.master.content.vo.PayAccountVo;
 import so.wwb.gamebox.model.master.enums.RankFeeType;
+import so.wwb.gamebox.model.master.fee.po.RechargeFeeSchema;
+import so.wwb.gamebox.model.master.fee.vo.RechargeFeeSchemaVo;
 import so.wwb.gamebox.model.master.fund.enums.RechargeStatusEnum;
 import so.wwb.gamebox.model.master.fund.po.PlayerRecharge;
 import so.wwb.gamebox.model.master.fund.vo.PlayerRechargeListVo;
@@ -104,6 +108,142 @@ public class DepositTool {
         SysUserVo sysUserVo = new SysUserVo();
         sysUserVo.getSearch().setId(SessionManager.getUserId());
         return ServiceSiteTool.playerRankService().searchRankByPlayerId(sysUserVo);
+    }
+
+    public static IPlayerRechargeService playerRechargeService() {
+        return ServiceSiteTool.playerRechargeService();
+    }
+
+    /**
+     * 计算在RechargeFeeSchema设置的符合免手续费的存款次数
+     *
+     * @param schema        手续费方案
+     * @param isFee       手续费标志
+     * @param isReturnFee 返手续费标志
+     * @return
+     */
+    private static long getDepositFeeSchemaCountInTime(RechargeFeeSchema schema, boolean isFee, boolean isReturnFee) {
+        PlayerRechargeListVo listVo = new PlayerRechargeListVo();
+        Date now = SessionManager.getDate().getNow();
+        listVo.getSearch().setEndTime(now);
+        listVo.getSearch().setPlayerId(SessionManager.getUserId());
+        if (isFee && schema.getFreeCount() != null && schema.getFreeCount() > 0 && schema.getFeeTime() != null) {
+            listVo.getSearch().setStartTime(DateTool.addHours(now, -schema.getFeeTime()));
+        } else if (isReturnFee && schema.getReturnFeeCount() != null && schema.getReturnFeeCount() > 0 && schema.getReturnTime() != null) {
+            listVo.getSearch().setStartTime(DateTool.addHours(now, -schema.getReturnTime()));
+        }
+        listVo.setRechargeFeeSchema(schema);
+        return playerRechargeService().searchPlayerRechargeFeeSchemaCount(listVo);
+    }
+
+    /**
+     * 计算手续费方案收取的手续费金额
+     * @param rechargeAmount
+     * @param account
+     * @return
+     */
+    public static RechargeFeeSchemaVo calculateFeeSchema(double rechargeAmount, String account) {
+        //查询手续费方案
+        PayAccountVo accountVo = new PayAccountVo();
+        accountVo.setSearchId(account);
+        RechargeFeeSchemaVo schemaVo = ServiceSiteTool.rechargeFeeSchemaService().searchFeeSchemaUseAccountId(accountVo);
+        RechargeFeeSchema schema = schemaVo.getResult();
+        //是否收取或者返还:手续费为空,
+        if (schema == null) {
+            schemaVo.setISSchema(false);
+            return schemaVo;
+        }
+
+        //其余情况都是要收取的
+        schemaVo.setISSchema(true);
+
+        //手续费标志
+        boolean isFee = !(schema.getIsFee() == null || !schema.getIsFee());
+        //返手续费标志
+        boolean isReturnFee = !(schema.getIsReturnFee() == null || !schema.getIsReturnFee());
+        double fee = 0d;
+        schemaVo.setFeeAmount(fee);
+
+        //有手续费方案关联,但不收不返
+        if (!isFee && !isReturnFee) {
+            return schemaVo;
+        }
+        //返还达不到金额要求
+        if (isReturnFee && rechargeAmount < schema.getReachMoney()) {
+            return schemaVo;
+        }
+        // 规定时间内存款次数
+        long count = getDepositFeeSchemaCountInTime(schema, isFee, isReturnFee);
+        if (isFee && schema.getFreeCount() != null && count < schema.getFreeCount()) {
+            return schemaVo;
+        }
+        if (isReturnFee && schema.getReturnFeeCount() != null && count >= schema.getReturnFeeCount()) {
+            return schemaVo;
+        }
+
+        //费用计算
+        if (isFee && schema.getFeeMoney() != null) {
+            fee = computeFee(schema.getFeeType(), schema.getFeeMoney(), rechargeAmount, schema.getMaxFee());
+        } else if (isReturnFee && schema.getReturnMoney() != null) {
+            fee = computeFee(schema.getReturnType(), schema.getReturnMoney(), rechargeAmount, schema.getMaxReturnFee());
+        }
+        if (isFee) {
+            fee = -Math.abs(fee);
+        } else {
+            fee = Math.abs(fee);
+        }
+        schemaVo.setFeeAmount(fee);
+        return schemaVo;
+
+    }
+
+    /**
+     * 计算手续费:存款手续费方案或者层级手续费
+     *
+     * @param rechargeAmount 存款金额
+     * @return
+     */
+    public static double calculateFeeSchemaAndRank(PlayerRank rank, double rechargeAmount, String account) {
+
+        //计算手续费方案收取的手续费金额
+        RechargeFeeSchemaVo schemaVo = calculateFeeSchema(rechargeAmount, account);
+        if (schemaVo.getISSchema()){
+            return schemaVo.getFeeAmount();
+        }
+        //不用手续费方案,就计算层级的费用设置
+        if (rank == null) {
+            return 0d;
+        }
+        //手续费标志
+        boolean isFee = !(rank.getIsFee() == null || !rank.getIsFee());
+        //返手续费标志
+        boolean isReturnFee = !(rank.getIsReturnFee() == null || !rank.getIsReturnFee());
+        if (!isFee && !isReturnFee) {
+            return 0d;
+        }
+        if (isReturnFee && rechargeAmount < rank.getReachMoney()) {
+            return 0d;
+        }
+        // 规定时间内存款次数
+        long count = getDepositCountInTime(rank, isFee, isReturnFee);
+        if (isFee && rank.getFreeCount() != null && count < rank.getFreeCount()) {
+            return 0d;
+        }
+        if (isReturnFee && rank.getReturnFeeCount() != null && count >= rank.getReturnFeeCount()) {
+            return 0d;
+        }
+        double fee = 0d;
+        if (isFee && rank.getFeeMoney() != null) {
+            fee = computeFee(rank.getFeeType(), rank.getFeeMoney(), rechargeAmount, rank.getMaxFee());
+        } else if (isReturnFee && rank.getReturnMoney() != null) {
+            fee = computeFee(rank.getReturnType(), rank.getReturnMoney(), rechargeAmount, rank.getMaxReturnFee());
+        }
+        if (isFee) {
+            fee = -Math.abs(fee);
+        } else {
+            fee = Math.abs(fee);
+        }
+        return fee;
     }
 
     /**

@@ -411,7 +411,8 @@ public class DepositAppController extends BaseDepositController {
                     LocaleTool.tranMessage(Module.FUND.getCode(), MessageI18nConst.RECHARGE_AMOUNT_OVER, min, max),
                     null, APP_VERSION);
         }
-        Double fee = calculateFee(rank, rechargeAmount);
+//        Double fee = calculateFee(rank, rechargeAmount);
+        Double fee = calculateFeeSchemaAndRank(rank,rechargeAmount,playerRechargeVo.getAccount());
         fee = fee == null ? 0 : fee;
         if (rechargeAmount + fee <= 0) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.MONEY_ERROR.getCode(),

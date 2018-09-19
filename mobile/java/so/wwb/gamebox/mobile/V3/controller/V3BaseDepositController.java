@@ -39,8 +39,8 @@ public class V3BaseDepositController {
      * @param rechargeAmount 存款金额
      * @return
      */
-    protected double calculateFee(PlayerRank rank, double rechargeAmount) {
-        return DepositTool.calculateFee(rank, rechargeAmount);
+    protected double calculateFee(PlayerRank rank, double rechargeAmount,String account) {
+        return DepositTool.calculateFeeSchemaAndRank(getRank(), rechargeAmount,account);
     }
 
 

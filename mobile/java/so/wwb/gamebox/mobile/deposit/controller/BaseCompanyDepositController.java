@@ -3,6 +3,7 @@ package so.wwb.gamebox.mobile.deposit.controller;
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.data.json.JsonTool;
 import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.model.comet.vo.MessageVo;
 import org.soul.model.security.privilege.vo.SysResourceListVo;
 import org.soul.model.sys.po.SysParam;
@@ -127,6 +128,7 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
         boolean pop = true;
         String tips = "";
         Double rechargeAmount = playerRechargeVo.getResult().getRechargeAmount();
+        String account = CryptoTool.aesEncrypt(String.valueOf(playerRechargeVo.getResult().getPayAccountId()), "BaseVo");
         //验证存款金额的合法性
         if (rechargeAmount == null || rechargeAmount <= 0) {
             tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountCorrect");
@@ -140,7 +142,8 @@ public abstract class BaseCompanyDepositController extends BaseDepositController
                 tips = LocaleTool.tranMessage(Module.FUND, "rechargeForm.rechargeAmountOver", min, max);
                 model.addAttribute("tips", tips);
             } else {
-                double fee = calculateFee(rank, rechargeAmount);
+//                double fee = calculateFee(rank, rechargeAmount);
+                double fee = calculateFeeSchemaAndRank(rank, rechargeAmount,account);
                 if (rechargeAmount + fee <= 0) {
                     model.addAttribute("tips", "存款金额加手续费必须大于0");
                 } else if ("1".equals(playerRechargeVo.getStatusNum())) {//状态为"1"，不显示优惠信息

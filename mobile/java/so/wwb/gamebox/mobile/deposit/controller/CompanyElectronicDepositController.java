@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.deposit.controller;
 
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.web.session.SessionManagerBase;
 import org.soul.web.validation.form.annotation.FormModel;
 import org.soul.web.validation.form.js.JsRuleCreator;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositCashForm;
 import so.wwb.gamebox.mobile.deposit.form.CompanyElectronicDepositForm;
-import so.wwb.gamebox.mobile.deposit.form.DepositForm;
 import so.wwb.gamebox.mobile.init.annotataion.Upgrade;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.model.Module;
@@ -118,8 +118,10 @@ public class CompanyElectronicDepositController extends BaseCompanyDepositContro
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
         PlayerRank rank = getRank();
         playerRecharge.setRechargeTypeParent(RechargeTypeParentEnum.COMPANY_DEPOSIT.getCode());
+        String account = CryptoTool.aesEncrypt(String.valueOf(playerRecharge.getPayAccountId()), "BaseVo");
         if (playerRecharge.getCounterFee() == null) {
-            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+//            playerRecharge.setCounterFee(calculateFee(rank, playerRecharge.getRechargeAmount()));
+            playerRecharge.setCounterFee(calculateFeeSchemaAndRank(rank, playerRecharge.getRechargeAmount(),account));
         }
 
         //存款总额（存款金额+手续费）>0才能继续执行

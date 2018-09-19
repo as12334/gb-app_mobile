@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.soul.commons.bean.Pair;
 import org.soul.commons.lang.string.StringTool;
 import org.soul.commons.locale.LocaleTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.commons.support._Module;
 import org.springframework.validation.BindingResult;
 import so.wwb.gamebox.common.dubbo.ServiceSiteTool;
@@ -83,8 +84,10 @@ public abstract class AbstractRechargeSubmitter {
     protected PlayerRechargeVo counterAndValidateFee(PlayerRechargeVo playerRechargeVo, PlayerRank rank) {
         playerRechargeVo.setSuccess(true);
         PlayerRecharge playerRecharge = playerRechargeVo.getResult();
+        String account = CryptoTool.aesEncrypt(String.valueOf(playerRecharge.getPayAccountId()), "BaseVo");
         if (playerRecharge.getCounterFee() == null) {
-            double counterFee = DepositTool.calculateFee(rank, playerRecharge.getRechargeAmount());
+//            double counterFee = DepositTool.calculateFee(rank, playerRecharge.getRechargeAmount());
+            double counterFee = DepositTool.calculateFeeSchemaAndRank(rank, playerRecharge.getRechargeAmount(),account);
             playerRecharge.setCounterFee(counterFee);
         }
         //存款总额（存款金额+手续费）>0才能继续执行

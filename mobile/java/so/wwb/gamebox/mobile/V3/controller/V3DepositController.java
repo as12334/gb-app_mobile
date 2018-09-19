@@ -2,6 +2,7 @@ package so.wwb.gamebox.mobile.V3.controller;
 
 import org.soul.commons.currency.CurrencyTool;
 import org.soul.commons.lang.string.StringTool;
+import org.soul.commons.security.CryptoTool;
 import org.soul.model.sys.po.SysParam;
 import org.soul.web.validation.form.js.JsRuleCreator;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,8 @@ import so.wwb.gamebox.web.common.token.Token;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
+import static so.wwb.gamebox.mobile.V3.support.DepositTool.calculateFeeSchemaAndRank;
 
 @Controller
 @RequestMapping("/wallet/v3/deposit")
@@ -192,7 +195,8 @@ public class V3DepositController extends V3BaseDepositController {
             }
         }
         //计算优惠显示
-        double fee = calculateFee(getRank(), amount);
+        String account = CryptoTool.aesEncrypt(String.valueOf(playerRechargeVo.getResult().getPayAccountId()), "BaseVo");
+        double fee = calculateFee(getRank(), amount,account);
         model.addAttribute("rechargeAmount", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(amount));
         model.addAttribute("counterFee", DepositTool.getCurrencySign() + CurrencyTool.formatCurrency(Math.abs(fee)));
         model.addAttribute("fee", fee);
