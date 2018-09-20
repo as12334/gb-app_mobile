@@ -9,6 +9,7 @@ import org.soul.commons.validation.form.support.Comment;
 import org.soul.web.support.IForm;
 import so.wwb.gamebox.mobile.common.consts.FormValidRegExps;
 import so.wwb.gamebox.mobile.deposit.controller.BaseDepositController;
+import so.wwb.gamebox.model.common.RegExpConstants;
 import so.wwb.gamebox.model.master.fund.enums.RechargeTypeEnum;
 
 import javax.validation.constraints.Max;
@@ -36,7 +37,8 @@ public class CompanyElectronicDepositForm implements IForm {
     }
 
     @Comment("订单号后5位")
-    @Length(message = "valid.rechargeForm.bankOrderNotBlank", min = 5, max = 5)
+    @Pattern(message = "valid.rechargeForm.bankOrderNotBlank", regexp = RegExpConstants.BANKORDER)
+//    @Length(message = "valid.rechargeForm.bankOrderNotBlank", min = 5, max = 5)
     public String getResult_bankOrder() {
         return result_bankOrder;
     }
