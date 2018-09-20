@@ -151,7 +151,7 @@
                         <c:otherwise>
                             <div class="mui-input-row">
                                 <label for="result.bankOrder">${views.deposit_auto['订单号后5位']}
-                                    <span class="small">${views.deposit_auto['非必填']}</span>
+                                    <%--<span class="small">${views.deposit_auto['非必填']}</span>--%>
                                 </label>
                                 <div class="ct">
                                     <input type="text" id="result.bankOrder" name="result.bankOrder" placeholder="${views.deposit_auto['非商户订单号']}">
