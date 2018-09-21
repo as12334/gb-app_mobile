@@ -55,9 +55,7 @@ public class AppCheckController {
         List<VSysSiteDomain> siteDomain = new ArrayList<>();
         //只返回主页域名,去掉代理域名
         for (VSysSiteDomain domain : siteDomainIndex) {
-            if (domain.getAgentId() == null) {
-                siteDomain.add(domain);
-            }
+            siteDomain.add(domain);
         }
         if (siteDomain == null) {
             LOG.info("app获取域名错误:站点ID={0},获取次数={1}, 缓存DOMAIN_SITE is null", siteId, num);
