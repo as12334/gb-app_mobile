@@ -52,11 +52,7 @@ public class AppCheckController {
         String times = request.getParameter("times");
         int num = StringTool.isBlank(times) ? 0 : Integer.parseInt(times);
         List<VSysSiteDomain> siteDomainIndex = Cache.getSiteDomain(siteId, DomainPageUrlEnum.INDEX.getCode());
-        List<VSysSiteDomain> siteDomain = new ArrayList<>();
-        //只返回主页域名,去掉代理域名
-        for (VSysSiteDomain domain : siteDomainIndex) {
-            siteDomain.add(domain);
-        }
+        List<VSysSiteDomain> siteDomain = getIndexDomains(siteDomainIndex);
         if (siteDomain == null) {
             LOG.info("app获取域名错误:站点ID={0},获取次数={1}, 缓存DOMAIN_SITE is null", siteId, num);
             map.put("data", null);
@@ -76,5 +72,22 @@ public class AppCheckController {
         map.put("data", domains);
         return JsonTool.toJson(map);
 
+    }
+
+    private List<VSysSiteDomain> getIndexDomains(List<VSysSiteDomain> siteDomainIndex) {
+        List<VSysSiteDomain> siteDomain = new ArrayList<>();
+        //先返回主页域名
+        for (VSysSiteDomain domain : siteDomainIndex) {
+            if (domain.getAgentId() == null) {
+                siteDomain.add(domain);
+            }
+        }
+        //再返回代理域名
+        for (VSysSiteDomain domain : siteDomainIndex) {
+            if (domain.getAgentId() != null) {
+                siteDomain.add(domain);
+            }
+        }
+        return siteDomain;
     }
 }
