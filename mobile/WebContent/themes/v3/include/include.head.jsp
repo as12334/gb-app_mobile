@@ -19,6 +19,9 @@
 <link rel="shortcut icon" href="${ftlRoot}/ftl/commonPage/images/app_icon/app_icon_${siteId}.png">
 
 <link rel="stylesheet" href="${resRoot}/themes/mui.min.css?v=${rcVersion}"/>
+<link rel="stylesheet" href="${resRoot}/themes/mui.previewimage.css?v=${rcVersion}">
+<link rel="stylesheet" href="${resRoot}/themes/imageview.css?v=${rcVersion}">
+<link rel="stylesheet" href="${resRoot}/themes/mui.imageviewer.css?v=${rcVersion}">
 <link rel="stylesheet" href="${resRoot}/themes/common.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/index.css?v=${rcVersion}"/>
 <link rel="stylesheet" href="${resRoot}/themes/otherpage.css?v=${rcVersion}"/>
