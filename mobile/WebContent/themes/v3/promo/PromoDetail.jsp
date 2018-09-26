@@ -50,7 +50,7 @@
                                                 <c:set var="imgSrc" value="${resRoot}/images/img-sale1.jpg"/>
                                             </c:otherwise>
                                         </c:choose>
-                                        <img src="${imgSrc}" style="width: 100%;">
+                                        <img src="${imgSrc}" style="width: 100%;" data-preview-src="" data-preview-group="1" alt="">
                                     </a>
                                     <div class="ct" style="padding: 0;">
                                         <h5><i></i><span>${activity.activityName}</span></h5>
