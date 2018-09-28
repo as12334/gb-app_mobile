@@ -53,7 +53,8 @@
     </div>
 </section>
 <section class="notice">
-    <button type="button" class="mui-btn mui-btn-primary btn-title">${views.game_auto['公告']}</button>
+    <%--<button type="button" class="mui-btn mui-btn-primary btn-title">${views.game_auto['公告']}</button>--%>
+    <i class="msg_inform_icon"></i>
     <div class="notice-list">
         <div class="marquee">
             <c:forEach items="${announcement}" var="a" varStatus="vs">
