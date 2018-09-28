@@ -925,6 +925,7 @@ public class BaseDepositController {
         if (payAccount == null) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(), null);
         }
+        LOG.info("线上支付提交订单，入款类型type：{0}",payAccount.getType());
         if (PayAccountType.COMPANY_ACCOUNT.getCode().equals(payAccount.getType())) {
             String type;
             if (PayAccountAccountType.THIRTY.getCode().equals(payAccount.getAccountType()) && AppConstant.BITCOIN.equals(payAccount.getBankCode())) {
@@ -934,7 +935,7 @@ public class BaseDepositController {
             } else {
                 type = AppDepositPayEnum.ELECTRONIC_PAY.getCode();
             }
-            companyCommonDeposit(playerRechargeVo, result, type, request);
+            return companyCommonDeposit(playerRechargeVo, result, type, request);
         }
         PlayerRank rank = getRank();
         playerRechargeVo = saveRecharge(playerRechargeVo, payAccount, rank, RechargeTypeParentEnum.ONLINE_DEPOSIT.getCode(),
@@ -1089,8 +1090,9 @@ public class BaseDepositController {
         if (payAccount == null) {
             return AppModelVo.getAppModeVoJson(false, AppErrorCodeEnum.CHANNEL_CLOSURE.getCode(), null);
         }
+        LOG.info("公司入款提交订单，入款类型type：{0}，入款渠道：{1}",payAccount.getType(),type);
         if (PayAccountType.ONLINE_ACCOUNT.getCode().equals(payAccount.getType())) {
-            onlineCommonDeposit(playerRechargeVo, result, request);
+            return onlineCommonDeposit(playerRechargeVo, result, request);
         }
         if (AppDepositPayEnum.COMPANY_PAY.getCode().equals(type)) {
             playerRechargeVo = companySaveRecharge(playerRechargeVo, payAccount, request);
