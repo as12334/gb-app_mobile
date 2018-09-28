@@ -5,7 +5,7 @@
     <c:when test="${fn:length(command.result) gt 0}">
         <c:forEach items="${command.result}" var="s">
             <li class="${s.isRead==false?'no-read':''}">
-                <div class="i"><a class="${s.receiveStatus=='12'?'gb-radio':'gb-unread-radio'}" data-rel='{"target":"siteCheck","opType":"function"}'
+                <div class="i"><a class="${s.isRead==false?'gb-unread-radio':'gb-radio'}" data-rel='{"target":"siteCheck","opType":"function"}'
                                   value="${s.id}" name="site2_check"></a>
                     <div class="ct"
                          data-rel='{"target":"${root}/message/playerAdvisoryDetail.html?id=${s.id}","opType":"href"}'>
