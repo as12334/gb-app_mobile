@@ -113,10 +113,10 @@
                 <p class="qkclz">
 		            <span class="mui-pull-right">
 		                ${views.fund_auto['转账处理中']}：
-		                <span class="text-green transferSum">${currency}${soulFn:formatCurrency(transferSum)}</span>
+		                <span class="text-green transferSum">${soulFn:formatCurrency(transferSum)}</span>
 		            </span>
                     ${views.fund_auto['取款处理中']}：
-                    <span class="text-green withdrawSum">${currency}${soulFn:formatCurrency(withdrawSum)}</span>
+                    <span class="text-green withdrawSum">${soulFn:formatCurrency(withdrawSum)}</span>
                 </p>
             </div>
         </div>
