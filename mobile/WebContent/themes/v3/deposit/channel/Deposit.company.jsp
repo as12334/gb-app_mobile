@@ -42,7 +42,8 @@
                 <div class="depo_row">
                     <div class="label">存款金额</div>
                     <div class="input_dp_num">
-                        <input id="result.rechargeAmount" name="result.rechargeAmount" type="text"  placeholder="${siteCurrencySign}${soulFn:formatCurrency(min)}~${siteCurrencySign}${soulFn:formatCurrency(max)}"/>
+                        <%--<input id="result.rechargeAmount" name="result.rechargeAmount" type="text"  placeholder="${siteCurrencySign}${soulFn:formatCurrency(min)}~${siteCurrencySign}${soulFn:formatCurrency(max)}"/>--%>
+                        <input id="result.rechargeAmount" name="result.rechargeAmount" type="text"  placeholder="${soulFn:formatCurrency(min)} ~ ${soulFn:formatCurrency(max)}"/>
                         <input type="hidden" name="result.randomCash" value="0"/>
                     </div>
 
