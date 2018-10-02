@@ -22,6 +22,7 @@ import so.wwb.gamebox.mobile.app.model.*;
 import so.wwb.gamebox.mobile.session.SessionManager;
 import so.wwb.gamebox.mobile.tools.RegexTools;
 import so.wwb.gamebox.model.Module;
+import so.wwb.gamebox.model.common.MessageI18nConst;
 import so.wwb.gamebox.model.company.site.po.SiteI18n;
 import so.wwb.gamebox.model.master.enums.ActivityStateEnum;
 import so.wwb.gamebox.model.master.enums.ActivityTypeEnum;
@@ -290,13 +291,19 @@ public class DiscountController extends ActivityHallController {
                 //        LocaleTool.tranMessage(Module.MASTER_CONTENT, "activity_apply_fail");
                 String defaultMsg = state ? "您所提交的申请已经进入审批阶段，请及时跟进申请状况。如有问题，请与客服人员联系。" :
                         "您所提交的申请还未达到活动要求，请多多努力！如有问题，请与客服人员联系。";
-                String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("msg").toString();
+                String error = stringObjectMap.get("error") == null ? defaultMsg : stringObjectMap.get("error").toString();
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
                 if(ActivityTypeEnum.BACK_WATER.getCode().equals(code) || applyResult.lastIndexOf("您的注册时间为：{1}") >= 0){
                     applyResult = applyResult.replace("您的注册时间为：{1}","并且在活动期间注册。");
-                }else if("apply_activitty_transaction_times_error".equals(applyResult)){
-                    applyResult = "存款次数不足或者存款未完成，请检查存款状态";
+                }else if(StringTool.isNotBlank(applyResult) && applyResult.startsWith("apply_activitty_")){
+                    String msg = LocaleTool.tranMessage("apply_activity", applyResult);
+                    if(StringTool.isNotBlank(msg)){
+                        applyResult = msg;
+                    }
                 }
+                /*else if("apply_activitty_transaction_times_error".equals(applyResult)){
+                    applyResult = "存款次数不足或者存款未完成，请检查存款状态";
+                }*/
                 String tips = state && ActivityTypeEnum.DEPOSIT_SEND.getCode().equals(code) ? "操作成功,审核通过后彩金将直接发放到您的账户,请注意查收!" : null;
                 appDiscountApplyResult.setTips(tips);
                 Object transactionErrorList = stringObjectMap.get("transactionErrorList");
