@@ -11,6 +11,10 @@
 <script src="${resRoot}/js/common/Common.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/websocket/Comet.js?v=${rcVersion}"></script>
 <script src="${resRoot}/js/websocket/PopUp.js?v=${rcVersion}"></script>
+
+<script src="${resRoot}/js/common.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/swiper.min.js?v=${rcVersion}"></script>
+<script src="${resRoot}/js/jquery/jquery.nicescroll.min.js?v=${rcVersion}"></script>
 <script>
     var curTheme = '${curTheme}';
     var root = '${root}';
