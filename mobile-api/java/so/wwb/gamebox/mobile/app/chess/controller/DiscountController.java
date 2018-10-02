@@ -294,8 +294,11 @@ public class DiscountController extends ActivityHallController {
                 applyResult = stringObjectMap.get("msg") == null ? error : stringObjectMap.get("msg").toString();
                 if(ActivityTypeEnum.BACK_WATER.getCode().equals(code) || applyResult.lastIndexOf("您的注册时间为：{1}") >= 0){
                     applyResult = applyResult.replace("您的注册时间为：{1}","并且在活动期间注册。");
-                }else if("apply_activitty_transaction_times_error".equals(applyResult)){
-                    applyResult = "存款次数不足或者存款未完成，请检查存款状态";
+                }else if(StringTool.isNotBlank(applyResult) && applyResult.startsWith("apply_activitty_")){
+                    String msg = LocaleTool.tranMessage("apply_activity", applyResult);
+                    if(StringTool.isNotBlank(msg)){
+                        applyResult = msg;
+                    }
                 }
                 String tips = state && ActivityTypeEnum.DEPOSIT_SEND.getCode().equals(code) ? "操作成功,审核通过后彩金将直接发放到您的账户,请注意查收!" : null;
                 appDiscountApplyResult.setTips(tips);
